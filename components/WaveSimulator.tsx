@@ -78,6 +78,16 @@ const WaveSimulator: React.FC = () => {
     ]
   };
 
+  // Helper to intercept click and push state (simulating App.tsx router)
+  // Note: In a real architecture, we might pass the navigate function down via Context,
+  // but for this structure, we rely on the App.tsx handling popstate or standard link behavior if App.tsx intercepts.
+  // Actually, since we updated App.tsx to use real URLs, standard <a> tags are fine if we want full reload,
+  // but to keep SPA feel we need to prevent default. 
+  // However, simpler is to just let the URL update happen and App.tsx's popstate listener won't trigger on pushState from here automatically
+  // unless we use a custom event or pass props. 
+  // For simplicity in this specific update scope, we use <a> tags which work with the new clean URLs.
+  // The App.tsx navigation handles internal clicks, external clicks will just reload to the correct path.
+
   return (
     <div className="flex flex-col items-center w-full animate-in fade-in duration-500">
       <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(schemaData) }} />
@@ -153,22 +163,22 @@ const WaveSimulator: React.FC = () => {
       <div className="w-full max-w-5xl mt-12 mb-8">
         <h3 className="text-xl font-display font-bold text-white mb-4 px-2 border-l-4 border-blue-500">More Training Modules</h3>
         <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-            <a href="?view=cps" onClick={(e) => e.preventDefault()} className="bg-slate-900/60 border border-white/5 rounded-xl p-4 hover:border-blue-400/50 hover:bg-slate-900 transition-all cursor-pointer group block">
+            <a href="/cps-test" onClick={(e) => {e.preventDefault(); window.history.pushState(null, '', '/cps-test'); window.dispatchEvent(new PopStateEvent('popstate')); window.scrollTo(0,0);}} className="bg-slate-900/60 border border-white/5 rounded-xl p-4 hover:border-blue-400/50 hover:bg-slate-900 transition-all cursor-pointer group block">
                 <MousePointerClick className="w-8 h-8 text-blue-500 mb-3 group-hover:scale-110 transition-transform"/>
                 <h4 className="font-bold text-white text-sm mb-1">CPS Test</h4>
                 <p className="text-xs text-slate-400">Measure raw clicking speed.</p>
             </a>
-            <a href="?view=jitter" onClick={(e) => e.preventDefault()} className="bg-slate-900/60 border border-white/5 rounded-xl p-4 hover:border-orange-400/50 hover:bg-slate-900 transition-all cursor-pointer group block">
+            <a href="/jitter-click" onClick={(e) => {e.preventDefault(); window.history.pushState(null, '', '/jitter-click'); window.dispatchEvent(new PopStateEvent('popstate')); window.scrollTo(0,0);}} className="bg-slate-900/60 border border-white/5 rounded-xl p-4 hover:border-orange-400/50 hover:bg-slate-900 transition-all cursor-pointer group block">
                 <Activity className="w-8 h-8 text-orange-500 mb-3 group-hover:scale-110 transition-transform"/>
                 <h4 className="font-bold text-white text-sm mb-1">Jitter Click</h4>
                 <p className="text-xs text-slate-400">Learn advanced vibration.</p>
             </a>
-            <a href="?view=spacebar" onClick={(e) => e.preventDefault()} className="bg-slate-900/60 border border-white/5 rounded-xl p-4 hover:border-purple-400/50 hover:bg-slate-900 transition-all cursor-pointer group block">
+            <a href="/spacebar-counter" onClick={(e) => {e.preventDefault(); window.history.pushState(null, '', '/spacebar-counter'); window.dispatchEvent(new PopStateEvent('popstate')); window.scrollTo(0,0);}} className="bg-slate-900/60 border border-white/5 rounded-xl p-4 hover:border-purple-400/50 hover:bg-slate-900 transition-all cursor-pointer group block">
                 <Keyboard className="w-8 h-8 text-purple-500 mb-3 group-hover:scale-110 transition-transform"/>
                 <h4 className="font-bold text-white text-sm mb-1">Spacebar</h4>
                 <p className="text-xs text-slate-400">Test keyboard latency.</p>
             </a>
-            <a href="?view=reaction" onClick={(e) => e.preventDefault()} className="bg-slate-900/60 border border-white/5 rounded-xl p-4 hover:border-green-400/50 hover:bg-slate-900 transition-all cursor-pointer group block">
+            <a href="/reaction-test" onClick={(e) => {e.preventDefault(); window.history.pushState(null, '', '/reaction-test'); window.dispatchEvent(new PopStateEvent('popstate')); window.scrollTo(0,0);}} className="bg-slate-900/60 border border-white/5 rounded-xl p-4 hover:border-green-400/50 hover:bg-slate-900 transition-all cursor-pointer group block">
                 <Timer className="w-8 h-8 text-green-500 mb-3 group-hover:scale-110 transition-transform"/>
                 <h4 className="font-bold text-white text-sm mb-1">Reaction</h4>
                 <p className="text-xs text-slate-400">Test visual reflexes.</p>

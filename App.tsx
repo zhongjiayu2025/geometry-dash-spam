@@ -14,7 +14,9 @@ import { Gamepad2, MousePointer2, Keyboard, Timer, Menu, X, Zap, BookOpen, Chevr
 
 type View = 'game' | 'cps' | 'jitter' | 'butterfly' | 'rightClick' | 'spacebar' | 'reaction' | 'blog' | 'article' | 'about' | 'contact' | 'privacy' | 'terms';
 
-// SEO Configuration Mapping
+// --- SEO & ROUTING CONFIGURATION ---
+
+// 1. Metadata for HTML Head
 const VIEW_METADATA: Record<string, { title: string; desc: string }> = {
   game: {
     title: "Geometry Dash Spam Test | Ultimate Wave Simulator & Physics",
@@ -54,65 +56,90 @@ const VIEW_METADATA: Record<string, { title: string; desc: string }> = {
   terms: { title: "Terms of Service", desc: "Usage agreements." },
 };
 
-export default function App() {
-  // Initialize state from URL params if available
-  const [currentView, setCurrentView] = useState<View>(() => {
-    if (typeof window !== 'undefined') {
-      const params = new URLSearchParams(window.location.search);
-      const viewParam = params.get('view') as View;
-      return viewParam && VIEW_METADATA[viewParam] ? viewParam : 'game';
-    }
-    return 'game';
-  });
+// 2. Path Mapping for Clean URLs (SEO Friendly)
+const PATH_MAP: Record<View, string> = {
+    game: '/',
+    cps: '/cps-test',
+    jitter: '/jitter-click',
+    butterfly: '/butterfly-click',
+    rightClick: '/right-click',
+    spacebar: '/spacebar-counter',
+    reaction: '/reaction-test',
+    blog: '/blog',
+    article: '/blog/', // Prefix for articles
+    about: '/about',
+    contact: '/contact',
+    privacy: '/privacy',
+    terms: '/terms'
+};
 
+// Helper to find View from current Path
+const getViewFromPath = (path: string): { view: View; slug?: string } => {
+    if (path === '/' || path === '') return { view: 'game' };
+    
+    // Handle Blog Articles (/blog/some-slug)
+    if (path.startsWith('/blog/') && path.length > 6) {
+        const slug = path.replace('/blog/', '');
+        return { view: 'article', slug };
+    }
+
+    // Exact matches
+    const entry = Object.entries(PATH_MAP).find(([key, val]) => val === path);
+    if (entry) return { view: entry[0] as View };
+
+    // Fallback
+    return { view: 'game' };
+};
+
+export default function App() {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [cpsDropdownOpen, setCpsDropdownOpen] = useState(false);
   
-  // Handle article deep linking
+  // Initialize State from URL Path
+  const initialRoute = typeof window !== 'undefined' ? getViewFromPath(window.location.pathname) : { view: 'game' as View };
+  
+  const [currentView, setCurrentView] = useState<View>(initialRoute.view);
   const [currentPost, setCurrentPost] = useState<BlogPost | null>(() => {
-    if (typeof window !== 'undefined') {
-        const params = new URLSearchParams(window.location.search);
-        const slug = params.get('slug');
-        if (slug) {
-            return BLOG_POSTS.find(p => p.slug === slug) || null;
-        }
+    if (initialRoute.view === 'article' && initialRoute.slug) {
+        return BLOG_POSTS.find(p => p.slug === initialRoute.slug) || null;
     }
     return null;
   });
 
-  // --- SEO & ROUTING EFFECT ---
-  useEffect(() => {
-    // 1. Update URL without reloading
-    const params = new URLSearchParams();
-    if (currentView === 'article' && currentPost) {
-        params.set('view', 'article');
-        params.set('slug', currentPost.slug);
-    } else {
-        params.set('view', currentView);
-    }
+  // --- ROUTING ENGINE ---
+  
+  // Function to handle internal navigation
+  const navigate = (view: View, post?: BlogPost) => {
+    setCurrentView(view);
+    if (post) setCurrentPost(post);
+    setMobileMenuOpen(false);
     
-    const newUrl = `${window.location.pathname}?${params.toString()}`;
-    window.history.pushState({ view: currentView, slug: currentPost?.slug }, '', newUrl);
+    // Construct new URL
+    let newPath = PATH_MAP[view];
+    if (view === 'article' && post) {
+        newPath = `/blog/${post.slug}`;
+    }
 
-    // 2. Update Document Title
+    // Push to history
+    window.history.pushState({ view, slug: post?.slug }, '', newPath);
+    window.scrollTo(0, 0);
+  };
+
+  // Effect to handle SEO Title/Meta updates and Browser Back Button
+  useEffect(() => {
+    // 1. Update Document Title & Meta
     let meta = VIEW_METADATA[currentView];
     if (currentView === 'article' && currentPost) {
         document.title = `${currentPost.title} | GD Spam Blog`;
+        const metaDescTag = document.querySelector('meta[name="description"]');
+        if (metaDescTag) metaDescTag.setAttribute('content', currentPost.excerpt);
     } else if (meta) {
         document.title = meta.title;
+        const metaDescTag = document.querySelector('meta[name="description"]');
+        if (metaDescTag) metaDescTag.setAttribute('content', meta.desc);
     }
 
-    // 3. Update Meta Description
-    const metaDescTag = document.querySelector('meta[name="description"]');
-    if (metaDescTag) {
-        if (currentView === 'article' && currentPost) {
-            metaDescTag.setAttribute('content', currentPost.excerpt);
-        } else if (meta) {
-            metaDescTag.setAttribute('content', meta.desc);
-        }
-    }
-
-    // 4. Update Canonical Tag (Self-referencing)
+    // 2. Update Canonical Tag
     let linkCanonical = document.querySelector('link[rel="canonical"]');
     if (!linkCanonical) {
         linkCanonical = document.createElement('link');
@@ -123,30 +150,20 @@ export default function App() {
 
   }, [currentView, currentPost]);
 
-  // Handle Browser Back Button
+  // Handle Browser Back/Forward Buttons (PopState)
   useEffect(() => {
-      const handlePopState = (event: PopStateEvent) => {
-          if (event.state && event.state.view) {
-              setCurrentView(event.state.view as View);
-              if (event.state.slug) {
-                  const post = BLOG_POSTS.find(p => p.slug === event.state.slug);
-                  if (post) setCurrentPost(post);
-              }
-          } else {
-              // Fallback for initial load
-              setCurrentView('game');
+      const handlePopState = () => {
+          const route = getViewFromPath(window.location.pathname);
+          setCurrentView(route.view);
+          if (route.view === 'article' && route.slug) {
+              const post = BLOG_POSTS.find(p => p.slug === route.slug);
+              if (post) setCurrentPost(post);
           }
       };
 
       window.addEventListener('popstate', handlePopState);
       return () => window.removeEventListener('popstate', handlePopState);
   }, []);
-
-  const handleReadPost = (post: BlogPost) => {
-    setCurrentPost(post);
-    setCurrentView('article');
-    window.scrollTo(0, 0);
-  };
 
   const renderContent = () => {
     switch (currentView) {
@@ -157,8 +174,8 @@ export default function App() {
       case 'rightClick': return <RightClickTest />;
       case 'spacebar': return <SpacebarCounter />;
       case 'reaction': return <ReactionTest />;
-      case 'blog': return <BlogList onReadPost={handleReadPost} />;
-      case 'article': return currentPost ? <BlogPostReader post={currentPost} onBack={() => setCurrentView('blog')} onNavigate={(view) => setCurrentView(view)} /> : <BlogList onReadPost={handleReadPost} />;
+      case 'blog': return <BlogList onReadPost={(post) => navigate('article', post)} />;
+      case 'article': return currentPost ? <BlogPostReader post={currentPost} onBack={() => navigate('blog')} onNavigate={(view) => navigate(view)} /> : <BlogList onReadPost={(post) => navigate('article', post)} />;
       case 'about': return <AboutPage />;
       case 'contact': return <ContactPage />;
       case 'privacy': return <PrivacyPage />;
@@ -167,19 +184,17 @@ export default function App() {
     }
   };
 
-  const NavItem = ({ view, icon: Icon, label, onClick }: { view?: View; icon: any; label: string; onClick?: () => void }) => {
-    const isActive = view && (currentView === view || (currentView === 'article' && view === 'blog'));
-    // Render as <a> tag for SEO, but prevent default to handle via state
+  // Navigation Link Component
+  const NavItem = ({ view, icon: Icon, label }: { view: View; icon: any; label: string }) => {
+    const isActive = (currentView === view || (currentView === 'article' && view === 'blog'));
+    const href = PATH_MAP[view];
+
     return (
       <a
-        href={`?view=${view}`}
+        href={href}
         onClick={(e) => {
           e.preventDefault();
-          if (onClick) onClick();
-          else {
-            if(view) setCurrentView(view);
-            setMobileMenuOpen(false);
-          }
+          navigate(view);
         }}
         className={`
           relative flex items-center gap-2 px-4 py-2 rounded-full font-medium transition-all duration-300 text-sm tracking-wide
@@ -225,9 +240,9 @@ export default function App() {
           
           {/* Logo */}
           <a 
-            href="?view=game"
+            href="/"
             className="flex items-center gap-3 cursor-pointer group"
-            onClick={(e) => { e.preventDefault(); setCurrentView('game'); }}
+            onClick={(e) => { e.preventDefault(); navigate('game'); }}
           >
             <div className="w-8 h-8 md:w-10 md:h-10 rounded-lg bg-gradient-to-br from-blue-600 to-indigo-600 flex items-center justify-center shadow-lg shadow-blue-900/50 group-hover:scale-105 transition-transform">
               <Zap className="w-5 h-5 md:w-6 md:h-6 text-white" />
@@ -264,20 +279,18 @@ export default function App() {
               </button>
               
               {cpsDropdownOpen && (
-                // Use pt-2 (padding top) as an invisible bridge instead of mt-2 (margin).
-                // This ensures the mouse doesn't "leave" the container when moving down.
                 <div className="absolute top-full left-0 pt-2 w-48 z-50 animate-in fade-in slide-in-from-top-2">
                    <div className="bg-[#0b1021] border border-white/10 rounded-xl shadow-2xl overflow-hidden p-1">
-                       <button onClick={() => { setCurrentView('cps'); setCpsDropdownOpen(false); }} className="w-full text-left px-4 py-3 hover:bg-white/5 rounded-lg flex items-center gap-3 text-sm text-slate-300 hover:text-white transition-colors">
+                       <button onClick={() => { navigate('cps'); setCpsDropdownOpen(false); }} className="w-full text-left px-4 py-3 hover:bg-white/5 rounded-lg flex items-center gap-3 text-sm text-slate-300 hover:text-white transition-colors">
                           <MousePointer2 className="w-4 h-4 text-blue-400" /> Standard CPS
                        </button>
-                       <button onClick={() => { setCurrentView('jitter'); setCpsDropdownOpen(false); }} className="w-full text-left px-4 py-3 hover:bg-white/5 rounded-lg flex items-center gap-3 text-sm text-slate-300 hover:text-white transition-colors">
+                       <button onClick={() => { navigate('jitter'); setCpsDropdownOpen(false); }} className="w-full text-left px-4 py-3 hover:bg-white/5 rounded-lg flex items-center gap-3 text-sm text-slate-300 hover:text-white transition-colors">
                           <Activity className="w-4 h-4 text-orange-400" /> Jitter Click
                        </button>
-                       <button onClick={() => { setCurrentView('butterfly'); setCpsDropdownOpen(false); }} className="w-full text-left px-4 py-3 hover:bg-white/5 rounded-lg flex items-center gap-3 text-sm text-slate-300 hover:text-white transition-colors">
+                       <button onClick={() => { navigate('butterfly'); setCpsDropdownOpen(false); }} className="w-full text-left px-4 py-3 hover:bg-white/5 rounded-lg flex items-center gap-3 text-sm text-slate-300 hover:text-white transition-colors">
                           <Fingerprint className="w-4 h-4 text-pink-400" /> Butterfly Click
                        </button>
-                       <button onClick={() => { setCurrentView('rightClick'); setCpsDropdownOpen(false); }} className="w-full text-left px-4 py-3 hover:bg-white/5 rounded-lg flex items-center gap-3 text-sm text-slate-300 hover:text-white transition-colors">
+                       <button onClick={() => { navigate('rightClick'); setCpsDropdownOpen(false); }} className="w-full text-left px-4 py-3 hover:bg-white/5 rounded-lg flex items-center gap-3 text-sm text-slate-300 hover:text-white transition-colors">
                           <Mouse className="w-4 h-4 text-emerald-400" /> Right Click
                        </button>
                    </div>
@@ -315,8 +328,8 @@ export default function App() {
             <NavItem view="reaction" icon={Timer} label="Reaction Time" />
             <NavItem view="blog" icon={BookOpen} label="Blog & Guides" />
             <div className="h-px bg-white/10 my-2"></div>
-            <button onClick={() => { setCurrentView('about'); setMobileMenuOpen(false); }} className="px-4 py-2 text-slate-400 text-left hover:text-white">About Us</button>
-            <button onClick={() => { setCurrentView('contact'); setMobileMenuOpen(false); }} className="px-4 py-2 text-slate-400 text-left hover:text-white">Contact</button>
+            <button onClick={() => { navigate('about'); }} className="px-4 py-2 text-slate-400 text-left hover:text-white">About Us</button>
+            <button onClick={() => { navigate('contact'); }} className="px-4 py-2 text-slate-400 text-left hover:text-white">Contact</button>
           </div>
         )}
       </header>
@@ -358,10 +371,10 @@ export default function App() {
         <div className="max-w-7xl mx-auto px-4 py-8 md:py-12">
           <div className="flex flex-col md:flex-row items-center justify-between gap-6">
              <div className="flex flex-col gap-2">
-               <div className="flex items-center gap-3 opacity-80 hover:opacity-100 transition-opacity cursor-pointer" onClick={() => setCurrentView('game')}>
+               <a href="/" className="flex items-center gap-3 opacity-80 hover:opacity-100 transition-opacity cursor-pointer" onClick={(e) => { e.preventDefault(); navigate('game'); }}>
                   <Zap className="w-5 h-5 text-blue-500" />
                   <span className="font-display font-bold text-slate-300">GEOMETRY DASH SPAM</span>
-               </div>
+               </a>
                <p className="text-slate-600 text-xs font-mono max-w-xs">
                  The ultimate training toolkit for Geometry Dash players. Master the wave, improve CPS, and break your limits.
                </p>
@@ -369,10 +382,10 @@ export default function App() {
              
              <div className="flex flex-col items-center md:items-end gap-4">
                <div className="flex flex-wrap justify-center gap-6 text-sm text-slate-400 font-medium">
-                  <button onClick={() => setCurrentView('about')} className="hover:text-white transition-colors">About</button>
-                  <button onClick={() => setCurrentView('contact')} className="hover:text-white transition-colors">Contact</button>
-                  <button onClick={() => setCurrentView('privacy')} className="hover:text-white transition-colors">Privacy Policy</button>
-                  <button onClick={() => setCurrentView('terms')} className="hover:text-white transition-colors">Terms of Service</button>
+                  <a href="/about" onClick={(e) => { e.preventDefault(); navigate('about'); }} className="hover:text-white transition-colors">About</a>
+                  <a href="/contact" onClick={(e) => { e.preventDefault(); navigate('contact'); }} className="hover:text-white transition-colors">Contact</a>
+                  <a href="/privacy" onClick={(e) => { e.preventDefault(); navigate('privacy'); }} className="hover:text-white transition-colors">Privacy Policy</a>
+                  <a href="/terms" onClick={(e) => { e.preventDefault(); navigate('terms'); }} className="hover:text-white transition-colors">Terms of Service</a>
                </div>
                <p className="text-slate-700 text-[10px] font-mono text-center md:text-right">
                   &copy; 2026 GEOMETRYDASHSPAM.CC<br/>
