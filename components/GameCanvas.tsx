@@ -863,8 +863,10 @@ const GameCanvas: React.FC<GameCanvasProps> = memo(({ difficulty, status, onStat
   // Input Handling
   useEffect(() => {
     const handleInputDown = (e: Event) => {
-        if (e.target instanceof HTMLButtonElement) return;
-        if (e.target instanceof HTMLInputElement) return; 
+        // Fix: Improved target check to handle clicks on icons inside buttons
+        const target = e.target as HTMLElement;
+        if (target.closest('button') || target.closest('input') || target.closest('a')) return;
+
         if (e.type === 'keydown') {
              if (isBinding) { e.preventDefault(); const code = (e as KeyboardEvent).code; updateKeybind(code); return; }
              const kbEvent = e as KeyboardEvent; if (kbEvent.code === 'KeyH') { setShowHitbox(prev => !prev); return; }
@@ -1174,7 +1176,7 @@ const GameCanvas: React.FC<GameCanvasProps> = memo(({ difficulty, status, onStat
 
       {/* GAME OVER / WON SCREEN (Unified Dashboard) */}
       {(status === GameStatus.Lost || status === GameStatus.Won) && (
-        <div className="absolute inset-0 flex items-center justify-center bg-black/80 backdrop-blur-md z-10 animate-in zoom-in-95 duration-200 pointer-events-none p-4">
+        <div className="absolute inset-0 flex items-center justify-center bg-black/80 backdrop-blur-md z-30 animate-in zoom-in-95 duration-200 pointer-events-none p-4">
           <div className="w-full max-w-2xl bg-slate-950 border border-white/10 rounded-2xl overflow-hidden shadow-2xl pointer-events-auto flex flex-col md:flex-row">
              
              {/* Left: Result Stats */}
