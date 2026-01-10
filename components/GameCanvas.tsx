@@ -676,6 +676,41 @@ const GameCanvas: React.FC<GameCanvasProps> = memo(({ difficulty, status, onStat
     ctx.fillStyle = '#020617'; 
     ctx.fillRect(0, 0, canvas.width, canvas.height);
 
+    // Draw Real-time UI on Canvas (Behind obstacles)
+    if (status === GameStatus.Playing || status === GameStatus.Idle) {
+         ctx.save();
+         
+         // 1. Percentage (Center Top)
+         if (!isEndless) {
+             const pct = Math.min(100, Math.max(0, (gameState.current.distanceTraveled / gameState.current.finishLineX) * 100));
+             ctx.font = "900 italic 48px 'Orbitron', sans-serif";
+             ctx.fillStyle = "rgba(255, 255, 255, 0.2)";
+             ctx.textAlign = "center";
+             ctx.shadowColor = difficulty.color;
+             ctx.shadowBlur = 10;
+             ctx.fillText(`${pct.toFixed(0)}%`, canvas.width / 2, 80);
+             
+             // High visibility overlay
+             ctx.fillStyle = "rgba(255, 255, 255, 0.9)";
+             ctx.shadowBlur = 0;
+             ctx.fillText(`${pct.toFixed(0)}%`, canvas.width / 2, 80);
+         }
+
+         // 2. Timer (Top Left)
+         const currentTime = status === GameStatus.Playing 
+             ? (Date.now() - gameState.current.startTime) / 1000 
+             : gameState.current.runTime / 1000;
+             
+         ctx.font = "700 32px 'Orbitron', monospace";
+         ctx.fillStyle = "rgba(255, 255, 255, 0.9)";
+         ctx.textAlign = "left";
+         ctx.shadowColor = "rgba(0,0,0,0.5)";
+         ctx.shadowBlur = 4;
+         ctx.fillText(`${currentTime.toFixed(2)}s`, 30, 80);
+         
+         ctx.restore();
+    }
+
     gameState.current.stars.forEach(star => {
         ctx.fillStyle = `rgba(255,255,255,${star.opacity})`;
         ctx.beginPath();
@@ -737,7 +772,9 @@ const GameCanvas: React.FC<GameCanvasProps> = memo(({ difficulty, status, onStat
         }
     }
 
+    // --- NEON TRAIL RENDERING (Additive Blending) ---
     if (gameState.current.trail.length > 1) {
+        // 1. Create Path
         ctx.beginPath();
         ctx.moveTo(gameState.current.trail[0].x, gameState.current.trail[0].y - gameState.current.trail[0].w/2);
         for (let i = 1; i < gameState.current.trail.length; i++) {
@@ -748,20 +785,24 @@ const GameCanvas: React.FC<GameCanvasProps> = memo(({ difficulty, status, onStat
             ctx.lineTo(gameState.current.trail[i].x, gameState.current.trail[i].y + gameState.current.trail[i].w/2);
         }
         ctx.closePath();
+
+        // 2. Additive Glow Pass
+        ctx.save();
+        ctx.globalCompositeOperation = 'lighter'; // This creates the neon stacking effect
+        ctx.shadowBlur = 20;
+        ctx.shadowColor = difficulty.color;
         ctx.fillStyle = difficulty.color;
         ctx.globalAlpha = 0.6;
         ctx.fill();
-        ctx.globalAlpha = 1.0;
+        ctx.restore();
         
-        ctx.beginPath();
-        ctx.moveTo(gameState.current.trail[0].x, gameState.current.trail[0].y);
-        for (let i = 1; i < gameState.current.trail.length; i++) {
-            ctx.lineTo(gameState.current.trail[i].x, gameState.current.trail[i].y);
-        }
-        ctx.lineTo(gameState.current.playerX, gameState.current.playerY);
-        ctx.strokeStyle = '#fff';
-        ctx.lineWidth = 2;
+        // 3. Inner Core Pass (White Beam)
+        ctx.save();
+        ctx.globalCompositeOperation = 'source-over';
+        ctx.strokeStyle = 'rgba(255, 255, 255, 0.4)';
+        ctx.lineWidth = 1;
         ctx.stroke();
+        ctx.restore();
     }
 
     if (status !== GameStatus.Lost) {
@@ -995,28 +1036,17 @@ const GameCanvas: React.FC<GameCanvasProps> = memo(({ difficulty, status, onStat
 
       {/* --- HUD --- */}
       <div className="absolute top-4 left-4 right-4 flex justify-between items-start pointer-events-none">
+          {/* Replaced HTML Timer/Percentage with Canvas Rendering for 60FPS smoothness */}
           <div className="flex flex-col gap-1">
-              <div className="text-4xl font-display font-black text-white italic drop-shadow-lg tabular-nums">
-                  {status === GameStatus.Playing 
-                    ? ((Date.now() - gameState.current.startTime) / 1000).toFixed(2)
-                    : (gameState.current.runTime / 1000).toFixed(2)
-                  }s
-              </div>
-              {!isEndless ? (
-                <div className="w-48 h-2 bg-slate-800 rounded-full overflow-hidden border border-white/10">
-                   <div 
-                      className="h-full bg-white shadow-[0_0_10px_white] transition-all duration-75"
-                      style={{ width: `${Math.min(100, (gameState.current.distanceTraveled / gameState.current.finishLineX) * 100)}%` }}
-                   ></div>
-                </div>
-              ) : (
-                <div className="flex items-center gap-2">
+               {/* Left empty to maintain layout spacing for buttons on right if needed */}
+               {isEndless && (
+                <div className="flex items-center gap-2 mt-12 bg-black/40 px-2 py-1 rounded backdrop-blur-sm">
                     <Crown className="w-4 h-4 text-yellow-500" />
                     <span className="text-xs font-mono text-yellow-500 uppercase tracking-widest">
                         Best: {highScore.toFixed(2)}s
                     </span>
                 </div>
-              )}
+               )}
           </div>
           
           <div className="flex gap-2 pointer-events-auto">
