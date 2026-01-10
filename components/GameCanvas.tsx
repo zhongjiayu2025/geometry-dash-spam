@@ -193,7 +193,8 @@ const GameCanvas: React.FC<GameCanvasProps> = memo(({ difficulty, status, onStat
       if (newLb.length > 0) setBestTime(newLb[0].time);
   };
 
-  const clearLeaderboard = () => {
+  const clearLeaderboard = (e: React.MouseEvent) => {
+      e.stopPropagation();
       const key = getLeaderboardKey(); localStorage.removeItem(key); setLeaderboard([]); setBestTime(0);
   };
 
@@ -395,7 +396,8 @@ const GameCanvas: React.FC<GameCanvasProps> = memo(({ difficulty, status, onStat
     }
   }, [isMuted, clickSoundEnabled, isMini, clickSoundType]);
 
-  const shareScore = () => {
+  const shareScore = (e: React.MouseEvent) => {
+     e.stopPropagation();
      const score = (gameState.current.startTime ? ((Date.now() - gameState.current.startTime)/1000).toFixed(2) : "0.00");
      const text = `I just survived ${score}s on ${difficulty.label} difficulty in Geometry Dash Spam Test! 🌊 Can you beat me? https://geometrydashspam.cc`;
      navigator.clipboard.writeText(text);
@@ -863,9 +865,13 @@ const GameCanvas: React.FC<GameCanvasProps> = memo(({ difficulty, status, onStat
   // Input Handling
   useEffect(() => {
     const handleInputDown = (e: Event) => {
-        // Fix: Improved target check to handle clicks on icons inside buttons
-        const target = e.target as HTMLElement;
-        if (target.closest('button') || target.closest('input') || target.closest('a')) return;
+        // STRICT CHECK: For Mouse/Touch events, only allow if the target IS the canvas.
+        // This prevents clicks on overlay buttons from triggering the "reset game" logic.
+        if (e.type !== 'keydown' && e.type !== 'keyup') {
+            if (e.target !== canvasRef.current) {
+                return;
+            }
+        }
 
         if (e.type === 'keydown') {
              if (isBinding) { e.preventDefault(); const code = (e as KeyboardEvent).code; updateKeybind(code); return; }
@@ -1176,7 +1182,7 @@ const GameCanvas: React.FC<GameCanvasProps> = memo(({ difficulty, status, onStat
 
       {/* GAME OVER / WON SCREEN (Unified Dashboard) */}
       {(status === GameStatus.Lost || status === GameStatus.Won) && (
-        <div className="absolute inset-0 flex items-center justify-center bg-black/80 backdrop-blur-md z-30 animate-in zoom-in-95 duration-200 pointer-events-none p-4">
+        <div className="absolute inset-0 flex items-center justify-center bg-black/80 backdrop-blur-md z-50 animate-in zoom-in-95 duration-200 pointer-events-none p-4">
           <div className="w-full max-w-2xl bg-slate-950 border border-white/10 rounded-2xl overflow-hidden shadow-2xl pointer-events-auto flex flex-col md:flex-row">
              
              {/* Left: Result Stats */}
@@ -1227,12 +1233,15 @@ const GameCanvas: React.FC<GameCanvasProps> = memo(({ difficulty, status, onStat
 
                  <div className="flex gap-2 w-full mt-auto">
                      <button
-                        onClick={() => onStatusChange(GameStatus.Idle)}
-                        className={`flex-1 py-3 font-bold uppercase tracking-widest rounded transition-all ${status === GameStatus.Won ? 'bg-yellow-500 hover:bg-yellow-400 text-black' : 'bg-red-600 hover:bg-red-500 text-white'}`}
+                        onClick={(e) => {
+                            e.stopPropagation();
+                            onStatusChange(GameStatus.Idle);
+                        }}
+                        className={`flex-1 py-3 font-bold uppercase tracking-widest rounded transition-all cursor-pointer z-50 ${status === GameStatus.Won ? 'bg-yellow-500 hover:bg-yellow-400 text-black' : 'bg-red-600 hover:bg-red-500 text-white'}`}
                      >
                         Retry
                      </button>
-                     <button onClick={shareScore} className="p-3 bg-white/10 hover:bg-white/20 text-white rounded">
+                     <button onClick={shareScore} className="p-3 bg-white/10 hover:bg-white/20 text-white rounded cursor-pointer z-50">
                         {copied ? <Check className="w-5 h-5" /> : <Share2 className="w-5 h-5" />}
                      </button>
                  </div>
