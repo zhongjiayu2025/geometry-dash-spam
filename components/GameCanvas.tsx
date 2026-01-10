@@ -438,7 +438,8 @@ const GameCanvas: React.FC<GameCanvasProps> = memo(({ difficulty, status, onStat
     // Safety Calculation: Ensure new gap overlaps with old gap
     // To allow passage, |Delta| must be < Gap - PlayerHeight(approx 15) - Margin
     // We enforce a safe delta to prevent impossible walls
-    const safeDelta = Math.max(10, minGap - 30); // E.g., if gap is 50, safeDelta is 20.
+    // KEY CHANGE: Hard cap safeDelta to 60px to prevent massive jumps when gap is large
+    const safeDelta = Math.min(60, Math.max(10, minGap - 30)); 
 
     let center = gameState.current.lastCenterY;
     let delta = 0;

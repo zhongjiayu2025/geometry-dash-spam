@@ -3,53 +3,53 @@ import { Difficulty, DifficultyConfig } from './types';
 
 export const WIN_TIME_MS = 15000; // 15 seconds to win
 export const FPS = 60;
-export const GRAVITY = 0.45; // Reduced from 0.5: Even floatier, gives much more reaction time
-export const WAVE_SPEED_Y = 4.2; // Reduced from 4.5: Smoother control, less jerky movements
+export const GRAVITY = 0.35; // Reduced from 0.45: Very floaty, extremely forgiving
+export const WAVE_SPEED_Y = 3.8; // Reduced from 4.2: Slower ascent for better precision
 
 export const DIFFICULTY_CONFIGS: Record<Difficulty, DifficultyConfig> = {
   [Difficulty.Easy]: {
     id: Difficulty.Easy,
     label: 'Easy',
-    speed: 4, 
-    gap: 210, // Increased from 190. Massive space, very hard to die.
+    speed: 3.5, // Extremely slow
+    gap: 260, // Massive gap, almost impossible to hit walls
     color: '#22c55e', // Green
     secondaryColor: '#14532d',
-    description: 'Tutorial Mode. Very slow and very wide.',
+    description: 'Tutorial Mode. Very flat and wide.',
   },
   [Difficulty.Hard]: {
     id: Difficulty.Hard,
     label: 'Hard',
-    speed: 5.5, // Reduced from 6
-    gap: 170, // Increased from 150. A relaxing challenge.
+    speed: 5, 
+    gap: 220, // Huge breathing room
     color: '#eab308', // Yellow
     secondaryColor: '#713f12',
-    description: 'Casual pace. Good for warming up.',
+    description: 'Relaxed pace. Great for casual play.',
   },
   [Difficulty.Insane]: {
     id: Difficulty.Insane,
     label: 'Insane',
-    speed: 7, // Reduced from 8
-    gap: 130, // Increased from 110. Consistent and fair.
+    speed: 6.5, 
+    gap: 180, // Still very wide compared to original
     color: '#f97316', // Orange
     secondaryColor: '#7c2d12',
-    description: 'Faster, but with plenty of room to maneuver.',
+    description: 'Standard challenge level.',
   },
   [Difficulty.EasyDemon]: {
     id: Difficulty.EasyDemon,
     label: 'Easy Demon',
-    speed: 9, // Reduced from 10
-    gap: 100, // Increased from 80. The sweet spot for fun.
+    speed: 8, 
+    gap: 140, // Formerly 'Insane' difficulty
     color: '#ef4444', // Red
     secondaryColor: '#7f1d1d',
-    description: 'High speed action. Requires focus, not luck.',
+    description: 'Fast paced, requires focus.',
   },
   [Difficulty.ExtremeDemon]: {
     id: Difficulty.ExtremeDemon,
     label: 'Extreme Demon',
-    speed: 11, // Reduced from 12
-    gap: 70, // Increased from 50. Challenging but definitely humanly possible.
+    speed: 9.5, 
+    gap: 110, // Significantly wider than before (was 70)
     color: '#a855f7', // Purple/Pink
     secondaryColor: '#581c87',
-    description: 'Top speed test. For players seeking a rush.',
+    description: 'The ultimate test, but fair.',
   },
 };
