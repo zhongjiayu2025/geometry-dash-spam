@@ -393,71 +393,94 @@ const GameCanvas: React.FC<GameCanvasProps> = memo(({ difficulty, status, onStat
 
   const spawnObstacle = useCallback((canvasWidth: number, canvasHeight: number) => {
     const minGap = isMini ? difficulty.gap * 0.8 : difficulty.gap;
+    const obstacleWidth = 60;
     
-    // Pattern Selection Logic
+    // Pattern Selection Logic (Simplified/Improved)
     if (gameState.current.patternStep <= 0) {
         const patterns: PatternType[] = ['random', 'corridor', 'stairs_up', 'stairs_down', 'zigzag', 'sawtooth'];
-        // Bias towards patterns in higher difficulty
         let nextPattern: PatternType = 'random';
-        if (Math.random() > 0.4) {
+        // Randomly pick next pattern with bias
+        if (Math.random() > 0.3) {
              nextPattern = patterns[Math.floor(Math.random() * patterns.length)];
         }
         gameState.current.currentPattern = nextPattern;
-        gameState.current.patternStep = Math.floor(Math.random() * 5) + 3; 
+        // Patterns last for 5-10 blocks
+        gameState.current.patternStep = Math.floor(Math.random() * 5) + 5; 
     }
 
+    // Safety Calculation: Ensure new gap overlaps with old gap
+    // To allow passage, |Delta| must be < Gap - PlayerHeight(approx 15) - Margin
+    // We enforce a safe delta to prevent impossible walls
+    const safeDelta = Math.max(10, minGap - 30); // E.g., if gap is 50, safeDelta is 20.
+
     let center = gameState.current.lastCenterY;
-    const padding = minGap + 50;
+    let delta = 0;
 
     switch (gameState.current.currentPattern) {
         case 'corridor':
-            center += (Math.random() * 20 - 10); 
+            delta = (Math.random() * 10 - 5); 
             break;
         case 'stairs_up':
-            center -= (minGap * 0.6); 
+            delta = -safeDelta * 0.6; // Consistent Up
             break;
         case 'stairs_down':
-            center += (minGap * 0.6); 
+            delta = safeDelta * 0.6; // Consistent Down
             break;
         case 'zigzag':
-            const direction = gameState.current.patternStep % 2 === 0 ? 1 : -1;
-            center += (minGap * 1.5 * direction);
+            // Alternating Up/Down
+            const dir = gameState.current.patternStep % 2 === 0 ? 1 : -1;
+            delta = safeDelta * dir; 
             break;
         case 'sawtooth':
-            // The "Tight Spam" pattern
-            center += (Math.random() * 40 - 20);
+            // Small jitters
+            delta = (Math.random() * 20 - 10);
             break;
         case 'random':
         default:
-            center = Math.random() * (canvasHeight - minGap - 100) + 50 + minGap / 2;
+            // Random jump within safe limits
+            delta = (Math.random() - 0.5) * (safeDelta * 1.5);
             break;
     }
 
-    center = Math.max(padding, Math.min(canvasHeight - padding, center));
+    center += delta;
+
+    // Hard Clamp to Screen Boundaries with margin
+    const margin = minGap / 2 + 20; 
+    center = Math.max(margin, Math.min(canvasHeight - margin, center));
+    
+    // Final Overlap Check (Crucial for impossible level prevention)
+    // If the screen clamp forced a huge jump or pattern was aggressive, dampen it.
+    const actualDiff = center - gameState.current.lastCenterY;
+    if (Math.abs(actualDiff) > safeDelta) {
+        center = gameState.current.lastCenterY + Math.sign(actualDiff) * safeDelta;
+    }
+
     gameState.current.lastCenterY = center;
     gameState.current.patternStep--;
 
     let topHeight = center - minGap / 2;
     let bottomY = center + minGap / 2;
-    const width = 60; 
     
+    // Gentle sawtooth effect (width modulation)
     if (gameState.current.currentPattern === 'sawtooth') {
         if (gameState.current.patternStep % 2 === 0) {
-            topHeight += 20; 
-            bottomY -= 20;
+            // Shrink gap slightly (e.g. 10px total), not 40px like before
+            const shrink = Math.min(10, minGap * 0.2); 
+            topHeight += shrink; 
+            bottomY -= shrink;
         }
     }
 
     gameState.current.obstacles.push({
-      x: gameState.current.lastObstacleX + width,
-      width: width,
+      x: gameState.current.lastObstacleX + obstacleWidth,
+      width: obstacleWidth,
       topHeight: topHeight,
       bottomY: bottomY,
       passed: false,
       type: 'normal'
     });
 
-    gameState.current.lastObstacleX = gameState.current.obstacles[gameState.current.obstacles.length - 1].x;
+    gameState.current.lastObstacleX += obstacleWidth;
   }, [difficulty, isMini]);
 
   const createExplosion = (x: number, y: number, color: string) => {
