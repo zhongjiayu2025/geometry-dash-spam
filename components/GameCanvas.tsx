@@ -4,7 +4,7 @@
 import React, { useRef, useEffect, useCallback, useState, memo } from 'react';
 import { DifficultyConfig, GameStatus } from '../types';
 import { WIN_TIME_MS, WAVE_SPEED_Y, GRAVITY } from '../constants';
-import { Trophy, AlertTriangle, Crown, Volume2, VolumeX, Maximize, Minimize, Activity, ZapOff, Share2, Check, RotateCcw, Menu, Zap, X, Copy, Twitter, Facebook } from 'lucide-react';
+import { Trophy, AlertTriangle, Crown, Volume2, Volume1, VolumeX, Maximize, Minimize, Activity, ZapOff, Share2, Check, RotateCcw, Menu, Zap, X, Copy, Twitter, Facebook, Settings, Keyboard as KeyboardIcon, Ghost } from 'lucide-react';
 
 interface GameCanvasProps {
   difficulty: DifficultyConfig;
@@ -80,23 +80,39 @@ const GameCanvas: React.FC<GameCanvasProps> = memo(({ difficulty, status, onStat
   const containerRef = useRef<HTMLDivElement>(null);
   
   // Settings State
-  const [isMuted, setIsMuted] = useState<boolean>(false);
+  const [volume, setVolume] = useState<number>(0.5);
   const [isFullscreen, setIsFullscreen] = useState<boolean>(false);
   const [reduceMotion, setReduceMotion] = useState<boolean>(false);
+  const [customKey, setCustomKey] = useState<string>('Space');
+  const [isBinding, setIsBinding] = useState<boolean>(false);
 
   const [highScore, setHighScore] = useState<number>(0);
   const [isNewBest, setIsNewBest] = useState<boolean>(false);
   
-  // Share Modal State
+  // Modals State
   const [showShareModal, setShowShareModal] = useState<boolean>(false);
+  const [showSettingsModal, setShowSettingsModal] = useState<boolean>(false);
   const [shareText, setShareText] = useState<string>("");
   const [copied, setCopied] = useState<boolean>(false);
   
   useEffect(() => {
-    setIsMuted(localStorage.getItem('gd_spam_muted') === 'true');
+    const savedVol = localStorage.getItem('gd_spam_volume');
+    if (savedVol) setVolume(parseFloat(savedVol));
+    
+    const savedKey = localStorage.getItem('gd_spam_keybind');
+    if (savedKey) setCustomKey(savedKey);
+
     setReduceMotion(localStorage.getItem('gd_spam_reduce_motion') === 'true');
     loadHighScore();
   }, [difficulty.id, isEndless, isMini]);
+
+  // Update Audio Volume when state changes
+  useEffect(() => {
+      if (masterGainRef.current) {
+          masterGainRef.current.gain.value = volume;
+      }
+      localStorage.setItem('gd_spam_volume', volume.toString());
+  }, [volume]);
 
   // Handle Fullscreen Change Events
   useEffect(() => {
@@ -184,6 +200,7 @@ const GameCanvas: React.FC<GameCanvasProps> = memo(({ difficulty, status, onStat
     finishLineX: 0,
     baseColor: difficulty.color,
     lastClickTime: 0,
+    ghost: { x: 0, y: 0, visible: false }, // Ghost Marker
     rng: Math.random
   });
 
@@ -199,7 +216,7 @@ const GameCanvas: React.FC<GameCanvasProps> = memo(({ difficulty, status, onStat
           
           // Master Gain
           masterGainRef.current = ctx.createGain();
-          masterGainRef.current.gain.value = 0.8;
+          masterGainRef.current.gain.value = volume; // Initialize with current volume
 
           // Delay/Echo Effect for "Space" feel
           const delay = ctx.createDelay(5.0);
@@ -222,7 +239,7 @@ const GameCanvas: React.FC<GameCanvasProps> = memo(({ difficulty, status, onStat
       }
     }
     if (audioCtxRef.current?.state === 'suspended') audioCtxRef.current.resume();
-  }, []);
+  }, [volume]);
 
   // Trigger Beat Pulse Visuals
   const triggerBeat = useCallback(() => {
@@ -310,7 +327,7 @@ const GameCanvas: React.FC<GameCanvasProps> = memo(({ difficulty, status, onStat
 
   const scheduleMusic = useCallback(() => {
     const ctx = audioCtxRef.current;
-    if (!ctx || isMuted) return;
+    if (!ctx || volume <= 0) return;
 
     const tempo = 140; 
     const secondsPerBeat = 60.0 / tempo;
@@ -332,7 +349,7 @@ const GameCanvas: React.FC<GameCanvasProps> = memo(({ difficulty, status, onStat
         nextNoteTimeRef.current += secondsPer16th;
         noteIndexRef.current++;
     }
-  }, [isMuted, playKick, playBass, playHiHat]);
+  }, [volume, playKick, playBass, playHiHat]);
 
   const startMusic = useCallback(() => {
     if (musicSchedulerRef.current) return;
@@ -351,7 +368,7 @@ const GameCanvas: React.FC<GameCanvasProps> = memo(({ difficulty, status, onStat
   }, []);
 
   const playSound = useCallback((type: 'crash' | 'win' | 'click' | 'newBest') => {
-      if (isMuted || !audioCtxRef.current || !masterGainRef.current) return;
+      if (volume <= 0 || !audioCtxRef.current || !masterGainRef.current) return;
       const ctx = audioCtxRef.current;
       const now = ctx.currentTime;
       
@@ -398,7 +415,7 @@ const GameCanvas: React.FC<GameCanvasProps> = memo(({ difficulty, status, onStat
           osc.start(now);
           osc.stop(now + 0.4);
       }
-  }, [isMuted, isMini]);
+  }, [volume, isMini]);
 
   // --- GAMEPLAY & VISUALS ---
 
@@ -525,6 +542,9 @@ const GameCanvas: React.FC<GameCanvasProps> = memo(({ difficulty, status, onStat
         rngFunc = mulberry32(seedValue);
     }
 
+    // Preserve ghost if not a hard reload
+    const prevGhost = gameState.current.ghost;
+
     gameState.current = {
       ...gameState.current,
       playerY: height / 2,
@@ -547,11 +567,12 @@ const GameCanvas: React.FC<GameCanvasProps> = memo(({ difficulty, status, onStat
       lastBeatTime: 0,
       frameCount: 0,
       clickIntervals: [],
-      clickTimestamps: [], // Reset CPS Data
+      clickTimestamps: [], 
       runTime: 0,
       finishLineX: totalDistance + 600,
       baseColor: difficulty.color,
-      rng: rngFunc 
+      rng: rngFunc,
+      ghost: prevGhost // Keep ghost
     };
     initStars(width, height);
     setConsistency('100%');
@@ -682,8 +703,7 @@ const GameCanvas: React.FC<GameCanvasProps> = memo(({ difficulty, status, onStat
     ctx.fillStyle = '#020617'; 
     ctx.fillRect(0, 0, canvas.width, canvas.height);
 
-    // --- PARALLAX GRID RENDERING (SPEED PERCEPTION) ---
-    // Draw moving lines on floor and ceiling to simulate forward movement
+    // --- PARALLAX GRID RENDERING ---
     if (status === GameStatus.Playing || status === GameStatus.Idle) {
         ctx.strokeStyle = `${gameState.current.baseColor}40`; // Low opacity
         ctx.lineWidth = 1;
@@ -691,17 +711,32 @@ const GameCanvas: React.FC<GameCanvasProps> = memo(({ difficulty, status, onStat
         const offset = gameState.current.distanceTraveled % gridSize;
 
         for (let i = -offset; i < canvas.width; i += gridSize) {
-             // Ceiling Grid
-             ctx.beginPath(); 
-             ctx.moveTo(i, 10); 
-             ctx.lineTo(i - 30, 0); 
-             ctx.stroke();
+             ctx.beginPath(); ctx.moveTo(i, 10); ctx.lineTo(i - 30, 0); ctx.stroke(); // Ceiling
+             ctx.beginPath(); ctx.moveTo(i, canvas.height - 10); ctx.lineTo(i - 30, canvas.height); ctx.stroke(); // Floor
+        }
+    }
 
-             // Floor Grid
-             ctx.beginPath(); 
-             ctx.moveTo(i, canvas.height - 10); 
-             ctx.lineTo(i - 30, canvas.height); 
+    // --- RENDER GHOST MARKER ---
+    if (gameState.current.ghost.visible) {
+        const ghostScreenX = gameState.current.ghost.x - gameState.current.distanceTraveled;
+        // Only draw if within screen view
+        if (ghostScreenX > -50 && ghostScreenX < canvas.width + 50) {
+             ctx.save();
+             ctx.globalAlpha = 0.5;
+             ctx.translate(ghostScreenX, gameState.current.ghost.y);
+             ctx.fillStyle = "#ffffff";
+             // Draw small skull or X shape
+             ctx.beginPath();
+             ctx.arc(0, 0, 6, 0, Math.PI * 2);
+             ctx.fill();
+             // X mark
+             ctx.strokeStyle = "#000";
+             ctx.lineWidth = 2;
+             ctx.beginPath();
+             ctx.moveTo(-3, -3); ctx.lineTo(3, 3);
+             ctx.moveTo(3, -3); ctx.lineTo(-3, 3);
              ctx.stroke();
+             ctx.restore();
         }
     }
 
@@ -709,7 +744,7 @@ const GameCanvas: React.FC<GameCanvasProps> = memo(({ difficulty, status, onStat
     if (status === GameStatus.Playing || status === GameStatus.Idle) {
          ctx.save();
          
-         // 1. Percentage (Center Top)
+         // 1. Percentage
          if (!isEndless) {
              const pct = Math.min(100, Math.max(0, (gameState.current.distanceTraveled / gameState.current.finishLineX) * 100));
              ctx.font = "900 italic 48px 'Orbitron', sans-serif";
@@ -718,18 +753,15 @@ const GameCanvas: React.FC<GameCanvasProps> = memo(({ difficulty, status, onStat
              ctx.shadowColor = difficulty.color;
              ctx.shadowBlur = 10;
              ctx.fillText(`${pct.toFixed(0)}%`, canvas.width / 2, 80);
-             
-             // High visibility overlay
              ctx.fillStyle = "rgba(255, 255, 255, 0.9)";
              ctx.shadowBlur = 0;
              ctx.fillText(`${pct.toFixed(0)}%`, canvas.width / 2, 80);
          }
 
-         // 2. Timer (Top Left)
+         // 2. Timer
          const currentTime = status === GameStatus.Playing 
              ? (Date.now() - gameState.current.startTime) / 1000 
              : gameState.current.runTime / 1000;
-             
          ctx.font = "700 32px 'Orbitron', monospace";
          ctx.fillStyle = "rgba(255, 255, 255, 0.9)";
          ctx.textAlign = "left";
@@ -737,20 +769,17 @@ const GameCanvas: React.FC<GameCanvasProps> = memo(({ difficulty, status, onStat
          ctx.shadowBlur = 4;
          ctx.fillText(`${currentTime.toFixed(2)}s`, 30, 80);
          
-         // 3. LIVE CPS METER (NEW)
+         // 3. LIVE CPS
          const currentCPS = gameState.current.clickTimestamps.length;
          if (currentCPS > 0 || status === GameStatus.Playing) {
              ctx.textAlign = "right";
              ctx.fillStyle = currentCPS > 10 ? "#ef4444" : (currentCPS > 6 ? "#eab308" : "rgba(255,255,255,0.7)");
              ctx.font = "700 24px 'Orbitron', monospace";
              ctx.fillText(`${currentCPS} CPS`, canvas.width - 30, 80);
-             
-             // Small "Spam" label
              ctx.font = "400 12px 'Inter', sans-serif";
              ctx.fillStyle = "rgba(255,255,255,0.5)";
              ctx.fillText("SPEED", canvas.width - 30, 50);
          }
-
          ctx.restore();
     }
 
@@ -815,9 +844,8 @@ const GameCanvas: React.FC<GameCanvasProps> = memo(({ difficulty, status, onStat
         }
     }
 
-    // --- NEON TRAIL RENDERING (Additive Blending) ---
+    // --- NEON TRAIL RENDERING ---
     if (gameState.current.trail.length > 1) {
-        // 1. Create Path
         ctx.beginPath();
         ctx.moveTo(gameState.current.trail[0].x, gameState.current.trail[0].y - gameState.current.trail[0].w/2);
         for (let i = 1; i < gameState.current.trail.length; i++) {
@@ -829,9 +857,8 @@ const GameCanvas: React.FC<GameCanvasProps> = memo(({ difficulty, status, onStat
         }
         ctx.closePath();
 
-        // 2. Additive Glow Pass
         ctx.save();
-        ctx.globalCompositeOperation = 'lighter'; // This creates the neon stacking effect
+        ctx.globalCompositeOperation = 'lighter'; 
         ctx.shadowBlur = 20;
         ctx.shadowColor = difficulty.color;
         ctx.fillStyle = difficulty.color;
@@ -839,7 +866,6 @@ const GameCanvas: React.FC<GameCanvasProps> = memo(({ difficulty, status, onStat
         ctx.fill();
         ctx.restore();
         
-        // 3. Inner Core Pass (White Beam)
         ctx.save();
         ctx.globalCompositeOperation = 'source-over';
         ctx.strokeStyle = 'rgba(255, 255, 255, 0.4)';
@@ -876,10 +902,10 @@ const GameCanvas: React.FC<GameCanvasProps> = memo(({ difficulty, status, onStat
         ctx.shadowBlur = 0;
     }
 
-    // --- PARTICLES (Additive for Glow) ---
+    // --- PARTICLES ---
     gameState.current.particles.forEach(p => {
         ctx.save();
-        ctx.globalCompositeOperation = 'lighter'; // Glowing sparks
+        ctx.globalCompositeOperation = 'lighter';
         ctx.translate(p.x, p.y);
         ctx.rotate(p.rotation);
         ctx.globalAlpha = p.life;
@@ -908,12 +934,19 @@ const GameCanvas: React.FC<GameCanvasProps> = memo(({ difficulty, status, onStat
     ctx.restore(); 
 
     requestRef.current = requestAnimationFrame(gameLoop);
-  }, [status, difficulty, isEndless, isMini, spawnObstacle, saveHighScore, playSound, reduceMotion]);
+  }, [status, difficulty, isEndless, isMini, spawnObstacle, saveHighScore, playSound, reduceMotion, volume]);
 
   const handleDeath = () => {
       onStatusChange(GameStatus.Lost);
       gameState.current.shakeIntensity = reduceMotion ? 0 : 40; 
-      createExplosion(gameState.current.playerX, gameState.current.playerY, difficulty.color); // Explode with difficulty color
+      // Set Ghost Position
+      gameState.current.ghost = {
+          x: gameState.current.playerX + gameState.current.distanceTraveled,
+          y: gameState.current.playerY,
+          visible: true
+      };
+      
+      createExplosion(gameState.current.playerX, gameState.current.playerY, difficulty.color);
       playSound('crash');
       setConsistency(calculateConsistency());
       
@@ -927,17 +960,13 @@ const GameCanvas: React.FC<GameCanvasProps> = memo(({ difficulty, status, onStat
   
   const handleShareClick = (e: React.MouseEvent) => {
     e.stopPropagation();
-    
     const time = (gameState.current.runTime / 1000).toFixed(2);
     const pct = !isEndless ? Math.min(100, (gameState.current.distanceTraveled / gameState.current.finishLineX) * 100).toFixed(0) + '%' : '∞';
-    
     let text = `I just scored ${time}s on ${difficulty.label} mode!`;
     if (status === GameStatus.Won) text = `I completed the ${difficulty.label} level in ${time}s on Geometry Dash Spam Test! 🏆`;
     else if (isEndless) text = `I survived ${time}s on Endless ${difficulty.label} mode in Geometry Dash Spam Test! 🌊`;
     else text = `I reached ${pct} on ${difficulty.label} mode in Geometry Dash Spam Test! 💀 ${time}s`;
-    
     text += `\n\nTry to beat me here: https://geometrydashspam.cc`;
-    
     setShareText(text);
     setCopied(false);
     setShowShareModal(true);
@@ -948,28 +977,23 @@ const GameCanvas: React.FC<GameCanvasProps> = memo(({ difficulty, status, onStat
           await navigator.clipboard.writeText(shareText);
           setCopied(true);
           setTimeout(() => setCopied(false), 2000);
-      } catch (err) {
-          console.error("Failed to copy", err);
-      }
+      } catch (err) { console.error("Failed to copy", err); }
   };
 
   const handleStart = useCallback((e?: any) => {
-     // Check if the target is a button, interactive element, or inside the modal
      if (e && e.target instanceof Element) {
-        if (e.target.closest('button') || e.target.closest('a') || e.target.closest('.share-modal-content')) {
+        if (e.target.closest('button') || e.target.closest('a') || e.target.closest('.modal-content')) {
             return;
         }
      }
      
-     // Prevent starting if share modal is open
-     if (showShareModal) return;
+     if (showShareModal || showSettingsModal || isBinding) return;
   
      if (status === GameStatus.Lost || status === GameStatus.Won) {
          resetGame();
          onStatusChange(GameStatus.Playing);
          initAudio();
          gameState.current.isHolding = true; 
-         // Track click for CPS even on restart
          gameState.current.clickTimestamps.push(Date.now());
          gameState.current.lastClickTime = Date.now();
          playSound('click');
@@ -984,45 +1008,44 @@ const GameCanvas: React.FC<GameCanvasProps> = memo(({ difficulty, status, onStat
      gameState.current.isHolding = true;
      
      const now = Date.now();
-     // CPS Tracking
      gameState.current.clickTimestamps.push(now);
-
-     // Consistency Interval Tracking
      if (gameState.current.lastClickTime > 0) {
          gameState.current.clickIntervals.push(now - gameState.current.lastClickTime);
          if (gameState.current.clickIntervals.length > 50) gameState.current.clickIntervals.shift();
      }
      gameState.current.lastClickTime = now;
-
      playSound('click');
-  }, [status, resetGame, onStatusChange, initAudio, playSound, showShareModal]);
+  }, [status, resetGame, onStatusChange, initAudio, playSound, showShareModal, showSettingsModal, isBinding]);
 
   const handleEnd = useCallback(() => {
      gameState.current.isHolding = false;
   }, []);
 
   useEffect(() => {
-      if (status === GameStatus.Playing) {
-          startMusic();
-      } else {
-          stopMusic();
-      }
+      if (status === GameStatus.Playing) startMusic();
+      else stopMusic();
       return () => stopMusic();
   }, [status, startMusic, stopMusic]);
 
   useEffect(() => {
       const handleKeyDown = (e: KeyboardEvent) => {
-          if (showShareModal) return; // Disable keyboard controls when modal is open
+          if (showShareModal || showSettingsModal) {
+              if (isBinding) {
+                 e.preventDefault();
+                 setCustomKey(e.code);
+                 localStorage.setItem('gd_spam_keybind', e.code);
+                 setIsBinding(false);
+              }
+              return; 
+          }
           
-          if (e.code === 'Space' || e.code === 'ArrowUp') {
+          if (e.code === customKey || e.code === 'ArrowUp') {
               e.preventDefault();
               if (!e.repeat) handleStart();
           }
       };
       const handleKeyUp = (e: KeyboardEvent) => {
-          if (e.code === 'Space' || e.code === 'ArrowUp') {
-              handleEnd();
-          }
+          if (e.code === customKey || e.code === 'ArrowUp') handleEnd();
       };
 
       window.addEventListener('keydown', handleKeyDown);
@@ -1034,11 +1057,8 @@ const GameCanvas: React.FC<GameCanvasProps> = memo(({ difficulty, status, onStat
           container.addEventListener('mouseup', handleEnd);
           container.addEventListener('touchstart', (e) => { 
               const target = e.target as HTMLElement;
-              if (target.closest('button') || target.closest('a') || target.closest('.share-modal-content')) {
-                  return;
-              }
-              e.preventDefault(); 
-              handleStart(e); 
+              if (target.closest('button') || target.closest('a') || target.closest('.modal-content')) return;
+              e.preventDefault(); handleStart(e); 
           }, { passive: false });
           container.addEventListener('touchend', (e) => { e.preventDefault(); handleEnd(); });
       }
@@ -1051,18 +1071,7 @@ const GameCanvas: React.FC<GameCanvasProps> = memo(({ difficulty, status, onStat
               container.removeEventListener('mouseup', handleEnd);
           }
       };
-  }, [handleStart, handleEnd, showShareModal]);
-
-  useEffect(() => {
-      if (status === GameStatus.Playing) {
-          if (!requestRef.current) requestRef.current = requestAnimationFrame(gameLoop);
-      } else {
-          requestRef.current = requestAnimationFrame(gameLoop);
-      }
-      return () => {
-          if (requestRef.current) cancelAnimationFrame(requestRef.current);
-      };
-  }, [gameLoop, status]);
+  }, [handleStart, handleEnd, showShareModal, showSettingsModal, isBinding, customKey]);
 
   useEffect(() => {
       resetGame();
@@ -1088,9 +1097,7 @@ const GameCanvas: React.FC<GameCanvasProps> = memo(({ difficulty, status, onStat
 
       {/* --- HUD --- */}
       <div className="absolute top-4 left-4 right-4 flex justify-between items-start pointer-events-none">
-          {/* Replaced HTML Timer/Percentage with Canvas Rendering for 60FPS smoothness */}
           <div className="flex flex-col gap-1">
-               {/* Left empty to maintain layout spacing for buttons on right if needed */}
                {isEndless && (
                 <div className="flex items-center gap-2 mt-12 bg-black/40 px-2 py-1 rounded backdrop-blur-sm">
                     <Crown className="w-4 h-4 text-yellow-500" />
@@ -1103,7 +1110,14 @@ const GameCanvas: React.FC<GameCanvasProps> = memo(({ difficulty, status, onStat
           
           <div className="flex gap-2 pointer-events-auto">
               <button 
-                  title={reduceMotion ? "Enable Motion/Pulse" : "Reduce Motion/Shake"}
+                  title="Settings"
+                  onClick={(e) => { e.stopPropagation(); setShowSettingsModal(true); }} 
+                  className="p-2 bg-black/40 hover:bg-black/60 rounded-full text-white/70 hover:text-white backdrop-blur-md transition-colors"
+              >
+                  <Settings className="w-5 h-5"/>
+              </button>
+              <button 
+                  title={reduceMotion ? "Enable Motion" : "Reduce Motion"}
                   onClick={toggleMotion} 
                   className={`p-2 rounded-full backdrop-blur-md transition-colors border border-transparent ${reduceMotion ? 'bg-blue-600 text-white border-blue-400' : 'bg-black/40 text-white/70 hover:bg-black/60 hover:text-white'}`}
               >
@@ -1115,13 +1129,6 @@ const GameCanvas: React.FC<GameCanvasProps> = memo(({ difficulty, status, onStat
                   className="p-2 bg-black/40 hover:bg-black/60 rounded-full text-white/70 hover:text-white backdrop-blur-md transition-colors"
               >
                   {isFullscreen ? <Minimize className="w-5 h-5"/> : <Maximize className="w-5 h-5"/>}
-              </button>
-              <button 
-                  aria-label={isMuted ? "Unmute" : "Mute"}
-                  onClick={(e) => { e.stopPropagation(); setIsMuted(!isMuted); localStorage.setItem('gd_spam_muted', String(!isMuted)); }} 
-                  className="p-2 bg-black/40 hover:bg-black/60 rounded-full text-white/70 hover:text-white backdrop-blur-md transition-colors"
-              >
-                  {isMuted ? <VolumeX className="w-5 h-5"/> : <Volume2 className="w-5 h-5"/>}
               </button>
           </div>
       </div>
@@ -1156,7 +1163,7 @@ const GameCanvas: React.FC<GameCanvasProps> = memo(({ difficulty, status, onStat
               </button>
               
               <div className="text-xs text-slate-400 animate-pulse flex flex-col gap-1">
-                 <span>Click or Press Space to Play</span>
+                 <span>Click or Press {customKey} to Play</span>
                  {highScore > 0 && <span className="text-yellow-500 font-bold">Personal Best: {highScore.toFixed(2)}s</span>}
               </div>
           </div>
@@ -1202,9 +1209,8 @@ const GameCanvas: React.FC<GameCanvasProps> = memo(({ difficulty, status, onStat
                     </button>
                 </div>
                 
-                {/* Instant Restart Hint */}
                 <div className="text-xs text-white/50 animate-pulse font-mono border border-white/10 px-3 py-1 rounded-full">
-                    Press <span className="font-bold text-white">SPACE</span> to Instant Restart
+                    Press <span className="font-bold text-white uppercase">{customKey.replace('Key', '')}</span> to Instant Restart
                 </div>
                 
                 <button 
@@ -1262,10 +1268,73 @@ const GameCanvas: React.FC<GameCanvasProps> = memo(({ difficulty, status, onStat
          </div>
       )}
 
-      {/* --- SHARE MODAL (CUSTOM OVERLAY) --- */}
+      {/* --- SETTINGS MODAL --- */}
+      {showSettingsModal && (
+        <div className="absolute inset-0 z-50 flex items-center justify-center bg-black/80 backdrop-blur-sm animate-in fade-in duration-200" onClick={() => setShowSettingsModal(false)}>
+            <div className="modal-content w-[90%] max-w-sm bg-[#0f172a] border border-white/10 rounded-2xl p-6 shadow-2xl relative" onClick={(e) => e.stopPropagation()}>
+                <button 
+                    onClick={() => setShowSettingsModal(false)}
+                    className="absolute top-4 right-4 text-slate-400 hover:text-white"
+                >
+                    <X className="w-5 h-5" />
+                </button>
+
+                <h3 className="text-xl font-display font-bold text-white mb-6 flex items-center gap-2">
+                    <Settings className="w-5 h-5 text-blue-400" /> Game Settings
+                </h3>
+
+                {/* Keybind Setting */}
+                <div className="mb-6">
+                    <label className="text-sm font-bold text-slate-400 uppercase tracking-widest mb-2 block flex items-center gap-2">
+                        <KeyboardIcon className="w-4 h-4" /> Bind Key
+                    </label>
+                    <button 
+                        onClick={() => setIsBinding(true)}
+                        className={`w-full py-4 rounded-lg font-mono font-bold text-lg border-2 transition-all ${isBinding ? 'border-blue-500 bg-blue-900/30 text-white animate-pulse' : 'border-white/10 bg-black/30 text-slate-300 hover:bg-white/5'}`}
+                    >
+                        {isBinding ? "PRESS ANY KEY..." : customKey.replace('Key', '')}
+                    </button>
+                    <p className="text-xs text-slate-500 mt-2">Tap to record a new input key (e.g. Space, Up, Z)</p>
+                </div>
+
+                {/* Volume Setting */}
+                <div className="mb-6">
+                    <label className="text-sm font-bold text-slate-400 uppercase tracking-widest mb-2 block flex items-center gap-2">
+                        {volume > 0.5 ? <Volume2 className="w-4 h-4" /> : (volume > 0 ? <Volume1 className="w-4 h-4" /> : <VolumeX className="w-4 h-4" />)}
+                        Master Volume
+                    </label>
+                    <input 
+                        type="range" 
+                        min="0" 
+                        max="1" 
+                        step="0.01" 
+                        value={volume}
+                        onChange={(e) => setVolume(parseFloat(e.target.value))}
+                        className="w-full h-2 bg-slate-700 rounded-lg appearance-none cursor-pointer accent-blue-500"
+                    />
+                    <div className="flex justify-between text-xs text-slate-500 mt-1">
+                        <span>0%</span>
+                        <span>{(volume * 100).toFixed(0)}%</span>
+                        <span>100%</span>
+                    </div>
+                </div>
+
+                 {/* Ghost Marker Info */}
+                 <div className="p-3 bg-white/5 rounded border border-white/5 flex items-start gap-3">
+                     <Ghost className="w-5 h-5 text-slate-400 mt-0.5" />
+                     <div>
+                         <p className="text-sm text-white font-bold">Death Marker</p>
+                         <p className="text-xs text-slate-400">A ghost icon will appear at your last death location to help track progress.</p>
+                     </div>
+                 </div>
+            </div>
+        </div>
+      )}
+
+      {/* --- SHARE MODAL --- */}
       {showShareModal && (
         <div className="absolute inset-0 z-50 flex items-center justify-center bg-black/80 backdrop-blur-sm animate-in fade-in duration-200" onClick={() => setShowShareModal(false)}>
-            <div className="share-modal-content w-[90%] max-w-sm bg-[#0f172a] border border-white/10 rounded-2xl p-6 shadow-2xl relative" onClick={(e) => e.stopPropagation()}>
+            <div className="modal-content w-[90%] max-w-sm bg-[#0f172a] border border-white/10 rounded-2xl p-6 shadow-2xl relative" onClick={(e) => e.stopPropagation()}>
                 <button 
                     onClick={() => setShowShareModal(false)}
                     className="absolute top-4 right-4 text-slate-400 hover:text-white"
