@@ -162,7 +162,7 @@ const WaveSimulator: React.FC = () => {
                       <Calendar className="w-6 h-6" />
                   </div>
                   <div>
-                      <h4 className="text-yellow-400 font-bold uppercase tracking-widest text-xs mb-1">Daily Practice • {today}</h4>
+                      <div className="text-yellow-400 font-bold uppercase tracking-widest text-xs mb-1">Daily Practice • {today}</div>
                       <h3 className="text-xl font-display font-bold text-white mb-1">Slaughterhouse River Run</h3>
                       <p className="text-slate-400 text-sm max-w-md">
                           Today's Goal: Survive <span className="text-white font-bold">15 seconds</span> on <span className="text-white font-bold">Insane</span> difficulty using <span className="text-white font-bold">Mini Wave</span>.
@@ -183,7 +183,7 @@ const WaveSimulator: React.FC = () => {
                       <Star className="w-4 h-4 fill-current" />
                       ACCEPT CHALLENGE
                   </button>
-                  <p className="text-[10px] text-yellow-500/60 mt-2 font-mono">1,240 players completed this today</p>
+                  <p className="text-[10px] text-yellow-500/80 mt-2 font-mono">1,240 players completed this today</p>
               </div>
           </div>
       </div>

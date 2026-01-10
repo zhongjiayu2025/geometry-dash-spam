@@ -491,7 +491,7 @@ export default function App() {
             <div className="w-px h-8 bg-white/10 mx-2"></div>
             <NavItem view="blog" icon={BookOpen} label="Blog & Guides" />
           </nav>
-          <button className="md:hidden p-2 text-slate-400 hover:text-white" onClick={() => setMobileMenuOpen(!mobileMenuOpen)}>{mobileMenuOpen ? <X /> : <Menu />}</button>
+          <button className="md:hidden p-2 text-slate-400 hover:text-white" onClick={() => setMobileMenuOpen(!mobileMenuOpen)} aria-label={mobileMenuOpen ? "Close Menu" : "Open Menu"}>{mobileMenuOpen ? <X /> : <Menu />}</button>
         </div>
 
         {mobileMenuOpen && (
@@ -557,7 +557,7 @@ export default function App() {
                   <img src="/logo.svg" alt="Geometry Dash Spam Logo" className="w-6 h-6 rounded-md" />
                   <span className="font-display font-bold text-slate-300">GEOMETRY DASH SPAM</span>
                </a>
-               <p className="text-slate-600 text-xs font-mono max-w-xs">
+               <p className="text-slate-400 text-xs font-mono max-w-xs">
                  The ultimate training toolkit for Geometry Dash players. Master the wave, improve CPS, and break your limits.
                </p>
                {/* VISUAL SOCIAL PROOF FOR AGGREGATE RATING */}
@@ -569,7 +569,7 @@ export default function App() {
                        <Star className="w-3 h-3 fill-current" />
                        <Star className="w-3 h-3 fill-current" />
                    </div>
-                   <span className="text-[10px] text-slate-500 font-bold">4.9/5 RATING (12.5K RUNS)</span>
+                   <span className="text-[10px] text-slate-400 font-bold">4.9/5 RATING (12.5K RUNS)</span>
                </div>
              </div>
              
@@ -581,7 +581,7 @@ export default function App() {
                   <a href="/terms" onClick={(e) => { e.preventDefault(); navigate('terms'); }} className="hover:text-white transition-colors">Terms</a>
                   <a href="/sitemap" onClick={(e) => { e.preventDefault(); navigate('sitemap'); }} className="hover:text-white transition-colors">Sitemap</a>
                </div>
-               <p className="text-slate-700 text-[10px] font-mono text-center md:text-right">
+               <p className="text-slate-500 text-[10px] font-mono text-center md:text-right">
                   &copy; 2026 GEOMETRYDASHSPAM.CC<br/>
                   NOT AFFILIATED WITH ROBTOP GAMES.
                </p>

@@ -233,6 +233,7 @@ const CpsTest: React.FC = () => {
                    </button>
                    <button 
                     onClick={shareScore}
+                    aria-label="Share Score"
                     className={`px-4 py-3 bg-blue-600 text-white font-bold rounded-lg flex items-center gap-2 hover:bg-blue-500 transition-colors shadow-lg ${copied ? 'bg-green-500' : ''}`}
                    >
                      {copied ? <Check className="w-5 h-5" /> : <Share2 className="w-5 h-5" />}

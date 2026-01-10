@@ -583,7 +583,11 @@ const GameCanvas: React.FC<GameCanvasProps> = memo(({ difficulty, status, onStat
           
           {/* Controls / Info */}
           <div className="flex gap-2 pointer-events-auto">
-              <button onClick={(e) => { e.stopPropagation(); setIsMuted(!isMuted); localStorage.setItem('gd_spam_muted', String(!isMuted)); }} className="p-2 bg-black/40 hover:bg-black/60 rounded-full text-white/70 hover:text-white backdrop-blur-md transition-colors">
+              <button 
+                  aria-label={isMuted ? "Unmute" : "Mute"}
+                  onClick={(e) => { e.stopPropagation(); setIsMuted(!isMuted); localStorage.setItem('gd_spam_muted', String(!isMuted)); }} 
+                  className="p-2 bg-black/40 hover:bg-black/60 rounded-full text-white/70 hover:text-white backdrop-blur-md transition-colors"
+              >
                   {isMuted ? <VolumeX className="w-5 h-5"/> : <Volume2 className="w-5 h-5"/>}
               </button>
           </div>
@@ -618,7 +622,7 @@ const GameCanvas: React.FC<GameCanvasProps> = memo(({ difficulty, status, onStat
                 </span>
               </button>
               
-              <p className="text-xs text-slate-500 animate-pulse">Click or Press Space to Play</p>
+              <p className="text-xs text-slate-400 animate-pulse">Click or Press Space to Play</p>
           </div>
         </div>
       )}
