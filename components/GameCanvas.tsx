@@ -55,6 +55,28 @@ interface Shockwave {
 // Level Generation Patterns
 type PatternType = 'random' | 'corridor' | 'stairs_up' | 'stairs_down' | 'zigzag' | 'sawtooth';
 
+// --- SEEDED RNG UTILS ---
+// A simple, fast Pseudo-Random Number Generator (Mulberry32)
+// This ensures that for the same seed, we get the exact same sequence of numbers.
+const mulberry32 = (a: number) => {
+    return function() {
+      var t = a += 0x6D2B79F5;
+      t = Math.imul(t ^ t >>> 15, t | 1);
+      t ^= t + Math.imul(t ^ t >>> 7, t | 61);
+      return ((t ^ t >>> 14) >>> 0) / 4294967296;
+    }
+}
+
+const stringToSeed = (str: string): number => {
+    let hash = 0;
+    for (let i = 0; i < str.length; i++) {
+        const char = str.charCodeAt(i);
+        hash = (hash << 5) - hash + char;
+        hash |= 0; // Convert to 32bit integer
+    }
+    return hash + 2147483647 + 1; // Ensure positive
+}
+
 const GameCanvas: React.FC<GameCanvasProps> = memo(({ difficulty, status, onStatusChange, isEndless = false, isMini = false }) => {
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const containerRef = useRef<HTMLDivElement>(null);
@@ -158,6 +180,8 @@ const GameCanvas: React.FC<GameCanvasProps> = memo(({ difficulty, status, onStat
     finishLineX: 0,
     baseColor: difficulty.color,
     lastClickTime: 0,
+    // RNG Function (Can be seeded or random)
+    rng: Math.random
   });
 
   const requestRef = useRef<number | undefined>(undefined);
@@ -395,17 +419,20 @@ const GameCanvas: React.FC<GameCanvasProps> = memo(({ difficulty, status, onStat
     const minGap = isMini ? difficulty.gap * 0.8 : difficulty.gap;
     const obstacleWidth = 60;
     
+    // Use the seeded RNG from gameState
+    const random = gameState.current.rng;
+
     // Pattern Selection Logic (Simplified/Improved)
     if (gameState.current.patternStep <= 0) {
         const patterns: PatternType[] = ['random', 'corridor', 'stairs_up', 'stairs_down', 'zigzag', 'sawtooth'];
         let nextPattern: PatternType = 'random';
         // Randomly pick next pattern with bias
-        if (Math.random() > 0.3) {
-             nextPattern = patterns[Math.floor(Math.random() * patterns.length)];
+        if (random() > 0.3) {
+             nextPattern = patterns[Math.floor(random() * patterns.length)];
         }
         gameState.current.currentPattern = nextPattern;
         // Patterns last for 5-10 blocks
-        gameState.current.patternStep = Math.floor(Math.random() * 5) + 5; 
+        gameState.current.patternStep = Math.floor(random() * 5) + 5; 
     }
 
     // Safety Calculation: Ensure new gap overlaps with old gap
@@ -418,7 +445,7 @@ const GameCanvas: React.FC<GameCanvasProps> = memo(({ difficulty, status, onStat
 
     switch (gameState.current.currentPattern) {
         case 'corridor':
-            delta = (Math.random() * 10 - 5); 
+            delta = (random() * 10 - 5); 
             break;
         case 'stairs_up':
             delta = -safeDelta * 0.6; // Consistent Up
@@ -433,12 +460,12 @@ const GameCanvas: React.FC<GameCanvasProps> = memo(({ difficulty, status, onStat
             break;
         case 'sawtooth':
             // Small jitters
-            delta = (Math.random() * 20 - 10);
+            delta = (random() * 20 - 10);
             break;
         case 'random':
         default:
             // Random jump within safe limits
-            delta = (Math.random() - 0.5) * (safeDelta * 1.5);
+            delta = (random() - 0.5) * (safeDelta * 1.5);
             break;
     }
 
@@ -486,11 +513,13 @@ const GameCanvas: React.FC<GameCanvasProps> = memo(({ difficulty, status, onStat
   const createExplosion = (x: number, y: number, color: string) => {
     // If Reduce Motion is enabled, reduce particle count
     if (reduceMotion) return;
+    
+    const random = gameState.current.rng;
 
     // Create Shards (Triangles)
     for (let i = 0; i < 20; i++) {
-      const angle = Math.random() * Math.PI * 2;
-      const speed = Math.random() * 10 + 5;
+      const angle = random() * Math.PI * 2;
+      const speed = random() * 10 + 5;
       gameState.current.particles.push({
         x, y,
         vx: Math.cos(angle) * speed,
@@ -498,9 +527,9 @@ const GameCanvas: React.FC<GameCanvasProps> = memo(({ difficulty, status, onStat
         life: 1.0,
         maxLife: 1.0,
         color: color,
-        size: Math.random() * 8 + 4,
-        rotation: Math.random() * Math.PI * 2,
-        rotationSpeed: (Math.random() - 0.5) * 0.5
+        size: random() * 8 + 4,
+        rotation: random() * Math.PI * 2,
+        rotationSpeed: (random() - 0.5) * 0.5
       });
     }
     gameState.current.shockwaves.push({ x, y, radius: 10, opacity: 1.0 });
@@ -518,13 +547,15 @@ const GameCanvas: React.FC<GameCanvasProps> = memo(({ difficulty, status, onStat
 
   const initStars = (width: number, height: number) => {
       gameState.current.stars = [];
+      const random = gameState.current.rng;
+      
       for(let i=0; i<40; i++) {
           gameState.current.stars.push({
-              x: Math.random() * width,
-              y: Math.random() * height,
-              size: Math.random() * 2 + 0.5,
-              speed: Math.random() * 2 + 0.2, 
-              opacity: Math.random() * 0.5 + 0.1
+              x: random() * width,
+              y: random() * height,
+              size: random() * 2 + 0.5,
+              speed: random() * 2 + 0.2, 
+              opacity: random() * 0.5 + 0.1
           });
       }
   };
@@ -534,6 +565,18 @@ const GameCanvas: React.FC<GameCanvasProps> = memo(({ difficulty, status, onStat
     const width = canvasRef.current.width;
     const height = canvasRef.current.height;
     const totalDistance = difficulty.speed * 60 * (WIN_TIME_MS / 1000);
+    
+    // --- SEED SELECTION ---
+    // If it's Endless, we want RANDOM every time (Math.random).
+    // If it's a fixed Difficulty, we want a FIXED Seed based on the difficulty name.
+    // This allows players to memorize the level pattern (backboard) for that difficulty.
+    let rngFunc = Math.random;
+    
+    if (!isEndless) {
+        const seedString = `${difficulty.id}-${isMini ? 'mini' : 'normal'}`;
+        const seedValue = stringToSeed(seedString);
+        rngFunc = mulberry32(seedValue);
+    }
 
     gameState.current = {
       ...gameState.current,
@@ -559,12 +602,13 @@ const GameCanvas: React.FC<GameCanvasProps> = memo(({ difficulty, status, onStat
       clickIntervals: [],
       runTime: 0,
       finishLineX: totalDistance + 600,
-      baseColor: difficulty.color
+      baseColor: difficulty.color,
+      rng: rngFunc // Set the RNG for this run
     };
     initStars(width, height);
     setConsistency('100%');
     setIsNewBest(false);
-  }, [difficulty.color, difficulty.speed]);
+  }, [difficulty.color, difficulty.speed, difficulty.id, isEndless, isMini]);
 
   // --- GAME LOOP ---
   const gameLoop = useCallback(() => {
@@ -685,8 +729,9 @@ const GameCanvas: React.FC<GameCanvasProps> = memo(({ difficulty, status, onStat
         }
 
         if (gameState.current.shakeIntensity > 0) {
-            const dx = (Math.random() - 0.5) * gameState.current.shakeIntensity;
-            const dy = (Math.random() - 0.5) * gameState.current.shakeIntensity;
+            const random = gameState.current.rng; // Use seed here too for determinism (mostly)
+            const dx = (random() - 0.5) * gameState.current.shakeIntensity;
+            const dy = (random() - 0.5) * gameState.current.shakeIntensity;
             ctx.translate(dx, dy);
             gameState.current.shakeIntensity *= 0.9;
         }
