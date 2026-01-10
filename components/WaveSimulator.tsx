@@ -63,8 +63,8 @@ const WaveSimulator: React.FC = () => {
   // Generate today's date for dynamic content
   const today = new Date().toLocaleDateString('en-US', { weekday: 'long', month: 'short', day: 'numeric' });
 
-  // Schema data needs to be injected carefully in Next.js, or use script tag here
-  const schemaData = {
+  // Schema 1: HowTo
+  const howToSchema = {
     "@context": "https://schema.org",
     "@type": "HowTo",
     "name": "How to Practice Geometry Dash Wave Spam",
@@ -93,9 +93,42 @@ const WaveSimulator: React.FC = () => {
     ]
   };
 
+  // Schema 2: FAQPage (Matches the visible FAQ section below)
+  const faqSchema = {
+    "@context": "https://schema.org",
+    "@type": "FAQPage",
+    "mainEntity": [
+      {
+        "@type": "Question",
+        "name": "What is a good score on this Geometry Dash Spam Test?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "For the 'Extreme Demon' difficulty setting, surviving 15 seconds implies you have near-perfect wave control. This mimics the tightest corridors found in the Demon List's top 10."
+        }
+      },
+      {
+        "@type": "Question",
+        "name": "Does this tool help with Challenge Levels?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "Absolutely. The 'Challenge List' community is built almost entirely around short, intense Geometry Dash spam segments. Daily practice can significantly improve your ranking potential."
+        }
+      },
+      {
+        "@type": "Question",
+        "name": "How do I improve at Geometry Dash Spam?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "Start with the 'Hard' difficulty. Once you can survive for 60 seconds in Endless Mode, move up to Insane. Use the 'Mini Wave' toggle to refine your micro-clicks."
+        }
+      }
+    ]
+  };
+
   return (
     <div className="flex flex-col items-center w-full animate-in fade-in duration-500">
-      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(schemaData) }} />
+      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(howToSchema) }} />
+      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(faqSchema) }} />
       
       <DifficultySelector 
         currentDifficulty={difficulty} 

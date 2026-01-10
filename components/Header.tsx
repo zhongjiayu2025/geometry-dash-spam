@@ -45,6 +45,7 @@ export default function Header() {
           href="/"
           className="flex items-center gap-3 cursor-pointer group"
           onClick={() => setMobileMenuOpen(false)}
+          aria-label="Geometry Dash Spam Home"
         >
           <img 
             src="/logo.svg" 
@@ -69,6 +70,8 @@ export default function Header() {
               className={`relative flex items-center gap-2 px-4 py-2 rounded-full font-medium transition-all duration-300 text-sm tracking-wide ${['/cps-test', '/jitter-click', '/butterfly-click', '/right-click'].some(p => pathname.startsWith(p)) ? 'text-white bg-white/10 shadow-[0_0_15px_rgba(255,255,255,0.1)] border border-white/10' : 'text-slate-400 hover:text-white hover:bg-white/5 border border-transparent'}`}
               onMouseEnter={() => setCpsDropdownOpen(true)}
               onClick={() => setCpsDropdownOpen(!cpsDropdownOpen)}
+              aria-haspopup="true"
+              aria-expanded={cpsDropdownOpen}
             >
               <MousePointer2 className={`w-4 h-4 ${['/cps-test', '/jitter-click', '/butterfly-click', '/right-click'].some(p => pathname.startsWith(p)) ? 'text-blue-400' : 'text-slate-500'}`} />
               Click Tests
@@ -91,7 +94,13 @@ export default function Header() {
           <div className="w-px h-8 bg-white/10 mx-2"></div>
           <NavItem href="/blog" icon={BookOpen} label="Blog & Guides" />
         </nav>
-        <button className="md:hidden p-2 text-slate-400 hover:text-white" onClick={() => setMobileMenuOpen(!mobileMenuOpen)} aria-label={mobileMenuOpen ? "Close Menu" : "Open Menu"}>{mobileMenuOpen ? <X /> : <Menu />}</button>
+        <button 
+          className="md:hidden p-2 text-slate-400 hover:text-white" 
+          onClick={() => setMobileMenuOpen(!mobileMenuOpen)} 
+          aria-label={mobileMenuOpen ? "Close Menu" : "Open Menu"}
+        >
+          {mobileMenuOpen ? <X /> : <Menu />}
+        </button>
       </div>
 
       {mobileMenuOpen && (

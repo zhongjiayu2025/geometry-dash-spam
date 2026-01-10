@@ -1,9 +1,10 @@
+
 "use client";
 
 import React, { useRef, useEffect, useCallback, useState, memo } from 'react';
 import { DifficultyConfig, GameStatus } from '../types';
 import { WIN_TIME_MS, WAVE_SPEED_Y } from '../constants';
-import { Trophy, AlertTriangle, Crown, Volume2, VolumeX } from 'lucide-react';
+import { Trophy, AlertTriangle, Crown, Volume2, VolumeX, Zap } from 'lucide-react';
 
 interface GameCanvasProps {
   difficulty: DifficultyConfig;
@@ -32,23 +33,39 @@ interface Particle {
   size: number;
 }
 
-interface ClickEffect {
-  x: number;
-  y: number;
-  life: number;
-  maxLife: number;
-}
-
 const GameCanvas: React.FC<GameCanvasProps> = memo(({ difficulty, status, onStatusChange, isEndless = false, isMini = false }) => {
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const containerRef = useRef<HTMLDivElement>(null);
   
   // Settings State
   const [isMuted, setIsMuted] = useState<boolean>(false);
+  const [highScore, setHighScore] = useState<number>(0);
+  const [isNewBest, setIsNewBest] = useState<boolean>(false);
+  
   // Ensure we only access localStorage on the client
   useEffect(() => {
     setIsMuted(localStorage.getItem('gd_spam_muted') === 'true');
-  }, []);
+    loadHighScore();
+  }, [difficulty.id, isEndless, isMini]); // Reload high score when mode changes
+
+  const loadHighScore = () => {
+      const key = `gd_spam_best_${difficulty.id}_${isEndless ? 'endless' : 'timed'}_${isMini ? 'mini' : 'normal'}`;
+      const saved = localStorage.getItem(key);
+      setHighScore(saved ? parseFloat(saved) : 0);
+      setIsNewBest(false);
+  };
+
+  const saveHighScore = (time: number) => {
+      const key = `gd_spam_best_${difficulty.id}_${isEndless ? 'endless' : 'timed'}_${isMini ? 'mini' : 'normal'}`;
+      const currentBest = parseFloat(localStorage.getItem(key) || '0');
+      if (time > currentBest) {
+          localStorage.setItem(key, time.toString());
+          setHighScore(time);
+          setIsNewBest(true);
+          return true;
+      }
+      return false;
+  };
   
   const [consistency, setConsistency] = useState<string>('100%');
   
@@ -56,29 +73,28 @@ const GameCanvas: React.FC<GameCanvasProps> = memo(({ difficulty, status, onStat
   const audioCtxRef = useRef<AudioContext | null>(null);
   const masterGainRef = useRef<GainNode | null>(null);
 
-  // Game State Ref (Mutable to avoid re-renders during loop)
+  // Game State Ref
   const gameState = useRef({
     playerY: 250,
-    playerX: 100, // Fixed horizontal position
+    playerX: 100,
     velocityY: 0,
     isHolding: false,
     obstacles: [] as Obstacle[],
     particles: [] as Particle[],
-    clickEffects: [] as ClickEffect[],
     trail: [] as {x: number, y: number}[],
     startTime: 0,
-    distanceTraveled: 0, // In pixels
+    distanceTraveled: 0,
     lastObstacleX: 0,
     bgOffset: 0,
     groundOffset: 0,
     shakeIntensity: 0,
-    deathCoords: { x: 0, y: 0 },
+    pulseIntensity: 0, // NEW: For background pulse effect
     frameCount: 0,
     baseColor: difficulty.color,
-    currentHue: 0,
     lastClickTime: 0,
     clickIntervals: [] as number[],
     runTime: 0,
+    finishLineX: 0, // Calculated based on speed and time
   });
 
   const requestRef = useRef<number | undefined>(undefined);
@@ -97,7 +113,7 @@ const GameCanvas: React.FC<GameCanvasProps> = memo(({ difficulty, status, onStat
     if (audioCtxRef.current?.state === 'suspended') audioCtxRef.current.resume();
   }, []);
 
-  const playSound = useCallback((type: 'crash' | 'win' | 'click') => {
+  const playSound = useCallback((type: 'crash' | 'win' | 'click' | 'newBest') => {
       if (isMuted || !audioCtxRef.current || !masterGainRef.current) return;
       const ctx = audioCtxRef.current;
       const osc = ctx.createOscillator();
@@ -108,7 +124,6 @@ const GameCanvas: React.FC<GameCanvasProps> = memo(({ difficulty, status, onStat
       const now = ctx.currentTime;
       
       if (type === 'click') {
-          // Soft click sound
           osc.type = 'sine';
           osc.frequency.setValueAtTime(isMini ? 800 : 600, now);
           osc.frequency.exponentialRampToValueAtTime(300, now + 0.1);
@@ -117,7 +132,6 @@ const GameCanvas: React.FC<GameCanvasProps> = memo(({ difficulty, status, onStat
           osc.start(now);
           osc.stop(now + 0.1);
       } else if (type === 'crash') {
-          // Noise-like crash
           osc.type = 'sawtooth';
           osc.frequency.setValueAtTime(100, now);
           osc.frequency.linearRampToValueAtTime(50, now + 0.3);
@@ -126,15 +140,23 @@ const GameCanvas: React.FC<GameCanvasProps> = memo(({ difficulty, status, onStat
           osc.start(now);
           osc.stop(now + 0.3);
       } else if (type === 'win') {
-          // Victory chime
           osc.type = 'triangle';
-          osc.frequency.setValueAtTime(440, now);
-          osc.frequency.setValueAtTime(554, now + 0.1); // C#
-          osc.frequency.setValueAtTime(659, now + 0.2); // E
+          osc.frequency.setValueAtTime(440, now); // A4
+          osc.frequency.setValueAtTime(554, now + 0.1); // C#5
+          osc.frequency.setValueAtTime(659, now + 0.2); // E5
           gain.gain.setValueAtTime(0.3, now);
           gain.gain.linearRampToValueAtTime(0, now + 0.6);
           osc.start(now);
           osc.stop(now + 0.6);
+      } else if (type === 'newBest') {
+          // High pitch happy sound
+          osc.type = 'square';
+          osc.frequency.setValueAtTime(880, now); 
+          osc.frequency.exponentialRampToValueAtTime(1760, now + 0.2);
+          gain.gain.setValueAtTime(0.2, now);
+          gain.gain.linearRampToValueAtTime(0, now + 0.4);
+          osc.start(now);
+          osc.stop(now + 0.4);
       }
   }, [isMuted, isMini]);
 
@@ -142,16 +164,14 @@ const GameCanvas: React.FC<GameCanvasProps> = memo(({ difficulty, status, onStat
 
   const spawnObstacle = useCallback((canvasWidth: number, canvasHeight: number) => {
     const minGap = isMini ? difficulty.gap * 0.8 : difficulty.gap;
-    // Ensure obstacles are reachable
     const center = Math.random() * (canvasHeight - minGap - 100) + 50 + minGap / 2;
     const topHeight = center - minGap / 2;
     const bottomY = center + minGap / 2;
     
-    // Width varies slightly
     const width = Math.random() * 50 + 80;
 
     gameState.current.obstacles.push({
-      x: gameState.current.lastObstacleX + 300 + Math.random() * 100, // Distance between obstacles
+      x: gameState.current.lastObstacleX + 300 + Math.random() * 100,
       width: width,
       topHeight: topHeight,
       bottomY: bottomY,
@@ -180,14 +200,9 @@ const GameCanvas: React.FC<GameCanvasProps> = memo(({ difficulty, status, onStat
   const calculateConsistency = () => {
     const intervals = gameState.current.clickIntervals;
     if (intervals.length < 2) return '100%';
-    
-    // Calculate variance of time between clicks
     let mean = intervals.reduce((a, b) => a + b, 0) / intervals.length;
     let variance = intervals.reduce((a, b) => a + Math.pow(b - mean, 2), 0) / intervals.length;
     let stdDev = Math.sqrt(variance);
-    
-    // Normalize to a 0-100% score (lower stdDev is better)
-    // Arbitrary scaling: 0ms dev = 100%, 100ms dev = 0%
     let score = Math.max(0, 100 - (stdDev * 2)); 
     return score.toFixed(1) + '%';
   };
@@ -196,6 +211,10 @@ const GameCanvas: React.FC<GameCanvasProps> = memo(({ difficulty, status, onStat
     if (!canvasRef.current) return;
     const height = canvasRef.current.height;
     
+    // Calculate total distance needed for timed mode
+    // distance = speed (px/frame) * FPS * seconds
+    const totalDistance = difficulty.speed * 60 * (WIN_TIME_MS / 1000);
+
     gameState.current = {
       ...gameState.current,
       playerY: height / 2,
@@ -206,17 +225,20 @@ const GameCanvas: React.FC<GameCanvasProps> = memo(({ difficulty, status, onStat
       trail: [],
       startTime: 0,
       distanceTraveled: 0,
-      lastObstacleX: 400, // Start spawning a bit away
+      lastObstacleX: 600, // Give more breathing room at start
       bgOffset: 0,
       groundOffset: 0,
       shakeIntensity: 0,
+      pulseIntensity: 0,
       frameCount: 0,
       clickIntervals: [],
       runTime: 0,
+      finishLineX: totalDistance + 600, // + offset
       baseColor: difficulty.color
     };
     setConsistency('100%');
-  }, [difficulty.color]);
+    setIsNewBest(false);
+  }, [difficulty.color, difficulty.speed]);
 
   // --- MAIN GAME LOOP ---
   const gameLoop = useCallback(() => {
@@ -225,32 +247,41 @@ const GameCanvas: React.FC<GameCanvasProps> = memo(({ difficulty, status, onStat
     const ctx = canvas.getContext('2d');
     if (!ctx) return;
 
-    // 1. Update Physics (if playing)
+    // 1. Update Physics
     if (status === GameStatus.Playing) {
         if (gameState.current.startTime === 0) gameState.current.startTime = Date.now();
         gameState.current.runTime = Date.now() - gameState.current.startTime;
 
-        // Wave Physics
-        // Wave moves diagonally. Constant X speed (world moves left), Constant Y speed (player moves up/down)
         const speedY = isMini ? WAVE_SPEED_Y * 1.5 : WAVE_SPEED_Y;
         gameState.current.velocityY = gameState.current.isHolding ? -speedY : speedY;
         gameState.current.playerY += gameState.current.velocityY;
 
-        // Move World (Obstacles & BG)
         const moveSpeed = difficulty.speed;
         gameState.current.distanceTraveled += moveSpeed;
         gameState.current.bgOffset = (gameState.current.bgOffset + moveSpeed * 0.2) % canvas.width;
-        gameState.current.groundOffset = (gameState.current.groundOffset + moveSpeed) % 50; // Grid size
+        gameState.current.groundOffset = (gameState.current.groundOffset + moveSpeed) % 50;
 
-        // Spawn Obstacles
-        if (gameState.current.obstacles.length === 0 || 
-            gameState.current.obstacles[gameState.current.obstacles.length - 1].x < gameState.current.distanceTraveled + canvas.width + 200) {
-            spawnObstacle(canvas.width, canvas.height);
+        // Reduce pulse intensity
+        gameState.current.pulseIntensity *= 0.9;
+
+        // Spawn logic...
+        if (isEndless) {
+             // Infinite generation
+             if (gameState.current.obstacles.length === 0 || 
+                gameState.current.obstacles[gameState.current.obstacles.length - 1].x < gameState.current.distanceTraveled + canvas.width + 200) {
+                spawnObstacle(canvas.width, canvas.height);
+            }
+        } else {
+             // Timed mode: Stop spawning obstacles before the finish line
+             if (gameState.current.lastObstacleX < gameState.current.finishLineX - 400) {
+                 if (gameState.current.obstacles.length === 0 || 
+                    gameState.current.obstacles[gameState.current.obstacles.length - 1].x < gameState.current.distanceTraveled + canvas.width + 200) {
+                    spawnObstacle(canvas.width, canvas.height);
+                }
+             }
         }
 
-        // Update Obstacles & Collision
-        const playerRadius = isMini ? 4 : 8; // Hitbox size
-        // Simple AABB collision for wave tip (triangle approximation)
+        const playerRadius = isMini ? 4 : 8;
         const playerHitbox = {
              x: gameState.current.playerX - playerRadius,
              y: gameState.current.playerY - playerRadius,
@@ -258,24 +289,19 @@ const GameCanvas: React.FC<GameCanvasProps> = memo(({ difficulty, status, onStat
              h: playerRadius * 2
         };
 
-        // Floor/Ceiling Collision
         if (gameState.current.playerY < 0 || gameState.current.playerY > canvas.height) {
             handleDeath();
-            return; // Stop frame
+            return;
         }
 
         gameState.current.obstacles.forEach(obs => {
              const obsScreenX = obs.x - gameState.current.distanceTraveled;
-             
-             // Check if active
              if (obsScreenX < canvas.width && obsScreenX + obs.width > 0) {
-                 // Top Rect Collision
                  if (playerHitbox.x < obsScreenX + obs.width &&
                      playerHitbox.x + playerHitbox.w > obsScreenX &&
                      playerHitbox.y < obs.topHeight) {
                       handleDeath();
                  }
-                 // Bottom Rect Collision
                  if (playerHitbox.x < obsScreenX + obs.width &&
                      playerHitbox.x + playerHitbox.w > obsScreenX &&
                      playerHitbox.y + playerHitbox.h > obs.bottomY) {
@@ -284,13 +310,18 @@ const GameCanvas: React.FC<GameCanvasProps> = memo(({ difficulty, status, onStat
              }
         });
 
-        // Win Condition
-        if (!isEndless && gameState.current.runTime >= WIN_TIME_MS) {
-             onStatusChange(GameStatus.Won);
-             playSound('win');
+        // Win Condition: Cross finish line or Time (fallback)
+        if (!isEndless) {
+             const finishScreenX = gameState.current.finishLineX - gameState.current.distanceTraveled;
+             if (finishScreenX <= gameState.current.playerX) {
+                 onStatusChange(GameStatus.Won);
+                 playSound('win');
+                 const didBreakRecord = saveHighScore(gameState.current.runTime / 1000);
+                 if(didBreakRecord) setIsNewBest(true);
+             }
         }
 
-        // Trail Logic
+        // Trail
         if (gameState.current.frameCount % 2 === 0) {
             gameState.current.trail.push({ x: gameState.current.playerX, y: gameState.current.playerY });
             if (gameState.current.trail.length > 20) gameState.current.trail.shift();
@@ -299,7 +330,7 @@ const GameCanvas: React.FC<GameCanvasProps> = memo(({ difficulty, status, onStat
              gameState.current.trail[i].x -= moveSpeed;
         }
 
-        // Update Particles
+        // Particles
         gameState.current.particles = gameState.current.particles.filter(p => p.life > 0);
         gameState.current.particles.forEach(p => {
             p.x += p.vx;
@@ -315,43 +346,40 @@ const GameCanvas: React.FC<GameCanvasProps> = memo(({ difficulty, status, onStat
     ctx.fillStyle = '#020617'; 
     ctx.fillRect(0, 0, canvas.width, canvas.height);
 
-    // Draw Background Grid
-    ctx.strokeStyle = 'rgba(255, 255, 255, 0.05)';
+    // Dynamic Background Pulse (Changes background lightness slightly)
+    if (gameState.current.pulseIntensity > 0.1) {
+        ctx.fillStyle = `rgba(37, 99, 235, ${gameState.current.pulseIntensity * 0.1})`;
+        ctx.fillRect(0, 0, canvas.width, canvas.height);
+    }
+
+    // Grid
+    ctx.strokeStyle = `rgba(255, 255, 255, ${0.05 + gameState.current.pulseIntensity * 0.1})`;
     ctx.lineWidth = 1;
     const gridSize = 50;
     const offsetX = Math.floor(gameState.current.distanceTraveled) % gridSize;
     
-    // Vertical lines
     for (let x = -offsetX; x < canvas.width; x += gridSize) {
-        ctx.beginPath();
-        ctx.moveTo(x, 0);
-        ctx.lineTo(x, canvas.height);
-        ctx.stroke();
+        ctx.beginPath(); ctx.moveTo(x, 0); ctx.lineTo(x, canvas.height); ctx.stroke();
     }
-    // Horizontal lines
     for (let y = 0; y < canvas.height; y += gridSize) {
-        ctx.beginPath();
-        ctx.moveTo(0, y);
-        ctx.lineTo(canvas.width, y);
-        ctx.stroke();
+        ctx.beginPath(); ctx.moveTo(0, y); ctx.lineTo(canvas.width, y); ctx.stroke();
     }
 
-    // Draw Floor and Ceiling Lines
+    // Borders
     ctx.fillStyle = gameState.current.baseColor;
-    ctx.fillRect(0, 0, canvas.width, 10); // Ceiling
-    ctx.fillRect(0, canvas.height - 10, canvas.width, 10); // Floor
-    
-    // Glow effect
-    ctx.shadowBlur = 20;
+    ctx.fillRect(0, 0, canvas.width, 10);
+    ctx.fillRect(0, canvas.height - 10, canvas.width, 10);
+    ctx.shadowBlur = 20 + (gameState.current.pulseIntensity * 20);
     ctx.shadowColor = gameState.current.baseColor;
 
-    // Draw Obstacles
-    ctx.fillStyle = gameState.current.baseColor; // Obstacle color same as theme
+    // Obstacles
+    ctx.fillStyle = gameState.current.baseColor;
     gameState.current.obstacles.forEach(obs => {
         const x = obs.x - gameState.current.distanceTraveled;
         if (x > -obs.width && x < canvas.width) {
             ctx.fillRect(x, 0, obs.width, obs.topHeight);
             ctx.fillRect(x, obs.bottomY, obs.width, canvas.height - obs.bottomY);
+            // Outline
             ctx.strokeStyle = '#fff';
             ctx.lineWidth = 2;
             ctx.beginPath();
@@ -363,7 +391,19 @@ const GameCanvas: React.FC<GameCanvasProps> = memo(({ difficulty, status, onStat
         }
     });
 
-    // Draw Trail
+    // Finish Line (Visual Wall)
+    if (!isEndless) {
+        const finishX = gameState.current.finishLineX - gameState.current.distanceTraveled;
+        if (finishX < canvas.width) {
+            ctx.fillStyle = '#fff';
+            ctx.fillRect(finishX, 0, 20, canvas.height);
+            // Checkered pattern or glow
+            ctx.shadowBlur = 50;
+            ctx.shadowColor = '#fff';
+        }
+    }
+
+    // Trail
     if (gameState.current.trail.length > 1) {
         ctx.beginPath();
         ctx.moveTo(gameState.current.trail[0].x, gameState.current.trail[0].y);
@@ -373,13 +413,15 @@ const GameCanvas: React.FC<GameCanvasProps> = memo(({ difficulty, status, onStat
         ctx.lineTo(gameState.current.playerX, gameState.current.playerY);
         ctx.strokeStyle = gameState.current.baseColor;
         ctx.lineWidth = isMini ? 2 : 4;
+        ctx.lineCap = 'round';
+        ctx.lineJoin = 'round';
         ctx.stroke();
     }
 
-    // Draw Player (Wave Arrow)
-    ctx.shadowBlur = 10;
+    // Player
+    ctx.shadowBlur = 15;
     ctx.shadowColor = '#fff';
-    ctx.fillStyle = '#fff'; // Player is always white
+    ctx.fillStyle = '#fff';
     
     ctx.save();
     ctx.translate(gameState.current.playerX, gameState.current.playerY);
@@ -394,6 +436,7 @@ const GameCanvas: React.FC<GameCanvasProps> = memo(({ difficulty, status, onStat
     ctx.closePath();
     ctx.fill();
     
+    // Inner color
     ctx.fillStyle = isMini ? '#d8b4fe' : '#93c5fd'; 
     ctx.beginPath();
     ctx.moveTo(-size/2, -size/2);
@@ -401,10 +444,9 @@ const GameCanvas: React.FC<GameCanvasProps> = memo(({ difficulty, status, onStat
     ctx.lineTo(-size/2, size/2);
     ctx.closePath();
     ctx.fill();
-    
     ctx.restore();
 
-    // Draw Particles
+    // Particles
     gameState.current.particles.forEach(p => {
         ctx.globalAlpha = p.life;
         ctx.fillStyle = p.color;
@@ -414,7 +456,7 @@ const GameCanvas: React.FC<GameCanvasProps> = memo(({ difficulty, status, onStat
         ctx.globalAlpha = 1.0;
     });
 
-    // Shake Effect (on death)
+    // Shake
     if (gameState.current.shakeIntensity > 0) {
         const dx = (Math.random() - 0.5) * gameState.current.shakeIntensity;
         const dy = (Math.random() - 0.5) * gameState.current.shakeIntensity;
@@ -427,7 +469,7 @@ const GameCanvas: React.FC<GameCanvasProps> = memo(({ difficulty, status, onStat
     }
 
     requestRef.current = requestAnimationFrame(gameLoop);
-  }, [status, difficulty, isEndless, isMini, spawnObstacle]);
+  }, [status, difficulty, isEndless, isMini, spawnObstacle, saveHighScore]);
 
   const handleDeath = () => {
       onStatusChange(GameStatus.Lost);
@@ -435,21 +477,38 @@ const GameCanvas: React.FC<GameCanvasProps> = memo(({ difficulty, status, onStat
       createExplosion(gameState.current.playerX, gameState.current.playerY, '#fff');
       playSound('crash');
       setConsistency(calculateConsistency());
+      
+      const currentTime = gameState.current.runTime / 1000;
+      const didBreakRecord = saveHighScore(currentTime);
+      if (didBreakRecord) {
+          setIsNewBest(true);
+          playSound('newBest');
+      }
   };
 
   // --- INPUT HANDLING ---
   const handleStart = useCallback(() => {
+     // INSTANT RESTART LOGIC
      if (status === GameStatus.Lost || status === GameStatus.Won) {
          resetGame();
          onStatusChange(GameStatus.Playing);
+         // Pulse on restart
+         gameState.current.pulseIntensity = 2.0; 
          initAudio();
+         // Pre-load a click so they move up immediately
+         gameState.current.isHolding = true; 
+         playSound('click');
          return;
      }
+     
      if (status === GameStatus.Idle) {
          onStatusChange(GameStatus.Playing);
          initAudio();
      }
+     
      gameState.current.isHolding = true;
+     // Add visual pulse on click
+     gameState.current.pulseIntensity = 1.0; 
      
      const now = Date.now();
      if (gameState.current.lastClickTime > 0) {
@@ -540,12 +599,19 @@ const GameCanvas: React.FC<GameCanvasProps> = memo(({ difficulty, status, onStat
                     : (gameState.current.runTime / 1000).toFixed(2)
                   }s
               </div>
-              {!isEndless && (
-                <div className="w-32 h-2 bg-slate-800 rounded-full overflow-hidden border border-white/10">
+              {!isEndless ? (
+                <div className="w-48 h-2 bg-slate-800 rounded-full overflow-hidden border border-white/10">
                    <div 
-                      className="h-full bg-white shadow-[0_0_10px_white]"
-                      style={{ width: `${Math.min(100, (gameState.current.runTime / WIN_TIME_MS) * 100)}%` }}
+                      className="h-full bg-white shadow-[0_0_10px_white] transition-all duration-75"
+                      style={{ width: `${Math.min(100, (gameState.current.distanceTraveled / gameState.current.finishLineX) * 100)}%` }}
                    ></div>
+                </div>
+              ) : (
+                <div className="flex items-center gap-2">
+                    <Crown className="w-4 h-4 text-yellow-500" />
+                    <span className="text-xs font-mono text-yellow-500 uppercase tracking-widest">
+                        Best: {highScore.toFixed(2)}s
+                    </span>
                 </div>
               )}
           </div>
@@ -590,34 +656,44 @@ const GameCanvas: React.FC<GameCanvasProps> = memo(({ difficulty, status, onStat
                 </span>
               </button>
               
-              <p className="text-xs text-slate-400 animate-pulse">Click or Press Space to Play</p>
+              <div className="text-xs text-slate-400 animate-pulse flex flex-col gap-1">
+                 <span>Click or Press Space to Play</span>
+                 {highScore > 0 && <span className="text-yellow-500 font-bold">Personal Best: {highScore.toFixed(2)}s</span>}
+              </div>
           </div>
         </div>
       )}
 
       {/* --- GAME OVER SCREEN --- */}
       {status === GameStatus.Lost && (
-         <div className="absolute inset-0 flex flex-col items-center justify-center bg-red-900/40 backdrop-blur-sm z-20 animate-in zoom-in duration-200 pointer-events-auto" onClick={(e) => e.stopPropagation()}>
-             <AlertTriangle className="w-20 h-20 text-red-500 mb-4 drop-shadow-[0_0_20px_rgba(239,68,68,0.5)]" />
-             <h2 className="text-6xl font-display font-black text-white mb-2 tracking-tighter">CRASHED</h2>
-             <p className="text-red-200 font-mono text-lg mb-8">
-                 Time: <span className="text-white font-bold">{(gameState.current.runTime / 1000).toFixed(2)}s</span>
-                 <span className="mx-2">•</span>
-                 Consistency: <span className="text-white font-bold">{consistency}</span>
-             </p>
-             <div className="flex gap-4">
-                 <button 
-                    onClick={() => { resetGame(); onStatusChange(GameStatus.Playing); }}
-                    className="px-8 py-3 bg-white text-red-900 font-black font-display text-lg rounded hover:bg-slate-200 transition-colors shadow-xl"
-                 >
-                    RETRY
-                 </button>
-                 <button 
-                    onClick={() => { resetGame(); onStatusChange(GameStatus.Idle); }}
-                    className="px-8 py-3 bg-black/50 text-white font-bold rounded border border-white/10 hover:bg-black/70 transition-colors"
-                 >
-                    MENU
-                 </button>
+         <div className="absolute inset-0 flex flex-col items-center justify-center bg-red-900/40 backdrop-blur-sm z-20 animate-in zoom-in duration-100 pointer-events-none">
+             <div className="pointer-events-auto flex flex-col items-center" onClick={(e) => e.stopPropagation()}>
+                {isNewBest && (
+                    <div className="mb-4 flex items-center gap-2 px-4 py-1 bg-yellow-500 text-black font-black uppercase tracking-widest rounded-full animate-bounce shadow-lg shadow-yellow-500/50">
+                        <Crown className="w-4 h-4" /> New Best Score!
+                    </div>
+                )}
+                
+                <AlertTriangle className="w-20 h-20 text-red-500 mb-4 drop-shadow-[0_0_20px_rgba(239,68,68,0.5)]" />
+                <h2 className="text-6xl font-display font-black text-white mb-2 tracking-tighter">CRASHED</h2>
+                <p className="text-red-200 font-mono text-lg mb-8">
+                    Time: <span className="text-white font-bold">{(gameState.current.runTime / 1000).toFixed(2)}s</span>
+                    <span className="mx-2">•</span>
+                    Consistency: <span className="text-white font-bold">{consistency}</span>
+                </p>
+                
+                <div className="text-white/80 animate-pulse font-display font-bold text-xl tracking-widest border border-white/20 px-6 py-2 rounded-full bg-black/40 backdrop-blur-md">
+                    PRESS SPACE TO RETRY
+                </div>
+                
+                <div className="flex gap-4 mt-8 opacity-50 hover:opacity-100 transition-opacity">
+                    <button 
+                        onClick={() => { resetGame(); onStatusChange(GameStatus.Idle); }}
+                        className="px-6 py-2 bg-black/50 text-white font-bold rounded border border-white/10 hover:bg-black/70 transition-colors text-sm"
+                    >
+                        RETURN TO MENU
+                    </button>
+                </div>
              </div>
          </div>
       )}
@@ -625,20 +701,30 @@ const GameCanvas: React.FC<GameCanvasProps> = memo(({ difficulty, status, onStat
       {/* --- WIN SCREEN --- */}
       {status === GameStatus.Won && (
          <div className="absolute inset-0 flex flex-col items-center justify-center bg-green-900/40 backdrop-blur-sm z-20 animate-in zoom-in duration-500 pointer-events-auto" onClick={(e) => e.stopPropagation()}>
+             {isNewBest && (
+                <div className="mb-4 flex items-center gap-2 px-4 py-1 bg-yellow-500 text-black font-black uppercase tracking-widest rounded-full animate-bounce shadow-lg shadow-yellow-500/50">
+                    <Crown className="w-4 h-4" /> New Best Score!
+                </div>
+             )}
+             
              <Trophy className="w-24 h-24 text-yellow-400 mb-4 drop-shadow-[0_0_30px_rgba(250,204,21,0.6)] animate-bounce" />
-             <h2 className="text-6xl font-display font-black text-white mb-2 tracking-tighter">LEVEL COMPLETE!</h2>
+             <h2 className="text-6xl font-display font-black text-white mb-2 tracking-tighter">COMPLETE!</h2>
              <div className="flex items-center gap-2 mb-8">
-                 <Crown className="w-5 h-5 text-yellow-400" />
+                 <Zap className="w-5 h-5 text-yellow-400" />
                  <p className="text-green-100 font-mono text-lg">
                     Consistency Score: <span className="text-white font-bold text-xl">{consistency}</span>
                  </p>
              </div>
              
+             <div className="text-white/80 animate-pulse font-display font-bold text-xl tracking-widest border border-white/20 px-6 py-2 rounded-full bg-black/40 backdrop-blur-md mb-6">
+                 CLICK TO PLAY AGAIN
+             </div>
+
              <button 
                 onClick={() => { resetGame(); onStatusChange(GameStatus.Idle); }}
-                className="px-10 py-4 bg-yellow-500 text-black font-black font-display text-xl rounded shadow-[0_0_20px_rgba(234,179,8,0.4)] hover:scale-105 transition-transform"
+                className="px-8 py-3 bg-white/10 text-white font-bold rounded hover:bg-white/20 transition-colors"
              >
-                CONTINUE
+                MENU
              </button>
          </div>
       )}

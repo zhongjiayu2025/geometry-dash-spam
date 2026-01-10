@@ -3,7 +3,7 @@
 import React, { useEffect } from 'react';
 import Link from 'next/link';
 import { BlogPost } from '../data/blogContent';
-import { ArrowLeft, Calendar, Clock, Share2, Facebook, Twitter, Linkedin, Zap, MousePointer2, List } from 'lucide-react';
+import { ArrowLeft, Calendar, Clock, Share2, Facebook, Twitter, Linkedin, Zap, MousePointer2, List, ChevronRight, Home } from 'lucide-react';
 
 interface BlogPostProps {
   post: BlogPost;
@@ -50,14 +50,18 @@ const BlogPostReader: React.FC<BlogPostProps> = ({ post }) => {
   return (
     <article className="w-full max-w-4xl mx-auto animate-in slide-in-from-bottom-8 duration-500">
       
-      {/* Navigation */}
-      <Link 
-        href="/blog"
-        className="flex items-center gap-2 text-slate-400 hover:text-white mb-8 group transition-colors w-fit"
-      >
-        <ArrowLeft className="w-4 h-4 group-hover:-translate-x-1 transition-transform" />
-        Back to Blog
-      </Link>
+      {/* Visual Breadcrumbs for SEO and Navigation */}
+      <nav aria-label="Breadcrumb" className="flex items-center gap-2 text-xs md:text-sm text-slate-500 mb-6 font-mono overflow-x-auto whitespace-nowrap pb-2 scrollbar-hide">
+        <Link href="/" className="hover:text-blue-400 flex items-center gap-1 transition-colors">
+           <Home className="w-3 h-3" /> Home
+        </Link>
+        <ChevronRight className="w-3 h-3 text-slate-700" />
+        <Link href="/blog" className="hover:text-blue-400 transition-colors">
+           Blog
+        </Link>
+        <ChevronRight className="w-3 h-3 text-slate-700" />
+        <span className="text-slate-300 font-medium truncate max-w-[200px]">{post.title}</span>
+      </nav>
 
       {/* Header */}
       <header className="mb-12">
@@ -75,7 +79,11 @@ const BlogPostReader: React.FC<BlogPostProps> = ({ post }) => {
 
         <div className="flex items-center justify-between border-b border-white/10 pb-8">
             <div className="flex items-center gap-6 text-sm text-slate-400 font-mono">
-                <span className="flex items-center gap-2"><Calendar className="w-4 h-4" /> {post.date}</span>
+                {/* Semantic Time Element */}
+                <span className="flex items-center gap-2">
+                    <Calendar className="w-4 h-4" /> 
+                    <time dateTime={new Date(post.date).toISOString()}>{post.date}</time>
+                </span>
                 <span className="flex items-center gap-2"><Clock className="w-4 h-4" /> {post.readTime}</span>
             </div>
             
