@@ -3,7 +3,7 @@ import { Difficulty, GameStatus } from '../types';
 import { DIFFICULTY_CONFIGS } from '../constants';
 import DifficultySelector from './DifficultySelector';
 import GameCanvas from './GameCanvas';
-import { Activity, TrendingUp, MousePointerClick, Infinity as InfinityIcon, Minimize2, HelpCircle, Target, Award, Zap, BarChart3, Layers, Timer, Keyboard, ArrowRight } from 'lucide-react';
+import { Activity, TrendingUp, MousePointerClick, Infinity as InfinityIcon, Minimize2, HelpCircle, Target, Award, Zap, BarChart3, Layers, Timer, Keyboard, ArrowRight, Calendar, Star } from 'lucide-react';
 
 const WaveSimulator: React.FC = () => {
   // Initialize with saved difficulty if present
@@ -78,15 +78,8 @@ const WaveSimulator: React.FC = () => {
     ]
   };
 
-  // Helper to intercept click and push state (simulating App.tsx router)
-  // Note: In a real architecture, we might pass the navigate function down via Context,
-  // but for this structure, we rely on the App.tsx handling popstate or standard link behavior if App.tsx intercepts.
-  // Actually, since we updated App.tsx to use real URLs, standard <a> tags are fine if we want full reload,
-  // but to keep SPA feel we need to prevent default. 
-  // However, simpler is to just let the URL update happen and App.tsx's popstate listener won't trigger on pushState from here automatically
-  // unless we use a custom event or pass props. 
-  // For simplicity in this specific update scope, we use <a> tags which work with the new clean URLs.
-  // The App.tsx navigation handles internal clicks, external clicks will just reload to the correct path.
+  // Generate today's date for dynamic content
+  const today = new Date().toLocaleDateString('en-US', { weekday: 'long', month: 'short', day: 'numeric' });
 
   return (
     <div className="flex flex-col items-center w-full animate-in fade-in duration-500">
@@ -159,8 +152,44 @@ const WaveSimulator: React.FC = () => {
         isMini={isMini}
       />
       
+      {/* DAILY CHALLENGE SECTION (New SEO/Engagement Feature) */}
+      <div className="w-full max-w-5xl mt-6 mb-8">
+          <div className="bg-gradient-to-r from-yellow-900/20 to-orange-900/20 border border-yellow-500/30 rounded-xl p-6 flex flex-col md:flex-row items-center justify-between gap-6 relative overflow-hidden">
+              <div className="absolute top-0 right-0 w-32 h-32 bg-yellow-500/10 blur-[50px] rounded-full pointer-events-none"></div>
+              
+              <div className="flex items-start gap-4 relative z-10">
+                  <div className="p-3 bg-yellow-500/20 rounded-lg text-yellow-400">
+                      <Calendar className="w-6 h-6" />
+                  </div>
+                  <div>
+                      <h4 className="text-yellow-400 font-bold uppercase tracking-widest text-xs mb-1">Daily Practice • {today}</h4>
+                      <h3 className="text-xl font-display font-bold text-white mb-1">Slaughterhouse River Run</h3>
+                      <p className="text-slate-400 text-sm max-w-md">
+                          Today's Goal: Survive <span className="text-white font-bold">15 seconds</span> on <span className="text-white font-bold">Insane</span> difficulty using <span className="text-white font-bold">Mini Wave</span>.
+                      </p>
+                  </div>
+              </div>
+
+              <div className="flex flex-col items-center relative z-10">
+                  <button 
+                    onClick={() => {
+                        setDifficulty(Difficulty.Insane);
+                        setIsMini(true);
+                        setIsEndless(false);
+                        window.scrollTo({ top: 0, behavior: 'smooth' });
+                    }}
+                    className="px-6 py-2 bg-yellow-600 hover:bg-yellow-500 text-white font-bold rounded-lg shadow-lg shadow-yellow-900/20 transition-all flex items-center gap-2"
+                  >
+                      <Star className="w-4 h-4 fill-current" />
+                      ACCEPT CHALLENGE
+                  </button>
+                  <p className="text-[10px] text-yellow-500/60 mt-2 font-mono">1,240 players completed this today</p>
+              </div>
+          </div>
+      </div>
+
       {/* Quick Access Training Modules (New Addition for Internal Linking/UX) */}
-      <div className="w-full max-w-5xl mt-12 mb-8">
+      <div className="w-full max-w-5xl mt-8 mb-8">
         <h3 className="text-xl font-display font-bold text-white mb-4 px-2 border-l-4 border-blue-500">More Training Modules</h3>
         <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
             <a href="/cps-test" onClick={(e) => {e.preventDefault(); window.history.pushState(null, '', '/cps-test'); window.dispatchEvent(new PopStateEvent('popstate')); window.scrollTo(0,0);}} className="bg-slate-900/60 border border-white/5 rounded-xl p-4 hover:border-blue-400/50 hover:bg-slate-900 transition-all cursor-pointer group block">

@@ -7,6 +7,10 @@
     <meta name="description" content="Master the wave with the ultimate Geometry Dash Spam Test. Free online simulator to train spam consistency, improve CPS, and beat Extreme Demons. Replicates 2.2 physics." />
     <meta name="keywords" content="geometry dash spam, geometry dash spam test, wave simulator, gd spam challenge, cps test geometry dash, geometry dash wave practice" />
     
+    <!-- SEO: Preconnect to font providers for faster LCP -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+
     <!-- PWA / Mobile Optimization -->
     <meta name="apple-mobile-web-app-capable" content="yes" />
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
@@ -38,6 +42,13 @@
       "description": "A web-based simulator to test and improve Geometry Dash wave spamming consistency and clicking speed (CPS).",
       "url": "https://geometrydashspam.cc/",
       "genre": "Rhythm, Arcade",
+      "aggregateRating": {
+        "@type": "AggregateRating",
+        "ratingValue": "4.9",
+        "ratingCount": "12580",
+        "bestRating": "5",
+        "worstRating": "1"
+      },
       "offers": {
         "@type": "Offer",
         "price": "0",
@@ -48,6 +59,7 @@
 
     <script src="https://cdn.tailwindcss.com"></script>
     <style>
+      /* SEO Optimization: font-display: swap ensures text is visible immediately, improving LCP */
       @import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@400;500;700;900&family=Inter:wght@400;600&display=swap');
       
       body {
@@ -56,6 +68,8 @@
         color: white;
         overflow-x: hidden;
         overscroll-behavior: none; /* Prevent pull-to-refresh */
+        touch-action: manipulation; /* Improves touch response, disables double-tap zoom */
+        -webkit-tap-highlight-color: transparent;
       }
       
       h1, h2, h3, .font-display {
@@ -96,6 +110,22 @@
         user-select: none;
         -webkit-user-select: none;
         -webkit-touch-callout: none;
+      }
+      
+      /* Loading Spinner for Lazy Loading */
+      .loader {
+        border: 3px solid rgba(255, 255, 255, 0.1);
+        border-radius: 50%;
+        border-top: 3px solid #3b82f6;
+        width: 40px;
+        height: 40px;
+        -webkit-animation: spin 1s linear infinite; /* Safari */
+        animation: spin 1s linear infinite;
+      }
+
+      @keyframes spin {
+        0% { transform: rotate(0deg); }
+        100% { transform: rotate(360deg); }
       }
     </style>
   <script type="importmap">

@@ -1,5 +1,6 @@
 import React, { useState, useRef } from 'react';
-import { Timer, AlertCircle, Play, Eye, Activity, MousePointer2, ArrowRight, Zap, Target, Keyboard } from 'lucide-react';
+import { Timer, AlertCircle, Play, Eye, Activity, MousePointer2, ArrowRight, Zap, Target, Keyboard, BarChart2 } from 'lucide-react';
+import RelatedTools from './RelatedTools';
 
 type TestState = 'idle' | 'waiting' | 'ready' | 'result' | 'early';
 
@@ -138,42 +139,56 @@ const ReactionTest: React.FC = () => {
              </div>
           </div>
 
-          {/* Internal Linking / Related Tools */}
-          <div className="border-t border-white/10 pt-8">
-              <h3 className="text-xl font-bold text-white mb-6 uppercase tracking-widest flex items-center gap-2">
-                  <Activity className="w-5 h-5 text-blue-500"/> More Training Tools
+          {/* TABLE SEO OPTIMIZATION: Link Bait for "Average Reaction Time by Age" */}
+          <div className="bg-slate-900/40 border border-white/5 rounded-2xl p-8">
+              <h3 className="text-xl font-bold text-white mb-4 flex items-center gap-2">
+                  <BarChart2 className="w-5 h-5 text-yellow-400" /> Reaction Time Benchmarks by Age
               </h3>
-              <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-                  
-                  <a href="/" onClick={(e) => { e.preventDefault(); (window as any).history.pushState(null, '', '/'); window.dispatchEvent(new PopStateEvent('popstate')); window.scrollTo(0,0); }} className="group block bg-slate-900/40 border border-white/5 rounded-xl p-6 hover:border-blue-500/50 transition-all">
-                      <div className="flex justify-between items-start mb-4">
-                          <div className="p-3 bg-blue-900/20 rounded-lg text-blue-400"><Target className="w-6 h-6"/></div>
-                          <ArrowRight className="w-5 h-5 text-slate-600 group-hover:text-blue-400 transition-colors"/>
-                      </div>
-                      <h4 className="font-bold text-white mb-1 group-hover:text-blue-400 transition-colors">Wave Simulator</h4>
-                      <p className="text-xs text-slate-400">Apply your reactions in 2.2 physics.</p>
-                  </a>
-
-                  <a href="/cps-test" onClick={(e) => { e.preventDefault(); (window as any).history.pushState(null, '', '/cps-test'); window.dispatchEvent(new PopStateEvent('popstate')); window.scrollTo(0,0); }} className="group block bg-slate-900/40 border border-white/5 rounded-xl p-6 hover:border-green-500/50 transition-all">
-                      <div className="flex justify-between items-start mb-4">
-                          <div className="p-3 bg-green-900/20 rounded-lg text-green-400"><MousePointer2 className="w-6 h-6"/></div>
-                          <ArrowRight className="w-5 h-5 text-slate-600 group-hover:text-green-400 transition-colors"/>
-                      </div>
-                      <h4 className="font-bold text-white mb-1 group-hover:text-green-400 transition-colors">CPS Test</h4>
-                      <p className="text-xs text-slate-400">Test raw clicking speed.</p>
-                  </a>
-
-                  <a href="/spacebar-counter" onClick={(e) => { e.preventDefault(); (window as any).history.pushState(null, '', '/spacebar-counter'); window.dispatchEvent(new PopStateEvent('popstate')); window.scrollTo(0,0); }} className="group block bg-slate-900/40 border border-white/5 rounded-xl p-6 hover:border-purple-500/50 transition-all">
-                      <div className="flex justify-between items-start mb-4">
-                          <div className="p-3 bg-purple-900/20 rounded-lg text-purple-400"><Keyboard className="w-6 h-6"/></div>
-                          <ArrowRight className="w-5 h-5 text-slate-600 group-hover:text-purple-400 transition-colors"/>
-                      </div>
-                      <h4 className="font-bold text-white mb-1 group-hover:text-purple-400 transition-colors">Spacebar Latency</h4>
-                      <p className="text-xs text-slate-400">Check your keyboard responsiveness.</p>
-                  </a>
-                  
+              <p className="text-sm text-slate-400 mb-6">
+                  Reaction time naturally slows down with age. Compare your score to the global averages below to see where you stand.
+              </p>
+              
+              <div className="overflow-x-auto">
+                  <table className="w-full text-left border-collapse">
+                      <thead>
+                          <tr className="border-b border-white/10 text-slate-500 text-xs uppercase tracking-wider">
+                              <th className="p-3 font-medium">Age Group</th>
+                              <th className="p-3 font-medium">Average Reaction Time</th>
+                              <th className="p-3 font-medium">Competitive Gamer Speed</th>
+                          </tr>
+                      </thead>
+                      <tbody className="text-sm text-slate-300">
+                          <tr className="border-b border-white/5 bg-white/5">
+                              <td className="p-3 font-bold text-white">18 - 25 Years</td>
+                              <td className="p-3">230 ms</td>
+                              <td className="p-3 text-green-400">150 - 180 ms</td>
+                          </tr>
+                          <tr className="border-b border-white/5">
+                              <td className="p-3 font-bold text-white">26 - 35 Years</td>
+                              <td className="p-3">250 ms</td>
+                              <td className="p-3 text-green-400">180 - 200 ms</td>
+                          </tr>
+                          <tr className="border-b border-white/5 bg-white/5">
+                              <td className="p-3 font-bold text-white">36 - 45 Years</td>
+                              <td className="p-3">270 ms</td>
+                              <td className="p-3 text-green-400">200 - 220 ms</td>
+                          </tr>
+                          <tr className="border-b border-white/5">
+                              <td className="p-3 font-bold text-white">46 - 55 Years</td>
+                              <td className="p-3">300 ms</td>
+                              <td className="p-3 text-green-400">230 - 250 ms</td>
+                          </tr>
+                          <tr>
+                              <td className="p-3 font-bold text-white">55+ Years</td>
+                              <td className="p-3">350+ ms</td>
+                              <td className="p-3 text-green-400">270+ ms</td>
+                          </tr>
+                      </tbody>
+                  </table>
               </div>
           </div>
+
+          <RelatedTools currentTool="reaction" />
       </section>
 
     </div>

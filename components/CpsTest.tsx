@@ -1,5 +1,6 @@
 import React, { useState, useEffect, useRef } from 'react';
-import { MousePointer2, RotateCcw, Timer, Activity, Fingerprint, Mouse, ArrowRight, Zap, Trophy, Share2, Check } from 'lucide-react';
+import { MousePointer2, RotateCcw, Timer, Activity, Fingerprint, Mouse, ArrowRight, Zap, Trophy, Share2, Check, Clock } from 'lucide-react';
+import RelatedTools from './RelatedTools';
 
 interface ClickEffect {
   id: number;
@@ -11,7 +12,11 @@ const CpsTest: React.FC = () => {
   const [active, setActive] = useState(false);
   const [finished, setFinished] = useState(false);
   const [clicks, setClicks] = useState(0);
+  
+  // SEO Optimization: Configurable durations for long-tail keywords (e.g., "1 second cps test")
+  const [selectedDuration, setSelectedDuration] = useState(10); 
   const [timeLeft, setTimeLeft] = useState(10.00);
+  
   const [ripples, setRipples] = useState<ClickEffect[]>([]);
   const [copied, setCopied] = useState(false);
   const timerRef = useRef<number | null>(null);
@@ -20,11 +25,18 @@ const CpsTest: React.FC = () => {
     setActive(true);
     setFinished(false);
     setClicks(1);
-    setTimeLeft(10.00);
+    setTimeLeft(selectedDuration);
+  };
+
+  const handleDurationChange = (duration: number) => {
+      if (active) return; // Prevent changing during test
+      setSelectedDuration(duration);
+      setTimeLeft(duration);
+      setFinished(false);
+      setClicks(0);
   };
 
   const handlePointerDown = (e: React.PointerEvent) => {
-    // Prevent default touch behaviors (zooming, scrolling)
     e.preventDefault();
     
     // Add Visual Ripple
@@ -34,7 +46,6 @@ const CpsTest: React.FC = () => {
     const newRipple = { id: Date.now(), x, y };
     setRipples(prev => [...prev, newRipple]);
     
-    // Cleanup ripple after animation
     setTimeout(() => {
       setRipples(prev => prev.filter(r => r.id !== newRipple.id));
     }, 500);
@@ -52,34 +63,25 @@ const CpsTest: React.FC = () => {
     setActive(false);
     setFinished(false);
     setClicks(0);
-    setTimeLeft(10.00);
+    setTimeLeft(selectedDuration);
     setCopied(false);
     if (timerRef.current) clearInterval(timerRef.current);
   };
 
   const shareScore = async (e: React.MouseEvent) => {
      e.stopPropagation();
-     const score = (clicks / 10).toFixed(2);
-     const text = `I just hit ${score} CPS on the Geometry Dash Spam Test! ⚡ How fast are you?`;
-     const url = 'https://geometrydashspam.cc';
+     const score = (clicks / selectedDuration).toFixed(2);
+     const text = `I just hit ${score} CPS (${selectedDuration}s mode) on the Geometry Dash Spam Test! ⚡`;
+     const url = 'https://geometrydashspam.cc/cps-test';
 
-     // Try native share first
      if (typeof navigator !== 'undefined' && navigator.share) {
         try {
-            await navigator.share({
-                title: 'Geometry Dash Spam Test',
-                text: text,
-                url: url
-            });
+            await navigator.share({ title: 'CPS Test Result', text: text, url: url });
             return;
-        } catch (err) {
-            console.error('Share failed or canceled:', err);
-        }
+        } catch (err) { console.error(err); }
      }
      
-     // Fallback to Clipboard
-     const fullText = `${text} ${url}`;
-     navigator.clipboard.writeText(fullText);
+     navigator.clipboard.writeText(`${text} ${url}`);
      setCopied(true);
      setTimeout(() => setCopied(false), 2000);
   };
@@ -89,7 +91,7 @@ const CpsTest: React.FC = () => {
       const startTime = Date.now();
       timerRef.current = window.setInterval(() => {
         const elapsed = (Date.now() - startTime) / 1000;
-        const remaining = Math.max(0, 10 - elapsed);
+        const remaining = Math.max(0, selectedDuration - elapsed);
         setTimeLeft(remaining);
         
         if (remaining <= 0) {
@@ -102,12 +104,11 @@ const CpsTest: React.FC = () => {
     return () => {
       if (timerRef.current) clearInterval(timerRef.current);
     };
-  }, [active, finished]);
+  }, [active, finished, selectedDuration]);
 
-  const cps = finished ? (clicks / 10).toFixed(2) : (active ? (clicks / (10 - timeLeft)).toFixed(1) : "0.00");
+  const cps = finished ? (clicks / selectedDuration).toFixed(2) : (active ? (clicks / (selectedDuration - timeLeft)).toFixed(1) : "0.00");
   const cpsNum = parseFloat(cps);
 
-  // Gamification: Rank System
   const getRank = (score: number) => {
     if (score < 5) return { label: "Stereo Madness", color: "text-slate-400" };
     if (score < 7) return { label: "Harder", color: "text-yellow-400" };
@@ -122,9 +123,28 @@ const CpsTest: React.FC = () => {
   return (
     <div className="w-full max-w-5xl mx-auto animate-in slide-in-from-bottom-4 duration-500">
       
-      {/* Main Testing Area */}
+      {/* Time Selector - Critical for SEO (1s CPS Test, 5s CPS Test keywords) */}
+      <div className="flex flex-wrap justify-center gap-2 mb-8">
+          {[1, 3, 5, 10, 30, 60].map(sec => (
+              <button
+                key={sec}
+                onClick={() => handleDurationChange(sec)}
+                disabled={active}
+                className={`
+                    flex items-center gap-2 px-4 py-2 rounded-full font-mono text-sm font-bold border transition-all
+                    ${selectedDuration === sec 
+                        ? 'bg-blue-600 border-blue-400 text-white shadow-[0_0_15px_rgba(37,99,235,0.4)]' 
+                        : 'bg-slate-900/50 border-white/10 text-slate-400 hover:bg-slate-800 hover:text-white'}
+                    ${active ? 'opacity-50 cursor-not-allowed' : 'cursor-pointer'}
+                `}
+              >
+                  <Clock className="w-3 h-3" />
+                  {sec}s
+              </button>
+          ))}
+      </div>
+
       <div className="grid grid-cols-1 md:grid-cols-2 gap-8 items-stretch mb-16">
-        
         {/* Click Area */}
         <div className="relative aspect-square md:aspect-auto md:h-[400px]">
           <button
@@ -137,18 +157,11 @@ const CpsTest: React.FC = () => {
               }
             `}
           >
-            {/* Ripples */}
             {ripples.map(r => (
                <span 
                  key={r.id}
                  className="absolute rounded-full bg-white/30 animate-ping pointer-events-none"
-                 style={{
-                   left: r.x,
-                   top: r.y,
-                   width: '20px',
-                   height: '20px',
-                   transform: 'translate(-50%, -50%)'
-                 }}
+                 style={{ left: r.x, top: r.y, width: '20px', height: '20px', transform: 'translate(-50%, -50%)' }}
                />
             ))}
 
@@ -156,7 +169,7 @@ const CpsTest: React.FC = () => {
               <>
                 <MousePointer2 className="w-16 h-16 text-white mb-4 animate-bounce" />
                 <span className="text-3xl font-display font-bold text-white tracking-widest">CLICK TO START</span>
-                <span className="text-blue-200 mt-2 font-mono text-sm">10 SECOND TEST</span>
+                <span className="text-blue-200 mt-2 font-mono text-sm">{selectedDuration} SECOND TEST</span>
               </>
             )}
             
@@ -188,7 +201,7 @@ const CpsTest: React.FC = () => {
               </div>
               <div className="h-12 w-12 rounded-full border-4 border-slate-700 flex items-center justify-center relative">
                  <svg className="absolute inset-0 transform -rotate-90 w-full h-full">
-                    <circle cx="22" cy="22" r="18" stroke="currentColor" strokeWidth="4" fill="transparent" className="text-blue-600" strokeDasharray={113} strokeDashoffset={113 * (1 - timeLeft/10)} />
+                    <circle cx="22" cy="22" r="18" stroke="currentColor" strokeWidth="4" fill="transparent" className="text-blue-600" strokeDasharray={113} strokeDashoffset={113 * (1 - timeLeft/selectedDuration)} />
                  </svg>
               </div>
            </div>
@@ -201,7 +214,6 @@ const CpsTest: React.FC = () => {
                <div className="text-7xl font-display font-black text-white mb-2 text-glow relative z-10">{finished ? cps : (active ? cps : '0.00')}</div>
                <div className="text-xl text-blue-400 font-mono relative z-10 mb-6">CPS</div>
                
-               {/* Rank Display */}
                {finished && rank && (
                  <div className="animate-in zoom-in duration-300 mb-8 relative z-10">
                     <div className="text-xs text-slate-500 uppercase tracking-widest mb-1">Rank Achieved</div>
@@ -219,7 +231,6 @@ const CpsTest: React.FC = () => {
                    >
                      <RotateCcw className="w-5 h-5" /> TRY AGAIN
                    </button>
-                   
                    <button 
                     onClick={shareScore}
                     className={`px-4 py-3 bg-blue-600 text-white font-bold rounded-lg flex items-center gap-2 hover:bg-blue-500 transition-colors shadow-lg ${copied ? 'bg-green-500' : ''}`}
@@ -232,42 +243,27 @@ const CpsTest: React.FC = () => {
         </div>
       </div>
 
-      {/* Cross-Link / Internal Navigation (SEO Booster) */}
-      <div className="border-t border-white/10 pt-12">
-        <h2 className="text-2xl font-display font-bold text-white mb-6 flex items-center gap-2">
-            <Activity className="text-blue-500" /> Advanced Click Techniques
-        </h2>
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-            
-            <a href="#" onClick={(e) => { e.preventDefault(); (window as any).location.reload(); /* In a real router, navigate */ }} className="group block bg-slate-900/40 border border-white/5 rounded-xl p-6 hover:border-orange-500/50 transition-all">
-                <div className="flex justify-between items-start mb-4">
-                    <div className="p-3 bg-orange-900/20 rounded-lg text-orange-400"><Zap className="w-6 h-6"/></div>
-                    <ArrowRight className="w-5 h-5 text-slate-600 group-hover:text-orange-400 transition-colors"/>
-                </div>
-                <h3 className="text-lg font-bold text-white mb-2 group-hover:text-orange-400 transition-colors">Jitter Clicking</h3>
-                <p className="text-sm text-slate-400">Learn to vibrate your arm muscles to reach 14+ CPS without macros.</p>
-            </a>
+      {/* Featured Snippet Target: Mathematical Definition */}
+      <section className="mb-12 bg-blue-900/10 border border-blue-500/20 rounded-2xl p-8">
+          <h2 className="text-2xl font-display font-bold text-white mb-4">How is CPS Calculated?</h2>
+          <div className="flex flex-col md:flex-row gap-8 items-center">
+              <div className="bg-black/30 p-6 rounded-xl border border-white/5 font-mono text-slate-300 text-sm">
+                  <p className="mb-2"><span className="text-blue-400">CPS</span> = <span className="text-green-400">Total Clicks</span> / <span className="text-yellow-400">Time (seconds)</span></p>
+                  <p className="text-xs text-slate-500 mt-2">// Example:<br/>If you click 60 times in 5 seconds,<br/>60 / 5 = 12 CPS.</p>
+              </div>
+              <div className="text-slate-300 leading-relaxed">
+                  <p className="mb-2">
+                      <strong>CPS</strong> stands for <em>Clicks Per Second</em>. It is a metric used to measure the speed at which a person can press a mouse button or keyboard key.
+                  </p>
+                  <p>
+                      In <strong className="text-white">Geometry Dash</strong>, consistent CPS is more important than raw peak speed, which is why our test allows you to measure your consistency over longer durations like 30s or 60s.
+                  </p>
+              </div>
+          </div>
+      </section>
 
-            <a href="#" className="group block bg-slate-900/40 border border-white/5 rounded-xl p-6 hover:border-pink-500/50 transition-all">
-                <div className="flex justify-between items-start mb-4">
-                    <div className="p-3 bg-pink-900/20 rounded-lg text-pink-400"><Fingerprint className="w-6 h-6"/></div>
-                    <ArrowRight className="w-5 h-5 text-slate-600 group-hover:text-pink-400 transition-colors"/>
-                </div>
-                <h3 className="text-lg font-bold text-white mb-2 group-hover:text-pink-400 transition-colors">Butterfly Clicking</h3>
-                <p className="text-sm text-slate-400">Use two fingers on one button. The meta for modern Minecraft and GD spam.</p>
-            </a>
-
-            <a href="#" className="group block bg-slate-900/40 border border-white/5 rounded-xl p-6 hover:border-emerald-500/50 transition-all">
-                <div className="flex justify-between items-start mb-4">
-                    <div className="p-3 bg-emerald-900/20 rounded-lg text-emerald-400"><Mouse className="w-6 h-6"/></div>
-                    <ArrowRight className="w-5 h-5 text-slate-600 group-hover:text-emerald-400 transition-colors"/>
-                </div>
-                <h3 className="text-lg font-bold text-white mb-2 group-hover:text-emerald-400 transition-colors">Right Click Test</h3>
-                <p className="text-sm text-slate-400">Don't neglect your middle finger. Essential for MOBA players.</p>
-            </a>
-            
-        </div>
-      </div>
+      {/* Cross-Link / Internal Navigation */}
+      <RelatedTools currentTool="cps" />
     </div>
   );
 };

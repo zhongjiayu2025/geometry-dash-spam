@@ -18,6 +18,30 @@ const BlogPostReader: React.FC<BlogPostProps> = ({ post, onBack, onNavigate }) =
     window.scrollTo(0, 0);
   }, [post]);
 
+  const handleShare = (platform: 'twitter' | 'facebook' | 'linkedin') => {
+      const url = encodeURIComponent(window.location.href);
+      const title = encodeURIComponent(post.title);
+      let shareUrl = '';
+
+      switch (platform) {
+          case 'twitter':
+              shareUrl = `https://twitter.com/intent/tweet?url=${url}&text=${title}`;
+              break;
+          case 'facebook':
+              shareUrl = `https://www.facebook.com/sharer/sharer.php?u=${url}`;
+              break;
+          case 'linkedin':
+              shareUrl = `https://www.linkedin.com/sharing/share-offsite/?url=${url}`;
+              break;
+      }
+      window.open(shareUrl, '_blank', 'noopener,noreferrer');
+  };
+
+  const copyLink = () => {
+      navigator.clipboard.writeText(window.location.href);
+      // Optional: Add a toast notification here
+  };
+
   return (
     <article className="w-full max-w-4xl mx-auto animate-in slide-in-from-bottom-8 duration-500">
       
@@ -51,16 +75,19 @@ const BlogPostReader: React.FC<BlogPostProps> = ({ post, onBack, onNavigate }) =
             </div>
             
             <div className="flex gap-4">
-                <button className="text-slate-400 hover:text-white transition-colors"><Share2 className="w-5 h-5" /></button>
+                <button onClick={copyLink} className="text-slate-400 hover:text-white transition-colors" title="Copy Link"><Share2 className="w-5 h-5" /></button>
             </div>
         </div>
       </header>
 
-      {/* Featured Image */}
-      <div className="w-full aspect-video rounded-2xl overflow-hidden mb-12 border border-white/5 shadow-2xl relative group">
+      {/* Featured Image - Optimized for LCP */}
+      <div className="w-full aspect-video rounded-2xl overflow-hidden mb-12 border border-white/5 shadow-2xl relative group bg-slate-800">
          <img 
            src={post.coverImage} 
-           alt={post.title}
+           alt={`Cover image for ${post.title}`}
+           width="896"
+           height="504"
+           loading="eager" // Hero image should load immediately
            className="w-full h-full object-cover"
          />
          <div className="absolute inset-0 bg-gradient-to-t from-[#020617] via-transparent to-transparent opacity-50"></div>
@@ -105,9 +132,9 @@ const BlogPostReader: React.FC<BlogPostProps> = ({ post, onBack, onNavigate }) =
              <p className="text-slate-500 text-sm mt-1">Dedicated to pushing the limits of human clicking potential.</p>
          </div>
          <div className="flex gap-4">
-             <button className="p-3 bg-slate-800 rounded-full hover:bg-blue-600 transition-colors text-white"><Twitter className="w-4 h-4" /></button>
-             <button className="p-3 bg-slate-800 rounded-full hover:bg-blue-700 transition-colors text-white"><Facebook className="w-4 h-4" /></button>
-             <button className="p-3 bg-slate-800 rounded-full hover:bg-blue-500 transition-colors text-white"><Linkedin className="w-4 h-4" /></button>
+             <button onClick={() => handleShare('twitter')} className="p-3 bg-slate-800 rounded-full hover:bg-blue-600 transition-colors text-white" aria-label="Share on Twitter"><Twitter className="w-4 h-4" /></button>
+             <button onClick={() => handleShare('facebook')} className="p-3 bg-slate-800 rounded-full hover:bg-blue-700 transition-colors text-white" aria-label="Share on Facebook"><Facebook className="w-4 h-4" /></button>
+             <button onClick={() => handleShare('linkedin')} className="p-3 bg-slate-800 rounded-full hover:bg-blue-500 transition-colors text-white" aria-label="Share on LinkedIn"><Linkedin className="w-4 h-4" /></button>
          </div>
       </div>
 

@@ -10,17 +10,20 @@ const BlogList: React.FC<BlogListProps> = ({ onReadPost }) => {
   return (
     <div className="w-full max-w-7xl mx-auto animate-in fade-in duration-500">
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-        {BLOG_POSTS.map((post) => (
-          <div 
+        {BLOG_POSTS.map((post, index) => (
+          <article 
             key={post.id}
             onClick={() => onReadPost(post)}
             className="group relative bg-slate-900/40 backdrop-blur-md border border-white/5 rounded-2xl overflow-hidden cursor-pointer hover:border-blue-500/50 transition-all duration-300 hover:transform hover:-translate-y-1 hover:shadow-2xl hover:shadow-blue-900/20"
           >
             {/* Image Container */}
-            <div className="h-48 overflow-hidden relative">
+            <div className="h-48 overflow-hidden relative bg-slate-800">
                <img 
                  src={post.coverImage} 
                  alt={post.title}
+                 width="400" 
+                 height="250"
+                 loading={index < 3 ? "eager" : "lazy"} // Eager load top row for LCP, lazy load others
                  className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110"
                />
                <div className="absolute inset-0 bg-gradient-to-t from-slate-900 to-transparent opacity-60"></div>
@@ -42,9 +45,9 @@ const BlogList: React.FC<BlogListProps> = ({ onReadPost }) => {
                 <span className="flex items-center gap-1"><Clock className="w-3 h-3" /> {post.readTime}</span>
               </div>
               
-              <h3 className="text-xl font-display font-bold text-white mb-3 leading-tight group-hover:text-blue-400 transition-colors line-clamp-2">
+              <h2 className="text-xl font-display font-bold text-white mb-3 leading-tight group-hover:text-blue-400 transition-colors line-clamp-2">
                 {post.title}
-              </h3>
+              </h2>
               
               <p className="text-slate-400 text-sm leading-relaxed mb-6 line-clamp-3">
                 {post.excerpt}
@@ -54,7 +57,7 @@ const BlogList: React.FC<BlogListProps> = ({ onReadPost }) => {
                 READ ARTICLE <ArrowRight className="w-4 h-4 ml-1" />
               </div>
             </div>
-          </div>
+          </article>
         ))}
       </div>
     </div>

@@ -1,5 +1,6 @@
 import React, { useState, useEffect, useCallback, useRef } from 'react';
-import { Keyboard, RotateCcw, Zap, Target, ArrowRight, MousePointerClick, Activity } from 'lucide-react';
+import { Keyboard, RotateCcw, Zap, Target, ArrowRight, MousePointerClick, Activity, Gauge } from 'lucide-react';
+import RelatedTools from './RelatedTools';
 
 const SpacebarCounter: React.FC = () => {
   const [active, setActive] = useState(false);
@@ -178,40 +179,56 @@ const SpacebarCounter: React.FC = () => {
              </div>
           </div>
 
-          {/* Internal Linking / Related Tools */}
-          <div className="border-t border-white/10 pt-8">
-              <h3 className="text-xl font-bold text-white mb-6 uppercase tracking-widest flex items-center gap-2">
-                  <Activity className="w-5 h-5 text-blue-500"/> Improve Your Mechanics
+          {/* TABLE SEO OPTIMIZATION: Link Bait for "Best Switches for Spam" */}
+          <div className="bg-slate-900/40 border border-white/5 rounded-2xl p-8">
+              <h3 className="text-xl font-bold text-white mb-4 flex items-center gap-2">
+                  <Gauge className="w-5 h-5 text-purple-400" /> Best Keyboard Switches for Speed Spam
               </h3>
-              <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-                  <a href="#" onClick={(e) => { e.preventDefault(); (window as any).history.pushState(null, '', '/cps-test'); window.dispatchEvent(new PopStateEvent('popstate')); window.scrollTo(0,0); }} className="group block bg-slate-900/40 border border-white/5 rounded-xl p-6 hover:border-blue-500/50 transition-all">
-                      <div className="flex justify-between items-start mb-4">
-                          <div className="p-3 bg-blue-900/20 rounded-lg text-blue-400"><MousePointerClick className="w-6 h-6"/></div>
-                          <ArrowRight className="w-5 h-5 text-slate-600 group-hover:text-blue-400 transition-colors"/>
-                      </div>
-                      <h4 className="font-bold text-white mb-1 group-hover:text-blue-400 transition-colors">Mouse CPS Test</h4>
-                      <p className="text-xs text-slate-400">Compare your thumb speed to your index finger speed.</p>
-                  </a>
-
-                  <a href="#" onClick={(e) => { e.preventDefault(); (window as any).history.pushState(null, '', '/'); window.dispatchEvent(new PopStateEvent('popstate')); window.scrollTo(0,0); }} className="group block bg-slate-900/40 border border-white/5 rounded-xl p-6 hover:border-green-500/50 transition-all">
-                      <div className="flex justify-between items-start mb-4">
-                          <div className="p-3 bg-green-900/20 rounded-lg text-green-400"><Target className="w-6 h-6"/></div>
-                          <ArrowRight className="w-5 h-5 text-slate-600 group-hover:text-green-400 transition-colors"/>
-                      </div>
-                      <h4 className="font-bold text-white mb-1 group-hover:text-green-400 transition-colors">Wave Simulator</h4>
-                      <p className="text-xs text-slate-400">Put your spacebar spam to the test in a real scenario.</p>
-                  </a>
-
-                   <a href="#" onClick={(e) => { e.preventDefault(); (window as any).history.pushState(null, '', '/reaction-test'); window.dispatchEvent(new PopStateEvent('popstate')); window.scrollTo(0,0); }} className="group block bg-slate-900/40 border border-white/5 rounded-xl p-6 hover:border-yellow-500/50 transition-all">
-                      <div className="flex justify-between items-start mb-4">
-                          <div className="p-3 bg-yellow-900/20 rounded-lg text-yellow-400"><Zap className="w-6 h-6"/></div>
-                          <ArrowRight className="w-5 h-5 text-slate-600 group-hover:text-yellow-400 transition-colors"/>
-                      </div>
-                      <h4 className="font-bold text-white mb-1 group-hover:text-yellow-400 transition-colors">Reaction Time</h4>
-                      <p className="text-xs text-slate-400">Is your keyboard adding latency? Check your input delay.</p>
-                  </a>
+              <p className="text-sm text-slate-400 mb-6">
+                  Not all mechanical switches are equal. For Geometry Dash spam, you need a high actuation point and light operating force.
+              </p>
+              
+              <div className="overflow-x-auto">
+                  <table className="w-full text-left border-collapse">
+                      <thead>
+                          <tr className="border-b border-white/10 text-slate-500 text-xs uppercase tracking-wider">
+                              <th className="p-3 font-medium">Switch Type</th>
+                              <th className="p-3 font-medium">Actuation Distance</th>
+                              <th className="p-3 font-medium">Force</th>
+                              <th className="p-3 font-medium">Spam Rating</th>
+                          </tr>
+                      </thead>
+                      <tbody className="text-sm text-slate-300">
+                          <tr className="border-b border-white/5 bg-white/5">
+                              <td className="p-3 font-bold text-white">Cherry MX Silver (Speed)</td>
+                              <td className="p-3">1.2 mm</td>
+                              <td className="p-3">45g</td>
+                              <td className="p-3 text-purple-400">★★★★★</td>
+                          </tr>
+                          <tr className="border-b border-white/5">
+                              <td className="p-3 font-bold text-white">Gateron Red</td>
+                              <td className="p-3">2.0 mm</td>
+                              <td className="p-3">45g</td>
+                              <td className="p-3 text-purple-400">★★★★☆</td>
+                          </tr>
+                          <tr className="border-b border-white/5 bg-white/5">
+                              <td className="p-3 font-bold text-white">Razer Opto-Mechanical</td>
+                              <td className="p-3">1.0 mm</td>
+                              <td className="p-3">40g</td>
+                              <td className="p-3 text-purple-400">★★★★★</td>
+                          </tr>
+                          <tr className="border-b border-white/5">
+                              <td className="p-3 font-bold text-white">Cherry MX Blue (Clicky)</td>
+                              <td className="p-3">2.2 mm</td>
+                              <td className="p-3">60g</td>
+                              <td className="p-3 text-slate-500">★★☆☆☆</td>
+                          </tr>
+                      </tbody>
+                  </table>
               </div>
           </div>
+
+          <RelatedTools currentTool="spacebar" />
       </section>
 
     </div>
