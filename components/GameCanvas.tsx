@@ -94,7 +94,7 @@ const GameCanvas: React.FC<GameCanvasProps> = memo(({ difficulty, status, onStat
     if (!audioCtxRef.current) {
       const AudioContext = window.AudioContext || (window as any).webkitAudioContext;
       if (AudioContext) {
-          const ctx = new AudioContext();
+          const ctx = new AudioContext({ latencyHint: 'interactive' });
           audioCtxRef.current = ctx;
           masterGainRef.current = ctx.createGain();
           masterGainRef.current.connect(ctx.destination);
