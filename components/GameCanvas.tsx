@@ -1,3 +1,4 @@
+
 "use client";
 
 import React, { useRef, useEffect, useCallback, useState, memo } from 'react';
@@ -863,7 +864,14 @@ const GameCanvas: React.FC<GameCanvasProps> = memo(({ difficulty, status, onStat
     }
   };
 
-  const handleStart = useCallback(() => {
+  const handleStart = useCallback((e?: any) => {
+     // Check if the target is a button or interactive element to prevent accidental game start
+     if (e && e.target instanceof Element) {
+        if (e.target.closest('button') || e.target.closest('a')) {
+            return;
+        }
+     }
+  
      if (status === GameStatus.Lost || status === GameStatus.Won) {
          resetGame();
          onStatusChange(GameStatus.Playing);
@@ -923,7 +931,15 @@ const GameCanvas: React.FC<GameCanvasProps> = memo(({ difficulty, status, onStat
       if (container) {
           container.addEventListener('mousedown', handleStart as any);
           container.addEventListener('mouseup', handleEnd);
-          container.addEventListener('touchstart', (e) => { e.preventDefault(); handleStart(); }, { passive: false });
+          container.addEventListener('touchstart', (e) => { 
+              const target = e.target as HTMLElement;
+              // If touching a button, allow the click and don't start the game
+              if (target.closest('button') || target.closest('a')) {
+                  return;
+              }
+              e.preventDefault(); 
+              handleStart(e); 
+          }, { passive: false });
           container.addEventListener('touchend', (e) => { e.preventDefault(); handleEnd(); });
       }
 
