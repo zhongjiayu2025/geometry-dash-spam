@@ -57,11 +57,29 @@ const CpsTest: React.FC = () => {
     if (timerRef.current) clearInterval(timerRef.current);
   };
 
-  const shareScore = (e: React.MouseEvent) => {
+  const shareScore = async (e: React.MouseEvent) => {
      e.stopPropagation();
      const score = (clicks / 10).toFixed(2);
-     const text = `I just hit ${score} CPS on the Geometry Dash Spam Test! ⚡ How fast are you? https://geometrydashspam.cc`;
-     navigator.clipboard.writeText(text);
+     const text = `I just hit ${score} CPS on the Geometry Dash Spam Test! ⚡ How fast are you?`;
+     const url = 'https://geometrydashspam.cc';
+
+     // Try native share first
+     if (typeof navigator !== 'undefined' && navigator.share) {
+        try {
+            await navigator.share({
+                title: 'Geometry Dash Spam Test',
+                text: text,
+                url: url
+            });
+            return;
+        } catch (err) {
+            console.error('Share failed or canceled:', err);
+        }
+     }
+     
+     // Fallback to Clipboard
+     const fullText = `${text} ${url}`;
+     navigator.clipboard.writeText(fullText);
      setCopied(true);
      setTimeout(() => setCopied(false), 2000);
   };
@@ -204,7 +222,7 @@ const CpsTest: React.FC = () => {
                    
                    <button 
                     onClick={shareScore}
-                    className="px-4 py-3 bg-blue-600 text-white font-bold rounded-lg flex items-center gap-2 hover:bg-blue-500 transition-colors shadow-lg"
+                    className={`px-4 py-3 bg-blue-600 text-white font-bold rounded-lg flex items-center gap-2 hover:bg-blue-500 transition-colors shadow-lg ${copied ? 'bg-green-500' : ''}`}
                    >
                      {copied ? <Check className="w-5 h-5" /> : <Share2 className="w-5 h-5" />}
                    </button>

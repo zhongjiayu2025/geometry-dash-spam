@@ -396,11 +396,30 @@ const GameCanvas: React.FC<GameCanvasProps> = memo(({ difficulty, status, onStat
     }
   }, [isMuted, clickSoundEnabled, isMini, clickSoundType]);
 
-  const shareScore = (e: React.MouseEvent) => {
+  const shareScore = async (e: React.MouseEvent) => {
      e.stopPropagation();
      const score = (gameState.current.startTime ? ((Date.now() - gameState.current.startTime)/1000).toFixed(2) : "0.00");
-     const text = `I just survived ${score}s on ${difficulty.label} difficulty in Geometry Dash Spam Test! 🌊 Can you beat me? https://geometrydashspam.cc`;
-     navigator.clipboard.writeText(text);
+     const text = `I just survived ${score}s on ${difficulty.label} difficulty in Geometry Dash Spam Test! 🌊 Can you beat me?`;
+     const url = 'https://geometrydashspam.cc';
+
+     // Try native share first
+     if (typeof navigator !== 'undefined' && navigator.share) {
+        try {
+            await navigator.share({
+                title: 'Geometry Dash Spam Test',
+                text: text,
+                url: url
+            });
+            return;
+        } catch (err) {
+            console.error('Share failed or canceled:', err);
+            // Fallthrough to clipboard if share failed (e.g. user cancel or unsupported)
+        }
+     }
+     
+     // Fallback to Clipboard
+     const fullText = `${text} ${url}`;
+     navigator.clipboard.writeText(fullText);
      setCopied(true);
      setTimeout(() => setCopied(false), 2000);
   };
@@ -1241,8 +1260,8 @@ const GameCanvas: React.FC<GameCanvasProps> = memo(({ difficulty, status, onStat
                      >
                         Retry
                      </button>
-                     <button onClick={shareScore} className="p-3 bg-white/10 hover:bg-white/20 text-white rounded cursor-pointer z-50">
-                        {copied ? <Check className="w-5 h-5" /> : <Share2 className="w-5 h-5" />}
+                     <button onClick={shareScore} className={`px-4 py-3 bg-white/10 hover:bg-white/20 text-white rounded cursor-pointer z-50 flex items-center justify-center gap-2 font-bold transition-all ${copied ? 'bg-green-500/20 text-green-400' : ''}`}>
+                        {copied ? <><Check className="w-5 h-5" /> COPIED</> : <><Share2 className="w-5 h-5" /> SHARE</>}
                      </button>
                  </div>
              </div>
