@@ -1,7 +1,9 @@
+"use client";
+
 import React, { useRef, useEffect, useCallback, useState, memo } from 'react';
 import { DifficultyConfig, GameStatus } from '../types';
 import { WIN_TIME_MS, WAVE_SPEED_Y } from '../constants';
-import { Trophy, AlertTriangle, Crown, Volume2, VolumeX, Settings, X, Music2 } from 'lucide-react';
+import { Trophy, AlertTriangle, Crown, Volume2, VolumeX } from 'lucide-react';
 
 interface GameCanvasProps {
   difficulty: DifficultyConfig;
@@ -37,25 +39,17 @@ interface ClickEffect {
   maxLife: number;
 }
 
-// Helper to convert HSL to Hex
-const hslToHex = (h: number, s: number, l: number) => {
-  l /= 100;
-  const a = s * Math.min(l, 1 - l) / 100;
-  const f = (n: number) => {
-    const k = (n + h / 30) % 12;
-    const color = l - a * Math.max(Math.min(k - 3, 9 - k, 1), -1);
-    return Math.round(255 * color).toString(16).padStart(2, '0');
-  };
-  return `#${f(0)}${f(8)}${f(4)}`;
-};
-
 const GameCanvas: React.FC<GameCanvasProps> = memo(({ difficulty, status, onStatusChange, isEndless = false, isMini = false }) => {
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const containerRef = useRef<HTMLDivElement>(null);
   
   // Settings State
-  const [isMuted, setIsMuted] = useState<boolean>(() => localStorage.getItem('gd_spam_muted') === 'true');
-  const [showSettings, setShowSettings] = useState(false);
+  const [isMuted, setIsMuted] = useState<boolean>(false);
+  // Ensure we only access localStorage on the client
+  useEffect(() => {
+    setIsMuted(localStorage.getItem('gd_spam_muted') === 'true');
+  }, []);
+  
   const [consistency, setConsistency] = useState<string>('100%');
   
   // Audio Refs
@@ -87,14 +81,14 @@ const GameCanvas: React.FC<GameCanvasProps> = memo(({ difficulty, status, onStat
     runTime: 0,
   });
 
-  const requestRef = useRef<number>();
+  const requestRef = useRef<number | undefined>(undefined);
 
   // --- AUDIO SYSTEM ---
   const initAudio = useCallback(() => {
     if (!audioCtxRef.current) {
-      const AudioContext = window.AudioContext || (window as any).webkitAudioContext;
-      if (AudioContext) {
-          const ctx = new AudioContext({ latencyHint: 'interactive' });
+      const AudioContextClass = window.AudioContext || (window as any).webkitAudioContext;
+      if (AudioContextClass) {
+          const ctx = new AudioContextClass();
           audioCtxRef.current = ctx;
           masterGainRef.current = ctx.createGain();
           masterGainRef.current.connect(ctx.destination);
@@ -301,12 +295,6 @@ const GameCanvas: React.FC<GameCanvasProps> = memo(({ difficulty, status, onStat
             gameState.current.trail.push({ x: gameState.current.playerX, y: gameState.current.playerY });
             if (gameState.current.trail.length > 20) gameState.current.trail.shift();
         }
-        // Move trail points left relative to player
-        // Actually, easiest is to store trail absolute and subtract distance when drawing
-        // But for infinite runner, better to store relative or manage array carefully.
-        // Let's store absolute world coordinates for trail:
-        // Wait, playerX is fixed on screen. 
-        // To make trail look like it's behind, we just store previous PlayerY and shift X by speed.
         for (let i = 0; i < gameState.current.trail.length; i++) {
              gameState.current.trail[i].x -= moveSpeed;
         }
@@ -324,8 +312,7 @@ const GameCanvas: React.FC<GameCanvasProps> = memo(({ difficulty, status, onStat
     }
 
     // 2. Rendering
-    // Clear
-    ctx.fillStyle = '#020617'; // Slate 950
+    ctx.fillStyle = '#020617'; 
     ctx.fillRect(0, 0, canvas.width, canvas.height);
 
     // Draw Background Grid
@@ -363,21 +350,13 @@ const GameCanvas: React.FC<GameCanvasProps> = memo(({ difficulty, status, onStat
     gameState.current.obstacles.forEach(obs => {
         const x = obs.x - gameState.current.distanceTraveled;
         if (x > -obs.width && x < canvas.width) {
-            // Top
             ctx.fillRect(x, 0, obs.width, obs.topHeight);
-            // Bottom
             ctx.fillRect(x, obs.bottomY, obs.width, canvas.height - obs.bottomY);
-            
-            // Neon Outline for obstacles
             ctx.strokeStyle = '#fff';
             ctx.lineWidth = 2;
-            
-            // Top outline
             ctx.beginPath();
             ctx.moveTo(x, 0); ctx.lineTo(x, obs.topHeight); ctx.lineTo(x + obs.width, obs.topHeight); ctx.lineTo(x + obs.width, 0);
             ctx.stroke();
-
-            // Bottom outline
             ctx.beginPath();
             ctx.moveTo(x, canvas.height); ctx.lineTo(x, obs.bottomY); ctx.lineTo(x + obs.width, obs.bottomY); ctx.lineTo(x + obs.width, canvas.height);
             ctx.stroke();
@@ -404,8 +383,7 @@ const GameCanvas: React.FC<GameCanvasProps> = memo(({ difficulty, status, onStat
     
     ctx.save();
     ctx.translate(gameState.current.playerX, gameState.current.playerY);
-    // Rotate slightly based on velocity
-    const rotation = gameState.current.velocityY > 0 ? 45 : -45; // Fixed 45deg for wave
+    const rotation = gameState.current.velocityY > 0 ? 45 : -45;
     ctx.rotate(rotation * Math.PI / 180);
     
     const size = isMini ? 6 : 12;
@@ -416,8 +394,7 @@ const GameCanvas: React.FC<GameCanvasProps> = memo(({ difficulty, status, onStat
     ctx.closePath();
     ctx.fill();
     
-    // Inner color
-    ctx.fillStyle = isMini ? '#d8b4fe' : '#93c5fd'; // Small tint
+    ctx.fillStyle = isMini ? '#d8b4fe' : '#93c5fd'; 
     ctx.beginPath();
     ctx.moveTo(-size/2, -size/2);
     ctx.lineTo(size/2, 0);
@@ -427,7 +404,7 @@ const GameCanvas: React.FC<GameCanvasProps> = memo(({ difficulty, status, onStat
     
     ctx.restore();
 
-    // Draw Particles (Death or Trail)
+    // Draw Particles
     gameState.current.particles.forEach(p => {
         ctx.globalAlpha = p.life;
         ctx.fillStyle = p.color;
@@ -474,7 +451,6 @@ const GameCanvas: React.FC<GameCanvasProps> = memo(({ difficulty, status, onStat
      }
      gameState.current.isHolding = true;
      
-     // Record click interval for consistency calculation
      const now = Date.now();
      if (gameState.current.lastClickTime > 0) {
          gameState.current.clickIntervals.push(now - gameState.current.lastClickTime);
@@ -504,7 +480,7 @@ const GameCanvas: React.FC<GameCanvasProps> = memo(({ difficulty, status, onStat
 
       window.addEventListener('keydown', handleKeyDown);
       window.addEventListener('keyup', handleKeyUp);
-      // Mouse/Touch listeners attached to canvas div
+      
       const container = containerRef.current;
       if (container) {
           container.addEventListener('mousedown', handleStart as any);
@@ -519,18 +495,14 @@ const GameCanvas: React.FC<GameCanvasProps> = memo(({ difficulty, status, onStat
           if (container) {
               container.removeEventListener('mousedown', handleStart as any);
               container.removeEventListener('mouseup', handleEnd);
-              // Clean up touch
           }
       };
   }, [handleStart, handleEnd]);
 
-  // Start/Stop Loop
   useEffect(() => {
       if (status === GameStatus.Playing) {
           if (!requestRef.current) requestRef.current = requestAnimationFrame(gameLoop);
       } else {
-          // If we want the particles/shake to animate even after death, we could keep loop running
-          // But for now let's keep it running to render death screen background
           requestRef.current = requestAnimationFrame(gameLoop);
       }
       return () => {
@@ -538,14 +510,12 @@ const GameCanvas: React.FC<GameCanvasProps> = memo(({ difficulty, status, onStat
       };
   }, [gameLoop, status]);
 
-  // Initial draw to prevent blank screen
+  // Initial draw
   useEffect(() => {
       resetGame();
-      // Force one frame
       requestAnimationFrame(gameLoop);
   }, [resetGame, gameLoop]);
 
-  // --- RENDER UI OVERLAY ---
   return (
     <div 
       className="relative w-full max-w-5xl aspect-video md:h-[500px] bg-slate-950 rounded-lg overflow-hidden transition-all duration-500 mx-auto select-none touch-none group" 
@@ -563,7 +533,6 @@ const GameCanvas: React.FC<GameCanvasProps> = memo(({ difficulty, status, onStat
 
       {/* --- HUD --- */}
       <div className="absolute top-4 left-4 right-4 flex justify-between items-start pointer-events-none">
-          {/* Progress / Time */}
           <div className="flex flex-col gap-1">
               <div className="text-4xl font-display font-black text-white italic drop-shadow-lg tabular-nums">
                   {status === GameStatus.Playing 
@@ -581,7 +550,6 @@ const GameCanvas: React.FC<GameCanvasProps> = memo(({ difficulty, status, onStat
               )}
           </div>
           
-          {/* Controls / Info */}
           <div className="flex gap-2 pointer-events-auto">
               <button 
                   aria-label={isMuted ? "Unmute" : "Mute"}

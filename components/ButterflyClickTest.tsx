@@ -1,3 +1,5 @@
+"use client";
+
 import React, { useState, useEffect, useRef } from 'react';
 import { MousePointer2, RotateCcw, Timer, Fingerprint, Mouse, ShieldCheck, Zap, Activity } from 'lucide-react';
 

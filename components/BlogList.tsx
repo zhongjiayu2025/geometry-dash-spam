@@ -1,20 +1,18 @@
 import React from 'react';
-import { BLOG_POSTS, BlogPost } from '../data/blogContent';
+import Link from 'next/link';
+import { BLOG_POSTS } from '../data/blogContent';
 import { Calendar, Clock, ArrowRight } from 'lucide-react';
 
-interface BlogListProps {
-  onReadPost: (post: BlogPost) => void;
-}
-
-const BlogList: React.FC<BlogListProps> = ({ onReadPost }) => {
+// No props needed now, as we use Link
+const BlogList: React.FC = () => {
   return (
     <div className="w-full max-w-7xl mx-auto animate-in fade-in duration-500">
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
         {BLOG_POSTS.map((post, index) => (
-          <article 
+          <Link 
+            href={`/blog/${post.slug}`}
             key={post.id}
-            onClick={() => onReadPost(post)}
-            className="group relative bg-slate-900/40 backdrop-blur-md border border-white/5 rounded-2xl overflow-hidden cursor-pointer hover:border-blue-500/50 transition-all duration-300 hover:transform hover:-translate-y-1 hover:shadow-2xl hover:shadow-blue-900/20"
+            className="group relative bg-slate-900/40 backdrop-blur-md border border-white/5 rounded-2xl overflow-hidden cursor-pointer hover:border-blue-500/50 transition-all duration-300 hover:transform hover:-translate-y-1 hover:shadow-2xl hover:shadow-blue-900/20 block"
           >
             {/* Image Container */}
             <div className="h-48 overflow-hidden relative bg-slate-800">
@@ -57,7 +55,7 @@ const BlogList: React.FC<BlogListProps> = ({ onReadPost }) => {
                 READ ARTICLE <ArrowRight className="w-4 h-4 ml-1" />
               </div>
             </div>
-          </article>
+          </Link>
         ))}
       </div>
     </div>

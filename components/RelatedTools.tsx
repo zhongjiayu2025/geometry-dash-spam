@@ -1,4 +1,5 @@
 import React from 'react';
+import Link from 'next/link';
 import { MousePointer2, Activity, Fingerprint, Mouse, Keyboard, Timer, Zap, Target, ArrowRight } from 'lucide-react';
 
 interface RelatedToolsProps {
@@ -19,13 +20,6 @@ const RelatedTools: React.FC<RelatedToolsProps> = ({ currentTool }) => {
   // Filter out the current page to avoid self-linking (which dilutes SEO value slightly)
   const filteredTools = tools.filter(t => t.id !== currentTool).slice(0, 3); // Show top 3 related
 
-  const handleNav = (e: React.MouseEvent, path: string) => {
-      e.preventDefault();
-      window.history.pushState(null, '', path);
-      window.dispatchEvent(new PopStateEvent('popstate'));
-      window.scrollTo(0,0);
-  };
-
   return (
     <nav className="border-t border-white/10 pt-12 mt-12 w-full max-w-4xl mx-auto">
         <h3 className="text-xl font-display font-bold text-white mb-6 flex items-center gap-2">
@@ -33,10 +27,9 @@ const RelatedTools: React.FC<RelatedToolsProps> = ({ currentTool }) => {
         </h3>
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
             {filteredTools.map((tool) => (
-                <a 
+                <Link 
                     key={tool.id} 
                     href={tool.path} 
-                    onClick={(e) => handleNav(e, tool.path)}
                     className={`group block bg-slate-900/40 border border-white/5 rounded-xl p-6 transition-all ${tool.border}`}
                 >
                     <div className="flex justify-between items-start mb-4">
@@ -47,7 +40,7 @@ const RelatedTools: React.FC<RelatedToolsProps> = ({ currentTool }) => {
                     </div>
                     <h4 className={`font-bold text-white mb-1 group-hover:${tool.color} transition-colors`}>{tool.label}</h4>
                     <p className="text-xs text-slate-400">{tool.desc}</p>
-                </a>
+                </Link>
             ))}
         </div>
     </nav>

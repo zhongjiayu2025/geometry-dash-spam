@@ -1,5 +1,7 @@
+"use client";
+
 import React, { useState, useEffect, useRef } from 'react';
-import { MousePointer2, RotateCcw, Timer, Activity, Fingerprint, Mouse, ArrowRight, Zap, Trophy, Share2, Check, Clock } from 'lucide-react';
+import { MousePointer2, RotateCcw, Timer, Check, Clock, Trophy, Share2 } from 'lucide-react';
 import RelatedTools from './RelatedTools';
 
 interface ClickEffect {

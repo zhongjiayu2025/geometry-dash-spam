@@ -1,5 +1,7 @@
+"use client";
+
 import React, { useState, useEffect, useCallback, useRef } from 'react';
-import { Keyboard, RotateCcw, Zap, Target, ArrowRight, MousePointerClick, Activity, Gauge } from 'lucide-react';
+import { Keyboard, RotateCcw, Zap, Gauge } from 'lucide-react';
 import RelatedTools from './RelatedTools';
 
 const SpacebarCounter: React.FC = () => {

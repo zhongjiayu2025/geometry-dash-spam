@@ -1,6 +1,9 @@
+"use client";
+
 import React, { useEffect } from 'react';
 import { Mail, Shield, FileText, Info, CheckCircle, AlertTriangle, ExternalLink, Server, Globe, Lock, Cookie, Map, ArrowRight } from 'lucide-react';
-import { BLOG_POSTS, BlogPost } from '../data/blogContent';
+import { BLOG_POSTS } from '../data/blogContent';
+import Link from 'next/link';
 
 interface InfoPageProps {
   title: string;
@@ -10,7 +13,7 @@ interface InfoPageProps {
 }
 
 const InfoPageLayout: React.FC<InfoPageProps> = ({ title, icon, lastUpdated, children }) => {
-  useEffect(() => { window.scrollTo(0, 0); }, []);
+  // useEffect(() => { window.scrollTo(0, 0); }, []); // Next.js handles scrolling on navigation
   
   return (
     <div className="w-full max-w-5xl mx-auto animate-in fade-in slide-in-from-bottom-4 duration-500">
@@ -223,8 +226,7 @@ export const TermsPage = () => (
   </InfoPageLayout>
 );
 
-// New Sitemap Component for Internal Linking
-export const SitemapPage: React.FC<{ onNavigate: (view: any, post?: any) => void }> = ({ onNavigate }) => (
+export const SitemapPage = () => (
   <InfoPageLayout title="Sitemap" icon={<Map className="w-10 h-10"/>} lastUpdated="January 10, 2026">
       <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
           
@@ -233,25 +235,24 @@ export const SitemapPage: React.FC<{ onNavigate: (view: any, post?: any) => void
               <h3 className="text-2xl font-display font-bold text-white mb-6 border-b border-white/10 pb-2">Tools & Simulators</h3>
               <ul className="space-y-4">
                   {[
-                      { view: 'game', label: 'Geometry Dash Wave Simulator', desc: 'The core spam test tool.' },
-                      { view: 'cps', label: '10 Second CPS Test', desc: 'Measure clicks per second.' },
-                      { view: 'jitter', label: 'Jitter Click Test', desc: 'Practice arm vibration.' },
-                      { view: 'butterfly', label: 'Butterfly Click Test', desc: 'Double clicking technique.' },
-                      { view: 'rightClick', label: 'Right Click Test', desc: 'RMB Speed test.' },
-                      { view: 'spacebar', label: 'Spacebar Counter', desc: 'Keyboard latency check.' },
-                      { view: 'reaction', label: 'Reaction Time Test', desc: 'Visual reflex benchmark.' },
+                      { view: '/', label: 'Geometry Dash Wave Simulator', desc: 'The core spam test tool.' },
+                      { view: '/cps-test', label: '10 Second CPS Test', desc: 'Measure clicks per second.' },
+                      { view: '/jitter-click', label: 'Jitter Click Test', desc: 'Practice arm vibration.' },
+                      { view: '/butterfly-click', label: 'Butterfly Click Test', desc: 'Double clicking technique.' },
+                      { view: '/right-click', label: 'Right Click Test', desc: 'RMB Speed test.' },
+                      { view: '/spacebar-counter', label: 'Spacebar Counter', desc: 'Keyboard latency check.' },
+                      { view: '/reaction-test', label: 'Reaction Time Test', desc: 'Visual reflex benchmark.' },
                   ].map((item: any) => (
                       <li key={item.view}>
-                          <a 
-                             href={`/${item.view === 'game' ? '' : item.view === 'cps' ? 'cps-test' : item.view === 'jitter' ? 'jitter-click' : item.view === 'butterfly' ? 'butterfly-click' : item.view === 'rightClick' ? 'right-click' : item.view === 'spacebar' ? 'spacebar-counter' : 'reaction-test'}`}
-                             onClick={(e) => { e.preventDefault(); onNavigate(item.view); }}
+                          <Link 
+                             href={item.view}
                              className="group block"
                           >
                               <div className="flex items-center gap-2 text-blue-400 font-bold group-hover:underline">
                                   {item.label} <ArrowRight className="w-4 h-4 opacity-0 group-hover:opacity-100 transition-opacity"/>
                               </div>
                               <p className="text-sm text-slate-400">{item.desc}</p>
-                          </a>
+                          </Link>
                       </li>
                   ))}
               </ul>
@@ -263,16 +264,15 @@ export const SitemapPage: React.FC<{ onNavigate: (view: any, post?: any) => void
               <ul className="space-y-4">
                   {BLOG_POSTS.map(post => (
                       <li key={post.id}>
-                          <a 
+                          <Link 
                              href={`/blog/${post.slug}`}
-                             onClick={(e) => { e.preventDefault(); onNavigate('article', post); }}
                              className="group block"
                           >
                               <div className="flex items-center gap-2 text-purple-400 font-bold group-hover:underline">
                                   {post.title}
                               </div>
                               <p className="text-xs text-slate-500 mt-1 line-clamp-1">{post.excerpt}</p>
-                          </a>
+                          </Link>
                       </li>
                   ))}
               </ul>
@@ -282,15 +282,14 @@ export const SitemapPage: React.FC<{ onNavigate: (view: any, post?: any) => void
           <div className="md:col-span-2 bg-slate-950/30 border border-white/5 rounded-xl p-6">
                <h3 className="text-xl font-bold text-slate-400 mb-4 uppercase tracking-widest text-sm">Legal & Info</h3>
                <div className="flex flex-wrap gap-6">
-                   {['About Us', 'Contact', 'Privacy Policy', 'Terms of Service'].map(page => (
-                       <a 
+                   {['About', 'Contact', 'Privacy', 'Terms'].map(page => (
+                       <Link 
                          key={page}
-                         href={`/${page.toLowerCase().split(' ')[0]}`}
-                         onClick={(e) => { e.preventDefault(); onNavigate(page.toLowerCase().split(' ')[0] as any); }}
+                         href={`/${page.toLowerCase()}`}
                          className="text-slate-300 hover:text-white hover:underline"
                        >
                            {page}
-                       </a>
+                       </Link>
                    ))}
                </div>
           </div>

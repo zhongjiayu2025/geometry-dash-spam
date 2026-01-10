@@ -1,5 +1,7 @@
+"use client";
+
 import React, { useState, useRef } from 'react';
-import { Timer, AlertCircle, Play, Eye, Activity, MousePointer2, ArrowRight, Zap, Target, Keyboard, BarChart2 } from 'lucide-react';
+import { Timer, AlertCircle, Play, Eye, BarChart2 } from 'lucide-react';
 import RelatedTools from './RelatedTools';
 
 type TestState = 'idle' | 'waiting' | 'ready' | 'result' | 'early';

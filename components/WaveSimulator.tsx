@@ -1,27 +1,39 @@
-import React, { useState, useEffect } from 'react';
+"use client";
+
+import React, { useState } from 'react';
+import Link from 'next/link';
 import { Difficulty, GameStatus } from '../types';
 import { DIFFICULTY_CONFIGS } from '../constants';
 import DifficultySelector from './DifficultySelector';
 import GameCanvas from './GameCanvas';
-import { Activity, TrendingUp, MousePointerClick, Infinity as InfinityIcon, Minimize2, HelpCircle, Target, Award, Zap, BarChart3, Layers, Timer, Keyboard, ArrowRight, Calendar, Star } from 'lucide-react';
+import { Infinity as InfinityIcon, Minimize2, HelpCircle, Target, Zap, BarChart3, Layers, Calendar, Star, MousePointerClick, Activity, Keyboard, Timer } from 'lucide-react';
 
 const WaveSimulator: React.FC = () => {
   // Initialize with saved difficulty if present
   const [difficulty, setDifficulty] = useState<Difficulty>(() => {
-    const saved = localStorage.getItem('gd_spam_last_difficulty');
-    return (saved && Object.values(Difficulty).includes(saved as Difficulty)) 
-      ? (saved as Difficulty) 
-      : Difficulty.Easy;
+    if (typeof window !== 'undefined') {
+        const saved = localStorage.getItem('gd_spam_last_difficulty');
+        return (saved && Object.values(Difficulty).includes(saved as Difficulty)) 
+        ? (saved as Difficulty) 
+        : Difficulty.Easy;
+    }
+    return Difficulty.Easy;
   });
   
   // Initialize Endless Mode state
   const [isEndless, setIsEndless] = useState<boolean>(() => {
-    return localStorage.getItem('gd_spam_endless_mode') === 'true';
+    if (typeof window !== 'undefined') {
+        return localStorage.getItem('gd_spam_endless_mode') === 'true';
+    }
+    return false;
   });
 
   // Initialize Mini Wave state
   const [isMini, setIsMini] = useState<boolean>(() => {
-    return localStorage.getItem('gd_spam_mini_mode') === 'true';
+    if (typeof window !== 'undefined') {
+        return localStorage.getItem('gd_spam_mini_mode') === 'true';
+    }
+    return false;
   });
   
   const [gameStatus, setGameStatus] = useState<GameStatus>(GameStatus.Idle);
@@ -48,7 +60,10 @@ const WaveSimulator: React.FC = () => {
 
   const currentConfig = DIFFICULTY_CONFIGS[difficulty];
 
-  // Schema Markup for "How to Practice Geometry Dash Spam"
+  // Generate today's date for dynamic content
+  const today = new Date().toLocaleDateString('en-US', { weekday: 'long', month: 'short', day: 'numeric' });
+
+  // Schema data needs to be injected carefully in Next.js, or use script tag here
   const schemaData = {
     "@context": "https://schema.org",
     "@type": "HowTo",
@@ -77,9 +92,6 @@ const WaveSimulator: React.FC = () => {
       }
     ]
   };
-
-  // Generate today's date for dynamic content
-  const today = new Date().toLocaleDateString('en-US', { weekday: 'long', month: 'short', day: 'numeric' });
 
   return (
     <div className="flex flex-col items-center w-full animate-in fade-in duration-500">
@@ -152,7 +164,7 @@ const WaveSimulator: React.FC = () => {
         isMini={isMini}
       />
       
-      {/* DAILY CHALLENGE SECTION (New SEO/Engagement Feature) */}
+      {/* DAILY CHALLENGE SECTION */}
       <div className="w-full max-w-5xl mt-6 mb-8">
           <div className="bg-gradient-to-r from-yellow-900/20 to-orange-900/20 border border-yellow-500/30 rounded-xl p-6 flex flex-col md:flex-row items-center justify-between gap-6 relative overflow-hidden">
               <div className="absolute top-0 right-0 w-32 h-32 bg-yellow-500/10 blur-[50px] rounded-full pointer-events-none"></div>
@@ -188,34 +200,34 @@ const WaveSimulator: React.FC = () => {
           </div>
       </div>
 
-      {/* Quick Access Training Modules (New Addition for Internal Linking/UX) */}
+      {/* Quick Access Training Modules (Modified to use Link) */}
       <div className="w-full max-w-5xl mt-8 mb-8">
         <h3 className="text-xl font-display font-bold text-white mb-4 px-2 border-l-4 border-blue-500">More Training Modules</h3>
         <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-            <a href="/cps-test" onClick={(e) => {e.preventDefault(); window.history.pushState(null, '', '/cps-test'); window.dispatchEvent(new PopStateEvent('popstate')); window.scrollTo(0,0);}} className="bg-slate-900/60 border border-white/5 rounded-xl p-4 hover:border-blue-400/50 hover:bg-slate-900 transition-all cursor-pointer group block">
+            <Link href="/cps-test" className="bg-slate-900/60 border border-white/5 rounded-xl p-4 hover:border-blue-400/50 hover:bg-slate-900 transition-all cursor-pointer group block">
                 <MousePointerClick className="w-8 h-8 text-blue-500 mb-3 group-hover:scale-110 transition-transform"/>
                 <h4 className="font-bold text-white text-sm mb-1">CPS Test</h4>
                 <p className="text-xs text-slate-400">Measure raw clicking speed.</p>
-            </a>
-            <a href="/jitter-click" onClick={(e) => {e.preventDefault(); window.history.pushState(null, '', '/jitter-click'); window.dispatchEvent(new PopStateEvent('popstate')); window.scrollTo(0,0);}} className="bg-slate-900/60 border border-white/5 rounded-xl p-4 hover:border-orange-400/50 hover:bg-slate-900 transition-all cursor-pointer group block">
+            </Link>
+            <Link href="/jitter-click" className="bg-slate-900/60 border border-white/5 rounded-xl p-4 hover:border-orange-400/50 hover:bg-slate-900 transition-all cursor-pointer group block">
                 <Activity className="w-8 h-8 text-orange-500 mb-3 group-hover:scale-110 transition-transform"/>
                 <h4 className="font-bold text-white text-sm mb-1">Jitter Click</h4>
                 <p className="text-xs text-slate-400">Learn advanced vibration.</p>
-            </a>
-            <a href="/spacebar-counter" onClick={(e) => {e.preventDefault(); window.history.pushState(null, '', '/spacebar-counter'); window.dispatchEvent(new PopStateEvent('popstate')); window.scrollTo(0,0);}} className="bg-slate-900/60 border border-white/5 rounded-xl p-4 hover:border-purple-400/50 hover:bg-slate-900 transition-all cursor-pointer group block">
+            </Link>
+            <Link href="/spacebar-counter" className="bg-slate-900/60 border border-white/5 rounded-xl p-4 hover:border-purple-400/50 hover:bg-slate-900 transition-all cursor-pointer group block">
                 <Keyboard className="w-8 h-8 text-purple-500 mb-3 group-hover:scale-110 transition-transform"/>
                 <h4 className="font-bold text-white text-sm mb-1">Spacebar</h4>
                 <p className="text-xs text-slate-400">Test keyboard latency.</p>
-            </a>
-            <a href="/reaction-test" onClick={(e) => {e.preventDefault(); window.history.pushState(null, '', '/reaction-test'); window.dispatchEvent(new PopStateEvent('popstate')); window.scrollTo(0,0);}} className="bg-slate-900/60 border border-white/5 rounded-xl p-4 hover:border-green-400/50 hover:bg-slate-900 transition-all cursor-pointer group block">
+            </Link>
+            <Link href="/reaction-test" className="bg-slate-900/60 border border-white/5 rounded-xl p-4 hover:border-green-400/50 hover:bg-slate-900 transition-all cursor-pointer group block">
                 <Timer className="w-8 h-8 text-green-500 mb-3 group-hover:scale-110 transition-transform"/>
                 <h4 className="font-bold text-white text-sm mb-1">Reaction</h4>
                 <p className="text-xs text-slate-400">Test visual reflexes.</p>
-            </a>
+            </Link>
         </div>
       </div>
 
-      {/* SEO Content Section - SIGNIFICANTLY EXPANDED FOR KEYWORD DENSITY */}
+      {/* SEO Content Section */}
       <section className="w-full max-w-5xl px-4 md:px-0 space-y-16 text-slate-300 leading-relaxed pb-16">
         
         {/* Intro */}
@@ -228,7 +240,7 @@ const WaveSimulator: React.FC = () => {
             </p>
         </div>
 
-        {/* Feature Grid with Keyword Integration */}
+        {/* Feature Grid */}
         <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
             <div className="bg-slate-900/40 p-8 rounded-2xl border border-white/5 hover:border-blue-500/30 transition-colors">
                 <h3 className="text-xl font-bold text-white mb-4 flex items-center gap-2">
@@ -259,12 +271,12 @@ const WaveSimulator: React.FC = () => {
                     <Layers className="text-yellow-400 w-6 h-6"/> Progressive Difficulty
                 </h3>
                 <p>
-                    From "Easy" wide gaps to "Extreme Demon" pixel-perfect corridors, our <strong>Geometry Dash Spam Test</strong> scales with you. Start slow to build muscle memory, then ramp up the speed to test your limits against the hardest <strong>Geometry Dash spam</strong> patterns known to the community.
+                    From "Easy" wide gaps to "Extreme Demon" pixel-perfect corridors, our <strong>Geometry Dash Spam Test</strong> scales with you. Start slow to build muscle memory, then ramp up the speed to test your limits against the hardest <strong>Geometry Dash Spam</strong> patterns known to the community.
                 </p>
             </div>
         </div>
 
-        {/* Deep Dive Content - High Keyword Density Area */}
+        {/* Deep Dive Content */}
         <div className="space-y-8">
             <h3 className="text-2xl font-display font-bold text-white border-b border-white/10 pb-4">
                 Why Consistency Matters in Geometry Dash Spam
@@ -279,7 +291,7 @@ const WaveSimulator: React.FC = () => {
             </div>
         </div>
 
-        {/* FAQ Section - Natural Keyword Integration */}
+        {/* FAQ Section */}
         <div className="space-y-8 border-t border-white/10 pt-8">
             <h3 className="text-2xl font-display font-bold text-white mb-6 flex items-center gap-2">
                 <HelpCircle className="w-6 h-6 text-slate-400"/> Geometry Dash Spam Test FAQ
