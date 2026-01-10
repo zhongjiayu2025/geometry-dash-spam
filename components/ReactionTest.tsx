@@ -1,5 +1,5 @@
 import React, { useState, useRef } from 'react';
-import { Timer, AlertCircle, Play } from 'lucide-react';
+import { Timer, AlertCircle, Play, Eye, Activity, MousePointer2, ArrowRight, Zap, Target, Keyboard } from 'lucide-react';
 
 type TestState = 'idle' | 'waiting' | 'ready' | 'result' | 'early';
 
@@ -41,7 +41,7 @@ const ReactionTest: React.FC = () => {
       <div 
         onMouseDown={handleClick}
         className={`
-          relative w-full h-[400px] rounded-2xl cursor-pointer transition-all duration-200 select-none flex flex-col items-center justify-center p-8 text-center shadow-2xl
+          relative w-full h-[400px] rounded-2xl cursor-pointer transition-all duration-200 select-none flex flex-col items-center justify-center p-8 text-center shadow-2xl mb-12
           ${state === 'idle' ? 'bg-slate-800 hover:bg-slate-700 border-4 border-slate-600' : ''}
           ${state === 'waiting' ? 'bg-red-600 border-4 border-red-800' : ''}
           ${state === 'ready' ? 'bg-green-500 border-4 border-green-700' : ''}
@@ -93,7 +93,8 @@ const ReactionTest: React.FC = () => {
         )}
       </div>
 
-      <div className="mt-8 grid grid-cols-1 md:grid-cols-3 gap-6 text-center">
+      {/* Benchmarks */}
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-6 text-center mb-16">
          <div className="p-4 rounded-lg bg-slate-900/50 border border-white/5">
              <div className="text-slate-500 text-xs uppercase mb-1">Average Human</div>
              <div className="text-white font-bold text-xl">250 ms</div>
@@ -107,6 +108,74 @@ const ReactionTest: React.FC = () => {
              <div className="text-slate-300 text-sm">Visual stimulus processing speed</div>
          </div>
       </div>
+
+      {/* SEO CONTENT SECTION */}
+      <section className="space-y-12 pb-12">
+          
+          <div className="bg-slate-900/40 border border-white/5 rounded-2xl p-8 md:p-12">
+             <h2 className="text-3xl font-display font-bold text-white mb-6 flex items-center gap-3">
+                 <Eye className="w-8 h-8 text-green-500"/> Sight Reading vs Muscle Memory
+             </h2>
+             <div className="prose prose-invert prose-lg max-w-none text-slate-300">
+                 <p>
+                     In Geometry Dash, there are two main skills: <strong>Memory</strong> (memorizing a level's layout) and <strong>Sight Reading</strong> (reacting to obstacles as they appear). A low reaction time is critical for Sight Reading, especially in fast-paced gamemodes like the Wave or Ship at 3x/4x speed.
+                 </p>
+                 <div className="grid grid-cols-1 md:grid-cols-2 gap-8 mt-6">
+                     <div>
+                         <h4 className="text-white font-bold mb-2">How Latency Affects Gameplay:</h4>
+                         <ul className="list-disc pl-5 space-y-2 text-sm">
+                             <li><strong>Input Lag:</strong> If your mouse or monitor adds 30ms of delay, your effective reaction time is slower.</li>
+                             <li><strong>Hardware:</strong> 144Hz monitors update the frame 2.4x faster than 60Hz monitors, giving you a visual advantage of ~9ms.</li>
+                         </ul>
+                     </div>
+                     <div>
+                         <h4 className="text-white font-bold mb-2">Improving Reaction Time:</h4>
+                         <p className="text-sm">
+                             While genetics play a role, staying hydrated, sleeping well, and "warming up" your eyes with tests like this can shave 10-20ms off your time before a serious gaming session.
+                         </p>
+                     </div>
+                 </div>
+             </div>
+          </div>
+
+          {/* Internal Linking / Related Tools */}
+          <div className="border-t border-white/10 pt-8">
+              <h3 className="text-xl font-bold text-white mb-6 uppercase tracking-widest flex items-center gap-2">
+                  <Activity className="w-5 h-5 text-blue-500"/> More Training Tools
+              </h3>
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+                  
+                  <a href="/" onClick={(e) => { e.preventDefault(); (window as any).history.pushState(null, '', '/'); window.dispatchEvent(new PopStateEvent('popstate')); window.scrollTo(0,0); }} className="group block bg-slate-900/40 border border-white/5 rounded-xl p-6 hover:border-blue-500/50 transition-all">
+                      <div className="flex justify-between items-start mb-4">
+                          <div className="p-3 bg-blue-900/20 rounded-lg text-blue-400"><Target className="w-6 h-6"/></div>
+                          <ArrowRight className="w-5 h-5 text-slate-600 group-hover:text-blue-400 transition-colors"/>
+                      </div>
+                      <h4 className="font-bold text-white mb-1 group-hover:text-blue-400 transition-colors">Wave Simulator</h4>
+                      <p className="text-xs text-slate-400">Apply your reactions in 2.2 physics.</p>
+                  </a>
+
+                  <a href="/cps-test" onClick={(e) => { e.preventDefault(); (window as any).history.pushState(null, '', '/cps-test'); window.dispatchEvent(new PopStateEvent('popstate')); window.scrollTo(0,0); }} className="group block bg-slate-900/40 border border-white/5 rounded-xl p-6 hover:border-green-500/50 transition-all">
+                      <div className="flex justify-between items-start mb-4">
+                          <div className="p-3 bg-green-900/20 rounded-lg text-green-400"><MousePointer2 className="w-6 h-6"/></div>
+                          <ArrowRight className="w-5 h-5 text-slate-600 group-hover:text-green-400 transition-colors"/>
+                      </div>
+                      <h4 className="font-bold text-white mb-1 group-hover:text-green-400 transition-colors">CPS Test</h4>
+                      <p className="text-xs text-slate-400">Test raw clicking speed.</p>
+                  </a>
+
+                  <a href="/spacebar-counter" onClick={(e) => { e.preventDefault(); (window as any).history.pushState(null, '', '/spacebar-counter'); window.dispatchEvent(new PopStateEvent('popstate')); window.scrollTo(0,0); }} className="group block bg-slate-900/40 border border-white/5 rounded-xl p-6 hover:border-purple-500/50 transition-all">
+                      <div className="flex justify-between items-start mb-4">
+                          <div className="p-3 bg-purple-900/20 rounded-lg text-purple-400"><Keyboard className="w-6 h-6"/></div>
+                          <ArrowRight className="w-5 h-5 text-slate-600 group-hover:text-purple-400 transition-colors"/>
+                      </div>
+                      <h4 className="font-bold text-white mb-1 group-hover:text-purple-400 transition-colors">Spacebar Latency</h4>
+                      <p className="text-xs text-slate-400">Check your keyboard responsiveness.</p>
+                  </a>
+                  
+              </div>
+          </div>
+      </section>
+
     </div>
   );
 };

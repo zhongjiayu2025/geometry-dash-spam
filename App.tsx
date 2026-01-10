@@ -8,11 +8,11 @@ import SpacebarCounter from './components/SpacebarCounter';
 import ReactionTest from './components/ReactionTest';
 import BlogList from './components/BlogList';
 import BlogPostReader from './components/BlogPost.tsx';
-import { AboutPage, ContactPage, PrivacyPage, TermsPage } from './components/InfoPages';
+import { AboutPage, ContactPage, PrivacyPage, TermsPage, SitemapPage } from './components/InfoPages';
 import { BLOG_POSTS, BlogPost } from './data/blogContent';
-import { Gamepad2, MousePointer2, Keyboard, Timer, Menu, X, Zap, BookOpen, ChevronDown, Activity, Fingerprint, Mouse } from 'lucide-react';
+import { Gamepad2, MousePointer2, Keyboard, Timer, Menu, X, Zap, BookOpen, ChevronDown, Activity, Fingerprint, Mouse, AlertOctagon, Map } from 'lucide-react';
 
-type View = 'game' | 'cps' | 'jitter' | 'butterfly' | 'rightClick' | 'spacebar' | 'reaction' | 'blog' | 'article' | 'about' | 'contact' | 'privacy' | 'terms';
+type View = 'game' | 'cps' | 'jitter' | 'butterfly' | 'rightClick' | 'spacebar' | 'reaction' | 'blog' | 'article' | 'about' | 'contact' | 'privacy' | 'terms' | 'sitemap' | '404';
 
 // --- SEO & ROUTING CONFIGURATION ---
 
@@ -20,6 +20,7 @@ interface SeoConfig {
     title: string;
     desc: string;
     schemaType?: string;
+    image?: string; // Optional custom OG image
 }
 
 // 1. Metadata & Schema Configuration
@@ -68,10 +69,12 @@ const VIEW_METADATA: Record<string, SeoConfig> = {
   contact: { title: "Contact Us | Feature Requests & Support", desc: "Get in touch with the GeometryDashSpam.cc team." },
   privacy: { title: "Privacy Policy", desc: "How we handle your data." },
   terms: { title: "Terms of Service", desc: "Usage agreements." },
+  sitemap: { title: "Sitemap | All Tools & Articles", desc: "Full list of Geometry Dash spam tools and guides." },
+  '404': { title: "404 Page Not Found", desc: "The page you are looking for does not exist." }
 };
 
 // 2. Path Mapping for Clean URLs (SEO Friendly)
-const PATH_MAP: Record<View, string> = {
+const PATH_MAP: Record<string, string> = {
     game: '/',
     cps: '/cps-test',
     jitter: '/jitter-click',
@@ -84,7 +87,8 @@ const PATH_MAP: Record<View, string> = {
     about: '/about',
     contact: '/contact',
     privacy: '/privacy',
-    terms: '/terms'
+    terms: '/terms',
+    sitemap: '/sitemap'
 };
 
 // Helper to find View from current Path
@@ -94,21 +98,39 @@ const getViewFromPath = (path: string): { view: View; slug?: string } => {
     // Handle Blog Articles (/blog/some-slug)
     if (path.startsWith('/blog/') && path.length > 6) {
         const slug = path.replace('/blog/', '');
-        return { view: 'article', slug };
+        // Validate slug exists to avoid soft 404s on blog
+        const exists = BLOG_POSTS.some(p => p.slug === slug);
+        if (exists) return { view: 'article', slug };
+        return { view: '404' };
     }
 
     // Exact matches
     const entry = Object.entries(PATH_MAP).find(([key, val]) => val === path);
     if (entry) return { view: entry[0] as View };
 
-    // Fallback
-    return { view: 'game' };
+    // Fallback to 404 instead of Home to prevent Duplicate Content issues
+    return { view: '404' };
+};
+
+// --- HELPER: Meta Tag Injection ---
+const updateMetaTag = (selector: string, content: string, attrName: string = 'content') => {
+    let element = document.querySelector(selector);
+    if (!element) {
+        element = document.createElement('meta');
+        // Parse selector to create element attributes if needed
+        if (selector.includes('name="')) element.setAttribute('name', selector.split('name="')[1].split('"')[0]);
+        if (selector.includes('property="')) element.setAttribute('property', selector.split('property="')[1].split('"')[0]);
+        document.head.appendChild(element);
+    }
+    element.setAttribute(attrName, content);
 };
 
 // --- SCHEMA GENERATOR ---
 const generateSchema = (view: View, post: BlogPost | null) => {
     const baseUrl = 'https://geometrydashspam.cc';
-    const currentUrl = `${baseUrl}${PATH_MAP[view]}`;
+    // Handle 404 or unknown views safely
+    const path = PATH_MAP[view] || '/';
+    const currentUrl = `${baseUrl}${path}`;
     
     // Base Breadcrumbs
     const breadcrumbList = {
@@ -153,18 +175,12 @@ const generateSchema = (view: View, post: BlogPost | null) => {
                 "@type": "BlogPosting",
                 "headline": post.title,
                 "image": post.coverImage,
-                "datePublished": new Date(post.date).toISOString().split('T')[0], // Approximation
-                "author": {
-                    "@type": "Organization",
-                    "name": "GD Spam Team"
-                },
+                "datePublished": new Date(post.date).toISOString().split('T')[0], 
+                "author": { "@type": "Organization", "name": "GD Spam Team" },
                 "publisher": {
                     "@type": "Organization",
                     "name": "Geometry Dash Spam Test",
-                    "logo": {
-                        "@type": "ImageObject",
-                        "url": `${baseUrl}/icon.png` 
-                    }
+                    "logo": { "@type": "ImageObject", "url": `${baseUrl}/icon.png` }
                 },
                 "description": post.excerpt
             }
@@ -191,6 +207,21 @@ const generateSchema = (view: View, post: BlogPost | null) => {
     return [breadcrumbList];
 };
 
+const NotFoundPage = ({ onHome }: { onHome: () => void }) => (
+    <div className="flex flex-col items-center justify-center min-h-[50vh] text-center px-4 animate-in fade-in zoom-in duration-300">
+        <AlertOctagon className="w-24 h-24 text-red-500 mb-6" />
+        <h1 className="text-6xl font-display font-black text-white mb-4">404</h1>
+        <p className="text-xl text-slate-400 mb-8 max-w-md">
+            The level you are looking for has been deleted from the servers.
+        </p>
+        <button 
+            onClick={onHome}
+            className="px-8 py-3 bg-blue-600 hover:bg-blue-500 text-white font-bold rounded-full transition-all"
+        >
+            Return to Menu
+        </button>
+    </div>
+);
 
 export default function App() {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
@@ -213,39 +244,66 @@ export default function App() {
     if (post) setCurrentPost(post);
     setMobileMenuOpen(false);
     
-    let newPath = PATH_MAP[view];
+    let newPath = PATH_MAP[view as string]; // Cast to string to access generic record
     if (view === 'article' && post) {
         newPath = `/blog/${post.slug}`;
     }
+    if (view === 'game') newPath = '/';
 
-    window.history.pushState({ view, slug: post?.slug }, '', newPath);
-    window.scrollTo(0, 0);
+    if (newPath) {
+        window.history.pushState({ view, slug: post?.slug }, '', newPath);
+        window.scrollTo(0, 0);
+    }
   };
 
   // SEO & Schema Injection Effect
   useEffect(() => {
-    // 1. Update Title & Meta Desc
+    let title = "Page Not Found";
+    let desc = "404 Error";
+    let image = "https://images.unsplash.com/photo-1550745165-9bc0b252726f?q=80&w=2070&auto=format&fit=crop"; 
+    const baseUrl = 'https://geometrydashspam.cc';
+    const currentUrl = `${baseUrl}${window.location.pathname}`;
+
+    // 1. Determine Metadata
     let meta = VIEW_METADATA[currentView];
     if (currentView === 'article' && currentPost) {
-        document.title = `${currentPost.title} | GD Spam Blog`;
-        const metaDescTag = document.querySelector('meta[name="description"]');
-        if (metaDescTag) metaDescTag.setAttribute('content', currentPost.excerpt);
+        title = `${currentPost.title} | GD Spam Blog`;
+        desc = currentPost.excerpt;
+        image = currentPost.coverImage;
     } else if (meta) {
-        document.title = meta.title;
-        const metaDescTag = document.querySelector('meta[name="description"]');
-        if (metaDescTag) metaDescTag.setAttribute('content', meta.desc);
+        title = meta.title;
+        desc = meta.desc;
+        if (meta.image) image = meta.image;
     }
 
-    // 2. Update Canonical Tag
+    // 2. Update Document Title
+    document.title = title;
+
+    // 3. Update Standard Meta Tags
+    updateMetaTag('meta[name="description"]', desc);
+
+    // 4. Update Open Graph (Facebook/Discord)
+    updateMetaTag('meta[property="og:title"]', title);
+    updateMetaTag('meta[property="og:description"]', desc);
+    updateMetaTag('meta[property="og:image"]', image);
+    updateMetaTag('meta[property="og:url"]', currentUrl);
+    updateMetaTag('meta[property="og:type"]', currentView === 'article' ? 'article' : 'website');
+
+    // 5. Update Twitter Cards
+    updateMetaTag('meta[property="twitter:title"]', title);
+    updateMetaTag('meta[property="twitter:description"]', desc);
+    updateMetaTag('meta[property="twitter:image"]', image);
+    
+    // 6. Update Canonical Tag
     let linkCanonical = document.querySelector('link[rel="canonical"]');
     if (!linkCanonical) {
         linkCanonical = document.createElement('link');
         linkCanonical.setAttribute('rel', 'canonical');
         document.head.appendChild(linkCanonical);
     }
-    linkCanonical.setAttribute('href', window.location.href);
+    linkCanonical.setAttribute('href', currentUrl);
 
-    // 3. Inject Dynamic JSON-LD Schema
+    // 7. Inject Dynamic JSON-LD Schema
     const schemas = generateSchema(currentView, currentPost);
     
     // Remove old schema scripts to prevent duplicates
@@ -291,13 +349,15 @@ export default function App() {
       case 'contact': return <ContactPage />;
       case 'privacy': return <PrivacyPage />;
       case 'terms': return <TermsPage />;
-      default: return <WaveSimulator />;
+      case 'sitemap': return <SitemapPage onNavigate={(view, post) => navigate(view, post)} />;
+      case '404': return <NotFoundPage onHome={() => navigate('game')} />;
+      default: return <NotFoundPage onHome={() => navigate('game')} />;
     }
   };
 
   const NavItem = ({ view, icon: Icon, label }: { view: View; icon: any; label: string }) => {
     const isActive = (currentView === view || (currentView === 'article' && view === 'blog'));
-    const href = PATH_MAP[view];
+    const href = PATH_MAP[view as string] || '#';
 
     return (
       <a
@@ -334,7 +394,8 @@ export default function App() {
           ${currentView === 'spacebar' ? 'bg-purple-600' : ''}
           ${currentView === 'reaction' ? 'bg-green-600' : ''}
           ${['blog','article','about','contact'].includes(currentView) ? 'bg-indigo-600' : ''}
-          ${['privacy','terms'].includes(currentView) ? 'bg-slate-600' : ''}
+          ${['privacy','terms', 'sitemap'].includes(currentView) ? 'bg-slate-600' : ''}
+          ${currentView === '404' ? 'bg-red-900/40' : ''}
         `}></div>
         <div className="absolute bottom-0 left-0 right-0 h-32 bg-gradient-to-t from-[#020617] to-transparent"></div>
       </div>
@@ -429,6 +490,7 @@ export default function App() {
             <div className="h-px bg-white/10 my-2"></div>
             <button onClick={() => { navigate('about'); }} className="px-4 py-2 text-slate-400 text-left hover:text-white">About Us</button>
             <button onClick={() => { navigate('contact'); }} className="px-4 py-2 text-slate-400 text-left hover:text-white">Contact</button>
+            <button onClick={() => { navigate('sitemap'); }} className="px-4 py-2 text-slate-400 text-left hover:text-white">Sitemap</button>
           </div>
         )}
       </header>
@@ -446,6 +508,7 @@ export default function App() {
                 {currentView === 'spacebar' && "SPACEBAR COUNTER"}
                 {currentView === 'reaction' && "REACTION TEST"}
                 {currentView === 'blog' && "LATEST INSIGHTS"}
+                {currentView === '404' && "PAGE NOT FOUND"}
              </h1>
              <p className="text-slate-500 max-w-2xl mx-auto text-sm md:text-base">
                 {currentView === 'game' && "Master the wave mechanic. Improve consistency. Survive the spam."}
@@ -453,6 +516,7 @@ export default function App() {
                 {currentView === 'spacebar' && "Test your keyboard latency and spamming capability."}
                 {currentView === 'reaction' && "Test your visual reflex speed. Wait for green, then click."}
                 {currentView === 'blog' && "Expert guides, hardware reviews, and strategy for Geometry Dash players."}
+                {currentView === '404' && "The requested resource could not be found."}
              </p>
           </div>
         )}
@@ -479,8 +543,9 @@ export default function App() {
                <div className="flex flex-wrap justify-center gap-6 text-sm text-slate-400 font-medium">
                   <a href="/about" onClick={(e) => { e.preventDefault(); navigate('about'); }} className="hover:text-white transition-colors">About</a>
                   <a href="/contact" onClick={(e) => { e.preventDefault(); navigate('contact'); }} className="hover:text-white transition-colors">Contact</a>
-                  <a href="/privacy" onClick={(e) => { e.preventDefault(); navigate('privacy'); }} className="hover:text-white transition-colors">Privacy Policy</a>
-                  <a href="/terms" onClick={(e) => { e.preventDefault(); navigate('terms'); }} className="hover:text-white transition-colors">Terms of Service</a>
+                  <a href="/privacy" onClick={(e) => { e.preventDefault(); navigate('privacy'); }} className="hover:text-white transition-colors">Privacy</a>
+                  <a href="/terms" onClick={(e) => { e.preventDefault(); navigate('terms'); }} className="hover:text-white transition-colors">Terms</a>
+                  <a href="/sitemap" onClick={(e) => { e.preventDefault(); navigate('sitemap'); }} className="hover:text-white transition-colors">Sitemap</a>
                </div>
                <p className="text-slate-700 text-[10px] font-mono text-center md:text-right">
                   &copy; 2026 GEOMETRYDASHSPAM.CC<br/>

@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useCallback, useRef } from 'react';
-import { Keyboard, RotateCcw, Zap } from 'lucide-react';
+import { Keyboard, RotateCcw, Zap, Target, ArrowRight, MousePointerClick, Activity } from 'lucide-react';
 
 const SpacebarCounter: React.FC = () => {
   const [active, setActive] = useState(false);
@@ -130,7 +130,7 @@ const SpacebarCounter: React.FC = () => {
       </div>
       
       {/* Stats Grid */}
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-16">
           <div className="bg-slate-900/40 p-6 rounded-xl border border-white/5 flex flex-col items-center">
              <Keyboard className="w-8 h-8 text-purple-500 mb-2" />
              <span className="text-slate-400 text-xs uppercase">Key</span>
@@ -147,6 +147,73 @@ const SpacebarCounter: React.FC = () => {
              <span className="text-white font-bold">MANUAL</span>
           </div>
       </div>
+
+      {/* SEO CONTENT SECTION */}
+      <section className="space-y-12 pb-12">
+          
+          <div className="bg-slate-900/40 border border-white/5 rounded-2xl p-8 md:p-12">
+             <h2 className="text-3xl font-display font-bold text-white mb-6 flex items-center gap-3">
+                 <Keyboard className="w-8 h-8 text-purple-500"/> Why is the Spacebar King in Geometry Dash?
+             </h2>
+             <div className="prose prose-invert prose-lg max-w-none text-slate-300">
+                 <p>
+                     While the mouse allows for micro-adjustments in ship flying, the <strong>spacebar</strong> is often preferred for "Endurance Spam" sections in Geometry Dash. This is because the thumb is the strongest digit on the human hand, capable of sustaining repetitive motion longer than the index finger without cramping.
+                 </p>
+                 <div className="grid grid-cols-1 md:grid-cols-2 gap-8 mt-6">
+                     <div>
+                         <h4 className="text-white font-bold mb-2">Advantages of Spacebar Spam:</h4>
+                         <ul className="list-disc pl-5 space-y-2 text-sm">
+                             <li><strong>Higher Stamina:</strong> The thumb has more muscle mass.</li>
+                             <li><strong>Mechanical Switches:</strong> Keyboards often have faster actuation points (e.g., Cherry MX Silver) compared to standard mouse switches.</li>
+                             <li><strong>Stability:</strong> Pressing a keyboard key doesn't move your crosshair/aim like clicking a mouse might.</li>
+                         </ul>
+                     </div>
+                     <div>
+                         <h4 className="text-white font-bold mb-2">When to use it:</h4>
+                         <p className="text-sm">
+                             Use the spacebar for long, straight wave corridors or UFO sections where rhythm is key. Avoid it for rapid direction changes where the travel distance of the key (3-4mm) might be too slow compared to a mouse click (0.5mm).
+                         </p>
+                     </div>
+                 </div>
+             </div>
+          </div>
+
+          {/* Internal Linking / Related Tools */}
+          <div className="border-t border-white/10 pt-8">
+              <h3 className="text-xl font-bold text-white mb-6 uppercase tracking-widest flex items-center gap-2">
+                  <Activity className="w-5 h-5 text-blue-500"/> Improve Your Mechanics
+              </h3>
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+                  <a href="#" onClick={(e) => { e.preventDefault(); (window as any).history.pushState(null, '', '/cps-test'); window.dispatchEvent(new PopStateEvent('popstate')); window.scrollTo(0,0); }} className="group block bg-slate-900/40 border border-white/5 rounded-xl p-6 hover:border-blue-500/50 transition-all">
+                      <div className="flex justify-between items-start mb-4">
+                          <div className="p-3 bg-blue-900/20 rounded-lg text-blue-400"><MousePointerClick className="w-6 h-6"/></div>
+                          <ArrowRight className="w-5 h-5 text-slate-600 group-hover:text-blue-400 transition-colors"/>
+                      </div>
+                      <h4 className="font-bold text-white mb-1 group-hover:text-blue-400 transition-colors">Mouse CPS Test</h4>
+                      <p className="text-xs text-slate-400">Compare your thumb speed to your index finger speed.</p>
+                  </a>
+
+                  <a href="#" onClick={(e) => { e.preventDefault(); (window as any).history.pushState(null, '', '/'); window.dispatchEvent(new PopStateEvent('popstate')); window.scrollTo(0,0); }} className="group block bg-slate-900/40 border border-white/5 rounded-xl p-6 hover:border-green-500/50 transition-all">
+                      <div className="flex justify-between items-start mb-4">
+                          <div className="p-3 bg-green-900/20 rounded-lg text-green-400"><Target className="w-6 h-6"/></div>
+                          <ArrowRight className="w-5 h-5 text-slate-600 group-hover:text-green-400 transition-colors"/>
+                      </div>
+                      <h4 className="font-bold text-white mb-1 group-hover:text-green-400 transition-colors">Wave Simulator</h4>
+                      <p className="text-xs text-slate-400">Put your spacebar spam to the test in a real scenario.</p>
+                  </a>
+
+                   <a href="#" onClick={(e) => { e.preventDefault(); (window as any).history.pushState(null, '', '/reaction-test'); window.dispatchEvent(new PopStateEvent('popstate')); window.scrollTo(0,0); }} className="group block bg-slate-900/40 border border-white/5 rounded-xl p-6 hover:border-yellow-500/50 transition-all">
+                      <div className="flex justify-between items-start mb-4">
+                          <div className="p-3 bg-yellow-900/20 rounded-lg text-yellow-400"><Zap className="w-6 h-6"/></div>
+                          <ArrowRight className="w-5 h-5 text-slate-600 group-hover:text-yellow-400 transition-colors"/>
+                      </div>
+                      <h4 className="font-bold text-white mb-1 group-hover:text-yellow-400 transition-colors">Reaction Time</h4>
+                      <p className="text-xs text-slate-400">Is your keyboard adding latency? Check your input delay.</p>
+                  </a>
+              </div>
+          </div>
+      </section>
+
     </div>
   );
 };
