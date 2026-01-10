@@ -216,7 +216,7 @@ const generateSchema = (view: View, post: BlogPost | null) => {
             "datePublished": new Date(post.date).toISOString().split('T')[0], 
             "dateModified": new Date(post.date).toISOString().split('T')[0], // Good for Google News
             "author": { "@type": "Organization", "name": "GD Spam Team", "url": baseUrl },
-            "publisher": { "@type": "Organization", "name": "Geometry Dash Spam Test", "logo": { "@type": "ImageObject", "url": `${baseUrl}/icon.png` } },
+            "publisher": { "@type": "Organization", "name": "Geometry Dash Spam Test", "logo": { "@type": "ImageObject", "url": `${baseUrl}/logo.svg` } },
             "description": post.excerpt,
             "mainEntityOfPage": { "@type": "WebPage", "@id": currentUrl }
         });
@@ -447,9 +447,12 @@ export default function App() {
             className="flex items-center gap-3 cursor-pointer group"
             onClick={(e) => { e.preventDefault(); navigate('game'); }}
           >
-            <div className="w-8 h-8 md:w-10 md:h-10 rounded-lg bg-gradient-to-br from-blue-600 to-indigo-600 flex items-center justify-center shadow-lg shadow-blue-900/50 group-hover:scale-105 transition-transform">
-              <Zap className="w-5 h-5 md:w-6 md:h-6 text-white" />
-            </div>
+            {/* UNIFIED LOGO SVG */}
+            <img 
+              src="/logo.svg" 
+              alt="Geometry Dash Spam Logo" 
+              className="w-8 h-8 md:w-10 md:h-10 rounded-xl shadow-lg shadow-blue-500/20 group-hover:scale-110 transition-transform duration-300" 
+            />
             <div>
               <div className="font-display font-bold text-lg md:text-xl text-white tracking-tight leading-none uppercase">
                 Geometry Dash Spam
@@ -550,7 +553,8 @@ export default function App() {
           <div className="flex flex-col md:flex-row items-center justify-between gap-6">
              <div className="flex flex-col gap-2">
                <a href="/" className="flex items-center gap-3 opacity-80 hover:opacity-100 transition-opacity cursor-pointer" onClick={(e) => { e.preventDefault(); navigate('game'); }}>
-                  <Zap className="w-5 h-5 text-blue-500" />
+                  {/* UNIFIED LOGO SVG */}
+                  <img src="/logo.svg" alt="Geometry Dash Spam Logo" className="w-6 h-6 rounded-md" />
                   <span className="font-display font-bold text-slate-300">GEOMETRY DASH SPAM</span>
                </a>
                <p className="text-slate-600 text-xs font-mono max-w-xs">
