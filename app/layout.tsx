@@ -9,15 +9,16 @@ const inter = Inter({ subsets: ["latin"], variable: "--font-inter" });
 const orbitron = Orbitron({ subsets: ["latin"], variable: "--font-orbitron" });
 
 export const metadata: Metadata = {
+  // CRITICAL FOR SEO: Sets the base URL for all relative URLs (canonical, og:image, etc.)
   metadataBase: new URL("https://geometrydashspam.cc"),
   title: {
     default: "Geometry Dash Spam Test | Ultimate Wave Simulator",
     template: "%s | Geometry Dash Spam"
   },
   description: "Master the wave with the ultimate Geometry Dash Spam Test. Free online simulator to train spam consistency, improve CPS, and beat Extreme Demons.",
-  keywords: ["geometry dash spam", "geometry dash spam test", "wave simulator", "gd spam", "cps test", "jitter click", "butterfly click"],
+  keywords: ["geometry dash spam", "geometry dash spam test", "wave simulator", "gd spam", "cps test", "jitter click", "butterfly click", "click speed test"],
   alternates: {
-    canonical: './',
+    canonical: './', // Now resolves to absolute URL automatically thanks to metadataBase
   },
   icons: {
     icon: '/logo.svg',
@@ -38,6 +39,7 @@ export const metadata: Metadata = {
     title: "Geometry Dash Spam Test",
     description: "Test your clicking speed and precision.",
     images: [{ url: "https://geometrydashspam.cc/logo.svg" }],
+    locale: 'en_US',
   },
   twitter: {
     card: "summary_large_image",
@@ -52,9 +54,31 @@ export default function RootLayout({
 }: Readonly<{
   children: React.ReactNode;
 }>) {
+  // Global Schema for Organization
+  const organizationSchema = {
+    "@context": "https://schema.org",
+    "@type": "Organization",
+    "name": "Geometry Dash Spam Test",
+    "url": "https://geometrydashspam.cc",
+    "logo": "https://geometrydashspam.cc/logo.svg",
+    "sameAs": [
+      "https://twitter.com/geometrydash", // Example social link
+    ],
+    "contactPoint": {
+      "@type": "ContactPoint",
+      "email": "info@geometrydashspam.cc",
+      "contactType": "customer support"
+    }
+  };
+
   return (
     <html lang="en">
       <body className={`${inter.variable} ${orbitron.variable} min-h-screen bg-[#020617] text-slate-200 font-sans selection:bg-blue-500 selection:text-white flex flex-col`}>
+        <script
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{ __html: JSON.stringify(organizationSchema) }}
+        />
+        
         {/* Background Effects */}
         <div className="fixed inset-0 pointer-events-none z-0">
           <div className="absolute inset-0 bg-grid opacity-20"></div>
