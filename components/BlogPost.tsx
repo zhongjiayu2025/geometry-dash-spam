@@ -1,6 +1,6 @@
 import React, { useEffect } from 'react';
 import { BlogPost } from '../data/blogContent';
-import { ArrowLeft, Calendar, Clock, Share2, Facebook, Twitter, Linkedin, Zap, MousePointer2 } from 'lucide-react';
+import { ArrowLeft, Calendar, Clock, Share2, Facebook, Twitter, Linkedin, Zap, MousePointer2, List } from 'lucide-react';
 
 // Need to match the View type from App.tsx partially or just use string
 type View = 'game' | 'cps' | 'jitter' | 'butterfly' | 'rightClick' | 'spacebar' | 'reaction' | 'blog' | 'article' | 'about' | 'contact' | 'privacy' | 'terms';
@@ -40,6 +40,13 @@ const BlogPostReader: React.FC<BlogPostProps> = ({ post, onBack, onNavigate }) =
   const copyLink = () => {
       navigator.clipboard.writeText(window.location.href);
       // Optional: Add a toast notification here
+  };
+
+  const scrollToSection = (id: string) => {
+    const element = document.getElementById(id);
+    if (element) {
+        element.scrollIntoView({ behavior: 'smooth' });
+    }
   };
 
   return (
@@ -93,12 +100,76 @@ const BlogPostReader: React.FC<BlogPostProps> = ({ post, onBack, onNavigate }) =
          <div className="absolute inset-0 bg-gradient-to-t from-[#020617] via-transparent to-transparent opacity-50"></div>
       </div>
 
-      {/* Content Body */}
-      <div className="prose prose-lg prose-invert max-w-none prose-headings:font-display prose-headings:font-bold prose-a:text-blue-400 prose-a:no-underline hover:prose-a:underline prose-img:rounded-xl">
-        {post.content}
+      <div className="flex flex-col lg:flex-row gap-12 relative">
+          
+          {/* Main Content */}
+          <div className="flex-1 min-w-0">
+             {/* TABLE OF CONTENTS (Mobile/Inline) */}
+             {post.toc && post.toc.length > 0 && (
+                <div className="lg:hidden mb-8 bg-slate-900/50 border border-white/10 rounded-xl p-6">
+                    <h3 className="text-sm font-bold text-slate-400 uppercase tracking-widest mb-4 flex items-center gap-2">
+                        <List className="w-4 h-4" /> Table of Contents
+                    </h3>
+                    <ul className="space-y-3">
+                        {post.toc.map(item => (
+                            <li key={item.id}>
+                                <button 
+                                    onClick={() => scrollToSection(item.id)} 
+                                    className="text-slate-300 hover:text-blue-400 text-sm text-left transition-colors"
+                                >
+                                    {item.title}
+                                </button>
+                            </li>
+                        ))}
+                    </ul>
+                </div>
+             )}
+
+             <div className="prose prose-lg prose-invert max-w-none prose-headings:font-display prose-headings:font-bold prose-a:text-blue-400 prose-a:no-underline hover:prose-a:underline prose-img:rounded-xl prose-headings:scroll-mt-24">
+                {post.content}
+             </div>
+          </div>
+
+          {/* Sidebar / Desktop TOC */}
+          <aside className="hidden lg:block w-72 flex-shrink-0">
+             <div className="sticky top-32 space-y-8">
+                 {post.toc && post.toc.length > 0 && (
+                    <div className="bg-slate-900/30 border border-white/5 rounded-xl p-6 backdrop-blur-sm">
+                        <h3 className="text-xs font-bold text-slate-500 uppercase tracking-widest mb-4 flex items-center gap-2">
+                            <List className="w-4 h-4" /> In this Article
+                        </h3>
+                        <ul className="space-y-3 border-l border-white/10 ml-1">
+                            {post.toc.map(item => (
+                                <li key={item.id} className="-ml-px">
+                                    <button 
+                                        onClick={() => scrollToSection(item.id)} 
+                                        className="pl-4 text-slate-400 hover:text-blue-400 hover:border-l-blue-400 border-l border-transparent text-sm text-left transition-all py-1 block w-full"
+                                    >
+                                        {item.title}
+                                    </button>
+                                </li>
+                            ))}
+                        </ul>
+                    </div>
+                 )}
+                 
+                 {/* Mini CTA in Sidebar */}
+                 <div className="bg-gradient-to-b from-blue-900/20 to-slate-900/20 border border-blue-500/20 rounded-xl p-6 text-center">
+                    <Zap className="w-8 h-8 text-blue-400 mx-auto mb-3" />
+                    <h4 className="font-bold text-white mb-2 text-sm">Train Your Wave</h4>
+                    <p className="text-xs text-slate-400 mb-4">Put this theory into practice now.</p>
+                    <button 
+                        onClick={() => onNavigate('game')}
+                        className="w-full py-2 bg-blue-600 hover:bg-blue-500 text-white text-xs font-bold rounded uppercase tracking-wider transition-colors"
+                    >
+                        Start Simulator
+                    </button>
+                 </div>
+             </div>
+          </aside>
       </div>
 
-      {/* ACTION CTA CARD (New Addition for Conversion) */}
+      {/* ACTION CTA CARD */}
       <div className="mt-16 bg-gradient-to-r from-blue-900/40 to-indigo-900/40 border border-blue-500/30 rounded-2xl p-8 md:p-10 flex flex-col md:flex-row items-center gap-8 relative overflow-hidden group">
          <div className="absolute inset-0 bg-blue-500/5 group-hover:bg-blue-500/10 transition-colors"></div>
          <div className="absolute top-0 right-0 w-64 h-64 bg-blue-500/20 blur-[100px] rounded-full pointer-events-none"></div>

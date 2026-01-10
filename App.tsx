@@ -185,17 +185,19 @@ const generateSchema = (view: View, post: BlogPost | null) => {
         });
     }
 
-    // Software Application Schema with Aggregate Rating
-    // This allows for "Star Ratings" to appear in Google Search Results
+    // Video Game Schema Upgrade (More Specific than SoftwareApplication)
     if (view === 'game' || ['cps', 'jitter', 'butterfly', 'spacebar', 'reaction'].includes(view)) {
         schemaData.push({
             "@context": "https://schema.org",
-            "@type": "SoftwareApplication", // Changed from VideoGame/WebApplication to unify ranking power
+            "@type": "VideoGame",
             "name": meta?.title || "Geometry Dash Spam Test",
             "url": currentUrl,
             "description": meta?.desc,
+            "genre": ["Rhythm", "Action", "Arcade"],
+            "gamePlatform": ["Web Browser", "PC", "Mobile"],
+            "playMode": "SinglePlayer",
             "applicationCategory": "GameApplication",
-            "operatingSystem": "Web Browser",
+            "operatingSystem": "Any",
             "aggregateRating": {
                 "@type": "AggregateRating",
                 "ratingValue": "4.9",
@@ -212,9 +214,11 @@ const generateSchema = (view: View, post: BlogPost | null) => {
             "headline": post.title,
             "image": post.coverImage,
             "datePublished": new Date(post.date).toISOString().split('T')[0], 
-            "author": { "@type": "Organization", "name": "GD Spam Team" },
+            "dateModified": new Date(post.date).toISOString().split('T')[0], // Good for Google News
+            "author": { "@type": "Organization", "name": "GD Spam Team", "url": baseUrl },
             "publisher": { "@type": "Organization", "name": "Geometry Dash Spam Test", "logo": { "@type": "ImageObject", "url": `${baseUrl}/icon.png` } },
-            "description": post.excerpt
+            "description": post.excerpt,
+            "mainEntityOfPage": { "@type": "WebPage", "@id": currentUrl }
         });
     }
 
@@ -295,6 +299,7 @@ export default function App() {
     }
   };
 
+  // SEO: Soft 404 Handling & Meta Injection
   useEffect(() => {
     let title = "Page Not Found";
     let desc = "404 Error";
@@ -302,6 +307,14 @@ export default function App() {
     const baseUrl = 'https://geometrydashspam.cc';
     const currentUrl = `${baseUrl}${window.location.pathname}`;
     let meta = VIEW_METADATA[currentView];
+
+    // SOFT 404 HANDLING for Single Page Apps
+    if (currentView === '404') {
+        updateMetaTag('meta[name="robots"]', 'noindex, nofollow');
+    } else {
+        updateMetaTag('meta[name="robots"]', 'index, follow');
+    }
+
     if (currentView === 'article' && currentPost) {
         title = `${currentPost.title} | GD Spam Blog`;
         desc = currentPost.excerpt;

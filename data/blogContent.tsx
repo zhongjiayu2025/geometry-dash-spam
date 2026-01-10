@@ -10,6 +10,7 @@ export interface BlogPost {
   coverImage: string;
   content: React.ReactNode;
   tags: string[];
+  toc?: { id: string; title: string }[]; // NEW: For Table of Contents
 }
 
 export const BLOG_POSTS: BlogPost[] = [
@@ -22,13 +23,23 @@ export const BLOG_POSTS: BlogPost[] = [
     readTime: '15 min read',
     coverImage: 'https://images.unsplash.com/photo-1550745165-9bc0b252726f?q=80&w=2070&auto=format&fit=crop', // Neon Cyberpunk generic
     tags: ['Guide', 'Mechanics', 'Wave'],
+    toc: [
+        { id: 'intro', title: '1. Introduction to Geometry Dash Spam' },
+        { id: 'history', title: '2. History of Spam in GD' },
+        { id: 'types', title: '3. Types of Spam' },
+        { id: 'challenge', title: '4. Why is Spam so Challenging?' },
+        { id: 'levels', title: '5. Famous Spam Levels (2026 Edition)' },
+        { id: 'practice', title: '6. How to Practice' },
+        { id: 'mistakes', title: '7. Common Mistakes' },
+        { id: 'faq', title: '8. FAQ' }
+    ],
     content: (
       <>
         <p className="lead text-xl text-slate-300 mb-6">
           Geometry Dash has evolved significantly since its release. By 2026, one mechanic stands out as the ultimate test of a player's physical limits: <strong>Spam</strong>. Whether you are tackling an Extreme Demon or just trying to survive a community challenge, understanding <em>Geometry Dash spam</em> is crucial for success.
         </p>
 
-        <h2 className="text-3xl font-display font-bold text-white mt-12 mb-6">1. Introduction to Geometry Dash Spam</h2>
+        <h2 id="intro" className="text-3xl font-display font-bold text-white mt-12 mb-6 scroll-mt-24">1. Introduction to Geometry Dash Spam</h2>
         <p className="mb-4 text-slate-300">
           In the context of Geometry Dash, "spam" refers to the act of clicking, tapping, or pressing a key rapidly and consistently to navigate through a level. Unlike timing-based jumps where precision is about <em>when</em> you click, spam sections require raw speed (CPS - Clicks Per Second) combined with consistency.
         </p>
@@ -36,7 +47,7 @@ export const BLOG_POSTS: BlogPost[] = [
           The most notorious form is <strong>Wave Spam</strong>, where the player must rapid-fire click to keep the wave moving in a tight corridor, often looking like a straight line. This is exactly what our <a href="https://geometrydashspam.cc/" className="text-blue-400 hover:underline font-bold">Geometry Dash Spam Simulator</a> is designed to train.
         </p>
 
-        <h2 className="text-3xl font-display font-bold text-white mt-12 mb-6">2. History of Spam in GD</h2>
+        <h2 id="history" className="text-3xl font-display font-bold text-white mt-12 mb-6 scroll-mt-24">2. History of Spam in GD</h2>
         <p className="mb-4 text-slate-300">
           Spam wasn't always a core mechanic. In the early updates (1.0 - 1.5), levels were mostly about memory and platforming.
         </p>
@@ -46,7 +57,7 @@ export const BLOG_POSTS: BlogPost[] = [
           <li><strong>2026 Standards:</strong> Today, "Spam Challenges" are a genre of their own. Players compete not just to finish levels, but to see who can maintain the tightest wave control for the longest duration.</li>
         </ul>
 
-        <h2 className="text-3xl font-display font-bold text-white mt-12 mb-6">3. Types of Spam</h2>
+        <h2 id="types" className="text-3xl font-display font-bold text-white mt-12 mb-6 scroll-mt-24">3. Types of Spam</h2>
         
         <h3 className="text-2xl font-bold text-blue-400 mt-8 mb-4">The Wave Spam</h3>
         <p className="mb-4 text-slate-300">
@@ -64,7 +75,7 @@ export const BLOG_POSTS: BlogPost[] = [
           <em>Reference:</em> See the <a href="https://geometry-dash.fandom.com/wiki/UFO" target="_blank" rel="noopener noreferrer" className="text-blue-400 hover:underline">Geometry Dash Wiki: UFO</a> for physics details.
         </p>
 
-        <h2 className="text-3xl font-display font-bold text-white mt-12 mb-6">4. Why is Spam so Challenging?</h2>
+        <h2 id="challenge" className="text-3xl font-display font-bold text-white mt-12 mb-6 scroll-mt-24">4. Why is Spam so Challenging?</h2>
         <p className="mb-4 text-slate-300">
           It taxes your physical endurance. Most players can click 10 CPS for 1 second. But can you do it for 15 seconds straight without your finger locking up?
         </p>
@@ -75,7 +86,7 @@ export const BLOG_POSTS: BlogPost[] = [
             </p>
         </div>
 
-        <h2 className="text-3xl font-display font-bold text-white mt-12 mb-6">5. Famous Spam Levels (2026 Edition)</h2>
+        <h2 id="levels" className="text-3xl font-display font-bold text-white mt-12 mb-6 scroll-mt-24">5. Famous Spam Levels (2026 Edition)</h2>
         <p className="mb-4 text-slate-300">
             If you want to test your mettle, try these levels:
         </p>
@@ -85,7 +96,7 @@ export const BLOG_POSTS: BlogPost[] = [
             <li><strong>Sakupen Circles:</strong> The definition of tight wave spam.</li>
         </ol>
 
-        <h2 className="text-3xl font-display font-bold text-white mt-12 mb-6">6. How to Practice</h2>
+        <h2 id="practice" className="text-3xl font-display font-bold text-white mt-12 mb-6 scroll-mt-24">6. How to Practice</h2>
         <p className="mb-4 text-slate-300">
             Don't just jump into demons. Practice scientifically.
         </p>
@@ -95,14 +106,14 @@ export const BLOG_POSTS: BlogPost[] = [
             <li><strong>Step 3:</strong> Use simulators. Our <a href="https://geometrydashspam.cc/" className="text-blue-400 hover:underline">Geometry Dash Spam tool</a> allows you to adjust speed and gap size without reloading the game.</li>
         </ul>
 
-        <h2 className="text-3xl font-display font-bold text-white mt-12 mb-6">7. Common Mistakes</h2>
+        <h2 id="mistakes" className="text-3xl font-display font-bold text-white mt-12 mb-6 scroll-mt-24">7. Common Mistakes</h2>
         <p className="mb-4 text-slate-300">
             <strong>Tensing up:</strong> Tensing your whole arm reduces speed. Relax your shoulder.
             <br/>
             <strong>Using a bad mouse:</strong> Office mice often have high latency.
         </p>
 
-        <h2 className="text-3xl font-display font-bold text-white mt-12 mb-6">8. FAQ</h2>
+        <h2 id="faq" className="text-3xl font-display font-bold text-white mt-12 mb-6 scroll-mt-24">8. FAQ</h2>
         <p className="mb-4 text-slate-300 font-bold">Q: Is jitter clicking allowed in GD?</p>
         <p className="mb-4 text-slate-300">A: Yes, as long as it is done physically by your hand and not a macro.</p>
         
@@ -120,14 +131,21 @@ export const BLOG_POSTS: BlogPost[] = [
     readTime: '12 min read',
     coverImage: 'https://images.unsplash.com/photo-1614726365345-0377fa1f513a?q=80&w=2070&auto=format&fit=crop', // Gaming mouse/hand
     tags: ['Training', 'CPS', 'Hardware'],
+    toc: [
+      { id: 'understanding', title: '1. Understanding CPS in GD' },
+      { id: 'techniques', title: '2. Finger Positioning Techniques' },
+      { id: 'input', title: '3. Mouse vs Touchscreen vs Spacebar' },
+      { id: 'schedule', title: '4. Training Schedule' },
+      { id: 'tools', title: '5. Recommended Practice Tools' }
+    ],
     content: (
       <>
-        <h2 className="text-3xl font-display font-bold text-white mt-12 mb-6">1. Understanding CPS in GD</h2>
+        <h2 id="understanding" className="text-3xl font-display font-bold text-white mt-12 mb-6 scroll-mt-24">1. Understanding CPS in GD</h2>
         <p className="mb-4 text-slate-300">
           CPS (Clicks Per Second) is the raw engine of your gameplay. In <a href="https://geometrydashspam.cc/" className="text-blue-400 hover:underline">Geometry Dash Spam</a> scenarios, higher CPS allows for tighter wave movements.
         </p>
 
-        <h2 className="text-3xl font-display font-bold text-white mt-12 mb-6">2. Finger Positioning Techniques</h2>
+        <h2 id="techniques" className="text-3xl font-display font-bold text-white mt-12 mb-6 scroll-mt-24">2. Finger Positioning Techniques</h2>
         <h3 className="text-xl font-bold text-white mt-4">Normal Clicking</h3>
         <p className="text-slate-300 mb-4">Standard grip. Good for accuracy, bad for speed.</p>
         
@@ -137,7 +155,7 @@ export const BLOG_POSTS: BlogPost[] = [
         <h3 className="text-xl font-bold text-white mt-4">Butterfly Clicking</h3>
         <p className="text-slate-300 mb-4">Using two fingers on one button. Requires a mouse that can double-click or has wide buttons.</p>
 
-        <h2 className="text-3xl font-display font-bold text-white mt-12 mb-6">3. Mouse vs Touchscreen vs Spacebar</h2>
+        <h2 id="input" className="text-3xl font-display font-bold text-white mt-12 mb-6 scroll-mt-24">3. Mouse vs Touchscreen vs Spacebar</h2>
         <p className="mb-4 text-slate-300">
             We analyzed 10,000 users on our <a href="https://geometrydashspam.cc/" className="text-blue-400 hover:underline">Spacebar Counter</a>.
         </p>
@@ -147,7 +165,7 @@ export const BLOG_POSTS: BlogPost[] = [
             <li><strong>Touchscreen:</strong> Highest latency, generally hardest for extreme spam.</li>
         </ul>
 
-        <h2 className="text-3xl font-display font-bold text-white mt-12 mb-6">4. Training Schedule</h2>
+        <h2 id="schedule" className="text-3xl font-display font-bold text-white mt-12 mb-6 scroll-mt-24">4. Training Schedule</h2>
         <p className="mb-4 text-slate-300">
             Do not overtrain. RSI (Repetitive Strain Injury) is real.
             <br/>
@@ -158,7 +176,7 @@ export const BLOG_POSTS: BlogPost[] = [
             <strong>Rest:</strong> 15 mins break.
         </p>
 
-        <h2 className="text-3xl font-display font-bold text-white mt-12 mb-6">5. Recommended Practice Tools</h2>
+        <h2 id="tools" className="text-3xl font-display font-bold text-white mt-12 mb-6 scroll-mt-24">5. Recommended Practice Tools</h2>
         <p className="mb-4 text-slate-300">
             Use the specialized tools on this website. The <a href="https://geometrydashspam.cc/" className="text-blue-400 hover:underline">Wave Simulator</a> is specifically tuned to mimic 2.2 physics.
         </p>
