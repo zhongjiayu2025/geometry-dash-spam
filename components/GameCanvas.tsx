@@ -179,6 +179,7 @@ const GameCanvas: React.FC<GameCanvasProps> = memo(({ difficulty, status, onStat
     lastBeatTime: 0, // Track when the kick hit
     frameCount: 0,
     clickIntervals: [] as number[],
+    clickTimestamps: [] as number[], // For Real-time CPS
     runTime: 0,
     finishLineX: 0,
     baseColor: difficulty.color,
@@ -546,6 +547,7 @@ const GameCanvas: React.FC<GameCanvasProps> = memo(({ difficulty, status, onStat
       lastBeatTime: 0,
       frameCount: 0,
       clickIntervals: [],
+      clickTimestamps: [], // Reset CPS Data
       runTime: 0,
       finishLineX: totalDistance + 600,
       baseColor: difficulty.color,
@@ -564,6 +566,10 @@ const GameCanvas: React.FC<GameCanvasProps> = memo(({ difficulty, status, onStat
     if (!ctx) return;
 
     gameState.current.beatScale = 1.0 + (gameState.current.beatScale - 1.0) * 0.9;
+
+    // Prune CPS timestamps older than 1 second
+    const now = Date.now();
+    gameState.current.clickTimestamps = gameState.current.clickTimestamps.filter(t => now - t < 1000);
 
     if (status === GameStatus.Playing) {
         if (gameState.current.startTime === 0) gameState.current.startTime = Date.now();
@@ -676,6 +682,29 @@ const GameCanvas: React.FC<GameCanvasProps> = memo(({ difficulty, status, onStat
     ctx.fillStyle = '#020617'; 
     ctx.fillRect(0, 0, canvas.width, canvas.height);
 
+    // --- PARALLAX GRID RENDERING (SPEED PERCEPTION) ---
+    // Draw moving lines on floor and ceiling to simulate forward movement
+    if (status === GameStatus.Playing || status === GameStatus.Idle) {
+        ctx.strokeStyle = `${gameState.current.baseColor}40`; // Low opacity
+        ctx.lineWidth = 1;
+        const gridSize = 60;
+        const offset = gameState.current.distanceTraveled % gridSize;
+
+        for (let i = -offset; i < canvas.width; i += gridSize) {
+             // Ceiling Grid
+             ctx.beginPath(); 
+             ctx.moveTo(i, 10); 
+             ctx.lineTo(i - 30, 0); 
+             ctx.stroke();
+
+             // Floor Grid
+             ctx.beginPath(); 
+             ctx.moveTo(i, canvas.height - 10); 
+             ctx.lineTo(i - 30, canvas.height); 
+             ctx.stroke();
+        }
+    }
+
     // Draw Real-time UI on Canvas (Behind obstacles)
     if (status === GameStatus.Playing || status === GameStatus.Idle) {
          ctx.save();
@@ -708,6 +737,20 @@ const GameCanvas: React.FC<GameCanvasProps> = memo(({ difficulty, status, onStat
          ctx.shadowBlur = 4;
          ctx.fillText(`${currentTime.toFixed(2)}s`, 30, 80);
          
+         // 3. LIVE CPS METER (NEW)
+         const currentCPS = gameState.current.clickTimestamps.length;
+         if (currentCPS > 0 || status === GameStatus.Playing) {
+             ctx.textAlign = "right";
+             ctx.fillStyle = currentCPS > 10 ? "#ef4444" : (currentCPS > 6 ? "#eab308" : "rgba(255,255,255,0.7)");
+             ctx.font = "700 24px 'Orbitron', monospace";
+             ctx.fillText(`${currentCPS} CPS`, canvas.width - 30, 80);
+             
+             // Small "Spam" label
+             ctx.font = "400 12px 'Inter', sans-serif";
+             ctx.fillStyle = "rgba(255,255,255,0.5)";
+             ctx.fillText("SPEED", canvas.width - 30, 50);
+         }
+
          ctx.restore();
     }
 
@@ -833,8 +876,10 @@ const GameCanvas: React.FC<GameCanvasProps> = memo(({ difficulty, status, onStat
         ctx.shadowBlur = 0;
     }
 
+    // --- PARTICLES (Additive for Glow) ---
     gameState.current.particles.forEach(p => {
         ctx.save();
+        ctx.globalCompositeOperation = 'lighter'; // Glowing sparks
         ctx.translate(p.x, p.y);
         ctx.rotate(p.rotation);
         ctx.globalAlpha = p.life;
@@ -868,7 +913,7 @@ const GameCanvas: React.FC<GameCanvasProps> = memo(({ difficulty, status, onStat
   const handleDeath = () => {
       onStatusChange(GameStatus.Lost);
       gameState.current.shakeIntensity = reduceMotion ? 0 : 40; 
-      createExplosion(gameState.current.playerX, gameState.current.playerY, '#fff');
+      createExplosion(gameState.current.playerX, gameState.current.playerY, difficulty.color); // Explode with difficulty color
       playSound('crash');
       setConsistency(calculateConsistency());
       
@@ -924,6 +969,9 @@ const GameCanvas: React.FC<GameCanvasProps> = memo(({ difficulty, status, onStat
          onStatusChange(GameStatus.Playing);
          initAudio();
          gameState.current.isHolding = true; 
+         // Track click for CPS even on restart
+         gameState.current.clickTimestamps.push(Date.now());
+         gameState.current.lastClickTime = Date.now();
          playSound('click');
          return;
      }
@@ -936,6 +984,10 @@ const GameCanvas: React.FC<GameCanvasProps> = memo(({ difficulty, status, onStat
      gameState.current.isHolding = true;
      
      const now = Date.now();
+     // CPS Tracking
+     gameState.current.clickTimestamps.push(now);
+
+     // Consistency Interval Tracking
      if (gameState.current.lastClickTime > 0) {
          gameState.current.clickIntervals.push(now - gameState.current.lastClickTime);
          if (gameState.current.clickIntervals.length > 50) gameState.current.clickIntervals.shift();
@@ -1135,7 +1187,7 @@ const GameCanvas: React.FC<GameCanvasProps> = memo(({ difficulty, status, onStat
                     </div>
                 </div>
 
-                <div className="flex gap-3">
+                <div className="flex gap-3 mb-4">
                      <button 
                         onClick={() => { resetGame(); onStatusChange(GameStatus.Playing); }}
                         className="px-6 py-3 bg-white text-black font-bold rounded hover:bg-slate-200 transition-colors flex items-center gap-2 shadow-lg"
@@ -1148,6 +1200,11 @@ const GameCanvas: React.FC<GameCanvasProps> = memo(({ difficulty, status, onStat
                     >
                         <Share2 className="w-4 h-4" /> SHARE
                     </button>
+                </div>
+                
+                {/* Instant Restart Hint */}
+                <div className="text-xs text-white/50 animate-pulse font-mono border border-white/10 px-3 py-1 rounded-full">
+                    Press <span className="font-bold text-white">SPACE</span> to Instant Restart
                 </div>
                 
                 <button 
