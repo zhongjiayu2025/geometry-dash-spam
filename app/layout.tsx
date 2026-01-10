@@ -19,6 +19,15 @@ export const metadata: Metadata = {
   alternates: {
     canonical: './',
   },
+  icons: {
+    icon: '/logo.svg',
+    shortcut: '/logo.svg',
+    apple: '/logo.svg',
+    other: {
+      rel: 'apple-touch-icon-precomposed',
+      url: '/logo.svg',
+    },
+  },
   verification: {
     google: "Yz_6YlW_BzjxZVMUNDmQKQV3n-Jf8cRUr6sMnqJDzyQ",
   },
