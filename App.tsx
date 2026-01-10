@@ -264,19 +264,23 @@ export default function App() {
               </button>
               
               {cpsDropdownOpen && (
-                <div className="absolute top-full left-0 mt-2 w-48 bg-[#0b1021] border border-white/10 rounded-xl shadow-2xl overflow-hidden animate-in fade-in slide-in-from-top-2 p-1">
-                   <button onClick={() => { setCurrentView('cps'); setCpsDropdownOpen(false); }} className="w-full text-left px-4 py-3 hover:bg-white/5 rounded-lg flex items-center gap-3 text-sm text-slate-300 hover:text-white transition-colors">
-                      <MousePointer2 className="w-4 h-4 text-blue-400" /> Standard CPS
-                   </button>
-                   <button onClick={() => { setCurrentView('jitter'); setCpsDropdownOpen(false); }} className="w-full text-left px-4 py-3 hover:bg-white/5 rounded-lg flex items-center gap-3 text-sm text-slate-300 hover:text-white transition-colors">
-                      <Activity className="w-4 h-4 text-orange-400" /> Jitter Click
-                   </button>
-                   <button onClick={() => { setCurrentView('butterfly'); setCpsDropdownOpen(false); }} className="w-full text-left px-4 py-3 hover:bg-white/5 rounded-lg flex items-center gap-3 text-sm text-slate-300 hover:text-white transition-colors">
-                      <Fingerprint className="w-4 h-4 text-pink-400" /> Butterfly Click
-                   </button>
-                   <button onClick={() => { setCurrentView('rightClick'); setCpsDropdownOpen(false); }} className="w-full text-left px-4 py-3 hover:bg-white/5 rounded-lg flex items-center gap-3 text-sm text-slate-300 hover:text-white transition-colors">
-                      <Mouse className="w-4 h-4 text-emerald-400" /> Right Click
-                   </button>
+                // Use pt-2 (padding top) as an invisible bridge instead of mt-2 (margin).
+                // This ensures the mouse doesn't "leave" the container when moving down.
+                <div className="absolute top-full left-0 pt-2 w-48 z-50 animate-in fade-in slide-in-from-top-2">
+                   <div className="bg-[#0b1021] border border-white/10 rounded-xl shadow-2xl overflow-hidden p-1">
+                       <button onClick={() => { setCurrentView('cps'); setCpsDropdownOpen(false); }} className="w-full text-left px-4 py-3 hover:bg-white/5 rounded-lg flex items-center gap-3 text-sm text-slate-300 hover:text-white transition-colors">
+                          <MousePointer2 className="w-4 h-4 text-blue-400" /> Standard CPS
+                       </button>
+                       <button onClick={() => { setCurrentView('jitter'); setCpsDropdownOpen(false); }} className="w-full text-left px-4 py-3 hover:bg-white/5 rounded-lg flex items-center gap-3 text-sm text-slate-300 hover:text-white transition-colors">
+                          <Activity className="w-4 h-4 text-orange-400" /> Jitter Click
+                       </button>
+                       <button onClick={() => { setCurrentView('butterfly'); setCpsDropdownOpen(false); }} className="w-full text-left px-4 py-3 hover:bg-white/5 rounded-lg flex items-center gap-3 text-sm text-slate-300 hover:text-white transition-colors">
+                          <Fingerprint className="w-4 h-4 text-pink-400" /> Butterfly Click
+                       </button>
+                       <button onClick={() => { setCurrentView('rightClick'); setCpsDropdownOpen(false); }} className="w-full text-left px-4 py-3 hover:bg-white/5 rounded-lg flex items-center gap-3 text-sm text-slate-300 hover:text-white transition-colors">
+                          <Mouse className="w-4 h-4 text-emerald-400" /> Right Click
+                       </button>
+                   </div>
                 </div>
               )}
             </div>
