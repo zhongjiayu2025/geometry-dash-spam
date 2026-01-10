@@ -4,7 +4,7 @@
 import React, { useRef, useEffect, useCallback, useState, memo } from 'react';
 import { DifficultyConfig, GameStatus } from '../types';
 import { WIN_TIME_MS, WAVE_SPEED_Y, GRAVITY } from '../constants';
-import { Trophy, AlertTriangle, Crown, Volume2, VolumeX, Maximize, Minimize, Activity, ZapOff, Share2, Check, RotateCcw, Menu, Zap } from 'lucide-react';
+import { Trophy, AlertTriangle, Crown, Volume2, VolumeX, Maximize, Minimize, Activity, ZapOff, Share2, Check, RotateCcw, Menu, Zap, X, Copy, Twitter, Facebook } from 'lucide-react';
 
 interface GameCanvasProps {
   difficulty: DifficultyConfig;
@@ -86,6 +86,10 @@ const GameCanvas: React.FC<GameCanvasProps> = memo(({ difficulty, status, onStat
 
   const [highScore, setHighScore] = useState<number>(0);
   const [isNewBest, setIsNewBest] = useState<boolean>(false);
+  
+  // Share Modal State
+  const [showShareModal, setShowShareModal] = useState<boolean>(false);
+  const [shareText, setShareText] = useState<string>("");
   const [copied, setCopied] = useState<boolean>(false);
   
   useEffect(() => {
@@ -835,8 +839,9 @@ const GameCanvas: React.FC<GameCanvasProps> = memo(({ difficulty, status, onStat
       }
   };
   
-  const handleShare = async (e: React.MouseEvent) => {
+  const handleShareClick = (e: React.MouseEvent) => {
     e.stopPropagation();
+    
     const time = (gameState.current.runTime / 1000).toFixed(2);
     const pct = !isEndless ? Math.min(100, (gameState.current.distanceTraveled / gameState.current.finishLineX) * 100).toFixed(0) + '%' : '∞';
     
@@ -844,33 +849,34 @@ const GameCanvas: React.FC<GameCanvasProps> = memo(({ difficulty, status, onStat
     if (status === GameStatus.Won) text = `I completed the ${difficulty.label} level in ${time}s on Geometry Dash Spam Test! 🏆`;
     else if (isEndless) text = `I survived ${time}s on Endless ${difficulty.label} mode in Geometry Dash Spam Test! 🌊`;
     else text = `I reached ${pct} on ${difficulty.label} mode in Geometry Dash Spam Test! 💀 ${time}s`;
+    
+    text += `\n\nTry to beat me here: https://geometrydashspam.cc`;
+    
+    setShareText(text);
+    setCopied(false);
+    setShowShareModal(true);
+  };
 
-    const shareData = {
-        title: 'Geometry Dash Spam Test Result',
-        text: text,
-        url: 'https://geometrydashspam.cc'
-    };
-
-    try {
-        if (typeof navigator !== 'undefined' && navigator.share) {
-            await navigator.share(shareData);
-        } else {
-            await navigator.clipboard.writeText(`${shareData.text} ${shareData.url}`);
-            setCopied(true);
-            setTimeout(() => setCopied(false), 2000);
-        }
-    } catch (err) {
-        console.error("Error sharing:", err);
-    }
+  const copyToClipboard = async () => {
+      try {
+          await navigator.clipboard.writeText(shareText);
+          setCopied(true);
+          setTimeout(() => setCopied(false), 2000);
+      } catch (err) {
+          console.error("Failed to copy", err);
+      }
   };
 
   const handleStart = useCallback((e?: any) => {
-     // Check if the target is a button or interactive element to prevent accidental game start
+     // Check if the target is a button, interactive element, or inside the modal
      if (e && e.target instanceof Element) {
-        if (e.target.closest('button') || e.target.closest('a')) {
+        if (e.target.closest('button') || e.target.closest('a') || e.target.closest('.share-modal-content')) {
             return;
         }
      }
+     
+     // Prevent starting if share modal is open
+     if (showShareModal) return;
   
      if (status === GameStatus.Lost || status === GameStatus.Won) {
          resetGame();
@@ -896,7 +902,7 @@ const GameCanvas: React.FC<GameCanvasProps> = memo(({ difficulty, status, onStat
      gameState.current.lastClickTime = now;
 
      playSound('click');
-  }, [status, resetGame, onStatusChange, initAudio, playSound]);
+  }, [status, resetGame, onStatusChange, initAudio, playSound, showShareModal]);
 
   const handleEnd = useCallback(() => {
      gameState.current.isHolding = false;
@@ -913,6 +919,8 @@ const GameCanvas: React.FC<GameCanvasProps> = memo(({ difficulty, status, onStat
 
   useEffect(() => {
       const handleKeyDown = (e: KeyboardEvent) => {
+          if (showShareModal) return; // Disable keyboard controls when modal is open
+          
           if (e.code === 'Space' || e.code === 'ArrowUp') {
               e.preventDefault();
               if (!e.repeat) handleStart();
@@ -933,8 +941,7 @@ const GameCanvas: React.FC<GameCanvasProps> = memo(({ difficulty, status, onStat
           container.addEventListener('mouseup', handleEnd);
           container.addEventListener('touchstart', (e) => { 
               const target = e.target as HTMLElement;
-              // If touching a button, allow the click and don't start the game
-              if (target.closest('button') || target.closest('a')) {
+              if (target.closest('button') || target.closest('a') || target.closest('.share-modal-content')) {
                   return;
               }
               e.preventDefault(); 
@@ -951,7 +958,7 @@ const GameCanvas: React.FC<GameCanvasProps> = memo(({ difficulty, status, onStat
               container.removeEventListener('mouseup', handleEnd);
           }
       };
-  }, [handleStart, handleEnd]);
+  }, [handleStart, handleEnd, showShareModal]);
 
   useEffect(() => {
       if (status === GameStatus.Playing) {
@@ -1077,7 +1084,7 @@ const GameCanvas: React.FC<GameCanvasProps> = memo(({ difficulty, status, onStat
       {/* --- GAME OVER SCREEN --- */}
       {status === GameStatus.Lost && (
          <div className="absolute inset-0 flex flex-col items-center justify-center bg-red-900/40 backdrop-blur-sm z-20 animate-in zoom-in duration-100 pointer-events-none">
-             <div className="pointer-events-auto flex flex-col items-center bg-black/50 p-8 rounded-2xl border border-white/10 backdrop-blur-md" onClick={(e) => e.stopPropagation()}>
+             <div className="pointer-events-auto flex flex-col items-center bg-black/50 p-8 rounded-2xl border border-white/10 backdrop-blur-md shadow-2xl" onClick={(e) => e.stopPropagation()}>
                 {isNewBest && (
                     <div className="mb-4 flex items-center gap-2 px-4 py-1 bg-yellow-500 text-black font-black uppercase tracking-widest rounded-full animate-bounce shadow-lg shadow-yellow-500/50">
                         <Crown className="w-4 h-4" /> New Best Score!
@@ -1101,16 +1108,15 @@ const GameCanvas: React.FC<GameCanvasProps> = memo(({ difficulty, status, onStat
                 <div className="flex gap-3">
                      <button 
                         onClick={() => { resetGame(); onStatusChange(GameStatus.Playing); }}
-                        className="px-6 py-3 bg-white text-black font-bold rounded hover:bg-slate-200 transition-colors flex items-center gap-2"
+                        className="px-6 py-3 bg-white text-black font-bold rounded hover:bg-slate-200 transition-colors flex items-center gap-2 shadow-lg"
                     >
                         <RotateCcw className="w-4 h-4" /> RETRY
                     </button>
                     <button 
-                        onClick={handleShare}
-                        className={`px-6 py-3 font-bold rounded transition-colors flex items-center gap-2 border ${copied ? 'bg-green-600 border-green-500 text-white' : 'bg-black/50 border-white/20 text-white hover:bg-black/70'}`}
+                        onClick={handleShareClick}
+                        className="px-6 py-3 bg-blue-600 hover:bg-blue-500 text-white font-bold rounded transition-colors flex items-center gap-2 shadow-lg"
                     >
-                        {copied ? <Check className="w-4 h-4" /> : <Share2 className="w-4 h-4" />}
-                        {copied ? 'COPIED' : 'SHARE'}
+                        <Share2 className="w-4 h-4" /> SHARE
                     </button>
                 </div>
                 
@@ -1127,7 +1133,7 @@ const GameCanvas: React.FC<GameCanvasProps> = memo(({ difficulty, status, onStat
       {/* --- WIN SCREEN --- */}
       {status === GameStatus.Won && (
          <div className="absolute inset-0 flex flex-col items-center justify-center bg-green-900/40 backdrop-blur-sm z-20 animate-in zoom-in duration-500 pointer-events-auto" onClick={(e) => e.stopPropagation()}>
-             <div className="bg-black/50 p-8 rounded-2xl border border-white/10 backdrop-blur-md flex flex-col items-center">
+             <div className="bg-black/50 p-8 rounded-2xl border border-white/10 backdrop-blur-md flex flex-col items-center shadow-2xl">
                 {isNewBest && (
                     <div className="mb-4 flex items-center gap-2 px-4 py-1 bg-yellow-500 text-black font-black uppercase tracking-widest rounded-full animate-bounce shadow-lg shadow-yellow-500/50">
                         <Crown className="w-4 h-4" /> New Best Score!
@@ -1147,16 +1153,15 @@ const GameCanvas: React.FC<GameCanvasProps> = memo(({ difficulty, status, onStat
                 <div className="flex gap-3 mb-4">
                      <button 
                         onClick={() => { resetGame(); onStatusChange(GameStatus.Playing); }}
-                        className="px-6 py-3 bg-white text-black font-bold rounded hover:bg-slate-200 transition-colors flex items-center gap-2"
+                        className="px-6 py-3 bg-white text-black font-bold rounded hover:bg-slate-200 transition-colors flex items-center gap-2 shadow-lg"
                     >
                         <RotateCcw className="w-4 h-4" /> REPLAY
                     </button>
                     <button 
-                        onClick={handleShare}
-                        className={`px-6 py-3 font-bold rounded transition-colors flex items-center gap-2 border ${copied ? 'bg-green-600 border-green-500 text-white' : 'bg-black/50 border-white/20 text-white hover:bg-black/70'}`}
+                        onClick={handleShareClick}
+                        className="px-6 py-3 bg-blue-600 hover:bg-blue-500 text-white font-bold rounded transition-colors flex items-center gap-2 shadow-lg"
                     >
-                        {copied ? <Check className="w-4 h-4" /> : <Share2 className="w-4 h-4" />}
-                        {copied ? 'COPIED' : 'SHARE'}
+                        <Share2 className="w-4 h-4" /> SHARE
                     </button>
                 </div>
 
@@ -1168,6 +1173,57 @@ const GameCanvas: React.FC<GameCanvasProps> = memo(({ difficulty, status, onStat
                 </button>
              </div>
          </div>
+      )}
+
+      {/* --- SHARE MODAL (CUSTOM OVERLAY) --- */}
+      {showShareModal && (
+        <div className="absolute inset-0 z-50 flex items-center justify-center bg-black/80 backdrop-blur-sm animate-in fade-in duration-200" onClick={() => setShowShareModal(false)}>
+            <div className="share-modal-content w-[90%] max-w-sm bg-[#0f172a] border border-white/10 rounded-2xl p-6 shadow-2xl relative" onClick={(e) => e.stopPropagation()}>
+                <button 
+                    onClick={() => setShowShareModal(false)}
+                    className="absolute top-4 right-4 text-slate-400 hover:text-white"
+                >
+                    <X className="w-5 h-5" />
+                </button>
+
+                <h3 className="text-xl font-display font-bold text-white mb-4 flex items-center gap-2">
+                    <Share2 className="w-5 h-5 text-blue-400" /> Share Result
+                </h3>
+
+                <div className="bg-black/50 p-4 rounded-lg border border-white/5 mb-4">
+                    <p className="text-slate-300 font-mono text-xs leading-relaxed break-words whitespace-pre-wrap select-all">
+                        {shareText}
+                    </p>
+                </div>
+
+                <button 
+                    onClick={copyToClipboard}
+                    className={`w-full py-3 mb-4 font-bold rounded flex items-center justify-center gap-2 transition-all ${copied ? 'bg-green-600 text-white' : 'bg-white text-black hover:bg-slate-200'}`}
+                >
+                    {copied ? <Check className="w-4 h-4" /> : <Copy className="w-4 h-4" />}
+                    {copied ? 'COPIED!' : 'COPY TEXT'}
+                </button>
+
+                <div className="flex gap-3">
+                    <a 
+                        href={`https://twitter.com/intent/tweet?text=${encodeURIComponent(shareText)}`}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="flex-1 py-2 bg-[#1DA1F2] hover:bg-[#1a91da] text-white rounded flex items-center justify-center transition-colors"
+                    >
+                        <Twitter className="w-5 h-5" />
+                    </a>
+                    <a 
+                        href={`https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent('https://geometrydashspam.cc')}&quote=${encodeURIComponent(shareText)}`}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="flex-1 py-2 bg-[#4267B2] hover:bg-[#365899] text-white rounded flex items-center justify-center transition-colors"
+                    >
+                        <Facebook className="w-5 h-5" />
+                    </a>
+                </div>
+            </div>
+        </div>
       )}
     </div>
   );
