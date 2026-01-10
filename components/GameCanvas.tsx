@@ -932,8 +932,6 @@ const GameCanvas: React.FC<GameCanvasProps> = memo(({ difficulty, status, onStat
     });
 
     ctx.restore(); 
-
-    requestRef.current = requestAnimationFrame(gameLoop);
   }, [status, difficulty, isEndless, isMini, spawnObstacle, saveHighScore, playSound, reduceMotion, volume]);
 
   const handleDeath = () => {
@@ -1068,10 +1066,18 @@ const GameCanvas: React.FC<GameCanvasProps> = memo(({ difficulty, status, onStat
       };
   }, [handleStart, handleEnd, showShareModal, showSettingsModal, isBinding, customKey]);
 
+  // Initial setup only when difficulty changes
   useEffect(() => {
       resetGame();
-      requestAnimationFrame(gameLoop);
-  }, [resetGame, gameLoop]);
+  }, [resetGame]);
+
+  // Game loop management
+  useEffect(() => {
+      requestRef.current = requestAnimationFrame(gameLoop);
+      return () => {
+          if (requestRef.current) cancelAnimationFrame(requestRef.current);
+      };
+  }, [gameLoop]);
 
   return (
     <div 
