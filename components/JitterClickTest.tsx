@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useRef } from 'react';
-import { MousePointer2, RotateCcw, Timer, Zap, AlertTriangle } from 'lucide-react';
+import { MousePointer2, RotateCcw, Timer, Zap, AlertTriangle, CheckCircle, Crosshair, Trophy } from 'lucide-react';
 
 const JitterClickTest: React.FC = () => {
   const [active, setActive] = useState(false);
@@ -139,32 +139,69 @@ const JitterClickTest: React.FC = () => {
         </div>
       </div>
 
-      {/* SEO Content / Tutorial */}
-      <section className="bg-slate-900/40 border border-white/5 rounded-2xl p-8 md:p-12">
-        <h2 className="text-3xl font-display font-bold text-white mb-6">How to Jitter Click?</h2>
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-8 text-slate-300 leading-relaxed">
-            <div>
-                <p className="mb-4">
-                    <strong>Jitter clicking</strong> is a technique used by competitive Geometry Dash and Minecraft players to achieve high clicks per second (CPS) by vibrating the muscles in their forearm rather than using the finger muscles alone.
-                </p>
-                <ol className="list-decimal pl-5 space-y-2">
-                    <li>Place your index finger on the mouse button.</li>
-                    <li>Tense your forearm muscles until your hand starts to vibrate.</li>
-                    <li>Direct this vibration into your finger tip.</li>
-                    <li>Do not press down hard; let the vibration trigger the switch.</li>
-                </ol>
-            </div>
-            <div>
-                <div className="bg-orange-900/20 border border-orange-500/20 p-6 rounded-xl">
-                    <h3 className="text-orange-400 font-bold flex items-center gap-2 mb-3">
-                        <AlertTriangle className="w-5 h-5" /> Safety Warning
-                    </h3>
-                    <p className="text-sm">
-                        Jitter clicking places significant stress on your forearm and wrist tendons. Do not practice for more than 10-15 minutes at a time. If you feel pain, stop immediately to prevent RSI (Repetitive Strain Injury).
+      {/* SEO Content / Tutorial - SIGNIFICANTLY ENRICHED */}
+      <section className="space-y-8">
+        
+        {/* Guide Section */}
+        <div className="bg-slate-900/40 border border-white/5 rounded-2xl p-8 md:p-12">
+            <h2 className="text-3xl font-display font-bold text-white mb-6 flex items-center gap-3">
+                <CheckCircle className="text-orange-500 w-8 h-8" /> 
+                How to Jitter Click: The Ultimate Guide
+            </h2>
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-8 text-slate-300 leading-relaxed">
+                <div>
+                    <p className="mb-4">
+                        <strong>Jitter clicking</strong> is a technique used by competitive Geometry Dash and Minecraft players to achieve high clicks per second (CPS) by vibrating the muscles in their forearm rather than using the finger muscles alone. Mastering this can boost your speed from 6 CPS to over 14 CPS.
                     </p>
+                    <h4 className="text-white font-bold mb-2 mt-6">Step-by-Step Technique:</h4>
+                    <ol className="space-y-2 list-decimal pl-5">
+                        <li><strong>Grip:</strong> Use a "Claw Grip" or "Fingertip Grip". Your hand should not rest heavily on the mouse.</li>
+                        <li><strong>Tension:</strong> Stiffen your forearm muscles (specifically the brachioradialis) until your hand begins to spasm or vibrate uncontrollably.</li>
+                        <li><strong>Transfer:</strong> Direct this vibration into your index finger tip.</li>
+                        <li><strong>Aiming:</strong> This is the hard part. Use your wrist or thumb to stabilize the mouse while your finger vibrates.</li>
+                    </ol>
+                </div>
+                <div className="space-y-6">
+                    <div className="bg-orange-900/20 border border-orange-500/20 p-6 rounded-xl">
+                        <h3 className="text-orange-400 font-bold flex items-center gap-2 mb-3">
+                            <AlertTriangle className="w-5 h-5" /> Safety Warning
+                        </h3>
+                        <p className="text-sm">
+                            Jitter clicking places significant stress on your forearm and wrist tendons. Do not practice for more than 10-15 minutes at a time. If you feel pain, stop immediately to prevent RSI (Repetitive Strain Injury) or Carpal Tunnel Syndrome.
+                        </p>
+                    </div>
+                    
+                    <div className="bg-slate-800/50 p-6 rounded-xl border border-white/5">
+                        <h4 className="text-white font-bold mb-2">Pros vs Cons</h4>
+                        <ul className="text-sm space-y-2">
+                            <li className="flex justify-between"><span className="text-green-400">High CPS (12-15)</span> <span className="text-red-400">Hard to Aim</span></li>
+                            <li className="flex justify-between"><span className="text-green-400">No Special Mouse Needed</span> <span className="text-red-400">High Fatigue</span></li>
+                            <li className="flex justify-between"><span className="text-green-400">Allowed on Most Servers</span> <span className="text-red-400">Risk of RSI</span></li>
+                        </ul>
+                    </div>
                 </div>
             </div>
         </div>
+
+        {/* Detailed FAQ for SEO Keywords */}
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+            <div className="bg-slate-900/30 p-6 rounded-xl border border-white/5">
+                <Crosshair className="w-8 h-8 text-blue-500 mb-4" />
+                <h3 className="font-bold text-white mb-2">Is Jitter Clicking good for Geometry Dash?</h3>
+                <p className="text-sm text-slate-400">Yes, specifically for spam wave sections. However, it's risky for sections requiring precision flying because the vibration makes fine movements difficult.</p>
+            </div>
+            <div className="bg-slate-900/30 p-6 rounded-xl border border-white/5">
+                <MousePointer2 className="w-8 h-8 text-purple-500 mb-4" />
+                <h3 className="font-bold text-white mb-2">Butterfly vs Jitter Clicking?</h3>
+                <p className="text-sm text-slate-400">Butterfly clicking is generally faster (15-20 CPS) and less tiring, but requires a mouse with double-clicking switches. Jitter works on any mouse but is harder to master.</p>
+            </div>
+            <div className="bg-slate-900/30 p-6 rounded-xl border border-white/5">
+                <Trophy className="w-8 h-8 text-yellow-500 mb-4" />
+                <h3 className="font-bold text-white mb-2">World Record Jitter Click?</h3>
+                <p className="text-sm text-slate-400">The highest consistent Jitter Click speed recorded is around 16 CPS, though some players can burst up to 18 CPS for short durations.</p>
+            </div>
+        </div>
+
       </section>
     </div>
   );

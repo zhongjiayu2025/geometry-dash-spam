@@ -16,39 +16,53 @@ type View = 'game' | 'cps' | 'jitter' | 'butterfly' | 'rightClick' | 'spacebar' 
 
 // --- SEO & ROUTING CONFIGURATION ---
 
-// 1. Metadata for HTML Head
-const VIEW_METADATA: Record<string, { title: string; desc: string }> = {
+interface SeoConfig {
+    title: string;
+    desc: string;
+    schemaType?: string;
+}
+
+// 1. Metadata & Schema Configuration
+const VIEW_METADATA: Record<string, SeoConfig> = {
   game: {
     title: "Geometry Dash Spam Test | Ultimate Wave Simulator & Physics",
-    desc: "Master the wave with the most accurate Geometry Dash Spam Simulator. Replicates 2.2 physics, gravity, and mini-wave mechanics. Test your consistency now."
+    desc: "Master the wave with the most accurate Geometry Dash Spam Simulator. Replicates 2.2 physics, gravity, and mini-wave mechanics. Test your consistency now.",
+    schemaType: "VideoGame"
   },
   cps: {
     title: "CPS Test 10 Seconds | Check Clicking Speed - Geometry Dash",
-    desc: "How fast can you click? Take the 10-second CPS test designed for gamers. Measure your raw clicking speed and compare with pros."
+    desc: "How fast can you click? Take the 10-second CPS test designed for gamers. Measure your raw clicking speed and compare with pros.",
+    schemaType: "WebApplication"
   },
   jitter: {
     title: "Jitter Click Test & Tutorial | Master Arm Vibration",
-    desc: "Learn how to Jitter Click safely. Test your arm vibration speed and improve your CPS for Geometry Dash and Minecraft PVP."
+    desc: "Learn how to Jitter Click safely. Test your arm vibration speed and improve your CPS for Geometry Dash and Minecraft PVP.",
+    schemaType: "HowTo"
   },
   butterfly: {
     title: "Butterfly Click Test | Double Clicking Speed Trainer",
-    desc: "Test your Butterfly Clicking technique. The ultimate double-finger clicking test for high CPS. Optimize your mouse grip today."
+    desc: "Test your Butterfly Clicking technique. The ultimate double-finger clicking test for high CPS. Optimize your mouse grip today.",
+    schemaType: "HowTo"
   },
   rightClick: {
     title: "Right Click CPS Test | RMB Speed Tester",
-    desc: "Don't neglect your right mouse button. Test your Right Click CPS speed. Essential for MOBA players and specialized bridging techniques."
+    desc: "Don't neglect your right mouse button. Test your Right Click CPS speed. Essential for MOBA players and specialized bridging techniques.",
+    schemaType: "WebApplication"
   },
   spacebar: {
     title: "Spacebar Counter & Speed Test | Keyboard Latency Check",
-    desc: "Test your spacebar spamming speed. precise counter with timer. Check your keyboard latency and mechanical switch performance."
+    desc: "Test your spacebar spamming speed. precise counter with timer. Check your keyboard latency and mechanical switch performance.",
+    schemaType: "WebApplication"
   },
   reaction: {
     title: "Reaction Time Test | Visual Reflex Benchmark (ms)",
-    desc: "Test your visual reaction time in milliseconds. Are you faster than a pro gamer? The average human reaction time is 250ms."
+    desc: "Test your visual reaction time in milliseconds. Are you faster than a pro gamer? The average human reaction time is 250ms.",
+    schemaType: "WebApplication"
   },
   blog: {
     title: "Geometry Dash Guides, Tips & Hardware Reviews | GD Spam Blog",
-    desc: "Expert guides on improving Wave consistency, choosing the best mouse for Geometry Dash, and understanding game physics."
+    desc: "Expert guides on improving Wave consistency, choosing the best mouse for Geometry Dash, and understanding game physics.",
+    schemaType: "Blog"
   },
   about: { title: "About Us | Geometry Dash Spam Test", desc: "Our mission to build the best training tools for the Geometry Dash community." },
   contact: { title: "Contact Us | Feature Requests & Support", desc: "Get in touch with the GeometryDashSpam.cc team." },
@@ -91,6 +105,93 @@ const getViewFromPath = (path: string): { view: View; slug?: string } => {
     return { view: 'game' };
 };
 
+// --- SCHEMA GENERATOR ---
+const generateSchema = (view: View, post: BlogPost | null) => {
+    const baseUrl = 'https://geometrydashspam.cc';
+    const currentUrl = `${baseUrl}${PATH_MAP[view]}`;
+    
+    // Base Breadcrumbs
+    const breadcrumbList = {
+        "@context": "https://schema.org",
+        "@type": "BreadcrumbList",
+        "itemListElement": [
+            { "@type": "ListItem", "position": 1, "name": "Home", "item": baseUrl },
+            { "@type": "ListItem", "position": 2, "name": VIEW_METADATA[view]?.title || view, "item": currentUrl }
+        ]
+    };
+
+    if (view === 'game') {
+        return [
+            breadcrumbList,
+            {
+                "@context": "https://schema.org",
+                "@type": "VideoGame",
+                "name": "Geometry Dash Spam Test",
+                "url": baseUrl,
+                "description": VIEW_METADATA.game.desc,
+                "genre": ["Rhythm", "Arcade", "Simulator"],
+                "gamePlatform": "Web Browser",
+                "applicationCategory": "Game",
+                "operatingSystem": "Any"
+            }
+        ];
+    }
+
+    if (view === 'article' && post) {
+        return [
+            {
+                "@context": "https://schema.org",
+                "@type": "BreadcrumbList",
+                "itemListElement": [
+                    { "@type": "ListItem", "position": 1, "name": "Home", "item": baseUrl },
+                    { "@type": "ListItem", "position": 2, "name": "Blog", "item": `${baseUrl}/blog` },
+                    { "@type": "ListItem", "position": 3, "name": post.title, "item": `${baseUrl}/blog/${post.slug}` }
+                ]
+            },
+            {
+                "@context": "https://schema.org",
+                "@type": "BlogPosting",
+                "headline": post.title,
+                "image": post.coverImage,
+                "datePublished": new Date(post.date).toISOString().split('T')[0], // Approximation
+                "author": {
+                    "@type": "Organization",
+                    "name": "GD Spam Team"
+                },
+                "publisher": {
+                    "@type": "Organization",
+                    "name": "Geometry Dash Spam Test",
+                    "logo": {
+                        "@type": "ImageObject",
+                        "url": `${baseUrl}/icon.png` 
+                    }
+                },
+                "description": post.excerpt
+            }
+        ];
+    }
+    
+    // Generic WebApp Schema for Tools
+    if (['cps', 'jitter', 'butterfly', 'spacebar', 'reaction'].includes(view)) {
+        return [
+            breadcrumbList,
+            {
+                "@context": "https://schema.org",
+                "@type": "WebApplication",
+                "name": VIEW_METADATA[view].title,
+                "url": currentUrl,
+                "description": VIEW_METADATA[view].desc,
+                "applicationCategory": "Utility",
+                "operatingSystem": "Any",
+                "offers": { "@type": "Offer", "price": "0", "priceCurrency": "USD" }
+            }
+        ];
+    }
+
+    return [breadcrumbList];
+};
+
+
 export default function App() {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [cpsDropdownOpen, setCpsDropdownOpen] = useState(false);
@@ -107,27 +208,23 @@ export default function App() {
   });
 
   // --- ROUTING ENGINE ---
-  
-  // Function to handle internal navigation
   const navigate = (view: View, post?: BlogPost) => {
     setCurrentView(view);
     if (post) setCurrentPost(post);
     setMobileMenuOpen(false);
     
-    // Construct new URL
     let newPath = PATH_MAP[view];
     if (view === 'article' && post) {
         newPath = `/blog/${post.slug}`;
     }
 
-    // Push to history
     window.history.pushState({ view, slug: post?.slug }, '', newPath);
     window.scrollTo(0, 0);
   };
 
-  // Effect to handle SEO Title/Meta updates and Browser Back Button
+  // SEO & Schema Injection Effect
   useEffect(() => {
-    // 1. Update Document Title & Meta
+    // 1. Update Title & Meta Desc
     let meta = VIEW_METADATA[currentView];
     if (currentView === 'article' && currentPost) {
         document.title = `${currentPost.title} | GD Spam Blog`;
@@ -148,9 +245,24 @@ export default function App() {
     }
     linkCanonical.setAttribute('href', window.location.href);
 
+    // 3. Inject Dynamic JSON-LD Schema
+    const schemas = generateSchema(currentView, currentPost);
+    
+    // Remove old schema scripts to prevent duplicates
+    const oldScripts = document.querySelectorAll('script[type="application/ld+json"][data-dynamic="true"]');
+    oldScripts.forEach(s => s.remove());
+
+    schemas.forEach(schemaData => {
+        const script = document.createElement('script');
+        script.type = 'application/ld+json';
+        script.setAttribute('data-dynamic', 'true');
+        script.text = JSON.stringify(schemaData);
+        document.head.appendChild(script);
+    });
+
   }, [currentView, currentPost]);
 
-  // Handle Browser Back/Forward Buttons (PopState)
+  // Handle Browser Back/Forward
   useEffect(() => {
       const handlePopState = () => {
           const route = getViewFromPath(window.location.pathname);
@@ -160,7 +272,6 @@ export default function App() {
               if (post) setCurrentPost(post);
           }
       };
-
       window.addEventListener('popstate', handlePopState);
       return () => window.removeEventListener('popstate', handlePopState);
   }, []);
@@ -184,7 +295,6 @@ export default function App() {
     }
   };
 
-  // Navigation Link Component
   const NavItem = ({ view, icon: Icon, label }: { view: View; icon: any; label: string }) => {
     const isActive = (currentView === view || (currentView === 'article' && view === 'blog'));
     const href = PATH_MAP[view];
@@ -217,10 +327,7 @@ export default function App() {
       
       {/* Background Elements */}
       <div className="fixed inset-0 pointer-events-none z-0">
-        {/* Grid Pattern */}
         <div className="absolute inset-0 bg-grid opacity-20"></div>
-        
-        {/* Dynamic Glow based on View */}
         <div className={`absolute top-0 left-1/2 -translate-x-1/2 w-[1000px] h-[600px] rounded-full blur-[120px] opacity-15 transition-colors duration-1000
           ${currentView === 'game' ? 'bg-blue-600' : ''}
           ${['cps', 'jitter', 'butterfly', 'rightClick'].includes(currentView) ? 'bg-cyan-600' : ''}
@@ -229,16 +336,12 @@ export default function App() {
           ${['blog','article','about','contact'].includes(currentView) ? 'bg-indigo-600' : ''}
           ${['privacy','terms'].includes(currentView) ? 'bg-slate-600' : ''}
         `}></div>
-        
-        {/* Bottom Fade */}
         <div className="absolute bottom-0 left-0 right-0 h-32 bg-gradient-to-t from-[#020617] to-transparent"></div>
       </div>
 
       {/* HEADER MENU */}
       <header className="fixed top-0 left-0 right-0 z-50 h-16 md:h-20 border-b border-white/5 bg-[#020617]/80 backdrop-blur-xl">
         <div className="max-w-7xl mx-auto px-4 h-full flex items-center justify-between">
-          
-          {/* Logo */}
           <a 
             href="/"
             className="flex items-center gap-3 cursor-pointer group"
@@ -257,11 +360,9 @@ export default function App() {
             </div>
           </a>
 
-          {/* Desktop Navigation */}
           <nav className="hidden md:flex items-center gap-2">
             <NavItem view="game" icon={Gamepad2} label="Wave Sim" />
             
-            {/* Click Tests Dropdown */}
             <div className="relative" onMouseLeave={() => setCpsDropdownOpen(false)}>
               <button
                 className={`
@@ -304,7 +405,6 @@ export default function App() {
             <NavItem view="blog" icon={BookOpen} label="Blog & Guides" />
           </nav>
 
-          {/* Mobile Menu Button */}
           <button 
             className="md:hidden p-2 text-slate-400 hover:text-white"
             onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
@@ -313,7 +413,6 @@ export default function App() {
           </button>
         </div>
 
-        {/* Mobile Navigation Dropdown */}
         {mobileMenuOpen && (
           <div className="md:hidden absolute top-full left-0 right-0 bg-[#0b1021] border-b border-white/10 p-4 flex flex-col gap-2 shadow-2xl animate-in slide-in-from-top-2 max-h-[80vh] overflow-y-auto">
             <NavItem view="game" icon={Gamepad2} label="Wave Simulator" />
@@ -334,9 +433,7 @@ export default function App() {
         )}
       </header>
 
-      {/* Main Content */}
       <main className="relative z-10 flex-grow pt-24 md:pt-32 pb-12 px-4 w-full max-w-7xl mx-auto">
-        {/* Page Title & Breadcrumbs */}
         {['game', 'cps', 'spacebar', 'reaction', 'blog'].includes(currentView) && (
           <div className="mb-8 md:mb-12 text-center animate-in fade-in slide-in-from-bottom-4 duration-700">
              <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-white/5 border border-white/10 text-xs font-mono text-slate-400 mb-4">
@@ -360,13 +457,11 @@ export default function App() {
           </div>
         )}
 
-        {/* Tool Container */}
         <div className="w-full">
            {renderContent()}
         </div>
       </main>
 
-      {/* Footer */}
       <footer className="relative z-10 border-t border-white/5 bg-[#020617] mt-auto">
         <div className="max-w-7xl mx-auto px-4 py-8 md:py-12">
           <div className="flex flex-col md:flex-row items-center justify-between gap-6">

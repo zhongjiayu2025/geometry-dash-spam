@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useRef } from 'react';
-import { MousePointer2, RotateCcw, Timer, Fingerprint } from 'lucide-react';
+import { MousePointer2, RotateCcw, Timer, Fingerprint, Mouse, ShieldCheck, Zap, Activity } from 'lucide-react';
 
 const ButterflyClickTest: React.FC = () => {
   const [active, setActive] = useState(false);
@@ -142,21 +142,57 @@ const ButterflyClickTest: React.FC = () => {
         </div>
       </div>
 
-      {/* SEO Content / Tutorial */}
-      <section className="bg-slate-900/40 border border-white/5 rounded-2xl p-8 md:p-12">
-        <h2 className="text-3xl font-display font-bold text-white mb-6">What is Butterfly Clicking?</h2>
-        <div className="prose prose-invert prose-lg max-w-none text-slate-300">
-            <p>
-                <strong>Butterfly clicking</strong> involves using two fingers (usually the index and middle finger) to hit the mouse button in an alternating rhythm. This effectively doubles the number of inputs you can send compared to single-finger clicking.
-            </p>
-            <h3 className="text-xl font-bold text-white mt-4">Why is it popular in Geometry Dash?</h3>
-            <p>
-                Unlike Minecraft PVP, where double-clicking switches are required for high CPS, Geometry Dash spam relies on consistent registration. Butterfly clicking allows players to maintain a high CPS (12-16) for longer durations because the workload is split between two fingers, reducing fatigue during long Wave sections.
-            </p>
-            <h3 className="text-xl font-bold text-white mt-4">Recommended Hardware</h3>
-            <p>
-                To butterfly click effectively, you need a mouse with wide primary buttons (like the <em>Glorious Model O</em> or <em>Razer Viper</em>). Narrow mice make it difficult to fit both fingers on the switch.
-            </p>
+      {/* SEO Content / Tutorial - EXPANDED */}
+      <section className="space-y-8">
+         <div className="bg-slate-900/40 border border-white/5 rounded-2xl p-8 md:p-12">
+            <h2 className="text-3xl font-display font-bold text-white mb-6">What is Butterfly Clicking?</h2>
+            <div className="prose prose-invert prose-lg max-w-none text-slate-300">
+                <p>
+                    <strong>Butterfly clicking</strong> involves using two fingers (usually the index and middle finger) to hit the mouse button in an alternating rhythm. This effectively doubles the number of inputs you can send compared to single-finger clicking, allowing players to reach 15-25 CPS.
+                </p>
+                
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-8 mt-8">
+                    <div>
+                        <h3 className="text-xl font-bold text-white mb-3 flex items-center gap-2">
+                             <Zap className="w-5 h-5 text-pink-400" /> Technique Guide
+                        </h3>
+                        <ul className="list-disc pl-5 space-y-2 text-sm">
+                            <li><strong>Positioning:</strong> Place both fingers on the Left Mouse Button (LMB). Lift one while the other strikes.</li>
+                            <li><strong>Rhythm:</strong> Think of it like a drum roll. Left-Right-Left-Right.</li>
+                            <li><strong>Double Clicking:</strong> The secret to "god-mode" speeds (20+ CPS) is using a mouse that registers a "bounce" or double click on every hit.</li>
+                        </ul>
+                    </div>
+                    <div>
+                         <h3 className="text-xl font-bold text-white mb-3 flex items-center gap-2">
+                             <Mouse className="w-5 h-5 text-blue-400" /> Best Mice for Butterfly
+                        </h3>
+                         <ul className="list-disc pl-5 space-y-2 text-sm">
+                            <li><strong>Glorious Model O:</strong> The industry standard. Wide buttons and adjustable debounce time.</li>
+                            <li><strong>Razer Viper Mini:</strong> Good shape, but optical switches prevent double-clicking (capped at ~12-14 CPS).</li>
+                            <li><strong>Logitech G Pro:</strong> Harder to butterfly due to narrower buttons and heavier tension.</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        {/* Why use it in GD? */}
+        <div className="bg-gradient-to-r from-purple-900/20 to-pink-900/20 border border-pink-500/20 rounded-2xl p-8">
+             <h3 className="text-2xl font-bold text-white mb-4">Why use Butterfly Clicking in Geometry Dash?</h3>
+             <p className="text-slate-300 leading-relaxed">
+                Unlike Minecraft PVP where pure speed matters, Geometry Dash requires consistency. Butterfly clicking is excellent for <strong>Endurance Spam</strong> (long wave sections) because it splits the workload between two fingers. This drastically reduces fatigue, allowing you to maintain 10-12 CPS for minutes at a time without your hand locking up.
+             </p>
+        </div>
+
+        <div className="flex flex-col md:flex-row gap-4">
+             <div className="flex-1 bg-slate-950/50 p-6 rounded-xl border border-white/5">
+                 <h4 className="font-bold text-white mb-2 flex items-center gap-2"><ShieldCheck className="w-4 h-4 text-green-400"/> Is it Cheating?</h4>
+                 <p className="text-xs text-slate-400">In Geometry Dash, Butterfly Clicking is legally considered legitimate input. However, using software to lower debounce time artificially to 0ms is a grey area on some Demon Lists.</p>
+             </div>
+             <div className="flex-1 bg-slate-950/50 p-6 rounded-xl border border-white/5">
+                 <h4 className="font-bold text-white mb-2 flex items-center gap-2"><Activity className="w-4 h-4 text-orange-400"/> Health Check</h4>
+                 <p className="text-xs text-slate-400">Butterfly clicking is safer than Jitter clicking for your tendons, but can still cause carpal tunnel if your wrist posture is poor.</p>
+             </div>
         </div>
       </section>
     </div>
