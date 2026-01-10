@@ -1,9 +1,9 @@
 import React from 'react';
 import Link from 'next/link';
+import Image from 'next/image';
 import { BLOG_POSTS } from '../data/blogContent';
 import { Calendar, Clock, ArrowRight } from 'lucide-react';
 
-// No props needed now, as we use Link
 const BlogList: React.FC = () => {
   return (
     <div className="w-full max-w-7xl mx-auto animate-in fade-in duration-500">
@@ -16,20 +16,20 @@ const BlogList: React.FC = () => {
           >
             {/* Image Container */}
             <div className="h-48 overflow-hidden relative bg-slate-800">
-               <img 
+               <Image 
                  src={post.coverImage} 
                  alt={post.title}
-                 width="400" 
-                 height="250"
-                 loading={index < 3 ? "eager" : "lazy"} // Eager load top row for LCP, lazy load others
-                 className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110"
+                 fill
+                 sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
+                 priority={index < 3} // Eager load top row for LCP
+                 className="object-cover transition-transform duration-700 group-hover:scale-110"
                />
                <div className="absolute inset-0 bg-gradient-to-t from-slate-900 to-transparent opacity-60"></div>
                
                {/* Tags */}
                <div className="absolute top-4 left-4 flex gap-2">
                  {post.tags.map(tag => (
-                   <span key={tag} className="px-2 py-1 bg-blue-600/90 text-white text-[10px] font-bold uppercase tracking-wider rounded backdrop-blur-sm">
+                   <span key={tag} className="px-2 py-1 bg-blue-600/90 text-white text-[10px] font-bold uppercase tracking-wider rounded backdrop-blur-sm relative z-10">
                      {tag}
                    </span>
                  ))}

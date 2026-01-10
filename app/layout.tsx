@@ -10,15 +10,31 @@ const orbitron = Orbitron({ subsets: ["latin"], variable: "--font-orbitron" });
 
 export const metadata: Metadata = {
   metadataBase: new URL("https://geometrydashspam.cc"),
-  title: "Geometry Dash Spam Test | Ultimate Wave Simulator",
+  title: {
+    default: "Geometry Dash Spam Test | Ultimate Wave Simulator",
+    template: "%s | Geometry Dash Spam"
+  },
   description: "Master the wave with the ultimate Geometry Dash Spam Test. Free online simulator to train spam consistency, improve CPS, and beat Extreme Demons.",
-  keywords: ["geometry dash spam", "geometry dash spam test", "wave simulator", "gd spam", "cps test"],
+  keywords: ["geometry dash spam", "geometry dash spam test", "wave simulator", "gd spam", "cps test", "jitter click", "butterfly click"],
+  alternates: {
+    canonical: './',
+  },
+  verification: {
+    google: "Yz_6YlW_BzjxZVMUNDmQKQV3n-Jf8cRUr6sMnqJDzyQ",
+  },
   openGraph: {
     type: "website",
     url: "https://geometrydashspam.cc",
+    siteName: "Geometry Dash Spam Test",
     title: "Geometry Dash Spam Test",
     description: "Test your clicking speed and precision.",
     images: [{ url: "https://geometrydashspam.cc/logo.svg" }],
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: "Geometry Dash Spam Test",
+    description: "Master the wave with the ultimate simulator.",
+    images: ["https://geometrydashspam.cc/logo.svg"],
   },
 };
 

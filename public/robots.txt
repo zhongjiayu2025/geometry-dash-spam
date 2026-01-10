@@ -1,4 +1,1 @@
-User-agent: *
-Allow: /
-
-Sitemap: https://geometrydashspam.cc/sitemap.xml
+# Deleted: Replaced by app/robots.ts
