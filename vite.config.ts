@@ -1,1 +1,2 @@
-// This file is obsolete in Next.js. Deleting content.
+// This file is obsolete. Next.js uses next.config.mjs.
+// You can safely delete this file.

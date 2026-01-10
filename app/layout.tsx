@@ -9,6 +9,7 @@ const inter = Inter({ subsets: ["latin"], variable: "--font-inter" });
 const orbitron = Orbitron({ subsets: ["latin"], variable: "--font-orbitron" });
 
 export const metadata: Metadata = {
+  metadataBase: new URL("https://geometrydashspam.cc"),
   title: "Geometry Dash Spam Test | Ultimate Wave Simulator",
   description: "Master the wave with the ultimate Geometry Dash Spam Test. Free online simulator to train spam consistency, improve CPS, and beat Extreme Demons.",
   keywords: ["geometry dash spam", "geometry dash spam test", "wave simulator", "gd spam", "cps test"],
