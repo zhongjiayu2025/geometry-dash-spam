@@ -989,14 +989,9 @@ const GameCanvas: React.FC<GameCanvasProps> = memo(({ difficulty, status, onStat
      
      if (showShareModal || showSettingsModal || isBinding) return;
   
+     // Prevent instant restart interaction when game is over (Lost/Won)
+     // User must explicitly use the UI buttons to Retry or Return
      if (status === GameStatus.Lost || status === GameStatus.Won) {
-         resetGame();
-         onStatusChange(GameStatus.Playing);
-         initAudio();
-         gameState.current.isHolding = true; 
-         gameState.current.clickTimestamps.push(Date.now());
-         gameState.current.lastClickTime = Date.now();
-         playSound('click');
          return;
      }
      
@@ -1015,7 +1010,7 @@ const GameCanvas: React.FC<GameCanvasProps> = memo(({ difficulty, status, onStat
      }
      gameState.current.lastClickTime = now;
      playSound('click');
-  }, [status, resetGame, onStatusChange, initAudio, playSound, showShareModal, showSettingsModal, isBinding]);
+  }, [status, onStatusChange, initAudio, playSound, showShareModal, showSettingsModal, isBinding]);
 
   const handleEnd = useCallback(() => {
      gameState.current.isHolding = false;
@@ -1207,10 +1202,6 @@ const GameCanvas: React.FC<GameCanvasProps> = memo(({ difficulty, status, onStat
                     >
                         <Share2 className="w-4 h-4" /> SHARE
                     </button>
-                </div>
-                
-                <div className="text-xs text-white/50 animate-pulse font-mono border border-white/10 px-3 py-1 rounded-full">
-                    Press <span className="font-bold text-white uppercase">{customKey.replace('Key', '')}</span> to Instant Restart
                 </div>
                 
                 <button 
