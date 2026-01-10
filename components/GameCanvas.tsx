@@ -4,7 +4,7 @@
 import React, { useRef, useEffect, useCallback, useState, memo } from 'react';
 import { DifficultyConfig, GameStatus } from '../types';
 import { WIN_TIME_MS, WAVE_SPEED_Y, GRAVITY } from '../constants';
-import { Trophy, AlertTriangle, Crown, Volume2, VolumeX, Zap } from 'lucide-react';
+import { Trophy, AlertTriangle, Crown, Volume2, VolumeX, Zap, Maximize, Minimize, Activity, ZapOff } from 'lucide-react';
 
 interface GameCanvasProps {
   difficulty: DifficultyConfig;
@@ -61,13 +61,44 @@ const GameCanvas: React.FC<GameCanvasProps> = memo(({ difficulty, status, onStat
   
   // Settings State
   const [isMuted, setIsMuted] = useState<boolean>(false);
+  const [isFullscreen, setIsFullscreen] = useState<boolean>(false);
+  const [reduceMotion, setReduceMotion] = useState<boolean>(false);
+
   const [highScore, setHighScore] = useState<number>(0);
   const [isNewBest, setIsNewBest] = useState<boolean>(false);
   
   useEffect(() => {
     setIsMuted(localStorage.getItem('gd_spam_muted') === 'true');
+    setReduceMotion(localStorage.getItem('gd_spam_reduce_motion') === 'true');
     loadHighScore();
   }, [difficulty.id, isEndless, isMini]);
+
+  // Handle Fullscreen Change Events
+  useEffect(() => {
+    const handleFsChange = () => {
+        setIsFullscreen(!!document.fullscreenElement);
+    };
+    document.addEventListener('fullscreenchange', handleFsChange);
+    return () => document.removeEventListener('fullscreenchange', handleFsChange);
+  }, []);
+
+  const toggleFullscreen = useCallback(() => {
+    if (!containerRef.current) return;
+    if (!document.fullscreenElement) {
+        containerRef.current.requestFullscreen().catch(err => {
+            console.error(`Error attempting to enable fullscreen: ${err.message}`);
+        });
+    } else {
+        document.exitFullscreen();
+    }
+  }, []);
+
+  const toggleMotion = useCallback((e: React.MouseEvent) => {
+      e.stopPropagation();
+      const newValue = !reduceMotion;
+      setReduceMotion(newValue);
+      localStorage.setItem('gd_spam_reduce_motion', String(newValue));
+  }, [reduceMotion]);
 
   const loadHighScore = () => {
       const key = `gd_spam_best_${difficulty.id}_${isEndless ? 'endless' : 'timed'}_${isMini ? 'mini' : 'normal'}`;
@@ -168,7 +199,11 @@ const GameCanvas: React.FC<GameCanvasProps> = memo(({ difficulty, status, onStat
 
   // Trigger Beat Pulse Visuals
   const triggerBeat = useCallback(() => {
-     gameState.current.beatScale = 1.05; // Jump to 105% scale
+     // If Reduce Motion is on, do nothing
+     if (localStorage.getItem('gd_spam_reduce_motion') === 'true') return;
+
+     // Reduced default intensity from 1.05 to 1.015 to stop complaints about "always shaking"
+     gameState.current.beatScale = 1.015; 
      gameState.current.lastBeatTime = Date.now();
   }, []);
 
@@ -426,6 +461,9 @@ const GameCanvas: React.FC<GameCanvasProps> = memo(({ difficulty, status, onStat
   }, [difficulty, isMini]);
 
   const createExplosion = (x: number, y: number, color: string) => {
+    // If Reduce Motion is enabled, reduce particle count
+    if (reduceMotion) return;
+
     // Create Shards (Triangles)
     for (let i = 0; i < 20; i++) {
       const angle = Math.random() * Math.PI * 2;
@@ -611,22 +649,24 @@ const GameCanvas: React.FC<GameCanvasProps> = memo(({ difficulty, status, onStat
     // 2. Rendering
     ctx.clearRect(0, 0, canvas.width, canvas.height);
     
-    // Shake + Beat Zoom
+    // Shake + Beat Zoom (Only if motion is not reduced)
     ctx.save();
     
-    // Beat Zoom (Center of Screen)
-    const scale = gameState.current.beatScale;
-    if (scale > 1.001) {
-        ctx.translate(canvas.width/2, canvas.height/2);
-        ctx.scale(scale, scale);
-        ctx.translate(-canvas.width/2, -canvas.height/2);
-    }
+    if (!reduceMotion) {
+        // Beat Zoom (Center of Screen)
+        const scale = gameState.current.beatScale;
+        if (scale > 1.001) {
+            ctx.translate(canvas.width/2, canvas.height/2);
+            ctx.scale(scale, scale);
+            ctx.translate(-canvas.width/2, -canvas.height/2);
+        }
 
-    if (gameState.current.shakeIntensity > 0) {
-        const dx = (Math.random() - 0.5) * gameState.current.shakeIntensity;
-        const dy = (Math.random() - 0.5) * gameState.current.shakeIntensity;
-        ctx.translate(dx, dy);
-        gameState.current.shakeIntensity *= 0.9;
+        if (gameState.current.shakeIntensity > 0) {
+            const dx = (Math.random() - 0.5) * gameState.current.shakeIntensity;
+            const dy = (Math.random() - 0.5) * gameState.current.shakeIntensity;
+            ctx.translate(dx, dy);
+            gameState.current.shakeIntensity *= 0.9;
+        }
     }
 
     // Background
@@ -792,11 +832,12 @@ const GameCanvas: React.FC<GameCanvasProps> = memo(({ difficulty, status, onStat
     ctx.restore(); // Restore shake/zoom state
 
     requestRef.current = requestAnimationFrame(gameLoop);
-  }, [status, difficulty, isEndless, isMini, spawnObstacle, saveHighScore, playSound]);
+  }, [status, difficulty, isEndless, isMini, spawnObstacle, saveHighScore, playSound, reduceMotion]);
 
   const handleDeath = () => {
       onStatusChange(GameStatus.Lost);
-      gameState.current.shakeIntensity = 40; // Intense impact
+      // Reduce default shake on death if reduceMotion is on
+      gameState.current.shakeIntensity = reduceMotion ? 0 : 40; 
       createExplosion(gameState.current.playerX, gameState.current.playerY, '#fff');
       playSound('crash');
       setConsistency(calculateConsistency());
@@ -904,17 +945,19 @@ const GameCanvas: React.FC<GameCanvasProps> = memo(({ difficulty, status, onStat
 
   return (
     <div 
-      className="relative w-full max-w-5xl aspect-video md:h-[500px] bg-slate-950 rounded-lg overflow-hidden transition-all duration-500 mx-auto select-none touch-none group" 
+      className={`relative w-full transition-all duration-500 mx-auto select-none touch-none group bg-slate-950 rounded-lg overflow-hidden
+        ${isFullscreen ? 'fixed inset-0 z-50 h-screen max-w-none rounded-none' : 'max-w-5xl aspect-video md:h-[500px]'}
+      `}
       ref={containerRef}
       style={{
-        boxShadow: `0 0 30px ${difficulty.color}15, 0 0 0 1px ${difficulty.color}30`
+        boxShadow: isFullscreen ? 'none' : `0 0 30px ${difficulty.color}15, 0 0 0 1px ${difficulty.color}30`
       }}
     >
       <canvas 
           ref={canvasRef} 
           width={800} 
           height={450} 
-          className="block w-full h-full cursor-pointer outline-none"
+          className="block w-full h-full cursor-pointer outline-none object-contain bg-[#020617]"
       />
 
       {/* --- HUD --- */}
@@ -944,6 +987,20 @@ const GameCanvas: React.FC<GameCanvasProps> = memo(({ difficulty, status, onStat
           </div>
           
           <div className="flex gap-2 pointer-events-auto">
+              <button 
+                  title={reduceMotion ? "Enable Motion/Pulse" : "Reduce Motion/Shake"}
+                  onClick={toggleMotion} 
+                  className={`p-2 rounded-full backdrop-blur-md transition-colors border border-transparent ${reduceMotion ? 'bg-blue-600 text-white border-blue-400' : 'bg-black/40 text-white/70 hover:bg-black/60 hover:text-white'}`}
+              >
+                  {reduceMotion ? <ZapOff className="w-5 h-5"/> : <Activity className="w-5 h-5"/>}
+              </button>
+              <button 
+                  title="Toggle Fullscreen"
+                  onClick={(e) => { e.stopPropagation(); toggleFullscreen(); }} 
+                  className="p-2 bg-black/40 hover:bg-black/60 rounded-full text-white/70 hover:text-white backdrop-blur-md transition-colors"
+              >
+                  {isFullscreen ? <Minimize className="w-5 h-5"/> : <Maximize className="w-5 h-5"/>}
+              </button>
               <button 
                   aria-label={isMuted ? "Unmute" : "Mute"}
                   onClick={(e) => { e.stopPropagation(); setIsMuted(!isMuted); localStorage.setItem('gd_spam_muted', String(!isMuted)); }} 
