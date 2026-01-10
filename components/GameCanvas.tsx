@@ -3,7 +3,7 @@
 
 import React, { useRef, useEffect, useCallback, useState, memo } from 'react';
 import { DifficultyConfig, GameStatus } from '../types';
-import { WIN_TIME_MS, WAVE_SPEED_Y } from '../constants';
+import { WIN_TIME_MS, WAVE_SPEED_Y, GRAVITY } from '../constants';
 import { Trophy, AlertTriangle, Crown, Volume2, VolumeX, Zap } from 'lucide-react';
 
 interface GameCanvasProps {
@@ -23,6 +23,7 @@ interface Obstacle {
   type: 'normal' | 'spike'; 
 }
 
+// Improved Particle for Shatter Effect
 interface Particle {
   x: number;
   y: number;
@@ -32,6 +33,16 @@ interface Particle {
   maxLife: number;
   color: string;
   size: number;
+  rotation: number;
+  rotationSpeed: number;
+}
+
+interface Star {
+  x: number;
+  y: number;
+  size: number;
+  speed: number;
+  opacity: number;
 }
 
 interface Shockwave {
@@ -42,7 +53,7 @@ interface Shockwave {
 }
 
 // Level Generation Patterns
-type PatternType = 'random' | 'corridor' | 'stairs_up' | 'stairs_down' | 'zigzag';
+type PatternType = 'random' | 'corridor' | 'stairs_up' | 'stairs_down' | 'zigzag' | 'sawtooth';
 
 const GameCanvas: React.FC<GameCanvasProps> = memo(({ difficulty, status, onStatusChange, isEndless = false, isMini = false }) => {
   const canvasRef = useRef<HTMLCanvasElement>(null);
@@ -82,8 +93,8 @@ const GameCanvas: React.FC<GameCanvasProps> = memo(({ difficulty, status, onStat
   // Audio Refs
   const audioCtxRef = useRef<AudioContext | null>(null);
   const masterGainRef = useRef<GainNode | null>(null);
+  const delayNodeRef = useRef<DelayNode | null>(null); // For echo/space
   
-  // Music Sequencer Refs
   const musicSchedulerRef = useRef<number | null>(null);
   const nextNoteTimeRef = useRef<number>(0);
   const noteIndexRef = useRef<number>(0);
@@ -95,20 +106,21 @@ const GameCanvas: React.FC<GameCanvasProps> = memo(({ difficulty, status, onStat
     velocityY: 0,
     isHolding: false,
     obstacles: [] as Obstacle[],
-    particles: [] as Particle[],
-    shockwaves: [] as Shockwave[], // New visual effect
-    trail: [] as {x: number, y: number}[],
+    particles: [] as Particle[], // Shards
+    shockwaves: [] as Shockwave[],
+    stars: [] as Star[], 
+    trail: [] as {x: number, y: number, w: number}[],
     startTime: 0,
     distanceTraveled: 0,
     lastObstacleX: 0,
-    // Generation Logic State
     currentPattern: 'random' as PatternType,
     patternStep: 0,
-    lastCenterY: 225, // Track previous hole center for continuity
+    lastCenterY: 225, 
     bgOffset: 0,
     groundOffset: 0,
     shakeIntensity: 0,
-    pulseIntensity: 0,
+    beatScale: 1.0, // For audio-visual sync
+    lastBeatTime: 0, // Track when the kick hit
     frameCount: 0,
     clickIntervals: [] as number[],
     runTime: 0,
@@ -119,18 +131,45 @@ const GameCanvas: React.FC<GameCanvasProps> = memo(({ difficulty, status, onStat
 
   const requestRef = useRef<number | undefined>(undefined);
 
-  // --- AUDIO SYSTEM ---
+  // --- AUDIO SYSTEM (ENHANCED) ---
   const initAudio = useCallback(() => {
     if (!audioCtxRef.current) {
       const AudioContextClass = window.AudioContext || (window as any).webkitAudioContext;
       if (AudioContextClass) {
           const ctx = new AudioContextClass();
           audioCtxRef.current = ctx;
+          
+          // Master Gain
           masterGainRef.current = ctx.createGain();
-          masterGainRef.current.connect(ctx.destination);
+          masterGainRef.current.gain.value = 0.8;
+
+          // Delay/Echo Effect for "Space" feel
+          const delay = ctx.createDelay(5.0);
+          delay.delayTime.value = 0.3; // 300ms delay
+          const feedback = ctx.createGain();
+          feedback.gain.value = 0.4; // 40% feedback
+          const delayFilter = ctx.createBiquadFilter();
+          delayFilter.type = 'lowpass';
+          delayFilter.frequency.value = 2000; // Dampen repeats
+
+          // Connect Delay Graph
+          masterGainRef.current.connect(ctx.destination); // Dry signal
+          masterGainRef.current.connect(delay); // Send to delay
+          delay.connect(delayFilter);
+          delayFilter.connect(feedback);
+          feedback.connect(delay); // Loop back
+          delayFilter.connect(ctx.destination); // Wet signal output
+          
+          delayNodeRef.current = delay;
       }
     }
     if (audioCtxRef.current?.state === 'suspended') audioCtxRef.current.resume();
+  }, []);
+
+  // Trigger Beat Pulse Visuals
+  const triggerBeat = useCallback(() => {
+     gameState.current.beatScale = 1.05; // Jump to 105% scale
+     gameState.current.lastBeatTime = Date.now();
   }, []);
 
   const playKick = useCallback((time: number) => {
@@ -139,33 +178,55 @@ const GameCanvas: React.FC<GameCanvasProps> = memo(({ difficulty, status, onStat
     const gain = audioCtxRef.current.createGain();
     osc.connect(gain);
     gain.connect(masterGainRef.current);
+    
     osc.frequency.setValueAtTime(150, time);
     osc.frequency.exponentialRampToValueAtTime(0.01, time + 0.5);
-    gain.gain.setValueAtTime(0.6, time); // Slightly louder kick
+    
+    gain.gain.setValueAtTime(1.0, time); 
     gain.gain.exponentialRampToValueAtTime(0.01, time + 0.5);
+    
     osc.start(time);
     osc.stop(time + 0.5);
-  }, []);
+
+    // Sync visual pulse
+    // We use setTimeout to sync the visual JS state with the AudioContext time roughly
+    const timeUntilKick = (time - audioCtxRef.current.currentTime) * 1000;
+    setTimeout(() => {
+        triggerBeat();
+    }, Math.max(0, timeUntilKick));
+
+  }, [triggerBeat]);
 
   const playBass = useCallback((time: number, note: number) => {
     if (!audioCtxRef.current || !masterGainRef.current) return;
     const osc = audioCtxRef.current.createOscillator();
     const gain = audioCtxRef.current.createGain();
     
-    // Mix Sawtooth and Square for "Tech" feel
     osc.type = 'sawtooth'; 
     osc.connect(gain);
     gain.connect(masterGainRef.current);
     
+    // Frequencies matching the key
     const freq = 55 * Math.pow(2, note / 12); 
     osc.frequency.setValueAtTime(freq, time);
-    osc.detune.setValueAtTime(Math.random() * 20 - 10, time); // Detune for width
+    osc.detune.setValueAtTime(Math.random() * 20 - 10, time); 
     
-    gain.gain.setValueAtTime(0.15, time);
-    gain.gain.exponentialRampToValueAtTime(0.001, time + 0.25);
+    // Moog-ish filter sweep
+    const filter = audioCtxRef.current.createBiquadFilter();
+    filter.type = 'lowpass';
+    filter.frequency.setValueAtTime(200, time);
+    filter.frequency.exponentialRampToValueAtTime(2000, time + 0.1);
+    filter.frequency.exponentialRampToValueAtTime(200, time + 0.3);
+    
+    osc.disconnect();
+    osc.connect(filter);
+    filter.connect(gain);
+
+    gain.gain.setValueAtTime(0.2, time);
+    gain.gain.exponentialRampToValueAtTime(0.001, time + 0.4);
     
     osc.start(time);
-    osc.stop(time + 0.3);
+    osc.stop(time + 0.4);
   }, []);
 
   const playHiHat = useCallback((time: number) => {
@@ -180,13 +241,13 @@ const GameCanvas: React.FC<GameCanvasProps> = memo(({ difficulty, status, onStat
       const gain = audioCtxRef.current.createGain();
       const filter = audioCtxRef.current.createBiquadFilter();
       filter.type = 'highpass';
-      filter.frequency.value = 6000; // Sharper hats
+      filter.frequency.value = 8000; 
 
       noise.connect(filter);
       filter.connect(gain);
       gain.connect(masterGainRef.current);
 
-      gain.gain.setValueAtTime(0.04, time);
+      gain.gain.setValueAtTime(0.05, time);
       gain.gain.exponentialRampToValueAtTime(0.001, time + 0.05);
 
       noise.start(time);
@@ -203,22 +264,21 @@ const GameCanvas: React.FC<GameCanvasProps> = memo(({ difficulty, status, onStat
     while (nextNoteTimeRef.current < ctx.currentTime + lookahead) {
         const sixteenth = noteIndexRef.current % 16;
         
-        // Heavy Kick on 1
-        if (sixteenth % 4 === 0) playKick(nextNoteTimeRef.current);
+        // Kick on 1, 5, 9, 13 (Standard 4/4)
+        if (sixteenth % 4 === 0) {
+            playKick(nextNoteTimeRef.current);
+        }
         
-        // Hats on offbeats
+        // Off-beat Hats
         if (sixteenth % 2 === 0 && sixteenth % 4 !== 0) playHiHat(nextNoteTimeRef.current);
-        if (Math.random() > 0.6) playHiHat(nextNoteTimeRef.current + (secondsPerBeat/8));
-
-        // Driving Bass
-        let note = 2; // F#
-        if (noteIndexRef.current % 32 >= 16) note = 5; 
-        if (noteIndexRef.current % 64 >= 48) note = 7; 
+        
+        // Bassline
+        let note = 0; // Key E
+        if (noteIndexRef.current % 64 >= 32) note = 3; // G
+        if (noteIndexRef.current % 64 >= 48) note = 5; // A
 
         if (sixteenth % 4 !== 0) {
            playBass(nextNoteTimeRef.current, note);
-        } else {
-           playBass(nextNoteTimeRef.current, note - 12); 
         }
 
         const secondsPer16th = secondsPerBeat / 4;
@@ -246,34 +306,40 @@ const GameCanvas: React.FC<GameCanvasProps> = memo(({ difficulty, status, onStat
   const playSound = useCallback((type: 'crash' | 'win' | 'click' | 'newBest') => {
       if (isMuted || !audioCtxRef.current || !masterGainRef.current) return;
       const ctx = audioCtxRef.current;
+      const now = ctx.currentTime;
+      
       const osc = ctx.createOscillator();
       const gain = ctx.createGain();
       gain.connect(masterGainRef.current);
       osc.connect(gain);
 
-      const now = ctx.currentTime;
-      
       if (type === 'click') {
-          osc.type = 'triangle'; // Crisper click
-          osc.frequency.setValueAtTime(isMini ? 900 : 700, now);
-          osc.frequency.exponentialRampToValueAtTime(100, now + 0.1);
-          gain.gain.setValueAtTime(0.2, now);
-          gain.gain.exponentialRampToValueAtTime(0.01, now + 0.1);
+          osc.type = 'triangle'; 
+          osc.frequency.setValueAtTime(isMini ? 800 : 600, now);
+          osc.frequency.exponentialRampToValueAtTime(1200, now + 0.05); // Zip up sound
+          gain.gain.setValueAtTime(0.15, now);
+          gain.gain.exponentialRampToValueAtTime(0.01, now + 0.05);
           osc.start(now);
-          osc.stop(now + 0.1);
+          osc.stop(now + 0.05);
       } else if (type === 'crash') {
-          osc.type = 'sawtooth';
-          osc.frequency.setValueAtTime(200, now);
-          osc.frequency.linearRampToValueAtTime(50, now + 0.4);
-          gain.gain.setValueAtTime(0.6, now);
-          gain.gain.exponentialRampToValueAtTime(0.01, now + 0.4);
-          osc.start(now);
-          osc.stop(now + 0.4);
+          // Noise burst
+          const bufferSize = ctx.sampleRate * 0.5;
+          const buffer = ctx.createBuffer(1, bufferSize, ctx.sampleRate);
+          const data = buffer.getChannelData(0);
+          for (let i = 0; i < bufferSize; i++) data[i] = Math.random() * 2 - 1;
+          const noise = ctx.createBufferSource();
+          noise.buffer = buffer;
+          const noiseGain = ctx.createGain();
+          noise.connect(noiseGain);
+          noiseGain.connect(masterGainRef.current);
+          noiseGain.gain.setValueAtTime(0.5, now);
+          noiseGain.gain.exponentialRampToValueAtTime(0.01, now + 0.5);
+          noise.start(now);
       } else if (type === 'win') {
           osc.type = 'sine';
-          osc.frequency.setValueAtTime(500, now);
-          osc.frequency.linearRampToValueAtTime(1000, now + 0.5);
-          gain.gain.setValueAtTime(0.3, now);
+          osc.frequency.setValueAtTime(440, now);
+          osc.frequency.linearRampToValueAtTime(880, now + 0.5);
+          gain.gain.setValueAtTime(0.2, now);
           gain.gain.linearRampToValueAtTime(0, now + 1.0);
           osc.start(now);
           osc.stop(now + 1.0);
@@ -288,19 +354,21 @@ const GameCanvas: React.FC<GameCanvasProps> = memo(({ difficulty, status, onStat
       }
   }, [isMuted, isMini]);
 
-  // --- LEVEL GENERATION SYSTEM ---
+  // --- GAMEPLAY & VISUALS ---
 
   const spawnObstacle = useCallback((canvasWidth: number, canvasHeight: number) => {
     const minGap = isMini ? difficulty.gap * 0.8 : difficulty.gap;
     
     // Pattern Selection Logic
     if (gameState.current.patternStep <= 0) {
-        const patterns: PatternType[] = ['random', 'corridor', 'stairs_up', 'stairs_down', 'zigzag'];
-        // Pick random pattern, but favor 'corridor' for spam practice
-        const nextPattern = Math.random() > 0.6 ? 'corridor' : patterns[Math.floor(Math.random() * patterns.length)];
+        const patterns: PatternType[] = ['random', 'corridor', 'stairs_up', 'stairs_down', 'zigzag', 'sawtooth'];
+        // Bias towards patterns in higher difficulty
+        let nextPattern: PatternType = 'random';
+        if (Math.random() > 0.4) {
+             nextPattern = patterns[Math.floor(Math.random() * patterns.length)];
+        }
         gameState.current.currentPattern = nextPattern;
-        // Determine length of pattern (number of obstacles)
-        gameState.current.patternStep = Math.floor(Math.random() * 5) + 3; // 3 to 8 blocks long
+        gameState.current.patternStep = Math.floor(Math.random() * 5) + 3; 
     }
 
     let center = gameState.current.lastCenterY;
@@ -308,19 +376,21 @@ const GameCanvas: React.FC<GameCanvasProps> = memo(({ difficulty, status, onStat
 
     switch (gameState.current.currentPattern) {
         case 'corridor':
-            // Straight line, slightly fluctuating
             center += (Math.random() * 20 - 10); 
             break;
         case 'stairs_up':
-            center -= (minGap * 0.5); // Step up
+            center -= (minGap * 0.6); 
             break;
         case 'stairs_down':
-            center += (minGap * 0.5); // Step down
+            center += (minGap * 0.6); 
             break;
         case 'zigzag':
-            // Alternating up/down drastically
             const direction = gameState.current.patternStep % 2 === 0 ? 1 : -1;
             center += (minGap * 1.5 * direction);
+            break;
+        case 'sawtooth':
+            // The "Tight Spam" pattern
+            center += (Math.random() * 40 - 20);
             break;
         case 'random':
         default:
@@ -328,20 +398,23 @@ const GameCanvas: React.FC<GameCanvasProps> = memo(({ difficulty, status, onStat
             break;
     }
 
-    // Clamp center to screen
     center = Math.max(padding, Math.min(canvasHeight - padding, center));
     gameState.current.lastCenterY = center;
     gameState.current.patternStep--;
 
-    const topHeight = center - minGap / 2;
-    const bottomY = center + minGap / 2;
-    
-    // Consistent width for patterns helps reading
+    let topHeight = center - minGap / 2;
+    let bottomY = center + minGap / 2;
     const width = 60; 
-    const spacing = 0; // Tighter spacing for continuous feel
+    
+    if (gameState.current.currentPattern === 'sawtooth') {
+        if (gameState.current.patternStep % 2 === 0) {
+            topHeight += 20; 
+            bottomY -= 20;
+        }
+    }
 
     gameState.current.obstacles.push({
-      x: gameState.current.lastObstacleX + width + spacing,
+      x: gameState.current.lastObstacleX + width,
       width: width,
       topHeight: topHeight,
       bottomY: bottomY,
@@ -353,10 +426,10 @@ const GameCanvas: React.FC<GameCanvasProps> = memo(({ difficulty, status, onStat
   }, [difficulty, isMini]);
 
   const createExplosion = (x: number, y: number, color: string) => {
-    // 1. Particles
-    for (let i = 0; i < 30; i++) {
+    // Create Shards (Triangles)
+    for (let i = 0; i < 20; i++) {
       const angle = Math.random() * Math.PI * 2;
-      const speed = Math.random() * 8 + 2;
+      const speed = Math.random() * 10 + 5;
       gameState.current.particles.push({
         x, y,
         vx: Math.cos(angle) * speed,
@@ -364,15 +437,12 @@ const GameCanvas: React.FC<GameCanvasProps> = memo(({ difficulty, status, onStat
         life: 1.0,
         maxLife: 1.0,
         color: color,
-        size: Math.random() * 4 + 2
+        size: Math.random() * 8 + 4,
+        rotation: Math.random() * Math.PI * 2,
+        rotationSpeed: (Math.random() - 0.5) * 0.5
       });
     }
-    // 2. Shockwave
-    gameState.current.shockwaves.push({
-        x, y,
-        radius: 10,
-        opacity: 1.0
-    });
+    gameState.current.shockwaves.push({ x, y, radius: 10, opacity: 1.0 });
   };
 
   const calculateConsistency = () => {
@@ -385,8 +455,22 @@ const GameCanvas: React.FC<GameCanvasProps> = memo(({ difficulty, status, onStat
     return score.toFixed(1) + '%';
   };
 
+  const initStars = (width: number, height: number) => {
+      gameState.current.stars = [];
+      for(let i=0; i<40; i++) {
+          gameState.current.stars.push({
+              x: Math.random() * width,
+              y: Math.random() * height,
+              size: Math.random() * 2 + 0.5,
+              speed: Math.random() * 2 + 0.2, 
+              opacity: Math.random() * 0.5 + 0.1
+          });
+      }
+  };
+
   const resetGame = useCallback(() => {
     if (!canvasRef.current) return;
+    const width = canvasRef.current.width;
     const height = canvasRef.current.height;
     const totalDistance = difficulty.speed * 60 * (WIN_TIME_MS / 1000);
 
@@ -408,23 +492,28 @@ const GameCanvas: React.FC<GameCanvasProps> = memo(({ difficulty, status, onStat
       bgOffset: 0,
       groundOffset: 0,
       shakeIntensity: 0,
-      pulseIntensity: 0,
+      beatScale: 1.0,
+      lastBeatTime: 0,
       frameCount: 0,
       clickIntervals: [],
       runTime: 0,
       finishLineX: totalDistance + 600,
       baseColor: difficulty.color
     };
+    initStars(width, height);
     setConsistency('100%');
     setIsNewBest(false);
   }, [difficulty.color, difficulty.speed]);
 
-  // --- MAIN GAME LOOP ---
+  // --- GAME LOOP ---
   const gameLoop = useCallback(() => {
     if (!canvasRef.current) return;
     const canvas = canvasRef.current;
     const ctx = canvas.getContext('2d');
     if (!ctx) return;
+
+    // Decay Beat Scale
+    gameState.current.beatScale = 1.0 + (gameState.current.beatScale - 1.0) * 0.9;
 
     // 1. Update Physics
     if (status === GameStatus.Playing) {
@@ -438,25 +527,28 @@ const GameCanvas: React.FC<GameCanvasProps> = memo(({ difficulty, status, onStat
         const moveSpeed = difficulty.speed;
         gameState.current.distanceTraveled += moveSpeed;
         gameState.current.bgOffset = (gameState.current.bgOffset + moveSpeed * 0.2) % canvas.width;
-        gameState.current.groundOffset = (gameState.current.groundOffset + moveSpeed) % 50;
-        gameState.current.pulseIntensity *= 0.9;
+        
+        // Parallax Stars
+        gameState.current.stars.forEach(star => {
+            star.x -= star.speed * (moveSpeed / 3);
+            if (star.x < 0) star.x = canvas.width;
+        });
 
         // Generation
         const spawnThreshold = isEndless ? Infinity : gameState.current.finishLineX - 400;
         const lastOb = gameState.current.obstacles.length > 0 ? gameState.current.obstacles[gameState.current.obstacles.length - 1] : null;
-        
         if (!lastOb || (lastOb.x < gameState.current.distanceTraveled + canvas.width + 100 && gameState.current.lastObstacleX < spawnThreshold)) {
             spawnObstacle(canvas.width, canvas.height);
         }
 
         // Collision
         const playerRadius = isMini ? 4 : 8;
-        // Hitbox slightly smaller than visual
+        const hitboxSize = playerRadius * 0.5; // Very forgiving hitbox for "Pro" feel
         const playerHitbox = {
-             x: gameState.current.playerX - playerRadius + 2,
-             y: gameState.current.playerY - playerRadius + 2,
-             w: (playerRadius * 2) - 4,
-             h: (playerRadius * 2) - 4
+             x: gameState.current.playerX - hitboxSize,
+             y: gameState.current.playerY - hitboxSize,
+             w: hitboxSize * 2,
+             h: hitboxSize * 2
         };
 
         if (gameState.current.playerY < 0 || gameState.current.playerY > canvas.height) {
@@ -467,10 +559,8 @@ const GameCanvas: React.FC<GameCanvasProps> = memo(({ difficulty, status, onStat
         gameState.current.obstacles.forEach(obs => {
              const obsScreenX = obs.x - gameState.current.distanceTraveled;
              if (obsScreenX < canvas.width && obsScreenX + obs.width > 0) {
-                 // AABB Collision
                  if (playerHitbox.x < obsScreenX + obs.width &&
                      playerHitbox.x + playerHitbox.w > obsScreenX) {
-                     
                      if (playerHitbox.y < obs.topHeight) handleDeath();
                      if (playerHitbox.y + playerHitbox.h > obs.bottomY) handleDeath();
                  }
@@ -487,27 +577,31 @@ const GameCanvas: React.FC<GameCanvasProps> = memo(({ difficulty, status, onStat
              }
         }
 
-        // Trail Logic
-        if (gameState.current.frameCount % 2 === 0) {
-            gameState.current.trail.push({ x: gameState.current.playerX, y: gameState.current.playerY });
-            if (gameState.current.trail.length > 20) gameState.current.trail.shift();
+        // Ribbon Trail
+        if (gameState.current.frameCount % 2 === 0) { // Optimize trail frequency
+             const w = isMini ? 4 : 8;
+            gameState.current.trail.push({ x: gameState.current.playerX, y: gameState.current.playerY, w });
+            if (gameState.current.trail.length > 30) gameState.current.trail.shift();
         }
         for (let i = 0; i < gameState.current.trail.length; i++) {
              gameState.current.trail[i].x -= moveSpeed;
+             gameState.current.trail[i].w *= 0.94; // Taper width faster
         }
 
-        // Update Effects
+        // Particle Physics (Gravity included)
         gameState.current.particles = gameState.current.particles.filter(p => p.life > 0);
         gameState.current.particles.forEach(p => {
             p.x += p.vx;
             p.y += p.vy;
+            p.vy += 0.5; // Gravity for shards
+            p.rotation += p.rotationSpeed;
             p.life -= 0.02;
-            p.size *= 0.95;
+            p.size *= 0.98;
         });
 
         gameState.current.shockwaves = gameState.current.shockwaves.filter(s => s.opacity > 0);
         gameState.current.shockwaves.forEach(s => {
-            s.radius += 5;
+            s.radius += 8;
             s.opacity -= 0.05;
         });
 
@@ -515,33 +609,43 @@ const GameCanvas: React.FC<GameCanvasProps> = memo(({ difficulty, status, onStat
     }
 
     // 2. Rendering
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
+    
+    // Shake + Beat Zoom
+    ctx.save();
+    
+    // Beat Zoom (Center of Screen)
+    const scale = gameState.current.beatScale;
+    if (scale > 1.001) {
+        ctx.translate(canvas.width/2, canvas.height/2);
+        ctx.scale(scale, scale);
+        ctx.translate(-canvas.width/2, -canvas.height/2);
+    }
+
+    if (gameState.current.shakeIntensity > 0) {
+        const dx = (Math.random() - 0.5) * gameState.current.shakeIntensity;
+        const dy = (Math.random() - 0.5) * gameState.current.shakeIntensity;
+        ctx.translate(dx, dy);
+        gameState.current.shakeIntensity *= 0.9;
+    }
+
+    // Background
     ctx.fillStyle = '#020617'; 
     ctx.fillRect(0, 0, canvas.width, canvas.height);
 
-    if (gameState.current.pulseIntensity > 0.1) {
-        ctx.fillStyle = `rgba(37, 99, 235, ${gameState.current.pulseIntensity * 0.1})`;
-        ctx.fillRect(0, 0, canvas.width, canvas.height);
-    }
-
-    // Grid
-    ctx.strokeStyle = `rgba(255, 255, 255, ${0.05 + gameState.current.pulseIntensity * 0.1})`;
-    ctx.lineWidth = 1;
-    const gridSize = 50;
-    const offsetX = Math.floor(gameState.current.distanceTraveled) % gridSize;
-    
-    for (let x = -offsetX; x < canvas.width; x += gridSize) {
-        ctx.beginPath(); ctx.moveTo(x, 0); ctx.lineTo(x, canvas.height); ctx.stroke();
-    }
-    for (let y = 0; y < canvas.height; y += gridSize) {
-        ctx.beginPath(); ctx.moveTo(0, y); ctx.lineTo(canvas.width, y); ctx.stroke();
-    }
+    // Stars
+    gameState.current.stars.forEach(star => {
+        ctx.fillStyle = `rgba(255,255,255,${star.opacity})`;
+        ctx.beginPath();
+        ctx.arc(star.x, star.y, star.size, 0, Math.PI * 2);
+        ctx.fill();
+    });
 
     // Floor/Ceiling
     ctx.fillStyle = gameState.current.baseColor;
     ctx.fillRect(0, 0, canvas.width, 10);
     ctx.fillRect(0, canvas.height - 10, canvas.width, 10);
-    // Neon glow line
-    ctx.shadowBlur = 10;
+    ctx.shadowBlur = 15;
     ctx.shadowColor = gameState.current.baseColor;
     ctx.strokeStyle = '#fff';
     ctx.lineWidth = 2;
@@ -549,68 +653,39 @@ const GameCanvas: React.FC<GameCanvasProps> = memo(({ difficulty, status, onStat
     ctx.beginPath(); ctx.moveTo(0, canvas.height - 10); ctx.lineTo(canvas.width, canvas.height - 10); ctx.stroke();
     ctx.shadowBlur = 0;
 
-    // Obstacles
-    ctx.fillStyle = gameState.current.baseColor; // Main fill
+    // Obstacles with Gradient
     gameState.current.obstacles.forEach(obs => {
         const x = obs.x - gameState.current.distanceTraveled;
-        // Optimization: Only render visible
         if (x > -obs.width && x < canvas.width) {
             
-            // Draw blocks
-            ctx.fillStyle = gameState.current.baseColor;
+            // Gradient creation for "glass/neon" look
+            const gradTop = ctx.createLinearGradient(x, 0, x, obs.topHeight);
+            gradTop.addColorStop(0, gameState.current.baseColor);
+            gradTop.addColorStop(1, `${gameState.current.baseColor}44`); // fade out
+
+            const gradBottom = ctx.createLinearGradient(x, obs.bottomY, x, canvas.height);
+            gradBottom.addColorStop(0, `${gameState.current.baseColor}44`);
+            gradBottom.addColorStop(1, gameState.current.baseColor);
+
+            ctx.fillStyle = gradTop;
             ctx.fillRect(x, 0, obs.width, obs.topHeight);
+            
+            ctx.fillStyle = gradBottom;
             ctx.fillRect(x, obs.bottomY, obs.width, canvas.height - obs.bottomY);
             
-            // Draw Spikes (Triangles)
-            const spikeSize = 10;
-            ctx.fillStyle = '#000000'; // Spike inner color
-            
-            // Top Spikes (Pointing Down)
-            const numSpikes = Math.floor(obs.width / spikeSize);
-            ctx.beginPath();
-            for(let i=0; i<numSpikes; i++) {
-                const sx = x + (i * spikeSize);
-                const sy = obs.topHeight;
-                ctx.moveTo(sx, sy - spikeSize); // base left
-                ctx.lineTo(sx + spikeSize/2, sy); // tip
-                ctx.lineTo(sx + spikeSize, sy - spikeSize); // base right
-            }
-            ctx.fill();
-
-            // Bottom Spikes (Pointing Up)
-            ctx.beginPath();
-            for(let i=0; i<numSpikes; i++) {
-                const sx = x + (i * spikeSize);
-                const sy = obs.bottomY;
-                ctx.moveTo(sx, sy + spikeSize); 
-                ctx.lineTo(sx + spikeSize/2, sy); 
-                ctx.lineTo(sx + spikeSize, sy + spikeSize);
-            }
-            ctx.fill();
-
-            // Neon Borders (Outlines)
-            ctx.shadowBlur = 15;
-            ctx.shadowColor = gameState.current.baseColor;
+            // Neon Outlines (Glowy)
             ctx.strokeStyle = '#fff';
             ctx.lineWidth = 2;
             
             // Top Block Border
             ctx.beginPath();
-            ctx.moveTo(x, 0); 
-            ctx.lineTo(x, obs.topHeight); 
-            ctx.lineTo(x + obs.width, obs.topHeight); 
-            ctx.lineTo(x + obs.width, 0);
+            ctx.moveTo(x, 0); ctx.lineTo(x, obs.topHeight); ctx.lineTo(x + obs.width, obs.topHeight); ctx.lineTo(x + obs.width, 0);
             ctx.stroke();
 
             // Bottom Block Border
             ctx.beginPath();
-            ctx.moveTo(x, canvas.height); 
-            ctx.lineTo(x, obs.bottomY); 
-            ctx.lineTo(x + obs.width, obs.bottomY); 
-            ctx.lineTo(x + obs.width, canvas.height);
+            ctx.moveTo(x, canvas.height); ctx.lineTo(x, obs.bottomY); ctx.lineTo(x + obs.width, obs.bottomY); ctx.lineTo(x + obs.width, canvas.height);
             ctx.stroke();
-            
-            ctx.shadowBlur = 0;
         }
     });
 
@@ -619,7 +694,6 @@ const GameCanvas: React.FC<GameCanvasProps> = memo(({ difficulty, status, onStat
         if (finishX < canvas.width) {
             ctx.fillStyle = '#fff';
             ctx.fillRect(finishX, 0, 10, canvas.height);
-            // Glow Wall
             ctx.shadowBlur = 50;
             ctx.shadowColor = '#fff';
             ctx.fillRect(finishX, 0, 10, canvas.height);
@@ -627,87 +701,102 @@ const GameCanvas: React.FC<GameCanvasProps> = memo(({ difficulty, status, onStat
         }
     }
 
-    // Trail
+    // Ribbon Trail
     if (gameState.current.trail.length > 1) {
+        ctx.beginPath();
+        ctx.moveTo(gameState.current.trail[0].x, gameState.current.trail[0].y - gameState.current.trail[0].w/2);
+        for (let i = 1; i < gameState.current.trail.length; i++) {
+            ctx.lineTo(gameState.current.trail[i].x, gameState.current.trail[i].y - gameState.current.trail[i].w/2);
+        }
+        ctx.lineTo(gameState.current.playerX, gameState.current.playerY);
+        for (let i = gameState.current.trail.length - 1; i >= 0; i--) {
+            ctx.lineTo(gameState.current.trail[i].x, gameState.current.trail[i].y + gameState.current.trail[i].w/2);
+        }
+        ctx.closePath();
+        ctx.fillStyle = difficulty.color;
+        ctx.globalAlpha = 0.6;
+        ctx.fill();
+        ctx.globalAlpha = 1.0;
+        
+        // Inner white line
         ctx.beginPath();
         ctx.moveTo(gameState.current.trail[0].x, gameState.current.trail[0].y);
         for (let i = 1; i < gameState.current.trail.length; i++) {
             ctx.lineTo(gameState.current.trail[i].x, gameState.current.trail[i].y);
         }
         ctx.lineTo(gameState.current.playerX, gameState.current.playerY);
-        ctx.strokeStyle = gameState.current.baseColor;
-        ctx.lineWidth = isMini ? 2 : 4;
-        ctx.lineCap = 'round';
-        ctx.lineJoin = 'round';
-        ctx.shadowBlur = 10;
-        ctx.shadowColor = gameState.current.baseColor;
+        ctx.strokeStyle = '#fff';
+        ctx.lineWidth = 2;
         ctx.stroke();
-        ctx.shadowBlur = 0;
     }
 
     // Player
-    ctx.shadowBlur = 20;
-    ctx.shadowColor = '#fff';
-    ctx.save();
-    ctx.translate(gameState.current.playerX, gameState.current.playerY);
-    const rotation = gameState.current.velocityY > 0 ? 45 : -45;
-    ctx.rotate(rotation * Math.PI / 180);
-    
-    const size = isMini ? 6 : 12;
-    ctx.fillStyle = '#fff';
-    ctx.beginPath();
-    ctx.moveTo(-size, -size);
-    ctx.lineTo(size, 0);
-    ctx.lineTo(-size, size);
-    ctx.closePath();
-    ctx.fill();
-    
-    ctx.fillStyle = isMini ? '#d8b4fe' : '#93c5fd'; 
-    ctx.beginPath();
-    ctx.moveTo(-size/2, -size/2);
-    ctx.lineTo(size/2, 0);
-    ctx.lineTo(-size/2, size/2);
-    ctx.closePath();
-    ctx.fill();
-    ctx.restore();
-    ctx.shadowBlur = 0;
+    if (status !== GameStatus.Lost) {
+        ctx.shadowBlur = 20;
+        ctx.shadowColor = '#fff';
+        ctx.save();
+        ctx.translate(gameState.current.playerX, gameState.current.playerY);
+        const rotation = gameState.current.velocityY > 0 ? 45 : -45;
+        ctx.rotate(rotation * Math.PI / 180);
+        
+        const size = isMini ? 6 : 12;
+        ctx.fillStyle = '#fff';
+        ctx.beginPath();
+        ctx.moveTo(-size, -size);
+        ctx.lineTo(size, 0);
+        ctx.lineTo(-size, size);
+        ctx.closePath();
+        ctx.fill();
+        
+        ctx.fillStyle = difficulty.color; 
+        ctx.beginPath();
+        ctx.moveTo(-size/2, -size/2);
+        ctx.lineTo(size/2, 0);
+        ctx.lineTo(-size/2, size/2);
+        ctx.closePath();
+        ctx.fill();
+        ctx.restore();
+        ctx.shadowBlur = 0;
+    }
 
-    // Render Shockwaves
+    // Render Shattered Particles
+    gameState.current.particles.forEach(p => {
+        ctx.save();
+        ctx.translate(p.x, p.y);
+        ctx.rotate(p.rotation);
+        ctx.globalAlpha = p.life;
+        ctx.fillStyle = p.color;
+        
+        // Draw Triangle Shard
+        ctx.beginPath();
+        const s = p.size;
+        ctx.moveTo(-s/2, s/2);
+        ctx.lineTo(s/2, s/2);
+        ctx.lineTo(0, -s/2);
+        ctx.closePath();
+        ctx.fill();
+        
+        ctx.globalAlpha = 1.0;
+        ctx.restore();
+    });
+
+    // Shockwaves
     gameState.current.shockwaves.forEach(s => {
         ctx.beginPath();
         ctx.arc(s.x, s.y, s.radius, 0, Math.PI * 2);
         ctx.strokeStyle = `rgba(255, 255, 255, ${s.opacity})`;
-        ctx.lineWidth = 5;
+        ctx.lineWidth = 4;
         ctx.stroke();
     });
 
-    // Render Particles
-    gameState.current.particles.forEach(p => {
-        ctx.globalAlpha = p.life;
-        ctx.fillStyle = p.color;
-        ctx.beginPath();
-        ctx.arc(p.x, p.y, p.size, 0, Math.PI * 2);
-        ctx.fill();
-        ctx.globalAlpha = 1.0;
-    });
-
-    if (gameState.current.shakeIntensity > 0) {
-        const dx = (Math.random() - 0.5) * gameState.current.shakeIntensity;
-        const dy = (Math.random() - 0.5) * gameState.current.shakeIntensity;
-        canvas.style.transform = `translate(${dx}px, ${dy}px)`;
-        gameState.current.shakeIntensity *= 0.9;
-        if (gameState.current.shakeIntensity < 0.5) {
-            gameState.current.shakeIntensity = 0;
-            canvas.style.transform = 'none';
-        }
-    }
+    ctx.restore(); // Restore shake/zoom state
 
     requestRef.current = requestAnimationFrame(gameLoop);
   }, [status, difficulty, isEndless, isMini, spawnObstacle, saveHighScore, playSound]);
 
   const handleDeath = () => {
       onStatusChange(GameStatus.Lost);
-      gameState.current.shakeIntensity = 25;
+      gameState.current.shakeIntensity = 40; // Intense impact
       createExplosion(gameState.current.playerX, gameState.current.playerY, '#fff');
       playSound('crash');
       setConsistency(calculateConsistency());
@@ -725,7 +814,6 @@ const GameCanvas: React.FC<GameCanvasProps> = memo(({ difficulty, status, onStat
      if (status === GameStatus.Lost || status === GameStatus.Won) {
          resetGame();
          onStatusChange(GameStatus.Playing);
-         gameState.current.pulseIntensity = 2.0; 
          initAudio();
          gameState.current.isHolding = true; 
          playSound('click');
@@ -738,7 +826,6 @@ const GameCanvas: React.FC<GameCanvasProps> = memo(({ difficulty, status, onStat
      }
      
      gameState.current.isHolding = true;
-     gameState.current.pulseIntensity = 1.0; 
      
      const now = Date.now();
      if (gameState.current.lastClickTime > 0) {
