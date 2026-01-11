@@ -68,28 +68,28 @@ const WaveSimulator: React.FC = () => {
   const howToSchema = {
     "@context": "https://schema.org",
     "@type": "HowTo",
-    "name": "How to Practice Geometry Dash Wave Spam",
-    "description": "A step-by-step guide to mastering the wave spam mechanic in Geometry Dash using a simulator.",
+    "name": "How to Pass a Geometry Dash Spam Test",
+    "description": "A step-by-step guide to mastering the wave spam mechanic in Geometry Dash using our simulator.",
     "step": [
       {
         "@type": "HowToStep",
         "name": "Select Difficulty",
-        "text": "Choose a difficulty level that matches your skill. Beginners should start with 'Easy' to learn the physics engine."
+        "text": "Choose a difficulty level for your Geometry Dash Spam Test. Beginners should start with 'Easy'."
       },
       {
         "@type": "HowToStep",
         "name": "Configure Wave Settings",
-        "text": "Toggle 'Mini Wave' if you want to practice faster vertical movement, or 'Endless Mode' for stamina training."
+        "text": "Toggle 'Mini Wave' if you want to practice faster vertical movement spam."
       },
       {
         "@type": "HowToStep",
-        "name": "Start the Simulation",
+        "name": "Start the Spam Test",
         "text": "Press Spacebar or Click to begin. The wave moves up when holding and down when releasing."
       },
       {
         "@type": "HowToStep",
         "name": "Analyze Consistency",
-        "text": "After a crash or win, check your 'Consistency Score' and 'Unstable Rate' to see how even your clicking rhythm is."
+        "text": "After the run, check your 'Consistency Score' to see if you passed the spam test with even rhythm."
       }
     ]
   };
@@ -178,7 +178,7 @@ const WaveSimulator: React.FC = () => {
                       <div className="text-yellow-400 font-bold uppercase tracking-widest text-xs mb-1">Daily Practice • {today}</div>
                       <h3 className="text-xl font-display font-bold text-white mb-1">Slaughterhouse River Run</h3>
                       <p className="text-slate-400 text-sm max-w-md">
-                          Today's Goal: Survive <span className="text-white font-bold">15 seconds</span> on <span className="text-white font-bold">Insane</span> difficulty using <span className="text-white font-bold">Mini Wave</span>.
+                          Today's <strong>Geometry Dash Spam</strong> Goal: Survive <span className="text-white font-bold">15 seconds</span> on <span className="text-white font-bold">Insane</span> difficulty using <span className="text-white font-bold">Mini Wave</span>.
                       </p>
                   </div>
               </div>
@@ -196,14 +196,14 @@ const WaveSimulator: React.FC = () => {
                       <Star className="w-4 h-4 fill-current" />
                       ACCEPT CHALLENGE
                   </button>
-                  <p className="text-[10px] text-yellow-500/80 mt-2 font-mono">1,240 players completed this today</p>
+                  <p className="text-[10px] text-yellow-500/80 mt-2 font-mono">1,240 players completed this test today</p>
               </div>
           </div>
       </div>
 
       {/* Quick Access Training Modules (Modified to use Link) */}
       <div className="w-full max-w-5xl mt-8 mb-8">
-        <h3 className="text-xl font-display font-bold text-white mb-4 px-2 border-l-4 border-blue-500">More Training Modules</h3>
+        <h3 className="text-xl font-display font-bold text-white mb-4 px-2 border-l-4 border-blue-500">More Geometry Dash Spam Tests</h3>
         <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
             <Link href="/cps-test" className="bg-slate-900/60 border border-white/5 rounded-xl p-4 hover:border-blue-400/50 hover:bg-slate-900 transition-all cursor-pointer group block">
                 <MousePointerClick className="w-8 h-8 text-blue-500 mb-3 group-hover:scale-110 transition-transform"/>

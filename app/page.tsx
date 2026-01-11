@@ -1,10 +1,51 @@
 
 import WaveSimulator from "../components/WaveSimulator";
 import HomeGuide from "../components/HomeGuide";
+import { Metadata } from "next";
+
+export const metadata: Metadata = {
+  // CRITICAL FOR SEO: Sets the base URL for all relative URLs (canonical, og:image, etc.)
+  metadataBase: new URL("https://geometrydashspam.cc"),
+  title: {
+    default: "Geometry Dash Spam Test | Ultimate Wave Simulator",
+    template: "%s | Geometry Dash Spam"
+  },
+  description: "The most accurate Geometry Dash Spam Test on the web. Simulate 2.2 wave physics, improve your Geometry Dash Spam consistency, and practice for Extreme Demons.",
+  keywords: ["geometry dash spam", "geometry dash spam test", "wave simulator", "gd spam", "cps test", "jitter click", "butterfly click", "click speed test"],
+  alternates: {
+    canonical: './', 
+  },
+  icons: {
+    icon: '/logo.svg',
+    shortcut: '/logo.svg',
+    apple: '/logo.svg',
+    other: {
+      rel: 'apple-touch-icon-precomposed',
+      url: '/logo.svg',
+    },
+  },
+  verification: {
+    google: "Yz_6YlW_BzjxZVMUNDmQKQV3n-Jf8cRUr6sMnqJDzyQ",
+  },
+  openGraph: {
+    type: "website",
+    url: "https://geometrydashspam.cc",
+    siteName: "Geometry Dash Spam Test",
+    title: "Geometry Dash Spam Test",
+    description: "Test your clicking speed and precision with the ultimate Geometry Dash Spam Wave Simulator.",
+    images: [{ url: "https://geometrydashspam.cc/logo.svg" }],
+    locale: 'en_US',
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: "Geometry Dash Spam Test",
+    description: "Master the wave with the ultimate Geometry Dash Spam simulator.",
+    images: ["https://geometrydashspam.cc/logo.svg"],
+  },
+};
 
 export default function Home() {
   // Structured Data for Software Application
-  // This helps Google show "Free", "Browser Game", and Star Ratings in search results
   const softwareSchema = {
     "@context": "https://schema.org",
     "@type": "SoftwareApplication",
@@ -39,11 +80,13 @@ export default function Home() {
             <span className="w-1.5 h-1.5 rounded-full bg-green-500 animate-pulse"></span>
             SYSTEM ONLINE
          </div>
-         <h1 className="text-3xl md:text-5xl font-display font-bold text-white mb-2 drop-shadow-2xl uppercase">
+         <h1 className="text-3xl md:text-5xl font-display font-bold text-white mb-4 drop-shadow-2xl uppercase">
             GEOMETRY DASH SPAM TEST
          </h1>
-         <p className="text-slate-500 max-w-2xl mx-auto text-sm md:text-base">
-            Master the wave mechanic. Improve consistency. Survive the spam.
+         <p className="text-slate-400 max-w-3xl mx-auto text-sm md:text-base leading-relaxed">
+            Welcome to the ultimate <strong>Geometry Dash Spam Test</strong>. 
+            This simulator is designed to help players master the <strong>Geometry Dash spam</strong> mechanic, 
+            improve wave consistency, and survive the hardest sections in the game.
          </p>
       </div>
 
