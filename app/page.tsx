@@ -1,48 +1,102 @@
 
 import WaveSimulator from "../components/WaveSimulator";
 import HomeGuide from "../components/HomeGuide";
-import { Metadata } from "next";
+import { Metadata, ResolvingMetadata } from "next";
 
-export const metadata: Metadata = {
-  // CRITICAL FOR SEO: Sets the base URL for all relative URLs (canonical, og:image, etc.)
-  metadataBase: new URL("https://geometrydashspam.cc"),
-  title: {
-    default: "Geometry Dash Spam Test | Ultimate Wave Simulator",
-    template: "%s | Geometry Dash Spam"
-  },
-  description: "The most accurate Geometry Dash Spam Test on the web. Simulate 2.2 wave physics, improve your Geometry Dash Spam consistency, and practice for Extreme Demons.",
-  keywords: ["geometry dash spam", "geometry dash spam test", "wave simulator", "gd spam", "cps test", "jitter click", "butterfly click", "click speed test"],
-  alternates: {
-    canonical: './', 
-  },
-  icons: {
-    icon: '/logo.svg',
-    shortcut: '/logo.svg',
-    apple: '/logo.svg',
-    other: {
-      rel: 'apple-touch-icon-precomposed',
-      url: '/logo.svg',
+type Props = {
+  params: { id: string }
+  searchParams: { [key: string]: string | string[] | undefined }
+}
+
+export async function generateMetadata(
+  { searchParams }: Props,
+  parent: ResolvingMetadata
+): Promise<Metadata> {
+  // Extract parameters from URL (e.g., ?score=15s&diff=Extreme%20Demon)
+  const score = searchParams.score;
+  const diff = searchParams.diff;
+  const mode = searchParams.mode;
+  
+  // Base metadata fallback
+  const baseTitle = "Geometry Dash Spam Test | Ultimate Wave Simulator";
+  const baseDesc = "The most accurate Geometry Dash Spam Test on the web. Simulate 2.2 wave physics, improve your Geometry Dash Spam consistency, and practice for Extreme Demons.";
+  
+  // If we have score parameters, generate dynamic social cards
+  if (score && diff) {
+     const cleanScore = typeof score === 'string' ? score : score[0];
+     const cleanDiff = typeof diff === 'string' ? diff : diff[0];
+     const cleanMode = typeof mode === 'string' ? mode : (mode ? mode[0] : '');
+     
+     // Determine context based on score format
+     const isTime = cleanScore.includes('s');
+     const isPercent = cleanScore.includes('%');
+     
+     let title = "";
+     if (isTime) title = `I survived ${cleanScore} on ${cleanDiff} Difficulty!`;
+     else if (isPercent) title = `I reached ${cleanScore} on ${cleanDiff} Difficulty!`;
+     else title = `I scored ${cleanScore} on ${cleanDiff}!`;
+
+     // Construct the API URL for the OG image
+     const ogImageUrl = `/api/og?score=${encodeURIComponent(cleanScore)}&diff=${encodeURIComponent(cleanDiff)}&mode=${encodeURIComponent(cleanMode)}`;
+
+     return {
+        title: title,
+        description: `Can you beat my ${cleanMode} run on Geometry Dash Spam Test? Attempt the ${cleanDiff} challenge now.`,
+        openGraph: {
+           images: [ogImageUrl],
+           title: title,
+           description: "Prove your skill in the ultimate Geometry Dash Wave Simulator.",
+           type: 'website',
+        },
+        twitter: {
+            card: "summary_large_image",
+            title: title,
+            description: "Prove your skill in the ultimate Geometry Dash Wave Simulator.",
+            images: [ogImageUrl],
+        }
+     }
+  }
+  
+  // Default Static Metadata
+  return {
+    title: {
+      default: baseTitle,
+      template: "%s | Geometry Dash Spam"
     },
-  },
-  verification: {
-    google: "Yz_6YlW_BzjxZVMUNDmQKQV3n-Jf8cRUr6sMnqJDzyQ",
-  },
-  openGraph: {
-    type: "website",
-    url: "https://geometrydashspam.cc",
-    siteName: "Geometry Dash Spam Test",
-    title: "Geometry Dash Spam Test",
-    description: "Test your clicking speed and precision with the ultimate Geometry Dash Spam Wave Simulator.",
-    images: [{ url: "https://geometrydashspam.cc/logo.svg" }],
-    locale: 'en_US',
-  },
-  twitter: {
-    card: "summary_large_image",
-    title: "Geometry Dash Spam Test",
-    description: "Master the wave with the ultimate Geometry Dash Spam simulator.",
-    images: ["https://geometrydashspam.cc/logo.svg"],
-  },
-};
+    description: baseDesc,
+    keywords: ["geometry dash spam", "geometry dash spam test", "wave simulator", "gd spam", "cps test", "jitter click", "butterfly click", "click speed test"],
+    alternates: {
+      canonical: './', 
+    },
+    icons: {
+      icon: '/logo.svg',
+      shortcut: '/logo.svg',
+      apple: '/logo.svg',
+      other: {
+        rel: 'apple-touch-icon-precomposed',
+        url: '/logo.svg',
+      },
+    },
+    verification: {
+      google: "Yz_6YlW_BzjxZVMUNDmQKQV3n-Jf8cRUr6sMnqJDzyQ",
+    },
+    openGraph: {
+      type: "website",
+      url: "https://geometrydashspam.cc",
+      siteName: "Geometry Dash Spam Test",
+      title: "Geometry Dash Spam Test",
+      description: "Test your clicking speed and precision with the ultimate Geometry Dash Spam Wave Simulator.",
+      images: [{ url: "https://geometrydashspam.cc/logo.svg" }],
+      locale: 'en_US',
+    },
+    twitter: {
+      card: "summary_large_image",
+      title: "Geometry Dash Spam Test",
+      description: "Master the wave with the ultimate Geometry Dash Spam simulator.",
+      images: ["https://geometrydashspam.cc/logo.svg"],
+    },
+  }
+}
 
 export default function Home() {
   // Structured Data for Software Application

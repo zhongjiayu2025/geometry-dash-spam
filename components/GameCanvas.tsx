@@ -90,6 +90,7 @@ const GameCanvas: React.FC<GameCanvasProps> = memo(({ difficulty, status, onStat
   // Share Modal State
   const [showShareModal, setShowShareModal] = useState<boolean>(false);
   const [shareText, setShareText] = useState<string>("");
+  const [shareUrl, setShareUrl] = useState<string>("");
   const [copied, setCopied] = useState<boolean>(false);
   
   useEffect(() => {
@@ -842,15 +843,34 @@ const GameCanvas: React.FC<GameCanvasProps> = memo(({ difficulty, status, onStat
   const handleShareClick = (e: React.MouseEvent) => {
     e.stopPropagation();
     
-    const time = (gameState.current.runTime / 1000).toFixed(2);
-    const pct = !isEndless ? Math.min(100, (gameState.current.distanceTraveled / gameState.current.finishLineX) * 100).toFixed(0) + '%' : '∞';
+    // Calculate Score String
+    const timeVal = (gameState.current.runTime / 1000).toFixed(2);
+    let scoreDisplay = "";
     
-    let text = `I just scored ${time}s on ${difficulty.label} mode!`;
-    if (status === GameStatus.Won) text = `I completed the ${difficulty.label} level in ${time}s on Geometry Dash Spam Test! 🏆`;
-    else if (isEndless) text = `I survived ${time}s on Endless ${difficulty.label} mode in Geometry Dash Spam Test! 🌊`;
-    else text = `I reached ${pct} on ${difficulty.label} mode in Geometry Dash Spam Test! 💀 ${time}s`;
+    if (status === GameStatus.Won) scoreDisplay = `${timeVal}s`;
+    else if (isEndless) scoreDisplay = `${timeVal}s`;
+    else {
+        const pct = Math.min(100, (gameState.current.distanceTraveled / gameState.current.finishLineX) * 100).toFixed(0);
+        scoreDisplay = `${pct}%`;
+    }
+
+    // Construct the dynamic share URL with parameters
+    // This allows the OG image API to read the score and render the card
+    const baseUrl = window.location.origin;
+    const params = new URLSearchParams();
+    params.set('score', scoreDisplay);
+    params.set('diff', difficulty.label);
+    params.set('mode', isEndless ? 'Endless' : 'Level');
     
-    text += `\n\nTry to beat me here: https://geometrydashspam.cc`;
+    const generatedShareUrl = `${baseUrl}/?${params.toString()}`;
+    setShareUrl(generatedShareUrl);
+    
+    let text = `I just scored ${scoreDisplay} on ${difficulty.label} mode!`;
+    if (status === GameStatus.Won) text = `I completed the ${difficulty.label} level in ${scoreDisplay} on Geometry Dash Spam Test! 🏆`;
+    else if (isEndless) text = `I survived ${scoreDisplay} on Endless ${difficulty.label} mode! 🌊`;
+    else text = `I reached ${scoreDisplay} on ${difficulty.label} mode! 💀`;
+    
+    text += `\n\nTry to beat me here:`; 
     
     setShareText(text);
     setCopied(false);
@@ -859,7 +879,7 @@ const GameCanvas: React.FC<GameCanvasProps> = memo(({ difficulty, status, onStat
 
   const copyToClipboard = async () => {
       try {
-          await navigator.clipboard.writeText(shareText);
+          await navigator.clipboard.writeText(`${shareText} ${shareUrl}`);
           setCopied(true);
           setTimeout(() => setCopied(false), 2000);
       } catch (err) {
@@ -1192,7 +1212,7 @@ const GameCanvas: React.FC<GameCanvasProps> = memo(({ difficulty, status, onStat
 
                 <div className="bg-black/50 p-4 rounded-lg border border-white/5 mb-4">
                     <p className="text-slate-300 font-mono text-xs leading-relaxed break-words whitespace-pre-wrap select-all">
-                        {shareText}
+                        {shareText} {shareUrl}
                     </p>
                 </div>
 
@@ -1201,12 +1221,12 @@ const GameCanvas: React.FC<GameCanvasProps> = memo(({ difficulty, status, onStat
                     className={`w-full py-3 mb-4 font-bold rounded flex items-center justify-center gap-2 transition-all ${copied ? 'bg-green-600 text-white' : 'bg-white text-black hover:bg-slate-200'}`}
                 >
                     {copied ? <Check className="w-4 h-4" /> : <Copy className="w-4 h-4" />}
-                    {copied ? 'COPIED!' : 'COPY TEXT'}
+                    {copied ? 'COPIED!' : 'COPY LINK'}
                 </button>
 
                 <div className="flex gap-3">
                     <a 
-                        href={`https://twitter.com/intent/tweet?text=${encodeURIComponent(shareText)}`}
+                        href={`https://twitter.com/intent/tweet?text=${encodeURIComponent(shareText)}&url=${encodeURIComponent(shareUrl)}`}
                         target="_blank"
                         rel="noopener noreferrer"
                         className="flex-1 py-2 bg-[#1DA1F2] hover:bg-[#1a91da] text-white rounded flex items-center justify-center transition-colors"
@@ -1214,7 +1234,7 @@ const GameCanvas: React.FC<GameCanvasProps> = memo(({ difficulty, status, onStat
                         <Twitter className="w-5 h-5" />
                     </a>
                     <a 
-                        href={`https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent('https://geometrydashspam.cc')}&quote=${encodeURIComponent(shareText)}`}
+                        href={`https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent(shareUrl)}&quote=${encodeURIComponent(shareText)}`}
                         target="_blank"
                         rel="noopener noreferrer"
                         className="flex-1 py-2 bg-[#4267B2] hover:bg-[#365899] text-white rounded flex items-center justify-center transition-colors"
