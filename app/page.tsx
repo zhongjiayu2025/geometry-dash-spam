@@ -1,4 +1,6 @@
+
 import WaveSimulator from "../components/WaveSimulator";
+import HomeGuide from "../components/HomeGuide";
 
 export default function Home() {
   // Structured Data for Software Application
@@ -46,6 +48,7 @@ export default function Home() {
       </div>
 
       <WaveSimulator />
+      <HomeGuide />
     </>
   );
 }

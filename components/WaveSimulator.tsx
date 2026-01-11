@@ -1,3 +1,4 @@
+
 "use client";
 
 import React, { useState } from 'react';
@@ -6,7 +7,7 @@ import { Difficulty, GameStatus } from '../types';
 import { DIFFICULTY_CONFIGS } from '../constants';
 import DifficultySelector from './DifficultySelector';
 import GameCanvas from './GameCanvas';
-import { Infinity as InfinityIcon, Minimize2, HelpCircle, Target, Zap, BarChart3, Layers, Calendar, Star, MousePointerClick, Activity, Keyboard, Timer } from 'lucide-react';
+import { Infinity as InfinityIcon, Minimize2, Star, MousePointerClick, Activity, Keyboard, Timer, Calendar } from 'lucide-react';
 
 const WaveSimulator: React.FC = () => {
   // Initialize with saved difficulty if present
@@ -93,42 +94,9 @@ const WaveSimulator: React.FC = () => {
     ]
   };
 
-  // Schema 2: FAQPage (Matches the visible FAQ section below)
-  const faqSchema = {
-    "@context": "https://schema.org",
-    "@type": "FAQPage",
-    "mainEntity": [
-      {
-        "@type": "Question",
-        "name": "What is a good score on this Geometry Dash Spam Test?",
-        "acceptedAnswer": {
-          "@type": "Answer",
-          "text": "For the 'Extreme Demon' difficulty setting, surviving 15 seconds implies you have near-perfect wave control. This mimics the tightest corridors found in the Demon List's top 10."
-        }
-      },
-      {
-        "@type": "Question",
-        "name": "Does this tool help with Challenge Levels?",
-        "acceptedAnswer": {
-          "@type": "Answer",
-          "text": "Absolutely. The 'Challenge List' community is built almost entirely around short, intense Geometry Dash spam segments. Daily practice can significantly improve your ranking potential."
-        }
-      },
-      {
-        "@type": "Question",
-        "name": "How do I improve at Geometry Dash Spam?",
-        "acceptedAnswer": {
-          "@type": "Answer",
-          "text": "Start with the 'Hard' difficulty. Once you can survive for 60 seconds in Endless Mode, move up to Insane. Use the 'Mini Wave' toggle to refine your micro-clicks."
-        }
-      }
-    ]
-  };
-
   return (
     <div className="flex flex-col items-center w-full animate-in fade-in duration-500">
       <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(howToSchema) }} />
-      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(faqSchema) }} />
       
       <DifficultySelector 
         currentDifficulty={difficulty} 
@@ -259,105 +227,6 @@ const WaveSimulator: React.FC = () => {
             </Link>
         </div>
       </div>
-
-      {/* SEO Content Section */}
-      <section className="w-full max-w-5xl px-4 md:px-0 space-y-16 text-slate-300 leading-relaxed pb-16">
-        
-        {/* Intro */}
-        <div className="space-y-6 bg-gradient-to-r from-blue-900/10 to-transparent p-6 rounded-2xl border-l-4 border-blue-500">
-            <h2 className="text-3xl md:text-4xl font-display font-bold text-white relative inline-block">
-                The Ultimate <span className="text-blue-500">Geometry Dash Spam Test</span>
-            </h2>
-            <p className="text-lg">
-                Welcome to the most advanced <strong>Geometry Dash Spam Test</strong> available online. Designed specifically for competitive players, this simulator isolates the most difficult mechanic in the game: the Wave. Whether you are practicing for <em>Slaughterhouse</em>, <em>Sakupen Circles</em>, or the latest top 1 Extreme Demon, mastering <strong>Geometry Dash spam</strong> is non-negotiable. Our tool provides a lag-free, instant-restart environment to perfect your consistency without the frustration of attempting a level 0-100%.
-            </p>
-        </div>
-
-        {/* Feature Grid */}
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-            <div className="bg-slate-900/40 p-8 rounded-2xl border border-white/5 hover:border-blue-500/30 transition-colors">
-                <h3 className="text-xl font-bold text-white mb-4 flex items-center gap-2">
-                    <Target className="text-blue-400 w-6 h-6"/> Accurate 2.2 Physics
-                </h3>
-                <p>
-                    Unlike basic clickers, this <strong>Geometry Dash Spam Test</strong> replicates the exact 2.2 physics engine. We calculate wave trail, gravity (0.6), and speed multipliers (3x to 12x) to ensure that your <strong>Geometry Dash spam</strong> practice translates 1:1 to the actual game.
-                </p>
-            </div>
-            <div className="bg-slate-900/40 p-8 rounded-2xl border border-white/5 hover:border-purple-500/30 transition-colors">
-                 <h3 className="text-xl font-bold text-white mb-4 flex items-center gap-2">
-                    <Minimize2 className="text-purple-400 w-6 h-6"/> Mini Wave & Gravity
-                </h3>
-                <p>
-                    Top-tier <strong>Geometry Dash spam</strong> challenges often utilize the Mini Wave due to its sharper vertical velocity. Our simulator includes instant Mini Wave toggles and gravity portals, making it the most comprehensive <strong>Geometry Dash Spam Test</strong> for practicing duals and complex structures.
-                </p>
-            </div>
-            <div className="bg-slate-900/40 p-8 rounded-2xl border border-white/5 hover:border-green-500/30 transition-colors">
-                 <h3 className="text-xl font-bold text-white mb-4 flex items-center gap-2">
-                    <BarChart3 className="text-green-400 w-6 h-6"/> Consistency Analytics
-                </h3>
-                <p>
-                    Surviving <strong>Geometry Dash spam</strong> isn't just about speed; it's about rhythm. Our built-in Consistency Meter analyzes the variance of your clicks during the <strong>Geometry Dash Spam Test</strong>, helping you identify if you are jitter clicking too erratically or maintaining the stable rhythm required for straight flying.
-                </p>
-            </div>
-            <div className="bg-slate-900/40 p-8 rounded-2xl border border-white/5 hover:border-yellow-500/30 transition-colors">
-                 <h3 className="text-xl font-bold text-white mb-4 flex items-center gap-2">
-                    <Layers className="text-yellow-400 w-6 h-6"/> Progressive Difficulty
-                </h3>
-                <p>
-                    From "Easy" wide gaps to "Extreme Demon" pixel-perfect corridors, our <strong>Geometry Dash Spam Test</strong> scales with you. Start slow to build muscle memory, then ramp up the speed to test your limits against the hardest <strong>Geometry Dash Spam</strong> patterns known to the community.
-                </p>
-            </div>
-        </div>
-
-        {/* Deep Dive Content */}
-        <div className="space-y-8">
-            <h3 className="text-2xl font-display font-bold text-white border-b border-white/10 pb-4">
-                Why Consistency Matters in Geometry Dash Spam
-            </h3>
-            <div className="prose prose-invert max-w-none text-slate-300">
-                <p>
-                    In the Geometry Dash community, "spam" typically refers to the act of rapid-fire clicking to navigate tight spaces, particularly in the Wave gamemode. However, a successful <strong>Geometry Dash spam</strong> run requires more than just high CPS (Clicks Per Second). It demands "Consistency"—the ability to keep the time between clicks identical.
-                </p>
-                <p>
-                    A corridor in a level like <em>Silent Circles</em> might require 10 clicks per second for 5 seconds straight. If you click 12 times in the first second and 8 times in the next, you will crash. This is why a dedicated <strong>Geometry Dash Spam Test</strong> is superior to a generic CPS test. It visualizes your consistency in real-time within a gameplay environment. By using our <strong>Geometry Dash Spam Test</strong>, you train your brain to lock into a specific rhythm, which is the secret to beating "Impossible" levels.
-                </p>
-            </div>
-        </div>
-
-        {/* FAQ Section */}
-        <div className="space-y-8 border-t border-white/10 pt-8">
-            <h3 className="text-2xl font-display font-bold text-white mb-6 flex items-center gap-2">
-                <HelpCircle className="w-6 h-6 text-slate-400"/> Geometry Dash Spam Test FAQ
-            </h3>
-            
-            <div className="space-y-3">
-                <h4 className="text-lg font-bold text-white flex items-center gap-2">
-                    <Zap className="w-4 h-4 text-yellow-500"/> What is a good score on this Geometry Dash Spam Test?
-                </h4>
-                <p className="pl-6 border-l-2 border-white/10">
-                    For the "Extreme Demon" difficulty setting, surviving 15 seconds implies you have near-perfect wave control. This level of <strong>Geometry Dash spam</strong> mimics the tightest corridors found in the Demon List's top 10. If you can beat this, your <strong>Geometry Dash spam</strong> skills are in the top 1% of players.
-                </p>
-            </div>
-
-            <div className="space-y-3">
-                <h4 className="text-lg font-bold text-white flex items-center gap-2">
-                    <Zap className="w-4 h-4 text-yellow-500"/> Does this tool help with Challenge Levels?
-                </h4>
-                <p className="pl-6 border-l-2 border-white/10">
-                    Absolutely. The "Challenge List" community is built almost entirely around short, intense <strong>Geometry Dash spam</strong> segments. Daily practice on this <strong>Geometry Dash Spam Test</strong> can significantly improve your ranking potential by building fast-twitch muscle endurance specifically for the Wave gamemode.
-                </p>
-            </div>
-
-            <div className="space-y-3">
-                <h4 className="text-lg font-bold text-white flex items-center gap-2">
-                    <Zap className="w-4 h-4 text-yellow-500"/> How do I improve at Geometry Dash Spam?
-                </h4>
-                <p className="pl-6 border-l-2 border-white/10">
-                    Start with the "Hard" difficulty on our simulator. Once you can survive the <strong>Geometry Dash spam</strong> for 60 seconds in Endless Mode without cramping, move up to Insane. Use the "Mini Wave" toggle to refine your micro-clicks. Consistent use of a specialized <strong>Geometry Dash Spam Test</strong> is scientifically proven to improve reaction time and finger stamina better than playing the full game alone.
-                </p>
-            </div>
-        </div>
-      </section>
     </div>
   );
 };
