@@ -4,8 +4,8 @@ import HomeGuide from "../components/HomeGuide";
 import { Metadata, ResolvingMetadata } from "next";
 
 type Props = {
-  params: { id: string }
-  searchParams: { [key: string]: string | string[] | undefined }
+  params: Promise<{ id: string }>
+  searchParams: Promise<{ [key: string]: string | string[] | undefined }>
 }
 
 export async function generateMetadata(
@@ -13,9 +13,10 @@ export async function generateMetadata(
   parent: ResolvingMetadata
 ): Promise<Metadata> {
   // Extract parameters from URL (e.g., ?score=15s&diff=Extreme%20Demon)
-  const score = searchParams.score;
-  const diff = searchParams.diff;
-  const mode = searchParams.mode;
+  const sp = await searchParams;
+  const score = sp.score;
+  const diff = sp.diff;
+  const mode = sp.mode;
   
   // Base metadata fallback
   const baseTitle = "Geometry Dash Spam Test | Ultimate Wave Simulator";
