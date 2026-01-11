@@ -1,4 +1,6 @@
+
 import React from 'react';
+import Link from 'next/link';
 
 export interface BlogPost {
   id: string;
@@ -44,7 +46,7 @@ export const BLOG_POSTS: BlogPost[] = [
           In the context of Geometry Dash, "spam" refers to the act of clicking, tapping, or pressing a key rapidly and consistently to navigate through a level. Unlike timing-based jumps where precision is about <em>when</em> you click, spam sections require raw speed (CPS - Clicks Per Second) combined with consistency.
         </p>
         <p className="mb-4 text-slate-300">
-          The most notorious form is <strong>Wave Spam</strong>, where the player must rapid-fire click to keep the wave moving in a tight corridor, often looking like a straight line. This is exactly what our <a href="https://geometrydashspam.cc/" className="text-blue-400 hover:underline font-bold">Geometry Dash Spam Simulator</a> is designed to train.
+          The most notorious form is <strong>Wave Spam</strong>, where the player must rapid-fire click to keep the wave moving in a tight corridor, often looking like a straight line. This is exactly what our <Link href="/" className="text-blue-400 hover:underline font-bold">Geometry Dash Spam Simulator</Link> is designed to train.
         </p>
 
         <h2 id="history" className="text-3xl font-display font-bold text-white mt-12 mb-6 scroll-mt-24">2. History of Spam in GD</h2>
@@ -65,7 +67,7 @@ export const BLOG_POSTS: BlogPost[] = [
           <br />
           <em>Difficulty:</em> High. Requires consistency.
           <br />
-          <em>Training:</em> Use our <a href="https://geometrydashspam.cc/" className="text-blue-400 hover:underline">Wave Simulator</a> set to "Extreme Demon" to practice 35px gaps.
+          <em>Training:</em> Use our <Link href="/" className="text-blue-400 hover:underline">Wave Simulator</Link> set to "Extreme Demon" to practice 35px gaps.
         </p>
 
         <h3 className="text-2xl font-bold text-green-400 mt-8 mb-4">The UFO Spam</h3>
@@ -101,16 +103,16 @@ export const BLOG_POSTS: BlogPost[] = [
             Don't just jump into demons. Practice scientifically.
         </p>
         <ul className="list-disc pl-6 mb-6 space-y-2 text-slate-300">
-            <li><strong>Step 1:</strong> Measure your baseline using a <a href="https://geometrydashspam.cc/" className="text-blue-400 hover:underline">CPS Test</a>.</li>
-            <li><strong>Step 2:</strong> Isolate the muscle. Try to click using only your finger, then try using your wrist (jitter clicking).</li>
-            <li><strong>Step 3:</strong> Use simulators. Our <a href="https://geometrydashspam.cc/" className="text-blue-400 hover:underline">Geometry Dash Spam tool</a> allows you to adjust speed and gap size without reloading the game.</li>
+            <li><strong>Step 1:</strong> Measure your baseline using a <Link href="/cps-test" className="text-blue-400 hover:underline">CPS Test</Link>.</li>
+            <li><strong>Step 2:</strong> Isolate the muscle. Try to click using only your finger, then try using your wrist (jitter clicking). You can practice this on our <Link href="/jitter-click" className="text-blue-400 hover:underline">Jitter Click Tester</Link>.</li>
+            <li><strong>Step 3:</strong> Use simulators. Our <Link href="/" className="text-blue-400 hover:underline">Geometry Dash Spam tool</Link> allows you to adjust speed and gap size without reloading the game.</li>
         </ul>
 
         <h2 id="mistakes" className="text-3xl font-display font-bold text-white mt-12 mb-6 scroll-mt-24">7. Common Mistakes</h2>
         <p className="mb-4 text-slate-300">
             <strong>Tensing up:</strong> Tensing your whole arm reduces speed. Relax your shoulder.
             <br/>
-            <strong>Using a bad mouse:</strong> Office mice often have high latency.
+            <strong>Using a bad mouse:</strong> Office mice often have high latency. Check our hardware guide.
         </p>
 
         <h2 id="faq" className="text-3xl font-display font-bold text-white mt-12 mb-6 scroll-mt-24">8. FAQ</h2>
@@ -142,22 +144,27 @@ export const BLOG_POSTS: BlogPost[] = [
       <>
         <h2 id="understanding" className="text-3xl font-display font-bold text-white mt-12 mb-6 scroll-mt-24">1. Understanding CPS in GD</h2>
         <p className="mb-4 text-slate-300">
-          CPS (Clicks Per Second) is the raw engine of your gameplay. In <a href="https://geometrydashspam.cc/" className="text-blue-400 hover:underline">Geometry Dash Spam</a> scenarios, higher CPS allows for tighter wave movements.
+          CPS (Clicks Per Second) is the raw engine of your gameplay. In <Link href="/" className="text-blue-400 hover:underline">Geometry Dash Spam</Link> scenarios, higher CPS allows for tighter wave movements. Before you start training, you need to know your current max speed.
         </p>
+        <div className="my-8 p-6 bg-blue-900/20 border border-blue-500/20 rounded-xl">
+             <h4 className="font-bold text-white mb-2">Measure Your Baseline</h4>
+             <p className="text-slate-400 mb-4 text-sm">You can't improve what you don't measure. Take a quick test now.</p>
+             <Link href="/cps-test" className="inline-block px-4 py-2 bg-blue-600 text-white rounded font-bold hover:bg-blue-500 transition-colors">Launch 10s CPS Test</Link>
+        </div>
 
         <h2 id="techniques" className="text-3xl font-display font-bold text-white mt-12 mb-6 scroll-mt-24">2. Finger Positioning Techniques</h2>
         <h3 className="text-xl font-bold text-white mt-4">Normal Clicking</h3>
         <p className="text-slate-300 mb-4">Standard grip. Good for accuracy, bad for speed.</p>
         
         <h3 className="text-xl font-bold text-white mt-4">Jitter Clicking</h3>
-        <p className="text-slate-300 mb-4">Vibrating your forearm muscles to generate clicks. High speed (10-14 CPS) but lower accuracy aiming.</p>
+        <p className="text-slate-300 mb-4">Vibrating your forearm muscles to generate clicks. High speed (10-14 CPS) but lower accuracy aiming. <Link href="/jitter-click" className="text-blue-400 hover:underline">Practice Jitter Clicking Here</Link>.</p>
         
         <h3 className="text-xl font-bold text-white mt-4">Butterfly Clicking</h3>
-        <p className="text-slate-300 mb-4">Using two fingers on one button. Requires a mouse that can double-click or has wide buttons.</p>
+        <p className="text-slate-300 mb-4">Using two fingers on one button. Requires a mouse that can double-click or has wide buttons. <Link href="/butterfly-click" className="text-blue-400 hover:underline">Practice Butterfly Clicking Here</Link>.</p>
 
         <h2 id="input" className="text-3xl font-display font-bold text-white mt-12 mb-6 scroll-mt-24">3. Mouse vs Touchscreen vs Spacebar</h2>
         <p className="mb-4 text-slate-300">
-            We analyzed 10,000 users on our <a href="https://geometrydashspam.cc/" className="text-blue-400 hover:underline">Spacebar Counter</a>.
+            We analyzed 10,000 users on our <Link href="/spacebar-counter" className="text-blue-400 hover:underline">Spacebar Counter</Link>.
         </p>
         <ul className="list-disc pl-6 mb-6 space-y-2 text-slate-300">
             <li><strong>Mouse:</strong> Best for micro-adjustments.</li>
@@ -169,16 +176,16 @@ export const BLOG_POSTS: BlogPost[] = [
         <p className="mb-4 text-slate-300">
             Do not overtrain. RSI (Repetitive Strain Injury) is real.
             <br/>
-            <strong>Warmup:</strong> 5 mins of easy wave.
+            <strong>Warmup:</strong> 5 mins of easy wave on our <Link href="/" className="text-blue-400 hover:underline">Simulator</Link>.
             <br/>
-            <strong>Intensity:</strong> 10 mins of <a href="https://geometrydashspam.cc/" className="text-blue-400 hover:underline">CPS Testing</a> to fail.
+            <strong>Intensity:</strong> 10 mins of <Link href="/cps-test" className="text-blue-400 hover:underline">CPS Testing</Link> to fail.
             <br/>
             <strong>Rest:</strong> 15 mins break.
         </p>
 
         <h2 id="tools" className="text-3xl font-display font-bold text-white mt-12 mb-6 scroll-mt-24">5. Recommended Practice Tools</h2>
         <p className="mb-4 text-slate-300">
-            Use the specialized tools on this website. The <a href="https://geometrydashspam.cc/" className="text-blue-400 hover:underline">Wave Simulator</a> is specifically tuned to mimic 2.2 physics.
+            Use the specialized tools on this website. The <Link href="/" className="text-blue-400 hover:underline">Wave Simulator</Link> is specifically tuned to mimic 2.2 physics.
         </p>
       </>
     )
@@ -196,7 +203,7 @@ export const BLOG_POSTS: BlogPost[] = [
       <>
         <h2 className="text-3xl font-display font-bold text-white mt-12 mb-6">1. Why Mouse Choice Matters</h2>
         <p className="mb-4 text-slate-300">
-            In <a href="https://geometrydashspam.cc/" className="text-blue-400 hover:underline">Geometry Dash</a>, input latency is the enemy. A standard office mouse has 10-15ms of latency. A gaming mouse has 1ms or less.
+            In <Link href="/" className="text-blue-400 hover:underline">Geometry Dash</Link>, input latency is the enemy. A standard office mouse has 10-15ms of latency. A gaming mouse has 1ms or less.
         </p>
 
         <h2 className="text-3xl font-display font-bold text-white mt-12 mb-6">2. Key Features for Spam</h2>
@@ -224,7 +231,7 @@ export const BLOG_POSTS: BlogPost[] = [
         </div>
 
         <p className="text-slate-300">
-            Always test your new hardware with a <a href="https://geometrydashspam.cc/" className="text-blue-400 hover:underline">Reaction Time Test</a> to verify the latency improvements.
+            Always test your new hardware with a <Link href="/reaction-test" className="text-blue-400 hover:underline">Reaction Time Test</Link> to verify the latency improvements.
         </p>
       </>
     )
@@ -240,7 +247,7 @@ export const BLOG_POSTS: BlogPost[] = [
     tags: ['Analysis', 'Game Modes'],
     content: (
        <>
-         <p className="text-slate-300 mb-4">Every gamemode in <a href="https://geometrydashspam.cc/" className="text-blue-400 hover:underline">Geometry Dash</a> handles spam differently.</p>
+         <p className="text-slate-300 mb-4">Every gamemode in <Link href="/" className="text-blue-400 hover:underline">Geometry Dash</Link> handles spam differently.</p>
          <h2 className="text-2xl font-bold text-white mt-8 mb-4">1. The Wave</h2>
          <p className="text-slate-300 mb-4">Linear movement. 1 click = 1 direction change. Purest form of spam.</p>
          <h2 className="text-2xl font-bold text-white mt-8 mb-4">2. The UFO</h2>
@@ -266,7 +273,7 @@ export const BLOG_POSTS: BlogPost[] = [
             <p className="text-slate-300 mb-4">An impossible remake focusing solely on the wave sections.</p>
             <h2 className="text-2xl font-bold text-white mt-8 mb-4">2. Spam Challenge 9000</h2>
             <p className="text-slate-300 mb-4">Requires 15 CPS for 30 seconds straight.</p>
-            <p className="text-slate-300 mt-8">Test your skills on our <a href="https://geometrydashspam.cc/" className="text-blue-400 hover:underline">Wave Simulator</a> before attempting these.</p>
+            <p className="text-slate-300 mt-8">Test your skills on our <Link href="/" className="text-blue-400 hover:underline">Wave Simulator</Link> before attempting these.</p>
         </>
     )
   },
@@ -282,9 +289,9 @@ export const BLOG_POSTS: BlogPost[] = [
     content: (
         <>
             <h2 className="text-2xl font-bold text-white mt-8 mb-4">Week 1: Foundations</h2>
-            <p className="text-slate-300 mb-4">Focus on accuracy over speed. Use the "Easy" mode on the <a href="https://geometrydashspam.cc/" className="text-blue-400 hover:underline">Simulator</a>.</p>
+            <p className="text-slate-300 mb-4">Focus on accuracy over speed. Use the "Easy" mode on the <Link href="/" className="text-blue-400 hover:underline">Simulator</Link>.</p>
             <h2 className="text-2xl font-bold text-white mt-8 mb-4">Week 2: Speed Bursts</h2>
-            <p className="text-slate-300 mb-4">Practice 1-second bursts of maximum speed.</p>
+            <p className="text-slate-300 mb-4">Practice 1-second bursts of maximum speed using the 1s mode on the <Link href="/cps-test" className="text-blue-400 hover:underline">CPS Test</Link>.</p>
         </>
     )
   },
@@ -302,7 +309,7 @@ export const BLOG_POSTS: BlogPost[] = [
             <h2 className="text-2xl font-bold text-white mt-8 mb-4">Fast Twitch Fibers</h2>
             <p className="text-slate-300 mb-4">Genetics play a role, but training can convert fibers.</p>
             <h2 className="text-2xl font-bold text-white mt-8 mb-4">The Role of Neuroplasticity</h2>
-            <p className="text-slate-300 mb-4">How your brain rewires itself to handle high-speed inputs in <a href="https://geometrydashspam.cc/" className="text-blue-400 hover:underline">Geometry Dash</a>.</p>
+            <p className="text-slate-300 mb-4">How your brain rewires itself to handle high-speed inputs in <Link href="/" className="text-blue-400 hover:underline">Geometry Dash</Link>.</p>
         </>
     )
   },
@@ -320,7 +327,7 @@ export const BLOG_POSTS: BlogPost[] = [
             <h2 className="text-2xl font-bold text-white mt-8 mb-4">60Hz vs 120Hz Screens</h2>
             <p className="text-slate-300 mb-4">Most modern phones have 120Hz, making them competitive.</p>
             <h2 className="text-2xl font-bold text-white mt-8 mb-4">Touch vs Click</h2>
-            <p className="text-slate-300 mb-4">Touch screens have inherent latency. See our <a href="https://geometrydashspam.cc/" className="text-blue-400 hover:underline">Reaction Test</a> data.</p>
+            <p className="text-slate-300 mb-4">Touch screens have inherent latency. See our <Link href="/reaction-test" className="text-blue-400 hover:underline">Reaction Test</Link> data.</p>
         </>
     )
   },
@@ -338,7 +345,7 @@ export const BLOG_POSTS: BlogPost[] = [
              <h2 className="text-2xl font-bold text-white mt-8 mb-4">1. Holding Breath</h2>
              <p className="text-slate-300 mb-4">Oxygen is fuel. Breathe while you spam.</p>
              <h2 className="text-2xl font-bold text-white mt-8 mb-4">2. Poor Posture</h2>
-             <p className="text-slate-300 mb-4">Sit straight to allow blood flow to arms.</p>
+             <p className="text-slate-300 mb-4">Sit straight to allow blood flow to arms. If you feel pain, check our guide on <Link href="/jitter-click" className="text-blue-400 hover:underline">Jitter Clicking Safety</Link>.</p>
         </>
     )
   },
@@ -354,7 +361,7 @@ export const BLOG_POSTS: BlogPost[] = [
     content: (
         <>
             <h2 className="text-2xl font-bold text-white mt-8 mb-4">Interview with Zoink (AI Generated Placeholder)</h2>
-            <p className="text-slate-300 mb-4">"I just practice on the <a href="https://geometrydashspam.cc/" className="text-blue-400 hover:underline">Spam Simulator</a> every day."</p>
+            <p className="text-slate-300 mb-4">"I just practice on the <Link href="/" className="text-blue-400 hover:underline">Spam Simulator</Link> every day."</p>
         </>
     )
   }
