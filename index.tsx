@@ -1,1 +1,0 @@
-// This file is obsolete in Next.js. Deleting content.

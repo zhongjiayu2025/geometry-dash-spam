@@ -1,6 +1,7 @@
 import React from "react";
 import type { Metadata } from "next";
 import { Inter, Orbitron } from "next/font/google";
+import Script from "next/script";
 import "./globals.css";
 import Header from "../components/Header";
 import Footer from "../components/Footer";
@@ -74,6 +75,12 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body className={`${inter.variable} ${orbitron.variable} min-h-screen bg-[#020617] text-slate-200 font-sans selection:bg-blue-500 selection:text-white flex flex-col`}>
+        <Script
+          async
+          src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-1528586776567779"
+          crossOrigin="anonymous"
+          strategy="afterInteractive"
+        />
         <script
           type="application/ld+json"
           dangerouslySetInnerHTML={{ __html: JSON.stringify(organizationSchema) }}
