@@ -100,6 +100,7 @@ export default function RootLayout({
         </main>
 
         <Footer />
+        <Script src="//pl28827470.effectivegatecpm.com/a5/02/4f/a5024f416ca331965f268098798e5cd1.js" strategy="lazyOnload" />
       </body>
     </html>
   );
