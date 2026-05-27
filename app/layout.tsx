@@ -1,5 +1,5 @@
 import React from "react";
-import type { Metadata } from "next";
+import type { Metadata, Viewport } from "next";
 import { Inter, Orbitron } from "next/font/google";
 import Script from "next/script";
 import "./globals.css";
@@ -8,6 +8,10 @@ import Footer from "../components/Footer";
 
 const inter = Inter({ subsets: ["latin"], variable: "--font-inter", display: "swap" });
 const orbitron = Orbitron({ subsets: ["latin"], variable: "--font-orbitron", display: "swap" });
+
+export const viewport: Viewport = {
+  themeColor: "#020617",
+};
 
 export const metadata: Metadata = {
   // CRITICAL FOR SEO: Sets the base URL for all relative URLs (canonical, og:image, etc.)
@@ -33,7 +37,6 @@ export const metadata: Metadata = {
   verification: {
     google: "Yz_6YlW_BzjxZVMUNDmQKQV3n-Jf8cRUr6sMnqJDzyQ",
   },
-  themeColor: "#020617",
   appleWebApp: {
     capable: true,
     statusBarStyle: "default",
