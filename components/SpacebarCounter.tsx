@@ -1,8 +1,29 @@
 "use client";
 
 import React, { useState, useEffect, useCallback, useRef } from 'react';
-import { Keyboard, RotateCcw, Zap, Gauge } from 'lucide-react';
-import RelatedTools from './RelatedTools';
+import dynamic from 'next/dynamic';
+const RelatedTools = dynamic(() => import('./RelatedTools'));
+import { Keyboard, RotateCcw, Zap, Gauge, Trophy, Volume2, VolumeX, Share2, Check } from 'lucide-react';
+
+
+const playKeySound = (audioCtx: AudioContext | null) => {
+  if (!audioCtx) return;
+  const oscillator = audioCtx.createOscillator();
+  const gainNode = audioCtx.createGain();
+  
+  oscillator.type = 'triangle';
+  oscillator.frequency.setValueAtTime(400, audioCtx.currentTime);
+  oscillator.frequency.exponentialRampToValueAtTime(100, audioCtx.currentTime + 0.05);
+  
+  gainNode.gain.setValueAtTime(0.2, audioCtx.currentTime);
+  gainNode.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + 0.05);
+  
+  oscillator.connect(gainNode);
+  gainNode.connect(audioCtx.destination);
+  
+  oscillator.start();
+  oscillator.stop(audioCtx.currentTime + 0.05);
+};
 
 const SpacebarCounter: React.FC = () => {
   const [active, setActive] = useState(false);
@@ -10,7 +31,25 @@ const SpacebarCounter: React.FC = () => {
   const [count, setCount] = useState(0);
   const [timeLeft, setTimeLeft] = useState(10.00);
   const [isPressed, setIsPressed] = useState(false);
+  const [bestCps, setBestCps] = useState<number | null>(null);
+  const [soundEnabled, setSoundEnabled] = useState(true);
+  const [copied, setCopied] = useState(false);
+  
   const timerRef = useRef<number | null>(null);
+  const audioCtxRef = useRef<AudioContext | null>(null);
+
+  useEffect(() => {
+    if (typeof window !== 'undefined') {
+      const AudioContextClass = window.AudioContext || (window as any).webkitAudioContext;
+      if (AudioContextClass) {
+          audioCtxRef.current = new AudioContextClass();
+      }
+      const saved = localStorage.getItem('spacebarBest');
+      if (saved) {
+        try { setBestCps(parseFloat(saved)); } catch(e) {}
+      }
+    }
+  }, []);
 
   const startTest = useCallback(() => {
     setActive(true);
@@ -23,6 +62,11 @@ const SpacebarCounter: React.FC = () => {
     if (e.code === 'Space') {
       e.preventDefault(); // Prevent scrolling
       if (e.repeat) return; // Ignore holding down
+      
+      if (soundEnabled && audioCtxRef.current) {
+          if (audioCtxRef.current.state === 'suspended') audioCtxRef.current.resume();
+          playKeySound(audioCtxRef.current);
+      }
 
       setIsPressed(true);
 
@@ -34,7 +78,7 @@ const SpacebarCounter: React.FC = () => {
       }
       setCount(c => c + 1);
     }
-  }, [active, finished, startTest]);
+  }, [active, finished, startTest, soundEnabled]);
 
   const handleKeyUp = useCallback((e: KeyboardEvent) => {
     if (e.code === 'Space') {
@@ -63,8 +107,20 @@ const SpacebarCounter: React.FC = () => {
           setFinished(true);
           setActive(false);
           if (timerRef.current) clearInterval(timerRef.current);
+          
+          setCount((currentCount) => {
+              setBestCps(prev => {
+                  const finalCps = currentCount / 10;
+                  if (prev === null || finalCps > prev) {
+                      localStorage.setItem('spacebarBest', finalCps.toString());
+                      return finalCps;
+                  }
+                  return prev;
+              });
+              return currentCount;
+          });
         }
-      }, 10);
+      }, 33);
     }
     return () => {
       if (timerRef.current) clearInterval(timerRef.current);
@@ -76,6 +132,20 @@ const SpacebarCounter: React.FC = () => {
     setFinished(false);
     setCount(0);
     setTimeLeft(10.00);
+  };
+
+  const shareScore = async () => {
+    const text = `I got ${(count / 10).toFixed(2)} CPS on the Geometry Dash Spacebar Counter Test! Can you beat me?`;
+    const url = `https://geometrydashspam.cc/spacebar-counter`;
+    if (typeof navigator !== 'undefined' && navigator.share) {
+        try {
+            await navigator.share({ title: 'Spacebar Counter Test', text, url });
+        } catch(e) { console.log(e); }
+    } else {
+        navigator.clipboard.writeText(`${text} ${url}`);
+        setCopied(true);
+        setTimeout(() => setCopied(false), 2000);
+    }
   };
 
   return (
@@ -118,12 +188,21 @@ const SpacebarCounter: React.FC = () => {
           {finished && (
              <div className="animate-in fade-in zoom-in duration-300">
                 <p className="text-xl text-white font-bold mb-4">Time's Up! Speed: <span className="text-purple-400">{(count / 10).toFixed(2)} CPS</span></p>
-                <button 
-                  onClick={reset}
-                  className="px-8 py-3 bg-purple-600 hover:bg-purple-500 text-white font-bold rounded-lg inline-flex items-center gap-2 transition-colors shadow-lg"
-                >
-                  <RotateCcw className="w-5 h-5" /> RESET COUNTER
-                </button>
+                <div className="flex gap-2 justify-center">
+                  <button 
+                    onClick={reset}
+                    className="px-8 py-3 bg-purple-600 hover:bg-purple-500 text-white font-bold rounded-lg inline-flex items-center gap-2 transition-colors shadow-lg"
+                  >
+                    <RotateCcw className="w-5 h-5" /> RESET COUNTER
+                  </button>
+                  <button
+                    onClick={shareScore}
+                    className="p-3 bg-slate-800 text-white rounded-lg flex items-center justify-center hover:bg-slate-700 transition-colors border border-white/10"
+                    title="Share your score"
+                  >
+                    {copied ? <Check className="w-5 h-5 text-green-400" /> : <Share2 className="w-5 h-5" />}
+                  </button>
+                </div>
              </div>
           )}
         </div>
@@ -133,7 +212,7 @@ const SpacebarCounter: React.FC = () => {
       </div>
       
       {/* Stats Grid */}
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-16">
+      <div className="grid grid-cols-1 md:grid-cols-4 gap-4 mb-16">
           <div className="bg-slate-900/40 p-6 rounded-xl border border-white/5 flex flex-col items-center">
              <Keyboard className="w-8 h-8 text-purple-500 mb-2" />
              <span className="text-slate-400 text-xs uppercase">Key</span>
@@ -144,10 +223,21 @@ const SpacebarCounter: React.FC = () => {
              <span className="text-slate-400 text-xs uppercase">Speed (CPS)</span>
              <span className="text-white font-bold">{finished ? (count / 10).toFixed(2) : (active && timeLeft < 10 ? (count / (10 - timeLeft)).toFixed(2) : '0.00')}</span>
           </div>
+          <div className="bg-slate-900/40 p-6 rounded-xl border border-white/5 flex flex-col items-center relative group">
+             <Trophy className="w-8 h-8 text-yellow-500 mb-2" />
+             <span className="text-slate-400 text-xs uppercase">Best CPS</span>
+             <span className="text-white font-bold">{bestCps !== null ? bestCps.toFixed(2) : '--'}</span>
+          </div>
           <div className="bg-slate-900/40 p-6 rounded-xl border border-white/5 flex flex-col items-center">
-             <RotateCcw className="w-8 h-8 text-blue-500 mb-2 cursor-pointer hover:rotate-180 transition-transform" onClick={reset} />
-             <span className="text-slate-400 text-xs uppercase">Reset</span>
-             <span className="text-white font-bold">MANUAL</span>
+             <button 
+                 onClick={() => setSoundEnabled(!soundEnabled)}
+                 className="p-1 mb-1 rounded-full hover:bg-white/5 transition-colors"
+                 title={soundEnabled ? "Mute Key Sound" : "Enable Key Sound"}
+             >
+                 {soundEnabled ? <Volume2 className="w-6 h-6 text-emerald-400" /> : <VolumeX className="w-6 h-6 text-slate-500" />}
+             </button>
+             <span className="text-slate-400 text-xs uppercase">Sound</span>
+             <span className="text-white font-bold">{soundEnabled ? 'ON' : 'OFF'}</span>
           </div>
       </div>
 

@@ -2,6 +2,7 @@
 
 import React, { useEffect } from 'react';
 import Link from 'next/link';
+import Image from 'next/image';
 import { BlogPost } from '../data/blogContent';
 import { ArrowLeft, Calendar, Clock, Share2, Facebook, Twitter, Linkedin, Zap, MousePointer2, List, ChevronRight, Home } from 'lucide-react';
 
@@ -95,12 +96,13 @@ const BlogPostReader: React.FC<BlogPostProps> = ({ post }) => {
 
       {/* Featured Image - Optimized for LCP */}
       <div className="w-full aspect-video rounded-2xl overflow-hidden mb-12 border border-white/5 shadow-2xl relative group bg-slate-800">
-         <img 
+         <Image 
            src={post.coverImage} 
            alt={`Cover image for ${post.title}`}
-           width="896"
-           height="504"
-           loading="eager" // Hero image should load immediately
+           width={896}
+           height={504}
+           priority // Hero image should load immediately
+           sizes="(max-width: 896px) 100vw, 896px"
            className="w-full h-full object-cover"
          />
          <div className="absolute inset-0 bg-gradient-to-t from-[#020617] via-transparent to-transparent opacity-50"></div>

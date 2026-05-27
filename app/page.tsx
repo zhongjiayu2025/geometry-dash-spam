@@ -1,7 +1,11 @@
 
-import WaveSimulator from "../components/WaveSimulator";
-import HomeGuide from "../components/HomeGuide";
+import dynamic from "next/dynamic";
 import { Metadata } from "next";
+import WaveSimulator from "../components/WaveSimulator";
+
+const HomeGuide = dynamic(() => import("../components/HomeGuide"), {
+  ssr: true,
+});
 
 export const metadata: Metadata = {
   // CRITICAL FOR SEO: Sets the base URL for all relative URLs (canonical, og:image, etc.)

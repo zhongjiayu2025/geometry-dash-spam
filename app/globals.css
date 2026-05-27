@@ -19,6 +19,16 @@ body {
   overflow-x: hidden;
 }
 
+/* Zero Click Delay & Selection Prevention for Interactive Buttons, Links, and Clickable Areas */
+button, 
+a, 
+[role="button"],
+.clickable {
+  touch-action: manipulation;
+  user-select: none;
+  -webkit-user-select: none;
+}
+
 /* Animated Background Grid */
 .bg-grid {
   background-size: 50px 50px;

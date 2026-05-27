@@ -14,7 +14,6 @@ interface BreadcrumbsProps {
 }
 
 const Breadcrumbs: React.FC<BreadcrumbsProps> = ({ items }) => {
-  // Schema for Breadcrumbs specifically for the UI component (optional visually, but good for structure)
   return (
     <nav aria-label="Breadcrumb" className="w-full max-w-5xl mx-auto mb-6">
       <ol className="flex items-center flex-wrap gap-2 text-xs md:text-sm font-mono text-slate-500">

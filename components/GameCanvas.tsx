@@ -225,10 +225,10 @@ const GameCanvas: React.FC<GameCanvasProps> = memo(({ difficulty, status, onStat
 
   // Trigger Beat Pulse Visuals
   const triggerBeat = useCallback(() => {
-     if (localStorage.getItem('gd_spam_reduce_motion') === 'true') return;
+     if (reduceMotion) return;
      gameState.current.beatScale = 1.015; 
      gameState.current.lastBeatTime = Date.now();
-  }, []);
+  }, [reduceMotion]);
 
   const playKick = useCallback((time: number) => {
     if (!audioCtxRef.current || !masterGainRef.current) return;

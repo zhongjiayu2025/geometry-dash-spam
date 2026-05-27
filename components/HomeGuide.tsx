@@ -10,26 +10,34 @@ const HomeGuide: React.FC = () => {
     "mainEntity": [
       {
         "@type": "Question",
-        "name": "Why is a Geometry Dash Spam Test important?",
+        "name": "What is the best mouse for Geometry Dash Spam?",
         "acceptedAnswer": {
           "@type": "Answer",
-          "text": "Taking a Geometry Dash Spam Test helps you measure your consistency and raw CPS (clicks per second). Mastering Geometry Dash spam is essential for beating Extreme Demons like Slaughterhouse."
+          "text": "Lightweight mice with low click latency are best for Geometry Dash spam. The Razer Viper 8K and Logitech G Pro X Superlight are top choices."
         }
       },
       {
         "@type": "Question",
-        "name": "What is the hardest Geometry Dash Spam level?",
+        "name": "Is the spacebar better for Spam Tests?",
         "acceptedAnswer": {
           "@type": "Answer",
-          "text": "As of 2026, the wave spam in 'Acheron' and the challenge level 'VSC' are considered the pinnacle of difficulty. They require elite Geometry Dash spam skills with near-zero error margin."
+          "text": "Generally, the spacebar is slower for rapid direction changes due to higher \"travel distance\". However, for an endurance Geometry Dash spam test, the thumb is stronger."
         }
       },
       {
         "@type": "Question",
-        "name": "How does this Geometry Dash Spam Test work?",
+        "name": "How do I improve my Spam Consistency?",
         "acceptedAnswer": {
           "@type": "Answer",
-          "text": "Our Geometry Dash Spam Test simulator replicates the 2.2 physics engine, allowing you to practice wave spam patterns without the loading times of the actual game."
+          "text": "Practice is key. Use our Geometry Dash Spam Test simulator daily on \"Endless Mode\" to build muscle memory without tensing your arm."
+        }
+      },
+      {
+        "@type": "Question",
+        "name": "Does this Spam Test work on mobile?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "Yes. Our Geometry Dash Spam simulator is optimized for 120Hz mobile screens, making it the perfect portable training tool."
         }
       }
     ]

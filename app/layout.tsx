@@ -6,8 +6,8 @@ import "./globals.css";
 import Header from "../components/Header";
 import Footer from "../components/Footer";
 
-const inter = Inter({ subsets: ["latin"], variable: "--font-inter" });
-const orbitron = Orbitron({ subsets: ["latin"], variable: "--font-orbitron" });
+const inter = Inter({ subsets: ["latin"], variable: "--font-inter", display: "swap" });
+const orbitron = Orbitron({ subsets: ["latin"], variable: "--font-orbitron", display: "swap" });
 
 export const metadata: Metadata = {
   // CRITICAL FOR SEO: Sets the base URL for all relative URLs (canonical, og:image, etc.)
@@ -32,6 +32,12 @@ export const metadata: Metadata = {
   },
   verification: {
     google: "Yz_6YlW_BzjxZVMUNDmQKQV3n-Jf8cRUr6sMnqJDzyQ",
+  },
+  themeColor: "#020617",
+  appleWebApp: {
+    capable: true,
+    statusBarStyle: "default",
+    title: "Geometry Dash Spam Test",
   },
   openGraph: {
     type: "website",
@@ -74,12 +80,22 @@ export default function RootLayout({
 
   return (
     <html lang="en">
+      <head>
+        <link rel="preconnect" href="https://pagead2.googlesyndication.com" />
+        <link rel="dns-prefetch" href="https://pagead2.googlesyndication.com" />
+        <link rel="preconnect" href="https://googleads.g.doubleclick.net" />
+        <link rel="dns-prefetch" href="https://googleads.g.doubleclick.net" />
+        <link rel="preconnect" href="https://fonts.googleapis.com" />
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="anonymous" />
+        <link rel="dns-prefetch" href="https://fonts.googleapis.com" />
+        <link rel="dns-prefetch" href="https://fonts.gstatic.com" />
+      </head>
       <body className={`${inter.variable} ${orbitron.variable} min-h-screen bg-[#020617] text-slate-200 font-sans selection:bg-blue-500 selection:text-white flex flex-col`}>
         <Script
           async
           src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-1528586776567779"
           crossOrigin="anonymous"
-          strategy="afterInteractive"
+          strategy="lazyOnload"
         />
         <script
           type="application/ld+json"

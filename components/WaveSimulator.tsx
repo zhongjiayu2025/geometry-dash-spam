@@ -3,11 +3,13 @@
 
 import React, { useState } from 'react';
 import Link from 'next/link';
+import dynamic from 'next/dynamic';
 import { Difficulty, GameStatus } from '../types';
 import { DIFFICULTY_CONFIGS } from '../constants';
 import DifficultySelector from './DifficultySelector';
-import GameCanvas from './GameCanvas';
 import { Infinity as InfinityIcon, Minimize2, Star, MousePointerClick, Activity, Keyboard, Timer, Calendar } from 'lucide-react';
+
+const GameCanvas = dynamic(() => import('./GameCanvas'), { ssr: false });
 
 const WaveSimulator: React.FC = () => {
   // Initialize with saved difficulty if present

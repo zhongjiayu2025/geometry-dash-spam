@@ -11,27 +11,26 @@ export const metadata: Metadata = {
 };
 
 export default function JitterClickPage() {
-    const breadcrumbSchema = {
+    const webAppSchema = {
         "@context": "https://schema.org",
-        "@type": "BreadcrumbList",
-        "itemListElement": [{
-            "@type": "ListItem",
-            "position": 1,
-            "name": "Home",
-            "item": "https://geometrydashspam.cc"
-        },{
-            "@type": "ListItem",
-            "position": 2,
-            "name": "Jitter Click Test",
-            "item": "https://geometrydashspam.cc/jitter-click"
-        }]
+        "@type": "WebApplication",
+        "name": "Jitter Click Test",
+        "url": "https://geometrydashspam.cc/jitter-click",
+        "description": "Learn to Jitter Click safely. Increase your CPS to 14+ with our vibration technique tutorial and speed test. Essential for spam wave.",
+        "applicationCategory": "UtilityApplication",
+        "operatingSystem": "Any",
+        "offers": {
+            "@type": "Offer",
+            "price": "0",
+            "priceCurrency": "USD"
+        }
     };
 
     return (
         <>
             <script
                 type="application/ld+json"
-                dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumbSchema) }}
+                dangerouslySetInnerHTML={{ __html: JSON.stringify(webAppSchema) }}
             />
             <JitterClickTest />
         </>

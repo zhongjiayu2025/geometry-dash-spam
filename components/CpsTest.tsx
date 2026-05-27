@@ -2,16 +2,38 @@
 "use client";
 
 import React, { useState, useEffect, useRef } from 'react';
-import { MousePointer2, RotateCcw, Timer, Check, Clock, Trophy, Share2, BookOpen, ArrowRight } from 'lucide-react';
+import { MousePointer2, RotateCcw, Timer, Check, Clock, Trophy, Share2, BookOpen, ArrowRight, Volume2, VolumeX } from 'lucide-react';
 import Link from 'next/link';
-import RelatedTools from './RelatedTools';
-import Breadcrumbs from './Breadcrumbs';
+import dynamic from "next/dynamic";
+
+const RelatedTools = dynamic(() => import('./RelatedTools'), { ssr: true });
+const Breadcrumbs = dynamic(() => import('./Breadcrumbs'), { ssr: true });
+
 
 interface ClickEffect {
   id: number;
   x: number;
   y: number;
 }
+
+const playClickSound = (audioCtx: AudioContext | null) => {
+  if (!audioCtx) return;
+  const oscillator = audioCtx.createOscillator();
+  const gainNode = audioCtx.createGain();
+  
+  oscillator.type = 'sine';
+  oscillator.frequency.setValueAtTime(800, audioCtx.currentTime);
+  oscillator.frequency.exponentialRampToValueAtTime(300, audioCtx.currentTime + 0.05);
+  
+  gainNode.gain.setValueAtTime(0.2, audioCtx.currentTime);
+  gainNode.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + 0.05);
+  
+  oscillator.connect(gainNode);
+  gainNode.connect(audioCtx.destination);
+  
+  oscillator.start();
+  oscillator.stop(audioCtx.currentTime + 0.05);
+};
 
 const CpsTest: React.FC = () => {
   const [active, setActive] = useState(false);
@@ -24,7 +46,27 @@ const CpsTest: React.FC = () => {
   
   const [ripples, setRipples] = useState<ClickEffect[]>([]);
   const [copied, setCopied] = useState(false);
+  
+  const [soundEnabled, setSoundEnabled] = useState(true);
+  const [bestScores, setBestScores] = useState<Record<number, number>>({});
+  
   const timerRef = useRef<number | null>(null);
+  const audioCtxRef = useRef<AudioContext | null>(null);
+
+  useEffect(() => {
+    if (typeof window !== 'undefined') {
+      const AudioContextClass = window.AudioContext || (window as any).webkitAudioContext;
+      if (AudioContextClass) {
+          audioCtxRef.current = new AudioContextClass();
+      }
+      const saved = localStorage.getItem('cpsBestScores');
+      if (saved) {
+        try {
+          setBestScores(JSON.parse(saved));
+        } catch(e) {}
+      }
+    }
+  }, []);
 
   const startTest = () => {
     setActive(true);
@@ -43,6 +85,13 @@ const CpsTest: React.FC = () => {
 
   const handlePointerDown = (e: React.PointerEvent) => {
     e.preventDefault();
+    
+    if (soundEnabled && audioCtxRef.current) {
+        if (audioCtxRef.current.state === 'suspended') {
+            audioCtxRef.current.resume();
+        }
+        playClickSound(audioCtxRef.current);
+    }
     
     // Add Visual Ripple
     const rect = (e.currentTarget as HTMLButtonElement).getBoundingClientRect();
@@ -103,13 +152,23 @@ const CpsTest: React.FC = () => {
           setFinished(true);
           setActive(false);
           if (timerRef.current) clearInterval(timerRef.current);
+          
+          setBestScores(prev => {
+            const finalCps = clicks / selectedDuration;
+            const newBests = { ...prev };
+            if (!newBests[selectedDuration] || finalCps > newBests[selectedDuration]) {
+                newBests[selectedDuration] = finalCps;
+                localStorage.setItem('cpsBestScores', JSON.stringify(newBests));
+            }
+            return newBests;
+          });
         }
-      }, 10);
+      }, 33);
     }
     return () => {
       if (timerRef.current) clearInterval(timerRef.current);
     };
-  }, [active, finished, selectedDuration]);
+  }, [active, finished, selectedDuration, clicks]);
 
   const cps = finished ? (clicks / selectedDuration).toFixed(2) : (active ? (clicks / (selectedDuration - timeLeft)).toFixed(1) : "0.00");
   const cpsNum = parseFloat(cps);
@@ -124,10 +183,25 @@ const CpsTest: React.FC = () => {
   };
 
   const rank = finished ? getRank(cpsNum) : null;
+  const currentBest = bestScores[selectedDuration];
+
+  const webAppSchema = {
+    "@context": "https://schema.org",
+    "@type": "WebApplication",
+    "name": `CPS Test - ${selectedDuration} Second Mode`,
+    "description": "Measure your raw clicks per second (CPS) accurately. Essential training for Geometry Dash, Minecraft PVP, and competitive gaming.",
+    "applicationCategory": "GameApplication",
+    "operatingSystem": "Any browser",
+    "offers": {
+      "@type": "Offer",
+      "price": "0",
+      "priceCurrency": "USD"
+    }
+  };
 
   return (
     <div className="w-full max-w-5xl mx-auto animate-in slide-in-from-bottom-4 duration-500">
-      
+      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(webAppSchema) }} />
       <Breadcrumbs items={[{ label: 'CPS Test', href: '/cps-test', active: true }]} />
 
       {/* Time Selector - Critical for SEO (1s CPS Test, 5s CPS Test keywords) */}
@@ -156,6 +230,7 @@ const CpsTest: React.FC = () => {
         <div className="relative aspect-square md:aspect-auto md:h-[400px]">
           <button
             onPointerDown={handlePointerDown}
+            aria-label="Click here to start or continue the CPS test"
             className={`
               w-full h-full rounded-2xl border-2 flex flex-col items-center justify-center transition-all duration-75 select-none relative overflow-hidden touch-none
               ${finished 
@@ -195,7 +270,7 @@ const CpsTest: React.FC = () => {
 
         {/* Stats & Rank Panel */}
         <div className="flex flex-col gap-4">
-           {/* Timer */}
+           {/* Timer & Controls */}
            <div className="bg-slate-900/50 backdrop-blur border border-white/10 p-6 rounded-2xl flex items-center justify-between">
               <div className="flex items-center gap-3">
                  <div className="p-3 rounded-lg bg-slate-800 text-blue-400">
@@ -206,10 +281,19 @@ const CpsTest: React.FC = () => {
                     <p className="text-3xl font-mono font-bold text-white tabular-nums">{timeLeft.toFixed(2)}s</p>
                  </div>
               </div>
-              <div className="h-12 w-12 rounded-full border-4 border-slate-700 flex items-center justify-center relative">
-                 <svg className="absolute inset-0 transform -rotate-90 w-full h-full">
-                    <circle cx="22" cy="22" r="18" stroke="currentColor" strokeWidth="4" fill="transparent" className="text-blue-600" strokeDasharray={113} strokeDashoffset={113 * (1 - timeLeft/selectedDuration)} />
-                 </svg>
+              <div className="flex items-center gap-4">
+                 <button 
+                  onClick={() => setSoundEnabled(!soundEnabled)}
+                  className={`p-3 rounded-xl border transition-colors ${soundEnabled ? 'bg-blue-600/20 border-blue-500/50 text-blue-400 hover:bg-blue-600/30' : 'bg-slate-800 border-white/10 text-slate-500 hover:text-slate-300'}`}
+                  title={soundEnabled ? "Mute Click Sound" : "Enable Click Sound"}
+                 >
+                   {soundEnabled ? <Volume2 className="w-5 h-5" /> : <VolumeX className="w-5 h-5" />}
+                 </button>
+                 <div className="h-12 w-12 rounded-full border-4 border-slate-700 flex items-center justify-center relative">
+                    <svg className="absolute inset-0 transform -rotate-90 w-full h-full">
+                       <circle cx="22" cy="22" r="18" stroke="currentColor" strokeWidth="4" fill="transparent" className="text-blue-600" strokeDasharray={113} strokeDashoffset={113 * (1 - timeLeft/selectedDuration)} />
+                    </svg>
+                 </div>
               </div>
            </div>
 
@@ -220,6 +304,13 @@ const CpsTest: React.FC = () => {
                <h3 className="text-slate-400 font-bold uppercase tracking-widest mb-2 relative z-10">Your Speed</h3>
                <div className="text-7xl font-display font-black text-white mb-2 text-glow relative z-10">{finished ? cps : (active ? cps : '0.00')}</div>
                <div className="text-xl text-blue-400 font-mono relative z-10 mb-6">CPS</div>
+               
+               {currentBest && (
+                 <div className="flex items-center justify-center gap-2 text-sm text-slate-300 bg-black/40 px-3 py-1.5 rounded-full border border-white/10 mb-6">
+                   <Trophy className="w-4 h-4 text-yellow-500" />
+                   Personal Best ({selectedDuration}s): <strong className="text-white">{currentBest.toFixed(2)} CPS</strong>
+                 </div>
+               )}
                
                {finished && rank && (
                  <div className="animate-in zoom-in duration-300 mb-8 relative z-10">

@@ -1,37 +1,48 @@
 import { MetadataRoute } from 'next';
-import { BLOG_POSTS } from '../data/blogContent';
 
 export default function sitemap(): MetadataRoute.Sitemap {
   const baseUrl = 'https://geometrydashspam.cc';
-
-  // Static Routes
+  
+  // List all routes for better SEO indexing
   const routes = [
     '',
-    '/cps-test',
     '/jitter-click',
     '/butterfly-click',
-    '/right-click',
+    '/drag-click',
     '/spacebar-counter',
-    '/reaction-test',
-    '/blog',
-    '/about',
-    '/contact',
-    '/privacy',
-    '/terms',
-  ].map((route) => ({
+    '/scroll-test',
+    '/reaction-time',
+    '/sound-reaction',
+    '/chimp-test',
+    '/visual-memory',
+    '/aim-trainer',
+    '/keyboard-latency',
+    '/polling-rate',
+    '/mouse-acceleration',
+    '/keyboard-ghosting',
+    '/key-rollover',
+    '/bpm-tapper',
+    '/refresh-rate',
+    '/cps-test',
+    '/right-click',
+    '/double-click',
+    '/1-second-cps-test',
+    '/2-second-cps-test',
+    '/3-second-cps-test',
+    '/5-second-cps-test',
+    '/10-second-cps-test',
+    '/15-second-cps-test',
+    '/30-second-cps-test',
+    '/60-second-cps-test',
+    '/100-second-cps-test',
+    '/leaderboard',
+    '/stats'
+  ];
+
+  return routes.map((route) => ({
     url: `${baseUrl}${route}`,
-    lastModified: new Date().toISOString().split('T')[0],
-    changeFrequency: 'weekly' as const,
-    priority: route === '' ? 1.0 : 0.8,
+    lastModified: new Date(),
+    changeFrequency: 'weekly',
+    priority: route === '' ? 1 : 0.8,
   }));
-
-  // Dynamic Blog Routes
-  const blogRoutes = BLOG_POSTS.map((post) => ({
-    url: `${baseUrl}/blog/${post.slug}`,
-    lastModified: new Date(post.date).toISOString().split('T')[0], // Parse friendly date string
-    changeFrequency: 'monthly' as const,
-    priority: 0.7,
-  }));
-
-  return [...routes, ...blogRoutes];
 }

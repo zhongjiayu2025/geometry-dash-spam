@@ -1,16 +1,38 @@
 "use client";
 
-import React, { useState, useRef } from 'react';
-import { Timer, AlertCircle, Play, Eye, BarChart2 } from 'lucide-react';
-import RelatedTools from './RelatedTools';
+import React, { useState, useRef, useEffect } from 'react';
+import dynamic from 'next/dynamic';
+const RelatedTools = dynamic(() => import('./RelatedTools'));
+import { Timer, AlertCircle, Play, Eye, BarChart2, Trophy, Share2, Check } from 'lucide-react';
+
 
 type TestState = 'idle' | 'waiting' | 'ready' | 'result' | 'early';
 
 const ReactionTest: React.FC = () => {
   const [state, setState] = useState<TestState>('idle');
   const [result, setResult] = useState(0);
+  const [bestScore, setBestScore] = useState<number | null>(null);
+  useEffect(() => {
+    const handleKeyDown = (e: KeyboardEvent) => {
+        if (e.code === 'Space' || e.code === 'Enter') {
+            e.preventDefault();
+            handleClick();
+        }
+    };
+    window.addEventListener('keydown', handleKeyDown);
+    return () => window.removeEventListener('keydown', handleKeyDown);
+  }, [state]);
+
+  const [copied, setCopied] = useState(false);
   const timeoutRef = useRef<number | null>(null);
   const startTimeRef = useRef<number>(0);
+
+  useEffect(() => {
+    const saved = localStorage.getItem('reactionBestScore');
+    if (saved) {
+      setBestScore(parseInt(saved, 10));
+    }
+  }, []);
 
   const startTest = () => {
     setState('waiting');
@@ -32,10 +54,30 @@ const ReactionTest: React.FC = () => {
     } else if (state === 'ready') {
       // Success
       const endTime = Date.now();
-      setResult(endTime - startTimeRef.current);
+      const newResult = endTime - startTimeRef.current;
+      setResult(newResult);
+      if (bestScore === null || newResult < bestScore) {
+          setBestScore(newResult);
+          localStorage.setItem('reactionBestScore', newResult.toString());
+      }
       setState('result');
     } else if (state === 'result' || state === 'early') {
       startTest();
+    }
+  };
+
+  const shareScore = async (e: React.MouseEvent) => {
+    e.stopPropagation();
+    const text = `I got a reaction time of ${result}ms on the Geometry Dash Reaction Test! Can you beat me?`;
+    const url = `https://geometrydashspam.cc/reaction-test`;
+    if (typeof navigator !== 'undefined' && navigator.share) {
+        try {
+            await navigator.share({ title: 'Reaction Time Test', text, url });
+        } catch(e) { console.log(e); }
+    } else {
+        navigator.clipboard.writeText(`${text} ${url}`);
+        setCopied(true);
+        setTimeout(() => setCopied(false), 2000);
     }
   };
 
@@ -57,7 +99,12 @@ const ReactionTest: React.FC = () => {
           <>
             <Play className="w-20 h-20 text-slate-400 mb-4" />
             <h2 className="text-4xl font-display font-bold text-white mb-2">Reaction Time Test</h2>
-            <p className="text-slate-300 text-lg">Click anywhere to start.</p>
+            <p className="text-slate-300 text-lg mb-4">Click anywhere to start.</p>
+            {bestScore && (
+              <div className="flex items-center justify-center gap-2 text-yellow-400 font-bold bg-yellow-400/10 px-4 py-2 rounded-full border border-yellow-400/20">
+                <Trophy className="w-5 h-5" /> Best: {bestScore} ms
+              </div>
+            )}
             <p className="text-slate-500 mt-4 text-sm">When the red box turns green, click as fast as you can.</p>
           </>
         )}
@@ -79,9 +126,23 @@ const ReactionTest: React.FC = () => {
         {state === 'result' && (
           <>
             <div className="text-8xl font-display font-black text-white mb-2 text-glow">{result} ms</div>
-            <p className="text-slate-300 text-xl mb-8">Your reaction time</p>
-            <div className="px-6 py-3 bg-slate-700 rounded-full text-white font-bold hover:bg-slate-600 transition-colors">
-              Click to Try Again
+            <p className="text-slate-300 text-xl mb-6">Your reaction time</p>
+            {bestScore && (
+              <div className="flex items-center justify-center gap-2 text-yellow-400 font-bold mb-8">
+                <Trophy className="w-4 h-4" /> Best: {bestScore} ms
+              </div>
+            )}
+            <div className="flex items-center gap-2">
+              <div className="px-6 py-3 bg-slate-700 rounded-full text-white font-bold hover:bg-slate-600 transition-colors">
+                Click to Try Again
+              </div>
+              <button
+                onMouseDown={shareScore}
+                className="p-3 bg-slate-800 text-white rounded-full flex items-center justify-center hover:bg-slate-700 transition-colors border border-white/10 relative z-10"
+                title="Share your score"
+              >
+                {copied ? <Check className="w-5 h-5 text-green-400" /> : <Share2 className="w-5 h-5" />}
+              </button>
             </div>
           </>
         )}
