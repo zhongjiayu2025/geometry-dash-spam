@@ -36,8 +36,9 @@ export default function HomeGuide() {
         <h2 className="text-2xl md:text-3xl font-display font-bold text-white mb-4">What is Geometry Dash spam?</h2>
         <p className="text-base md:text-lg">
           <strong className="text-white">Geometry Dash spam</strong> means sending rapid repeated inputs while still keeping enough rhythm and control to survive a tight section.
-          Raw speed matters, but consistent timing matters just as much. This site separates those skills into a playable spam trainer and a dedicated{" "}
-          <Link href="/cps-test" className="text-blue-400 hover:underline">Geometry Dash CPS test</Link>.
+          Raw speed matters, but consistent timing matters just as much. The main tool works as a <strong className="text-white">Geometry Dash spam click test</strong> with wave control, while the{" "}
+          <Link href="/cps-test" className="text-blue-400 hover:underline">Geometry Dash CPS test (GD CPS test)</Link>{" "}
+          isolates raw click speed and timing metrics.
         </p>
       </div>
 
