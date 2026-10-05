@@ -36,14 +36,12 @@ export const metadata: Metadata = {
     title: "Geometry Dash Spam Test – Wave Spam Trainer Online",
     description:
       "Practice Geometry Dash wave spam online and compare CPS, click consistency and repeatable control in a free browser trainer.",
-    images: [{ url: "/logo.svg", alt: "Geometry Dash Spam" }],
     locale: "en_US",
   },
   twitter: {
     card: "summary",
     title: "Geometry Dash Spam Test",
     description: "Practice Geometry Dash wave spam and measure CPS, click consistency and control.",
-    images: ["/logo.svg"],
   },
 };
 
