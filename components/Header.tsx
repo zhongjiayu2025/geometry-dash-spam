@@ -16,6 +16,7 @@ const coreItems = [
 ];
 
 const moreItems = [
+  ["/dashboard", "My Local Stats"],
   ["/geometry-dash-clicker", "Geometry Dash Clicker"],
   ["/geometry-dash-difficulty-faces", "Difficulty Faces"],
   ["/geometry-dash-vault-of-secrets-codes", "Vault of Secrets Codes"],
