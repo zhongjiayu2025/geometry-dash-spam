@@ -377,6 +377,7 @@ if (existsSync(llmsPath)) {
 }
 
 const layoutSource = readFileSync(join(process.cwd(), "app", "layout.tsx"), "utf8");
+const headerSource = readFileSync(join(process.cwd(), "components", "Header.tsx"), "utf8");
 if (!layoutSource.includes(`client=ca-${publisherId}`)) {
   infrastructureErrors.push(
     `AdSense script client does not match ads.txt publisher ID ${publisherId}`
@@ -392,6 +393,14 @@ if (
 
 if (!layoutSource.includes('"max-image-preview": "large"')) {
   infrastructureErrors.push("Root metadata must allow large Google image previews");
+}
+
+for (const utilityRoute of ["/jitter-click", "/butterfly-click", "/drag-click"]) {
+  if (headerSource.includes(utilityRoute)) {
+    infrastructureErrors.push(
+      `Global Header should not promote lower-priority utility route ${utilityRoute}`
+    );
+  }
 }
 
 const metadataErrors = [];
