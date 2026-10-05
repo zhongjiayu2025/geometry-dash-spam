@@ -372,15 +372,6 @@ const CpsTest: React.FC = () => {
                    Personal Best ({selectedDuration}s): <strong className="text-white">{currentBest.toFixed(2)} CPS</strong>
                  </div>
                )}
-               
-               {finished && rank && (
-                 <div className="animate-in zoom-in duration-300 mb-5 relative z-10">
-                    <div className="text-xs text-slate-500 uppercase tracking-widest mb-1">Speed Band</div>
-                    <div className={`text-3xl font-display font-black ${rank.color} drop-shadow-md flex items-center justify-center gap-2`}>
-                        <Trophy className="w-6 h-6" /> {rank.label}
-                    </div>
-                 </div>
-               )}
 
                {finished && (
                  <div className="grid grid-cols-3 gap-1.5 sm:gap-2 w-full mb-5 sm:mb-6 relative z-10">
