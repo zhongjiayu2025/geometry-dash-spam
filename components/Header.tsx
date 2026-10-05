@@ -17,6 +17,7 @@ const coreItems = [
 
 const moreItems = [
   ["/geometry-dash-clicker", "Geometry Dash Clicker"],
+  ["/geometry-dash-difficulty-faces", "Difficulty Faces"],
   ["/geometry-dash-vault-of-secrets-codes", "Vault of Secrets Codes"],
   ["/jitter-click", "Jitter Click"],
   ["/butterfly-click", "Butterfly Click"],
