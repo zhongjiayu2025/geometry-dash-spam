@@ -179,6 +179,7 @@ const GameCanvas: React.FC<GameCanvasProps> = memo(({ difficulty, status, onStat
     lastBeatTime: 0, // Track when the kick hit
     frameCount: 0,
     clickIntervals: [] as number[],
+    clickCount: 0,
     runTime: 0,
     finishLineX: 0,
     baseColor: difficulty.color,
@@ -490,11 +491,34 @@ const GameCanvas: React.FC<GameCanvasProps> = memo(({ difficulty, status, onStat
   const calculateConsistency = () => {
     const intervals = gameState.current.clickIntervals;
     if (intervals.length < 2) return '100%';
-    let mean = intervals.reduce((a, b) => a + b, 0) / intervals.length;
-    let variance = intervals.reduce((a, b) => a + Math.pow(b - mean, 2), 0) / intervals.length;
-    let stdDev = Math.sqrt(variance);
-    let score = Math.max(0, 100 - (stdDev * 2)); 
+    const mean = intervals.reduce((a, b) => a + b, 0) / intervals.length;
+    const variance = intervals.reduce((a, b) => a + Math.pow(b - mean, 2), 0) / intervals.length;
+    const stdDev = Math.sqrt(variance);
+    const score = Math.max(0, 100 - (stdDev * 2));
     return score.toFixed(1) + '%';
+  };
+
+  const getRunStats = () => {
+    const seconds = Math.max(0.001, gameState.current.runTime / 1000);
+    const intervals = gameState.current.clickIntervals;
+    const clickCount = gameState.current.clickCount;
+    const averageCps = clickCount / seconds;
+    const fastestInterval = intervals.length ? Math.min(...intervals) : 0;
+    const peakCps = fastestInterval > 0 ? 1000 / fastestInterval : averageCps;
+    const meanInterval = intervals.length
+      ? intervals.reduce((a, b) => a + b, 0) / intervals.length
+      : 0;
+    const variance = intervals.length
+      ? intervals.reduce((a, b) => a + Math.pow(b - meanInterval, 2), 0) / intervals.length
+      : 0;
+
+    return {
+      clickCount,
+      averageCps,
+      peakCps,
+      averageInterval: meanInterval,
+      intervalStdDev: Math.sqrt(variance),
+    };
   };
 
   const initStars = (width: number, height: number) => {
@@ -546,6 +570,7 @@ const GameCanvas: React.FC<GameCanvasProps> = memo(({ difficulty, status, onStat
       lastBeatTime: 0,
       frameCount: 0,
       clickIntervals: [],
+      clickCount: 0,
       runTime: 0,
       finishLineX: totalDistance + 600,
       baseColor: difficulty.color,
@@ -900,6 +925,7 @@ const GameCanvas: React.FC<GameCanvasProps> = memo(({ difficulty, status, onStat
          if (gameState.current.clickIntervals.length > 50) gameState.current.clickIntervals.shift();
      }
      gameState.current.lastClickTime = now;
+     gameState.current.clickCount += 1;
 
      playSound('click');
   }, [status, resetGame, onStatusChange, initAudio, playSound, showShareModal]);
@@ -975,6 +1001,8 @@ const GameCanvas: React.FC<GameCanvasProps> = memo(({ difficulty, status, onStat
       resetGame();
       requestAnimationFrame(gameLoop);
   }, [resetGame, gameLoop]);
+
+  const runStats = getRunStats();
 
   return (
     <div 
@@ -1094,14 +1122,30 @@ const GameCanvas: React.FC<GameCanvasProps> = memo(({ difficulty, status, onStat
                 <AlertTriangle className="w-16 h-16 text-red-500 mb-2 drop-shadow-[0_0_20px_rgba(239,68,68,0.5)]" />
                 <h2 className="text-5xl font-display font-black text-white mb-2 tracking-tighter">CRASHED</h2>
                 
-                <div className="grid grid-cols-2 gap-4 w-full mb-6">
+                <div className="grid grid-cols-2 gap-3 w-full mb-6">
                     <div className="bg-white/5 p-3 rounded-lg text-center">
-                        <div className="text-xs text-slate-400 uppercase tracking-wider mb-1">Attempt</div>
-                        <div className="text-2xl font-mono font-bold text-white">{(gameState.current.runTime / 1000).toFixed(2)}s</div>
+                        <div className="text-xs text-slate-400 uppercase tracking-wider mb-1">Survival</div>
+                        <div className="text-xl font-mono font-bold text-white">{(gameState.current.runTime / 1000).toFixed(2)}s</div>
                     </div>
                     <div className="bg-white/5 p-3 rounded-lg text-center">
                         <div className="text-xs text-slate-400 uppercase tracking-wider mb-1">Local Best</div>
-                        <div className="text-2xl font-mono font-bold text-yellow-400">{highScore.toFixed(2)}s</div>
+                        <div className="text-xl font-mono font-bold text-yellow-400">{highScore.toFixed(2)}s</div>
+                    </div>
+                    <div className="bg-white/5 p-3 rounded-lg text-center">
+                        <div className="text-xs text-slate-400 uppercase tracking-wider mb-1">Average CPS</div>
+                        <div className="text-xl font-mono font-bold text-blue-300">{runStats.averageCps.toFixed(2)}</div>
+                    </div>
+                    <div className="bg-white/5 p-3 rounded-lg text-center">
+                        <div className="text-xs text-slate-400 uppercase tracking-wider mb-1">Clicks</div>
+                        <div className="text-xl font-mono font-bold text-white">{runStats.clickCount}</div>
+                    </div>
+                    <div className="bg-white/5 p-3 rounded-lg text-center">
+                        <div className="text-xs text-slate-400 uppercase tracking-wider mb-1">Peak CPS</div>
+                        <div className="text-xl font-mono font-bold text-purple-300">{runStats.peakCps.toFixed(2)}</div>
+                    </div>
+                    <div className="bg-white/5 p-3 rounded-lg text-center">
+                        <div className="text-xs text-slate-400 uppercase tracking-wider mb-1">Timing SD</div>
+                        <div className="text-xl font-mono font-bold text-white">{runStats.intervalStdDev.toFixed(0)}ms</div>
                     </div>
                 </div>
 
@@ -1143,11 +1187,26 @@ const GameCanvas: React.FC<GameCanvasProps> = memo(({ difficulty, status, onStat
                 <Trophy className="w-20 h-20 text-yellow-400 mb-4 drop-shadow-[0_0_30px_rgba(250,204,21,0.6)] animate-bounce" />
                 <h2 className="text-5xl font-display font-black text-white mb-2 tracking-tighter">COMPLETE!</h2>
                 
-                <div className="flex items-center gap-2 mb-6">
+                <div className="flex items-center gap-2 mb-4">
                     <Zap className="w-5 h-5 text-yellow-400" />
                     <p className="text-green-100 font-mono text-lg">
                         Consistency Score: <span className="text-white font-bold text-xl">{consistency}</span>
                     </p>
+                </div>
+
+                <div className="grid grid-cols-3 gap-3 w-full mb-6">
+                    <div className="bg-white/5 p-3 rounded-lg text-center">
+                        <div className="text-[10px] text-slate-400 uppercase tracking-wider mb-1">Average CPS</div>
+                        <div className="text-lg font-mono font-bold text-blue-300">{runStats.averageCps.toFixed(2)}</div>
+                    </div>
+                    <div className="bg-white/5 p-3 rounded-lg text-center">
+                        <div className="text-[10px] text-slate-400 uppercase tracking-wider mb-1">Peak CPS</div>
+                        <div className="text-lg font-mono font-bold text-purple-300">{runStats.peakCps.toFixed(2)}</div>
+                    </div>
+                    <div className="bg-white/5 p-3 rounded-lg text-center">
+                        <div className="text-[10px] text-slate-400 uppercase tracking-wider mb-1">Clicks</div>
+                        <div className="text-lg font-mono font-bold text-white">{runStats.clickCount}</div>
+                    </div>
                 </div>
 
                 <div className="flex gap-3 mb-4">
