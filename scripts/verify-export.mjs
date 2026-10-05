@@ -2,6 +2,15 @@ import { existsSync, readFileSync, readdirSync } from "node:fs";
 import { join } from "node:path";
 
 const outDir = join(process.cwd(), "out");
+const demonSource = readFileSync(join(process.cwd(), "data", "demons.ts"), "utf8");
+const demonDate = demonSource.match(/DEMON_VERIFIED_AT = "([^"]+)"/)?.[1];
+const currentDemon = demonSource.match(/\{ rank: 1, level: "((?:\\.|[^"])*)"/)?.[1];
+
+if (!demonDate || !currentDemon) {
+  throw new Error("Could not read the current #1 Demon List entry for export verification.");
+}
+
+const currentDemonName = JSON.parse(`"${currentDemon}"`);
 
 const requiredRoutes = [
   "/",
@@ -60,6 +69,11 @@ const metadataExpectations = {
     title: "Geometry Dash Wave Demons",
     description: "Explore wave-focused Geometry Dash demon practice references",
     canonical: "https://geometrydashspam.cc/demon-list/wave-demons",
+  },
+  "/hardest-level": {
+    title: `Hardest Geometry Dash Level: ${currentDemonName}`,
+    description: `As checked ${demonDate}, Pointercrate ranks ${currentDemonName}`,
+    canonical: "https://geometrydashspam.cc/hardest-level",
   },
   "/geometry-dash-clicker": {
     title: "Geometry Dash Clicker",
