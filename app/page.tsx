@@ -28,7 +28,7 @@ export const metadata: Metadata = {
       "Play a Geometry Dash spam test online, practice wave spam and train repeatable input control in a free browser-based simulator.",
   },
   twitter: {
-    card: "summary",
+    card: "summary_large_image",
     title: "Geometry Dash Spam Test – Wave Spam Trainer Online",
     description:
       "Play a Geometry Dash spam test online, practice wave spam and train repeatable input control in a free browser-based simulator.",
