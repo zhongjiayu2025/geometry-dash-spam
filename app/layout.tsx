@@ -92,9 +92,7 @@ export default function RootLayout({
   return (
     <html lang="en">
       <head>
-        <link rel="preconnect" href="https://pagead2.googlesyndication.com" />
         <link rel="dns-prefetch" href="https://pagead2.googlesyndication.com" />
-        <link rel="preconnect" href="https://googleads.g.doubleclick.net" />
         <link rel="dns-prefetch" href="https://googleads.g.doubleclick.net" />
         <link rel="describedby" href="/llms.txt" type="text/markdown" />
         <meta property="og:site_name" content="Geometry Dash Spam" />
