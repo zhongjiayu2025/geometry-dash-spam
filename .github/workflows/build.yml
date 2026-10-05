@@ -24,3 +24,5 @@ jobs:
         run: npm run check
       - name: Build static site
         run: npm run build
+      - name: Verify exported routes
+        run: npm run verify
