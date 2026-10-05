@@ -713,7 +713,7 @@ const GameCanvas: React.FC<GameCanvasProps> = memo(({ difficulty, status, onStat
 
         if (!isEndless) {
              const finishScreenX = gameState.current.finishLineX - gameState.current.distanceTraveled;
-             if (finishScreenX <= gameState.current.playerX) {
+             if (finishScreenX <= gameState.current.playerX && !runRecordedRef.current) {
                  setConsistency(calculateConsistency());
                  recordRun("won");
                  onStatusChange(GameStatus.Won);
@@ -925,6 +925,7 @@ const GameCanvas: React.FC<GameCanvasProps> = memo(({ difficulty, status, onStat
   }, [status, difficulty, isEndless, isMini, spawnObstacle, saveHighScore, playSound, reduceMotion]);
 
   const handleDeath = () => {
+      if (runRecordedRef.current) return;
       onStatusChange(GameStatus.Lost);
       gameState.current.shakeIntensity = reduceMotion ? 0 : 40; 
       createExplosion(gameState.current.playerX, gameState.current.playerY, '#fff');
