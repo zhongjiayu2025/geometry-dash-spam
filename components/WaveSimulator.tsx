@@ -148,11 +148,11 @@ const WaveSimulator: React.FC<WaveSimulatorProps> = ({ variant = 'spam' }) => {
   };
 
   return (
-    <div className="flex flex-col items-center w-full animate-in fade-in duration-500">
+    <div id="spam-test-tool" className="flex flex-col items-center w-full animate-in fade-in duration-500 scroll-mt-20">
       <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(howToSchema) }} />
       
-      <section className="w-full max-w-5xl mb-6 rounded-2xl border border-white/10 bg-slate-900/35 p-4 md:p-5">
-          <div className="flex flex-col gap-2 md:flex-row md:items-end md:justify-between mb-4">
+      <section className="w-full max-w-5xl mb-4 md:mb-6 rounded-2xl border border-white/10 bg-slate-900/35 p-3 md:p-5">
+          <div className="flex flex-col gap-1 md:flex-row md:items-end md:justify-between mb-3 md:mb-4">
             <div>
               <p className="text-[11px] uppercase tracking-[0.2em] text-blue-400 font-bold">
                 {isWavePage ? "Wave training presets" : "Spam training presets"}
@@ -163,7 +163,7 @@ const WaveSimulator: React.FC<WaveSimulatorProps> = ({ variant = 'spam' }) => {
             </div>
             <p className="text-xs text-slate-500">Presets set difficulty, Mini Wave and Endless Mode for you.</p>
           </div>
-          <div className="grid grid-cols-2 gap-2 md:grid-cols-5">
+          <div className="flex gap-2 overflow-x-auto overscroll-x-contain pb-1 md:grid md:grid-cols-5 md:overflow-visible md:pb-0">
             {WAVE_PRESETS.map((preset) => (
               <button
                 key={preset.id}
@@ -171,7 +171,7 @@ const WaveSimulator: React.FC<WaveSimulatorProps> = ({ variant = 'spam' }) => {
                 onClick={() => applyWavePreset(preset.id)}
                 disabled={gameStatus === GameStatus.Playing}
                 className={
-                  "rounded-xl border p-3 text-left transition-colors disabled:opacity-40 " +
+                  "min-w-[156px] shrink-0 rounded-xl border p-3 text-left transition-colors disabled:opacity-40 md:min-w-0 " +
                   (wavePreset === preset.id
                     ? "border-blue-400/60 bg-blue-500/15 text-white"
                     : "border-white/10 bg-black/20 text-slate-400 hover:border-white/20 hover:text-white")
@@ -191,13 +191,13 @@ const WaveSimulator: React.FC<WaveSimulatorProps> = ({ variant = 'spam' }) => {
       />
 
       {/* Mode Toggles */}
-      <div className="flex flex-wrap justify-center gap-4 mb-6 relative z-10">
+      <div className="flex flex-wrap justify-center gap-2 md:gap-4 mb-4 md:mb-6 relative z-10">
         {/* Endless Toggle */}
         <button
             onClick={toggleEndless}
             disabled={gameStatus === GameStatus.Playing}
             className={`
-                group flex items-center gap-3 px-5 py-2 rounded-full border transition-all duration-300
+                group flex items-center gap-2 px-4 py-2 rounded-full border transition-all duration-300
                 ${gameStatus === GameStatus.Playing ? 'opacity-50 cursor-not-allowed' : 'cursor-pointer hover:border-blue-400'}
                 ${isEndless 
                     ? 'bg-blue-900/30 border-blue-500 text-blue-200 shadow-[0_0_15px_rgba(37,99,235,0.2)]' 
@@ -222,7 +222,7 @@ const WaveSimulator: React.FC<WaveSimulatorProps> = ({ variant = 'spam' }) => {
             onClick={toggleMini}
             disabled={gameStatus === GameStatus.Playing}
             className={`
-                group flex items-center gap-3 px-5 py-2 rounded-full border transition-all duration-300
+                group flex items-center gap-2 px-4 py-2 rounded-full border transition-all duration-300
                 ${gameStatus === GameStatus.Playing ? 'opacity-50 cursor-not-allowed' : 'cursor-pointer hover:border-purple-400'}
                 ${isMini 
                     ? 'bg-purple-900/30 border-purple-500 text-purple-200 shadow-[0_0_15px_rgba(168,85,247,0.2)]' 
@@ -276,7 +276,12 @@ const WaveSimulator: React.FC<WaveSimulatorProps> = ({ variant = 'spam' }) => {
                         setDifficulty(Difficulty.Insane);
                         setIsMini(true);
                         setIsEndless(false);
-                        window.scrollTo({ top: 0, behavior: 'smooth' });
+                        setWavePreset('mini');
+                        setGameStatus(GameStatus.Idle);
+                        localStorage.setItem('gd_spam_last_difficulty', Difficulty.Insane);
+                        localStorage.setItem('gd_spam_mini_mode', 'true');
+                        localStorage.setItem('gd_spam_endless_mode', 'false');
+                        document.getElementById('spam-test-tool')?.scrollIntoView({ behavior: 'smooth', block: 'start' });
                     }}
                     className="px-6 py-2 bg-yellow-600 hover:bg-yellow-500 text-white font-bold rounded-lg shadow-lg shadow-yellow-900/20 transition-all flex items-center gap-2"
                   >
