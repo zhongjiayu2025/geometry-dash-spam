@@ -7,22 +7,37 @@ const TREASURE_SOURCE = "https://geometrydash.wiki.gg/wiki/Treasure_Room";
 const CHECKED_AT = "2026-10-05";
 
 export const metadata: Metadata = {
-  title: "How to Get Gold Keys in Geometry Dash – Current Methods",
+  title: "How to Get Gold Keys in Geometry Dash | Current Methods",
   description:
-    "Learn how to get Gold Keys in Geometry Dash from eligible Event Level reward chests and Secret Room codes, and where to use them.",
+    "How to get Gold Keys in Geometry Dash: use eligible Event Level reward chests or Secret Room/Wraith codes, then spend them on gold chests.",
   alternates: { canonical: "/how-to-get-gold-keys-geometry-dash" },
   openGraph: {
-    title: "How to Get Gold Keys in Geometry Dash – Current Methods",
-    description: "Learn how to get Gold Keys in Geometry Dash from eligible Event Level reward chests and Secret Room codes, and where to use them.",
+    title: "How to Get Gold Keys in Geometry Dash | Current Methods",
+    description: "How to get Gold Keys in Geometry Dash: use eligible Event Level reward chests or Secret Room/Wraith codes, then spend them on gold chests.",
     url: "https://geometrydashspam.cc/how-to-get-gold-keys-geometry-dash",
     type: "website",
   },
   twitter: {
     card: "summary",
-    title: "How to Get Gold Keys in Geometry Dash – Current Methods",
-    description: "Learn how to get Gold Keys in Geometry Dash from eligible Event Level reward chests and Secret Room codes, and where to use them.",
+    title: "How to Get Gold Keys in Geometry Dash | Current Methods",
+    description: "How to get Gold Keys in Geometry Dash: use eligible Event Level reward chests or Secret Room/Wraith codes, then spend them on gold chests.",
   },
 };
+
+const goldKeyFaqs = [
+  {
+    q: "How do you get Gold Keys in Geometry Dash?",
+    a: "The Geometry Dash Wiki source used for this guide lists two routes: reward chests from specific Event Levels and eligible Secret Room/Wraith codes.",
+  },
+  {
+    q: "Where do you use Gold Keys?",
+    a: "Gold Keys open the gold chests on the fourth page of the Treasure Room.",
+  },
+  {
+    q: "Are Gold Keys the same as Demon Keys?",
+    a: "No. Regular Demon Keys open standard Treasure Room chest tiers, while Gold Keys are used for the separate gold chests.",
+  },
+];
 
 export default function GoldKeysPage() {
   const schema = {
@@ -49,9 +64,20 @@ export default function GoldKeysPage() {
     ],
   };
 
+  const faqSchema = {
+    "@context": "https://schema.org",
+    "@type": "FAQPage",
+    mainEntity: goldKeyFaqs.map((item) => ({
+      "@type": "Question",
+      name: item.q,
+      acceptedAnswer: { "@type": "Answer", text: item.a },
+    })),
+  };
+
   return (
     <>
       <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(schema) }} />
+      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(faqSchema) }} />
 
       <article className="mx-auto max-w-5xl">
         <header className="mb-10 max-w-4xl">
@@ -62,11 +88,20 @@ export default function GoldKeysPage() {
             How to Get Gold Keys in Geometry Dash
           </h1>
           <p className="leading-7 text-slate-400">
-            Gold Keys are different from regular Demon Keys. The official wiki lists two acquisition routes:
+            Gold Keys are different from regular Demon Keys. The Geometry Dash Wiki source used for this guide lists two acquisition routes:
             reward chests from specific <strong className="text-white">Event Levels</strong> and eligible{" "}
             <strong className="text-white">Secret Room/Wraith codes</strong>.
           </p>
         </header>
+
+        <section className="mb-8 rounded-2xl border border-yellow-500/20 bg-yellow-950/10 p-5 md:p-6">
+          <div className="mb-2 text-xs font-bold uppercase tracking-[0.18em] text-yellow-300">Quick answer</div>
+          <p className="leading-7 text-slate-300">
+            Get Gold Keys from <strong className="text-white">eligible Event Level reward chests</strong> or qualifying{" "}
+            <Link href="/geometry-dash-codes#wraith" className="text-blue-400 hover:underline">Secret Room/Wraith codes</Link>.
+            Spend them on the gold chests on the fourth page of the Treasure Room.
+          </p>
+        </section>
 
         <section className="grid gap-4 md:grid-cols-2">
           <div className="rounded-2xl border border-yellow-500/20 bg-yellow-950/10 p-6">
@@ -114,6 +149,18 @@ export default function GoldKeysPage() {
           <a href={COLLECTIBLES_SOURCE} target="_blank" rel="noopener noreferrer" className="mt-4 inline-block text-sm font-semibold text-blue-400 hover:underline">
             Key source →
           </a>
+        </section>
+
+        <section className="mt-10">
+          <h2 className="mb-4 text-2xl font-bold text-white">Geometry Dash Gold Keys FAQ</h2>
+          <div className="grid gap-4 md:grid-cols-3">
+            {goldKeyFaqs.map((item) => (
+              <div key={item.q} className="rounded-xl border border-white/10 bg-slate-900/30 p-5">
+                <h3 className="mb-2 font-bold text-white">{item.q}</h3>
+                <p className="text-sm leading-6 text-slate-400">{item.a}</p>
+              </div>
+            ))}
+          </div>
         </section>
 
         <div className="mt-8 flex flex-wrap gap-3">
