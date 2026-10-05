@@ -21,14 +21,6 @@ export const metadata: Metadata = {
   },
   description:
     "Practice Geometry Dash spam, wave control and CPS with free browser-based training tools, sourced demon references and no account required.",
-  keywords: [
-    "geometry dash spam",
-    "geometry dash spam test",
-    "geometry dash wave spam",
-    "geometry dash wave",
-    "geometry dash cps test",
-    "gd cps test",
-  ],
   icons: {
     icon: "/logo.svg",
     shortcut: "/logo.svg",
