@@ -83,6 +83,31 @@ export default function HomeGuide() {
       </div>
 
       <div>
+        <h2 className="text-2xl md:text-3xl font-display font-bold text-white mb-3">Popular Geometry Dash reference guides</h2>
+        <p className="text-sm text-slate-500 mb-5 max-w-3xl">
+          Use these supporting guides when your search is about game progression or reference information rather than spam training.
+        </p>
+        <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
+          <Link href="/geometry-dash-codes" className="rounded-xl border border-white/10 bg-slate-900/30 p-4 hover:border-blue-500/40">
+            <h3 className="font-bold text-white mb-1">Geometry Dash Codes</h3>
+            <p className="text-xs leading-5 text-slate-500">Vault, Secrets, Chamber and Wraith code reference.</p>
+          </Link>
+          <Link href="/hardest-level" className="rounded-xl border border-white/10 bg-slate-900/30 p-4 hover:border-purple-500/40">
+            <h3 className="font-bold text-white mb-1">Hardest Geometry Dash Level</h3>
+            <p className="text-xs leading-5 text-slate-500">Current #1 answer tied to a dated Demon List source.</p>
+          </Link>
+          <Link href="/easiest-demons" className="rounded-xl border border-white/10 bg-slate-900/30 p-4 hover:border-green-500/40">
+            <h3 className="font-bold text-white mb-1">Easiest Demons</h3>
+            <p className="text-xs leading-5 text-slate-500">Beginner-oriented demon progression references.</p>
+          </Link>
+          <Link href="/geometry-dash-difficulty-faces" className="rounded-xl border border-white/10 bg-slate-900/30 p-4 hover:border-yellow-500/40">
+            <h3 className="font-bold text-white mb-1">Difficulty Faces</h3>
+            <p className="text-xs leading-5 text-slate-500">Difficulty ratings, star ranges and Demon sub-difficulties.</p>
+          </Link>
+        </div>
+      </div>
+
+      <div>
         <h2 className="text-2xl md:text-3xl font-display font-bold text-white mb-6">Geometry Dash spam FAQ</h2>
         <div className="space-y-4">
           {faqs.map((item) => (
