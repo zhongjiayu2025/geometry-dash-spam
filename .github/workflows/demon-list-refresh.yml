@@ -32,6 +32,9 @@ jobs:
       - name: Refresh Pointercrate snapshot
         run: node scripts/update-demon-list.mjs
 
+      - name: Validate Demon List data
+        run: node scripts/verify-demon-data.mjs
+
       - name: Commit changes
         shell: bash
         run: |
