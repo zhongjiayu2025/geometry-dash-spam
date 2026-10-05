@@ -3,7 +3,7 @@
 import React, { useState, useRef, useEffect } from 'react';
 import dynamic from 'next/dynamic';
 const RelatedTools = dynamic(() => import('./RelatedTools'));
-import { Timer, AlertCircle, Play, Eye, BarChart2, Trophy, Share2, Check } from 'lucide-react';
+import { Timer, AlertCircle, Play, Eye, Trophy, Share2, Check } from 'lucide-react';
 
 
 type TestState = 'idle' | 'waiting' | 'ready' | 'result' | 'early';
@@ -40,7 +40,7 @@ const ReactionTest: React.FC = () => {
     
     timeoutRef.current = window.setTimeout(() => {
       setState('ready');
-      startTimeRef.current = Date.now();
+      startTimeRef.current = performance.now();
     }, delay);
   };
 
@@ -53,8 +53,8 @@ const ReactionTest: React.FC = () => {
       setState('early');
     } else if (state === 'ready') {
       // Success
-      const endTime = Date.now();
-      const newResult = endTime - startTimeRef.current;
+      const endTime = performance.now();
+      const newResult = Math.round(endTime - startTimeRef.current);
       setResult(newResult);
       if (bestScore === null || newResult < bestScore) {
           setBestScore(newResult);
@@ -157,98 +157,52 @@ const ReactionTest: React.FC = () => {
         )}
       </div>
 
-      {/* Benchmarks */}
       <div className="grid grid-cols-1 md:grid-cols-3 gap-6 text-center mb-16">
          <div className="p-4 rounded-lg bg-slate-900/50 border border-white/5">
-             <div className="text-slate-500 text-xs uppercase mb-1">Average Human</div>
-             <div className="text-white font-bold text-xl">250 ms</div>
+             <div className="text-slate-500 text-xs uppercase mb-1">Current Result</div>
+             <div className="text-white font-bold text-xl">{result > 0 ? `${result} ms` : "--"}</div>
          </div>
          <div className="p-4 rounded-lg bg-slate-900/50 border border-white/5">
-             <div className="text-slate-500 text-xs uppercase mb-1">Pro Gamer</div>
-             <div className="text-green-400 font-bold text-xl">150-200 ms</div>
+             <div className="text-slate-500 text-xs uppercase mb-1">Local Best</div>
+             <div className="text-green-400 font-bold text-xl">{bestScore ? `${bestScore} ms` : "--"}</div>
          </div>
          <div className="p-4 rounded-lg bg-slate-900/50 border border-white/5">
-             <div className="text-slate-500 text-xs uppercase mb-1">Interpretation</div>
-             <div className="text-slate-300 text-sm">Visual stimulus processing speed</div>
+             <div className="text-slate-500 text-xs uppercase mb-1">Measurement</div>
+             <div className="text-slate-300 text-sm">Browser cue-to-input time</div>
          </div>
       </div>
 
-      {/* SEO CONTENT SECTION */}
-      <section className="space-y-12 pb-12">
-          
+      <section className="space-y-8 pb-12">
           <div className="bg-slate-900/40 border border-white/5 rounded-2xl p-8 md:p-12">
              <h2 className="text-3xl font-display font-bold text-white mb-6 flex items-center gap-3">
-                 <Eye className="w-8 h-8 text-green-500"/> Sight Reading vs Muscle Memory
+                 <Eye className="w-8 h-8 text-green-500"/> How to use this reaction test
              </h2>
-             <div className="prose prose-invert prose-lg max-w-none text-slate-300">
-                 <p>
-                     In Geometry Dash, there are two main skills: <strong>Memory</strong> (memorizing a level's layout) and <strong>Sight Reading</strong> (reacting to obstacles as they appear). A low reaction time is critical for Sight Reading, especially in fast-paced gamemodes like the Wave or Ship at 3x/4x speed.
-                 </p>
-                 <div className="grid grid-cols-1 md:grid-cols-2 gap-8 mt-6">
-                     <div>
-                         <h4 className="text-white font-bold mb-2">How Latency Affects Gameplay:</h4>
-                         <ul className="list-disc pl-5 space-y-2 text-sm">
-                             <li><strong>Input Lag:</strong> If your mouse or monitor adds 30ms of delay, your effective reaction time is slower.</li>
-                             <li><strong>Hardware:</strong> 144Hz monitors update the frame 2.4x faster than 60Hz monitors, giving you a visual advantage of ~9ms.</li>
-                         </ul>
-                     </div>
-                     <div>
-                         <h4 className="text-white font-bold mb-2">Improving Reaction Time:</h4>
-                         <p className="text-sm">
-                             While genetics play a role, staying hydrated, sleeping well, and "warming up" your eyes with tests like this can shave 10-20ms off your time before a serious gaming session.
-                         </p>
-                     </div>
-                 </div>
+             <div className="space-y-4 text-slate-300 leading-relaxed">
+               <p>
+                 This page measures the time between a browser visual cue and the input event that reaches the page. The result includes your response plus delay from the display, input device, operating system and browser.
+               </p>
+               <p>
+                 Use several attempts on the same setup and compare your own results. A single unusually fast or slow run is less useful than a repeatable range.
+               </p>
+               <p>
+                 Refresh rate can change how quickly a visual cue becomes visible, but the display frame interval is not the same thing as total end-to-end input latency.
+               </p>
              </div>
           </div>
 
-          {/* TABLE SEO OPTIMIZATION: Link Bait for "Average Reaction Time by Age" */}
-          <div className="bg-slate-900/40 border border-white/5 rounded-2xl p-8">
-              <h3 className="text-xl font-bold text-white mb-4 flex items-center gap-2">
-                  <BarChart2 className="w-5 h-5 text-yellow-400" /> Reaction Time Benchmarks by Age
-              </h3>
-              <p className="text-sm text-slate-400 mb-6">
-                  Reaction time naturally slows down with age. Compare your score to the global averages below to see where you stand.
-              </p>
-              
-              <div className="overflow-x-auto">
-                  <table className="w-full text-left border-collapse">
-                      <thead>
-                          <tr className="border-b border-white/10 text-slate-500 text-xs uppercase tracking-wider">
-                              <th className="p-3 font-medium">Age Group</th>
-                              <th className="p-3 font-medium">Average Reaction Time</th>
-                              <th className="p-3 font-medium">Competitive Gamer Speed</th>
-                          </tr>
-                      </thead>
-                      <tbody className="text-sm text-slate-300">
-                          <tr className="border-b border-white/5 bg-white/5">
-                              <td className="p-3 font-bold text-white">18 - 25 Years</td>
-                              <td className="p-3">230 ms</td>
-                              <td className="p-3 text-green-400">150 - 180 ms</td>
-                          </tr>
-                          <tr className="border-b border-white/5">
-                              <td className="p-3 font-bold text-white">26 - 35 Years</td>
-                              <td className="p-3">250 ms</td>
-                              <td className="p-3 text-green-400">180 - 200 ms</td>
-                          </tr>
-                          <tr className="border-b border-white/5 bg-white/5">
-                              <td className="p-3 font-bold text-white">36 - 45 Years</td>
-                              <td className="p-3">270 ms</td>
-                              <td className="p-3 text-green-400">200 - 220 ms</td>
-                          </tr>
-                          <tr className="border-b border-white/5">
-                              <td className="p-3 font-bold text-white">46 - 55 Years</td>
-                              <td className="p-3">300 ms</td>
-                              <td className="p-3 text-green-400">230 - 250 ms</td>
-                          </tr>
-                          <tr>
-                              <td className="p-3 font-bold text-white">55+ Years</td>
-                              <td className="p-3">350+ ms</td>
-                              <td className="p-3 text-green-400">270+ ms</td>
-                          </tr>
-                      </tbody>
-                  </table>
-              </div>
+          <div className="grid gap-4 md:grid-cols-3">
+            <div className="rounded-xl border border-white/10 bg-slate-900/30 p-5">
+              <h3 className="font-bold text-white mb-2">Keep the setup fixed</h3>
+              <p className="text-sm leading-6 text-slate-400">Compare runs using the same device, browser, display and input method.</p>
+            </div>
+            <div className="rounded-xl border border-white/10 bg-slate-900/30 p-5">
+              <h3 className="font-bold text-white mb-2">Use multiple attempts</h3>
+              <p className="text-sm leading-6 text-slate-400">Your local best is useful, but repeated results are more informative than one outlier.</p>
+            </div>
+            <div className="rounded-xl border border-white/10 bg-slate-900/30 p-5">
+              <h3 className="font-bold text-white mb-2">Treat it as a browser test</h3>
+              <p className="text-sm leading-6 text-slate-400">The number is not a laboratory measurement of your nervous system or one hardware component.</p>
+            </div>
           </div>
 
           <RelatedTools currentTool="reaction" />
