@@ -249,9 +249,55 @@ const unexpected = removedGhostRoutes.filter((route) =>
   candidates(route).some((path) => existsSync(path))
 );
 
-const metadataFiles = ["sitemap.xml", "robots.txt"].filter(
+const metadataFiles = ["sitemap.xml", "robots.txt", "_redirects"].filter(
   (file) => !existsSync(join(outDir, file))
 );
+
+const redirectErrors = [];
+const redirectsPath = join(outDir, "_redirects");
+const expectedRedirects = new Map([
+  ["/1-second-cps-test", "/cps-test"],
+  ["/2-second-cps-test", "/cps-test"],
+  ["/10-second-cps-test", "/cps-test"],
+  ["/reaction-time", "/reaction-test"],
+  ["/stats", "/dashboard"],
+]);
+
+if (existsSync(redirectsPath)) {
+  const redirectLines = readFileSync(redirectsPath, "utf8")
+    .split(/\r?\n/)
+    .map((line) => line.trim())
+    .filter((line) => line && !line.startsWith("#"));
+
+  const parsedRedirects = new Map();
+  for (const line of redirectLines) {
+    const [source, destination, status] = line.split(/\s+/);
+    if (!source || !destination) {
+      redirectErrors.push(`Malformed redirect line: ${line}`);
+      continue;
+    }
+    if (status !== "301") {
+      redirectErrors.push(`${source}: expected permanent 301 redirect, found ${status ?? "default"}`);
+    }
+    parsedRedirects.set(source, destination);
+  }
+
+  for (const [source, destination] of expectedRedirects) {
+    const actual = parsedRedirects.get(source);
+    if (actual !== destination) {
+      redirectErrors.push(
+        `${source}: redirect target is "${actual ?? "missing"}", expected "${destination}"`
+      );
+      continue;
+    }
+
+    if (!internalTargetExists(destination)) {
+      redirectErrors.push(
+        `${source}: redirect destination does not exist in static export: ${destination}`
+      );
+    }
+  }
+}
 
 const metadataErrors = [];
 
@@ -597,6 +643,7 @@ if (
   unexpected.length ||
   metadataFiles.length ||
   metadataErrors.length ||
+  redirectErrors.length ||
   internalLinkErrors.length ||
   sitemapRouteErrors.length ||
   sitemapPolicyErrors.length ||
@@ -651,6 +698,11 @@ if (
     for (const error of contentErrors) console.error(`- ${error}`);
   }
 
+  if (redirectErrors.length) {
+    console.error("Legacy redirect errors:");
+    for (const error of redirectErrors) console.error(`- ${error}`);
+  }
+
   if (internalLinkErrors.length) {
     console.error("Broken internal links:");
     for (const error of internalLinkErrors.slice(0, 40)) console.error(`- ${error}`);
@@ -678,5 +730,5 @@ if (
 }
 
 console.log(
-  `Static export verified: ${requiredRoutes.length} core routes, metadata checks, search-snippet length checks, sitemap freshness checks, noindex utility policy, core-page authority leakage checks, HTML sitemap priority-link checks, Wraith data-to-page checks, ${htmlFiles.length} HTML files with internal-link checks, sitemap URL/canonical/title/description/OpenGraph/indexability integrity, sitemap.xml and robots.txt.`
+  `Static export verified: ${requiredRoutes.length} core routes, metadata checks, permanent legacy redirects, search-snippet length checks, sitemap freshness checks, noindex utility policy, core-page authority leakage checks, HTML sitemap priority-link checks, Wraith data-to-page checks, ${htmlFiles.length} HTML files with internal-link checks, sitemap URL/canonical/title/description/OpenGraph/indexability integrity, sitemap.xml and robots.txt.`
 );

@@ -1,0 +1,8 @@
+# Legacy CPS duration routes
+/1-second-cps-test /cps-test 301
+/2-second-cps-test /cps-test 301
+/10-second-cps-test /cps-test 301
+
+# Legacy utility routes
+/reaction-time /reaction-test 301
+/stats /dashboard 301
