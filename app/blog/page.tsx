@@ -8,6 +8,17 @@ export const metadata: Metadata = {
   alternates: {
     canonical: "/blog",
   },
+  openGraph: {
+    title: "Geometry Dash Spam Guides – Wave, CPS & Demon Training",
+    description: "Practical Geometry Dash guides covering spam, wave control, CPS measurement, input methods and demon practice without fabricated performance claims.",
+    url: "https://geometrydashspam.cc/blog",
+    type: "website",
+  },
+  twitter: {
+    card: "summary",
+    title: "Geometry Dash Spam Guides – Wave, CPS & Demon Training",
+    description: "Practical Geometry Dash guides covering spam, wave control, CPS measurement, input methods and demon practice without fabricated performance claims.",
+  },
 };
 
 export default function BlogPage() {
