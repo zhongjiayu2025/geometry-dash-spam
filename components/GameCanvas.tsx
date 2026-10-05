@@ -221,7 +221,6 @@ const GameCanvas: React.FC<GameCanvasProps> = memo(({ difficulty, status, onStat
     shakeIntensity: 0,
     beatScale: 1.0, // For audio-visual sync
     lastBeatTime: 0, // Track when the kick hit
-    frameCount: 0,
     trailAccumulator: 0,
     clickIntervals: [] as number[],
     clickTimes: [] as number[],
@@ -645,7 +644,6 @@ const GameCanvas: React.FC<GameCanvasProps> = memo(({ difficulty, status, onStat
       shakeIntensity: 0,
       beatScale: 1.0,
       lastBeatTime: 0,
-      frameCount: 0,
       trailAccumulator: 0,
       clickIntervals: [],
       clickTimes: [],
@@ -779,7 +777,6 @@ const GameCanvas: React.FC<GameCanvasProps> = memo(({ difficulty, status, onStat
             s.opacity -= 0.05 * frameFactor;
         });
 
-        gameState.current.frameCount++;
     }
 
     ctx.clearRect(0, 0, canvas.width, canvas.height);
@@ -1057,6 +1054,12 @@ const GameCanvas: React.FC<GameCanvasProps> = memo(({ difficulty, status, onStat
      gameState.current.isHolding = false;
   }, []);
 
+  const focusGame = useCallback(() => {
+      requestAnimationFrame(() => {
+          containerRef.current?.focus({ preventScroll: true });
+      });
+  }, []);
+
   useEffect(() => {
       if (status === GameStatus.Playing) {
           startMusic();
@@ -1179,10 +1182,11 @@ const GameCanvas: React.FC<GameCanvasProps> = memo(({ difficulty, status, onStat
         boxShadow: isFullscreen ? 'none' : `0 0 30px ${difficulty.color}15, 0 0 0 1px ${difficulty.color}30`
       }}
     >
-      <canvas 
-          ref={canvasRef} 
-          width={800} 
-          height={450} 
+      <canvas
+          ref={canvasRef}
+          width={800}
+          height={450}
+          aria-hidden="true"
           className="block w-full h-full cursor-pointer outline-none object-contain bg-[#020617]"
       />
 
@@ -1268,7 +1272,11 @@ const GameCanvas: React.FC<GameCanvasProps> = memo(({ difficulty, status, onStat
               </div>
               
               <button
-                onClick={() => { initAudio(); onStatusChange(GameStatus.Playing); }}
+                onClick={() => {
+                    initAudio();
+                    onStatusChange(GameStatus.Playing);
+                    focusGame();
+                }}
                 className="group relative w-full py-3 sm:py-4 bg-white text-black font-display font-black text-lg sm:text-xl rounded hover:scale-[1.02] transition-transform overflow-hidden"
               >
                 <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/50 to-transparent translate-x-[-100%] group-hover:translate-x-[100%] transition-transform duration-500"></div>
@@ -1334,7 +1342,11 @@ const GameCanvas: React.FC<GameCanvasProps> = memo(({ difficulty, status, onStat
 
                 <div className="flex flex-wrap justify-center gap-2 sm:gap-3">
                      <button 
-                        onClick={() => { resetGame(); onStatusChange(GameStatus.Playing); }}
+                        onClick={() => {
+                            resetGame();
+                            onStatusChange(GameStatus.Playing);
+                            focusGame();
+                        }}
                         className="px-4 py-2.5 sm:px-6 sm:py-3 bg-white text-black font-bold rounded hover:bg-slate-200 transition-colors flex items-center gap-2 shadow-lg"
                     >
                         <RotateCcw className="w-4 h-4" /> RETRY
@@ -1400,7 +1412,11 @@ const GameCanvas: React.FC<GameCanvasProps> = memo(({ difficulty, status, onStat
 
                 <div className="flex flex-wrap justify-center gap-2 sm:gap-3 mb-3 sm:mb-4">
                      <button 
-                        onClick={() => { resetGame(); onStatusChange(GameStatus.Playing); }}
+                        onClick={() => {
+                            resetGame();
+                            onStatusChange(GameStatus.Playing);
+                            focusGame();
+                        }}
                         className="px-4 py-2.5 sm:px-6 sm:py-3 bg-white text-black font-bold rounded hover:bg-slate-200 transition-colors flex items-center gap-2 shadow-lg"
                     >
                         <RotateCcw className="w-4 h-4" /> REPLAY
