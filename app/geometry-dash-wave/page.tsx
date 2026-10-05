@@ -4,19 +4,19 @@ import WaveSimulator from "../../components/WaveSimulator";
 import Breadcrumbs from "../../components/Breadcrumbs";
 
 export const metadata: Metadata = {
-  title: "Geometry Dash Wave | Wave Spam Test & Trainer",
+  title: "Geometry Dash Wave – Play Online Wave Spam Trainer",
   description:
     "Play a Geometry Dash wave trainer online for wave spam, mini wave and precision practice. Compare CPS, timing consistency and repeatable control in your browser.",
   alternates: { canonical: "/geometry-dash-wave" },
   openGraph: {
-    title: "Geometry Dash Wave | Wave Spam Test & Trainer",
+    title: "Geometry Dash Wave – Play Online Wave Spam Trainer",
     description: "Practice Geometry Dash wave and wave spam online with normal, mini, precision and endless training modes. Compare CPS, timing and control in your browser.",
     url: "https://geometrydashspam.cc/geometry-dash-wave",
     type: "website",
   },
   twitter: {
     card: "summary",
-    title: "Geometry Dash Wave | Wave Spam Test & Trainer",
+    title: "Geometry Dash Wave – Play Online Wave Spam Trainer",
     description: "Practice Geometry Dash wave and wave spam online with normal, mini, precision and endless training modes. Compare CPS, timing and control in your browser.",
   },
 };
@@ -33,6 +33,10 @@ const waveFaqs = [
   {
     q: "Is this browser trainer identical to Geometry Dash physics?",
     a: "No. It is a practice-oriented browser movement model for training input rhythm and control, not an exact reproduction of the official game engine.",
+  },
+  {
+    q: "Can I play the Geometry Dash Wave trainer online on mobile?",
+    a: "Yes. The trainer runs directly in modern browsers and accepts pointer or touch input. Mobile device and browser behavior can still feel different from the official game.",
   },
 ];
 
