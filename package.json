@@ -6,7 +6,9 @@
     "dev": "next dev",
     "build": "next build",
     "check": "tsc --noEmit",
-    "verify": "node scripts/verify-export.mjs",
+    "verify:data": "node scripts/verify-demon-data.mjs",
+    "verify:export": "node scripts/verify-export.mjs",
+    "verify": "npm run verify:data && npm run verify:export",
     "start": "next start"
   },
   "dependencies": {
