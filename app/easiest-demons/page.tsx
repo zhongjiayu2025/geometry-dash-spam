@@ -4,18 +4,18 @@ import Link from "next/link";
 export const metadata: Metadata = {
   title: "Easiest Demons in Geometry Dash | 5 Beginner Picks",
   description:
-    "Looking for the easiest demons in Geometry Dash? Compare five common beginner picks, their practice focus and a practical progression path."
+    "Looking for the easiest demons in Geometry Dash? Compare five common beginner picks, their practice focus and a practical progression path.",
   alternates: { canonical: "/easiest-demons" },
   openGraph: {
     title: "Easiest Demons in Geometry Dash | 5 Beginner Picks",
-    description: "A beginner-focused Geometry Dash Easy Demon guide with common starter picks, skill focus and a practical progression path.",
+    description: "Looking for the easiest demons in Geometry Dash? Compare five common beginner picks, their practice focus and a practical progression path.",
     url: "https://geometrydashspam.cc/easiest-demons",
     type: "website",
   },
   twitter: {
     card: "summary",
     title: "Easiest Demons in Geometry Dash | 5 Beginner Picks",
-    description: "A beginner-focused Geometry Dash Easy Demon guide with common starter picks, skill focus and a practical progression path.",
+    description: "Looking for the easiest demons in Geometry Dash? Compare five common beginner picks, their practice focus and a practical progression path.",
   },
 };
 
