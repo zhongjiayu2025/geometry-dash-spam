@@ -23,6 +23,11 @@ const faqs = [
     a: "Use the maintained Spam Challenge List entry linked from our SCL guide. The SCL is a separate community challenge ranking from Pointercrate's Demon List, so current placements and rules should be checked at the live list source.",
     href: "/spam-challenge-list",
   },
+  {
+    q: "What is the best clicking method for Geometry Dash spam?",
+    a: "There is no universal best method. Normal or alternating inputs can be easier to control, while jitter, butterfly and drag techniques trade different amounts of speed, consistency and fatigue. Use the method you can repeat cleanly, and check the current challenge rules before a ranked submission.",
+    href: null,
+  },
 ];
 
 export default function HomeGuide() {
@@ -89,6 +94,43 @@ export default function HomeGuide() {
           </p>
           <Link href="/blog" className="text-blue-400 hover:text-blue-300 font-semibold">Browse Geometry Dash guides →</Link>
         </div>
+      </div>
+
+      <div>
+        <h2 className="text-2xl md:text-3xl font-display font-bold text-white mb-3">Geometry Dash spam clicking methods</h2>
+        <p className="mb-5 max-w-3xl text-sm leading-6 text-slate-500">
+          Different methods trade speed for control in different ways. There is no universal “best” spam technique,
+          and a challenge list can have its own input rules. Compare methods on the same device, then keep the one you can repeat cleanly.
+        </p>
+        <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
+          <div className="rounded-xl border border-white/10 bg-slate-900/30 p-5">
+            <h3 className="mb-2 font-bold text-white">Normal / alternating</h3>
+            <p className="text-sm leading-6 text-slate-400">
+              A useful baseline because the goal is an even cadence, not the highest one-second peak.
+            </p>
+          </div>
+          <Link href="/jitter-click" className="rounded-xl border border-white/10 bg-slate-900/30 p-5 hover:border-blue-500/40">
+            <h3 className="mb-2 font-bold text-white">Jitter clicking</h3>
+            <p className="text-sm leading-6 text-slate-400">
+              Compare vibration-style clicking speed with repeatability instead of judging one peak attempt.
+            </p>
+          </Link>
+          <Link href="/butterfly-click" className="rounded-xl border border-white/10 bg-slate-900/30 p-5 hover:border-blue-500/40">
+            <h3 className="mb-2 font-bold text-white">Butterfly clicking</h3>
+            <p className="text-sm leading-6 text-slate-400">
+              Alternate two fingers and compare whether the extra input rate still stays evenly spaced.
+            </p>
+          </Link>
+          <Link href="/drag-click" className="rounded-xl border border-white/10 bg-slate-900/30 p-5 hover:border-blue-500/40">
+            <h3 className="mb-2 font-bold text-white">Drag clicking</h3>
+            <p className="text-sm leading-6 text-slate-400">
+              Useful for testing dense bursts, but hardware behavior and list rules can affect whether it is appropriate.
+            </p>
+          </Link>
+        </div>
+        <p className="mt-4 text-xs leading-5 text-slate-500">
+          For ranked spam challenges, check the <Link href="/spam-challenge-list" className="text-fuchsia-400 hover:underline">current Spam Challenge List</Link> before assuming a technique or hardware setup is allowed.
+        </p>
       </div>
 
       <div>
