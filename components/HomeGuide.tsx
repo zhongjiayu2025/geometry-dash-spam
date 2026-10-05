@@ -90,7 +90,7 @@ export default function HomeGuide() {
           If you are specifically looking for a <Link href="/demon-list/spam-demons" className="text-blue-400 hover:underline">Geometry Dash spam demonlist</Link>,
           use the rapid-input reference page instead of treating the full Demon List as a spam ranking.
         </p>
-        <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
+        <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
           <Link href="/geometry-dash-codes" className="rounded-xl border border-white/10 bg-slate-900/30 p-4 hover:border-blue-500/40">
             <h3 className="font-bold text-white mb-1">Geometry Dash Codes</h3>
             <p className="text-xs leading-5 text-slate-500">Vault, Secrets, Chamber and Wraith code reference.</p>
@@ -106,6 +106,14 @@ export default function HomeGuide() {
           <Link href="/geometry-dash-difficulty-faces" className="rounded-xl border border-white/10 bg-slate-900/30 p-4 hover:border-yellow-500/40">
             <h3 className="font-bold text-white mb-1">Difficulty Faces</h3>
             <p className="text-xs leading-5 text-slate-500">Difficulty ratings, star ranges and Demon sub-difficulties.</p>
+          </Link>
+          <Link href="/how-to-get-diamonds-geometry-dash" className="rounded-xl border border-white/10 bg-slate-900/30 p-4 hover:border-cyan-500/40">
+            <h3 className="font-bold text-white mb-1">How to Get Diamonds</h3>
+            <p className="text-xs leading-5 text-slate-500">Daily chests, quests, Daily/Weekly progress, Gauntlets, Paths and Treasure Room sources.</p>
+          </Link>
+          <Link href="/geometry-dash-stuttering-high-end-pc" className="rounded-xl border border-white/10 bg-slate-900/30 p-4 hover:border-red-500/40">
+            <h3 className="font-bold text-white mb-1">PC Stuttering Guide</h3>
+            <p className="text-xs leading-5 text-slate-500">A controlled one-variable-at-a-time checklist for high-end PC stutter.</p>
           </Link>
         </div>
       </div>
