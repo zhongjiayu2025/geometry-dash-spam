@@ -275,6 +275,7 @@ export const SitemapPage = () => (
             { view: "/how-to-get-diamonds-geometry-dash", label: "How to Get Diamonds", desc: "Official diamond sources and progression routine." },
             { view: "/how-to-get-gold-keys-geometry-dash", label: "How to Get Gold Keys", desc: "Event and Secret Room methods plus Treasure Room use." },
             { view: "/geometry-dash-difficulty-faces", label: "Geometry Dash Difficulty Faces", desc: "Difficulty ratings, star ranges and Demon sub-difficulties." },
+            { view: "/geometry-dash-stuttering-high-end-pc", label: "Geometry Dash PC Stuttering", desc: "Evidence-aware troubleshooting for high-end PC frame stutter." },
             { view: "/jitter-click", label: "Jitter Click Test", desc: "Jitter clicking practice." },
             { view: "/butterfly-click", label: "Butterfly Click Test", desc: "Two-finger clicking practice." },
             { view: "/drag-click", label: "Drag Click Test", desc: "Drag-click input practice." },
