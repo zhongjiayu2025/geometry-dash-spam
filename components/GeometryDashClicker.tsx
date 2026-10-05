@@ -43,6 +43,13 @@ export default function GeometryDashClicker() {
   const autoCost = useMemo(() => Math.floor(80 * Math.pow(1.75, state.autoPower)), [state.autoPower]);
   const prestigeCost = 10000 * (state.prestige + 1);
 
+  const achievements = [
+    { label: "100 Clicks", detail: "Register 100 manual clicks.", unlocked: state.totalClicks >= 100 },
+    { label: "Power 10", detail: "Reach Click Power level 10.", unlocked: state.clickPower >= 10 },
+    { label: "Auto 5/s", detail: "Generate at least 5 automatic orbs per second.", unlocked: state.autoPower >= 5 },
+    { label: "First Prestige", detail: "Complete one prestige reset.", unlocked: state.prestige >= 1 },
+  ];
+
   const clickCube = () => {
     const gain = state.clickPower * (state.prestige + 1);
     setState((prev) => ({
@@ -131,6 +138,36 @@ export default function GeometryDashClicker() {
           <p className="text-sm text-slate-400">Reset upgrades to permanently increase manual click value.</p>
           <div className="mt-3 font-mono text-sm text-purple-300">Requires: {prestigeCost.toLocaleString()} orbs</div>
         </button>
+
+        <div className="rounded-xl border border-white/10 bg-slate-900/30 p-5">
+          <h2 className="mb-3 text-sm font-bold uppercase tracking-wider text-white">Achievements</h2>
+          <div className="space-y-2">
+            {achievements.map((achievement) => (
+              <div
+                key={achievement.label}
+                className={
+                  "rounded-lg border p-3 " +
+                  (achievement.unlocked
+                    ? "border-green-500/25 bg-green-500/10"
+                    : "border-white/5 bg-black/20")
+                }
+              >
+                <div className="flex items-center justify-between gap-3">
+                  <span className={achievement.unlocked ? "font-semibold text-green-300" : "font-semibold text-slate-400"}>
+                    {achievement.label}
+                  </span>
+                  <span className="text-[10px] uppercase tracking-wider text-slate-600">
+                    {achievement.unlocked ? "Unlocked" : "Locked"}
+                  </span>
+                </div>
+                <p className="mt-1 text-xs text-slate-500">{achievement.detail}</p>
+              </div>
+            ))}
+          </div>
+          <p className="mt-3 text-xs text-slate-600">
+            Wave badge unlock: {state.totalClicks >= 500 ? "Unlocked at 500 clicks" : `${500 - state.totalClicks} clicks remaining`}.
+          </p>
+        </div>
 
         <button onClick={reset} className="flex items-center gap-2 text-xs text-slate-600 hover:text-slate-300">
           <RotateCcw className="h-3.5 w-3.5" /> Reset local progress
