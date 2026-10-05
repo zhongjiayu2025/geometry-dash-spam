@@ -206,6 +206,7 @@ const GameCanvas: React.FC<GameCanvasProps> = memo(({ difficulty, status, onStat
     stars: [] as Star[], 
     trail: [] as {x: number, y: number, w: number}[],
     startTime: 0,
+    lastFrameTime: 0,
     distanceTraveled: 0,
     lastObstacleX: 0,
     currentPattern: 'random' as PatternType,
@@ -625,6 +626,7 @@ const GameCanvas: React.FC<GameCanvasProps> = memo(({ difficulty, status, onStat
       shockwaves: [],
       trail: [],
       startTime: 0,
+      lastFrameTime: 0,
       distanceTraveled: 0,
       lastObstacleX: 600,
       lastCenterY: height / 2,
@@ -664,8 +666,16 @@ const GameCanvas: React.FC<GameCanvasProps> = memo(({ difficulty, status, onStat
 
     if (status === GameStatus.Playing) {
         const now = performance.now();
-        if (gameState.current.startTime === 0) gameState.current.startTime = now;
+        if (gameState.current.startTime === 0) {
+            gameState.current.startTime = now;
+            gameState.current.lastFrameTime = now;
+        }
+
+        const rawDeltaMs = now - gameState.current.lastFrameTime;
+        const frameFactor = Math.min(2, Math.max(0.25, rawDeltaMs / (1000 / 60)));
+        gameState.current.lastFrameTime = now;
         gameState.current.runTime = now - gameState.current.startTime;
+
         if (now - lastHudUpdateRef.current >= 50) {
             setDisplayTime(gameState.current.runTime / 1000);
             lastHudUpdateRef.current = now;
@@ -673,9 +683,9 @@ const GameCanvas: React.FC<GameCanvasProps> = memo(({ difficulty, status, onStat
 
         const speedY = isMini ? WAVE_SPEED_Y * 1.5 : WAVE_SPEED_Y;
         gameState.current.velocityY = gameState.current.isHolding ? -speedY : speedY;
-        gameState.current.playerY += gameState.current.velocityY;
+        gameState.current.playerY += gameState.current.velocityY * frameFactor;
 
-        const moveSpeed = difficulty.speed;
+        const moveSpeed = difficulty.speed * frameFactor;
         gameState.current.distanceTraveled += moveSpeed;
         gameState.current.bgOffset = (gameState.current.bgOffset + moveSpeed * 0.2) % canvas.width;
         
@@ -739,12 +749,13 @@ const GameCanvas: React.FC<GameCanvasProps> = memo(({ difficulty, status, onStat
 
         gameState.current.particles = gameState.current.particles.filter(p => p.life > 0);
         gameState.current.particles.forEach(p => {
-            p.x += p.vx;
-            p.y += p.vy;
-            p.vy += 0.5; 
-            p.rotation += p.rotationSpeed;
-            p.life -= 0.02;
-            p.size *= 0.98;
+            const frameFactor = Math.min(2, Math.max(0.25, (performance.now() - gameState.current.lastFrameTime + (1000 / 60)) / (1000 / 60)));
+            p.x += p.vx * frameFactor;
+            p.y += p.vy * frameFactor;
+            p.vy += 0.5 * frameFactor;
+            p.rotation += p.rotationSpeed * frameFactor;
+            p.life -= 0.02 * frameFactor;
+            p.size *= Math.pow(0.98, frameFactor);
         });
 
         gameState.current.shockwaves = gameState.current.shockwaves.filter(s => s.opacity > 0);
@@ -1067,13 +1078,25 @@ const GameCanvas: React.FC<GameCanvasProps> = memo(({ difficulty, status, onStat
           if (target.closest('button') || target.closest('a') || target.closest('.share-modal-content')) {
               return;
           }
+
           e.preventDefault();
+          if (container?.setPointerCapture) {
+              try {
+                  container.setPointerCapture(e.pointerId);
+              } catch {}
+          }
           handleStart(e);
       };
       const handlePointerUp = (e: PointerEvent) => {
           if (status !== GameStatus.Playing) return;
+
           e.preventDefault();
           handleEnd();
+          if (container?.hasPointerCapture?.(e.pointerId)) {
+              try {
+                  container.releasePointerCapture(e.pointerId);
+              } catch {}
+          }
       };
 
       if (container) {
