@@ -16,6 +16,13 @@ interface ClickEffect {
   y: number;
 }
 
+interface CpsRun {
+  duration: number;
+  clicks: number;
+  cps: number;
+  timestamp: number;
+}
+
 const playClickSound = (audioCtx: AudioContext | null) => {
   if (!audioCtx) return;
   const oscillator = audioCtx.createOscillator();
@@ -49,6 +56,7 @@ const CpsTest: React.FC = () => {
   
   const [soundEnabled, setSoundEnabled] = useState(true);
   const [bestScores, setBestScores] = useState<Record<number, number>>({});
+  const [runHistory, setRunHistory] = useState<CpsRun[]>([]);
   
   const timerRef = useRef<number | null>(null);
   const audioCtxRef = useRef<AudioContext | null>(null);
@@ -66,6 +74,14 @@ const CpsTest: React.FC = () => {
       if (saved) {
         try {
           setBestScores(JSON.parse(saved));
+        } catch(e) {}
+      }
+
+      const savedHistory = localStorage.getItem('cpsRunHistory');
+      if (savedHistory) {
+        try {
+          const parsed = JSON.parse(savedHistory);
+          if (Array.isArray(parsed)) setRunHistory(parsed.slice(0, 20));
         } catch(e) {}
       }
     }
@@ -165,9 +181,22 @@ const CpsTest: React.FC = () => {
           if (timerRef.current) clearInterval(timerRef.current);
 
           const finalClicks = clicksRef.current;
+          const finalCps = finalClicks / selectedDuration;
           setClicks(finalClicks);
+
+          setRunHistory(prev => {
+            const nextRun: CpsRun = {
+              duration: selectedDuration,
+              clicks: finalClicks,
+              cps: Number(finalCps.toFixed(2)),
+              timestamp: Date.now(),
+            };
+            const next = [nextRun, ...prev].slice(0, 20);
+            localStorage.setItem('cpsRunHistory', JSON.stringify(next));
+            return next;
+          });
+
           setBestScores(prev => {
-            const finalCps = finalClicks / selectedDuration;
             const newBests = { ...prev };
             if (!newBests[selectedDuration] || finalCps > newBests[selectedDuration]) {
               newBests[selectedDuration] = finalCps;
@@ -230,6 +259,12 @@ const CpsTest: React.FC = () => {
 
   const rank = finished ? getRank(cpsNum) : null;
   const currentBest = bestScores[selectedDuration];
+  const recentRuns = runHistory
+    .filter((run) => run.duration === selectedDuration)
+    .slice(0, 5);
+  const recentAverage = recentRuns.length
+    ? recentRuns.reduce((sum, run) => sum + run.cps, 0) / recentRuns.length
+    : 0;
 
   return (
     <div className="w-full max-w-5xl mx-auto animate-in slide-in-from-bottom-4 duration-500">
@@ -389,6 +424,37 @@ const CpsTest: React.FC = () => {
            </div>
         </div>
       </div>
+
+      <section className="mb-12 rounded-2xl border border-white/10 bg-slate-900/30 p-6 md:p-8">
+        <div className="mb-5 flex flex-col gap-2 sm:flex-row sm:items-end sm:justify-between">
+          <div>
+            <p className="text-xs font-bold uppercase tracking-[0.16em] text-blue-400">Local training history</p>
+            <h2 className="text-2xl font-display font-bold text-white">Recent {selectedDuration}s CPS runs</h2>
+          </div>
+          {recentRuns.length > 0 && (
+            <div className="text-sm text-slate-400">
+              Last {recentRuns.length} average: <strong className="text-white">{recentAverage.toFixed(2)} CPS</strong>
+            </div>
+          )}
+        </div>
+
+        {recentRuns.length ? (
+          <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-5">
+            {recentRuns.map((run, index) => (
+              <div key={`${run.timestamp}-${index}`} className="rounded-xl border border-white/10 bg-black/20 p-4">
+                <div className="text-xs text-slate-500">Run {index + 1}</div>
+                <div className="mt-1 font-mono text-2xl font-bold text-white">{run.cps.toFixed(2)}</div>
+                <div className="text-xs font-semibold text-blue-400">CPS</div>
+                <div className="mt-2 text-xs text-slate-500">{run.clicks} clicks</div>
+              </div>
+            ))}
+          </div>
+        ) : (
+          <p className="text-sm leading-6 text-slate-400">
+            Complete a {selectedDuration}-second test to start a private browser-only history. Your recent runs stay on this device and are not uploaded.
+          </p>
+        )}
+      </section>
 
       {/* Featured Snippet Target: Mathematical Definition */}
       <section className="mb-12 bg-blue-900/10 border border-blue-500/20 rounded-2xl p-8">
