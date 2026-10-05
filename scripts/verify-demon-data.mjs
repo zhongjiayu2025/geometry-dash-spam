@@ -52,6 +52,15 @@ if (duplicateLevels.length) {
 for (const item of entries) {
   if (!item.level.trim()) errors.push(`Rank #${item.rank} has an empty level name.`);
   if (!item.publisher.trim()) errors.push(`Rank #${item.rank} has an empty publisher.`);
+  if (item.level.length > 120) {
+    errors.push(`Rank #${item.rank} has an implausibly long level name (${item.level.length} characters).`);
+  }
+  if (item.publisher.length > 120) {
+    errors.push(`Rank #${item.rank} has an implausibly long publisher name (${item.publisher.length} characters).`);
+  }
+  if (/\s#\d+\s[-–]/.test(item.level) || /published by/i.test(item.level)) {
+    errors.push(`Rank #${item.rank} appears to contain scraped list markup instead of one level name.`);
+  }
 }
 
 if (verifiedAt && /^\d{4}-\d{2}-\d{2}$/.test(verifiedAt)) {
