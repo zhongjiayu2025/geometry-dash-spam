@@ -44,9 +44,9 @@ export default function SpamDemonsPage() {
           Geometry Dash Spam Demon List
         </h1>
         <p className="leading-7 text-slate-400">
-          There is no official universal “spam demon” ranking. This page uses current Demon List positions
-          only as context, then groups a few levels that are useful references when thinking about rapid
-          input, wave control and repeatable click timing.
+          Players sometimes use <strong className="text-slate-200">“spam demonlist”</strong> informally for demons known for demanding rapid-input sections,
+          but there is no official universal spam-demon ranking. This page uses current Demon List positions only as context,
+          then groups a few levels that are useful references for rapid input, wave control and repeatable click timing.
         </p>
       </header>
 
