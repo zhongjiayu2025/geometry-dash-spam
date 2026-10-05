@@ -5,24 +5,26 @@ import Breadcrumbs from "../../components/Breadcrumbs";
 const CHECKED_AT = "2026-10-05";
 const REPO_SOURCE = "https://github.com/ItzZyann/Geometry-Dash-Breeze";
 const RELEASE_SOURCE = "https://github.com/ItzZyann/Geometry-Dash-Breeze/releases";
+const LATEST_VERSION = "v1.3.1";
+const LEVEL_COUNT = 10;
+const breezeTitle = `Geometry Dash Breeze | ${LATEST_VERSION}, ${LEVEL_COUNT} Levels & Download`;
+const breezeDescription =
+  `Geometry Dash Breeze is a fan-made spinoff with ${LEVEL_COUNT} levels. Check ${LATEST_VERSION}, Android/Windows availability, known issues and the maintained GitHub download source.`;
 
 export const metadata: Metadata = {
-  title: "Geometry Dash Breeze | Fan-Made Spinoff & Latest Version",
-  description:
-    "Geometry Dash Breeze is a fan-made spinoff by Andrexel. Check its current GitHub source, latest release, supported platforms, known issue and safe download route.",
+  title: breezeTitle,
+  description: breezeDescription,
   alternates: { canonical: "/geometry-dash-breeze" },
   openGraph: {
-    title: "Geometry Dash Breeze | Fan-Made Spinoff & Latest Version",
-    description:
-      "Source-checked Geometry Dash Breeze guide covering the fan-made project, latest GitHub release, platforms and download source.",
+    title: breezeTitle,
+    description: breezeDescription,
     url: "https://geometrydashspam.cc/geometry-dash-breeze",
     type: "website",
   },
   twitter: {
     card: "summary",
-    title: "Geometry Dash Breeze | Fan-Made Spinoff & Latest Version",
-    description:
-      "Source-checked Geometry Dash Breeze guide covering the fan-made project, latest GitHub release, platforms and download source.",
+    title: breezeTitle,
+    description: breezeDescription,
   },
 };
 
@@ -89,8 +91,8 @@ export default function GeometryDashBreezePage() {
           <div className="mb-2 text-xs font-bold uppercase tracking-[0.18em] text-sky-300">Quick answer</div>
           <p className="leading-7 text-slate-300">
             Geometry Dash Breeze is a <strong className="text-white">fan-made Geometry Dash spinoff</strong>. The project's
-            GitHub repository lists GD Lists, Android and Windows availability, while its Releases page currently marks
-            <strong className="text-white"> v1.3.1</strong> as the latest release.
+            GitHub repository describes <strong className="text-white">{LEVEL_COUNT} levels</strong> and lists GD Lists, Android and Windows availability,
+            while its Releases page currently marks <strong className="text-white"> {LATEST_VERSION}</strong> as the latest release.
           </p>
         </section>
 
@@ -103,11 +105,26 @@ export default function GeometryDashBreezePage() {
             </p>
           </div>
           <div className="rounded-2xl border border-white/10 bg-slate-900/30 p-6">
-            <h2 className="mb-3 text-2xl font-bold text-white">Latest version: v1.3.1</h2>
+            <h2 className="mb-3 text-2xl font-bold text-white">Latest version: {LATEST_VERSION}</h2>
             <p className="leading-7 text-slate-400">
-              The GitHub Releases page currently marks v1.3.1 as Latest. Its release notes mention a new achievement,
+              The GitHub Releases page currently marks {LATEST_VERSION} as Latest. Its release notes mention a new achievement,
               a new main level called Ghost Retention, and additional bug fixes and tweaks.
             </p>
+          </div>
+        </section>
+
+        <section className="mb-10 grid gap-3 sm:grid-cols-3">
+          <div className="rounded-xl border border-sky-500/20 bg-sky-950/10 p-4">
+            <div className="text-2xl font-bold text-white">{LEVEL_COUNT}</div>
+            <div className="text-xs uppercase tracking-wider text-sky-300">Levels in the maintained project</div>
+          </div>
+          <div className="rounded-xl border border-white/10 bg-slate-900/30 p-4">
+            <div className="text-2xl font-bold text-white">{LATEST_VERSION}</div>
+            <div className="text-xs uppercase tracking-wider text-slate-400">Latest GitHub release checked {CHECKED_AT}</div>
+          </div>
+          <div className="rounded-xl border border-white/10 bg-slate-900/30 p-4">
+            <div className="text-2xl font-bold text-white">Android + Windows</div>
+            <div className="text-xs uppercase tracking-wider text-slate-400">Platforms listed by the maintained repository</div>
           </div>
         </section>
 

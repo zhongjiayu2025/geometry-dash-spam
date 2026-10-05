@@ -94,6 +94,24 @@ export default function DashmetryPage() {
             says existing levels, scores and leaderboard data moved to the new home. For the current playable version,
             use the official Challenge Rush link below rather than an old mirror.
           </p>
+          <div className="mt-4 flex flex-wrap gap-3">
+            <a
+              href={CURRENT_GAME_SOURCE}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="rounded-lg bg-cyan-400 px-4 py-2 text-sm font-bold text-slate-950 hover:bg-cyan-300"
+            >
+              Play current Challenge Rush ↗
+            </a>
+            <a
+              href={REBRAND_SOURCE}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="rounded-lg border border-cyan-500/20 px-4 py-2 text-sm font-bold text-cyan-200"
+            >
+              Verify the Dashmetry rebrand
+            </a>
+          </div>
         </section>
 
         <section className="mb-10 grid gap-4 md:grid-cols-2">
