@@ -23,7 +23,8 @@ export async function generateMetadata({ params }: { params: { slug: string } })
             description: post.excerpt,
             type: 'article',
             publishedTime: new Date(post.date).toISOString(),
-            authors: ['Geometry Dash Spam Team'],
+            modifiedTime: new Date(post.updated ?? post.date).toISOString(),
+            authors: ['Geometry Dash Spam Editorial'],
             tags: post.tags,
             images: [
                 {
@@ -61,10 +62,10 @@ export default function BlogPostPage({ params }: { params: { slug: string } }) {
         "description": post.excerpt,
         "image": post.coverImage,
         "datePublished": new Date(post.date).toISOString(),
-        "dateModified": new Date(post.date).toISOString(), // Should be updated if edited
+        "dateModified": new Date(post.updated ?? post.date).toISOString(),
         "author": {
             "@type": "Organization",
-            "name": "Geometry Dash Spam Team",
+            "name": "Geometry Dash Spam Editorial",
             "url": "https://geometrydashspam.cc"
         },
         "publisher": {
