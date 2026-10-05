@@ -58,12 +58,12 @@ export default function PollingRateTest() {
         };
     }, []);
 
-    const estimatedCategory = maxHz >= 900 ? '1000Hz+ Gaming Mouse' 
-                            : maxHz >= 450 ? '500Hz Gaming Mouse' 
-                            : maxHz >= 200 ? '250Hz Mouse / Tablet'
-                            : maxHz >= 100 ? '125Hz Standard Office Mouse'
-                            : maxHz > 0 ? 'Low Polling Rate / Bluetooth' 
-                            : 'Unknown';
+    const observedBand = maxHz >= 900 ? '900+ events/s'
+                            : maxHz >= 450 ? '450–899 events/s'
+                            : maxHz >= 200 ? '200–449 events/s'
+                            : maxHz >= 100 ? '100–199 events/s'
+                            : maxHz > 0 ? 'Below 100 events/s'
+                            : 'No result';
 
     return (
         <div className="w-full max-w-4xl mx-auto px-4 md:px-0">
@@ -116,8 +116,11 @@ export default function PollingRateTest() {
                     
                     {maxHz > 0 && (
                         <div className="mt-8 w-full bg-emerald-900/20 border border-emerald-500/20 rounded-xl p-6 flex flex-col items-center text-center animate-in zoom-in-95">
-                            <span className="text-emerald-200 font-medium mb-1">Estimated Hardware:</span>
-                            <span className="text-2xl font-display font-bold text-white">{estimatedCategory}</span>
+                            <span className="text-emerald-200 font-medium mb-1">Observed event-rate band:</span>
+                            <span className="text-2xl font-display font-bold text-white">{observedBand}</span>
+                            <p className="mt-3 max-w-xl text-sm text-slate-400">
+                              Browser pointer events can be coalesced or scheduled differently from the device&apos;s USB polling cycle, so this is a browser-side estimate rather than a hardware certification.
+                            </p>
                             
                             {isTracking && (
                                 <button
