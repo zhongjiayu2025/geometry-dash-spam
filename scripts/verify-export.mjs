@@ -1,4 +1,4 @@
-import { existsSync } from "node:fs";
+import { existsSync, readFileSync } from "node:fs";
 import { join } from "node:path";
 
 const outDir = join(process.cwd(), "out");
@@ -28,6 +28,39 @@ const removedGhostRoutes = [
   "/stats",
 ];
 
+const metadataExpectations = {
+  "/": {
+    title: "Geometry Dash Spam Test",
+    description: "free Geometry Dash spam test online",
+    canonical: "https://geometrydashspam.cc",
+  },
+  "/geometry-dash-wave": {
+    title: "Geometry Dash Wave",
+    description: "Practice Geometry Dash Wave control online",
+    canonical: "https://geometrydashspam.cc/geometry-dash-wave",
+  },
+  "/cps-test": {
+    title: "Geometry Dash CPS Test",
+    description: "Take a Geometry Dash CPS test",
+    canonical: "https://geometrydashspam.cc/cps-test",
+  },
+  "/demon-list": {
+    title: "Geometry Dash Demon List",
+    description: "Browse a sourced Geometry Dash Demon List snapshot",
+    canonical: "https://geometrydashspam.cc/demon-list",
+  },
+  "/geometry-dash-clicker": {
+    title: "Geometry Dash Clicker",
+    description: "Play a lightweight Geometry Dash Clicker",
+    canonical: "https://geometrydashspam.cc/geometry-dash-clicker",
+  },
+  "/geometry-dash-codes": {
+    title: "Geometry Dash Codes",
+    description: "Geometry Dash codes for The Vault",
+    canonical: "https://geometrydashspam.cc/geometry-dash-codes",
+  },
+};
+
 function candidates(route) {
   if (route === "/") {
     return [join(outDir, "index.html")];
@@ -40,19 +73,42 @@ function candidates(route) {
   ];
 }
 
-const missing = requiredRoutes.filter(
-  (route) => !candidates(route).some((path) => existsSync(path))
-);
+function exportedPath(route) {
+  return candidates(route).find((path) => existsSync(path));
+}
 
-const unexpected = removedGhostRoutes.filter(
-  (route) => candidates(route).some((path) => existsSync(path))
+const missing = requiredRoutes.filter((route) => !exportedPath(route));
+
+const unexpected = removedGhostRoutes.filter((route) =>
+  candidates(route).some((path) => existsSync(path))
 );
 
 const metadataFiles = ["sitemap.xml", "robots.txt"].filter(
   (file) => !existsSync(join(outDir, file))
 );
 
-if (missing.length || unexpected.length || metadataFiles.length) {
+const metadataErrors = [];
+
+for (const [route, expected] of Object.entries(metadataExpectations)) {
+  const path = exportedPath(route);
+  if (!path) continue;
+
+  const html = readFileSync(path, "utf8");
+
+  if (!html.includes(`<title>${expected.title}`) && !html.includes(expected.title)) {
+    metadataErrors.push(`${route}: title does not include "${expected.title}"`);
+  }
+
+  if (!html.includes(expected.description)) {
+    metadataErrors.push(`${route}: description does not include "${expected.description}"`);
+  }
+
+  if (!html.includes(`rel="canonical" href="${expected.canonical}"`)) {
+    metadataErrors.push(`${route}: canonical is not "${expected.canonical}"`);
+  }
+}
+
+if (missing.length || unexpected.length || metadataFiles.length || metadataErrors.length) {
   console.error("Static export verification failed.");
 
   if (missing.length) {
@@ -67,9 +123,14 @@ if (missing.length || unexpected.length || metadataFiles.length) {
     console.error("Missing metadata files:", metadataFiles.join(", "));
   }
 
+  if (metadataErrors.length) {
+    console.error("Metadata errors:");
+    for (const error of metadataErrors) console.error(`- ${error}`);
+  }
+
   process.exit(1);
 }
 
 console.log(
-  `Static export verified: ${requiredRoutes.length} core routes, sitemap.xml and robots.txt.`
+  `Static export verified: ${requiredRoutes.length} core routes, metadata checks, sitemap.xml and robots.txt.`
 );
