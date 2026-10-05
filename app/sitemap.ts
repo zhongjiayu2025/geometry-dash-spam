@@ -1,6 +1,7 @@
 import { MetadataRoute } from "next";
 import { BLOG_POSTS } from "../data/blogContent";
 import { DEMON_VERIFIED_AT } from "../data/demons";
+import { VAULT_CODES_CHECKED_AT } from "../data/vaultCodes";
 
 export const dynamic = "force-static";
 
@@ -11,6 +12,11 @@ const DEMON_ROUTES = new Set([
   "/demon-list/wave-demons",
   "/demon-list/spam-demons",
   "/hardest-level",
+]);
+
+const CODE_ROUTES = new Set([
+  "/geometry-dash-codes",
+  "/geometry-dash-vault-of-secrets-codes",
 ]);
 
 const CORE_ROUTES = [
@@ -63,7 +69,11 @@ export default function sitemap(): MetadataRoute.Sitemap {
 
   const routeEntries: MetadataRoute.Sitemap = CORE_ROUTES.map((route) => ({
     url: `${baseUrl}${route}`,
-    lastModified: DEMON_ROUTES.has(route) ? DEMON_VERIFIED_AT : UPDATED,
+    lastModified: DEMON_ROUTES.has(route)
+      ? DEMON_VERIFIED_AT
+      : CODE_ROUTES.has(route)
+        ? VAULT_CODES_CHECKED_AT
+        : UPDATED,
   }));
 
   const blogEntries: MetadataRoute.Sitemap = BLOG_POSTS.map((post) => ({
