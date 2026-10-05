@@ -60,6 +60,7 @@ interface WaveRun {
   clicks: number;
   result: "won" | "lost";
   timestamp: number;
+  mode: string;
 }
 
 // Level Generation Patterns
@@ -574,6 +575,7 @@ const GameCanvas: React.FC<GameCanvasProps> = memo(({ difficulty, status, onStat
       clicks: stats.clickCount,
       result,
       timestamp: Date.now(),
+      mode: `${difficulty.label}${isMini ? " · Mini" : " · Normal"}${isEndless ? " · Endless" : " · 15s"}`,
     };
 
     const next = [run, ...recentRuns].slice(0, 10);
