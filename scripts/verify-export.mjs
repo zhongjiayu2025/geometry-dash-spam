@@ -249,7 +249,7 @@ const unexpected = removedGhostRoutes.filter((route) =>
   candidates(route).some((path) => existsSync(path))
 );
 
-const metadataFiles = ["sitemap.xml", "robots.txt", "_redirects"].filter(
+const metadataFiles = ["sitemap.xml", "robots.txt", "manifest.webmanifest", "ads.txt", "_redirects"].filter(
   (file) => !existsSync(join(outDir, file))
 );
 
@@ -297,6 +297,53 @@ if (existsSync(redirectsPath)) {
       );
     }
   }
+}
+
+const infrastructureErrors = [];
+const publisherId = "pub-1528586776567779";
+
+const adsPath = join(outDir, "ads.txt");
+if (existsSync(adsPath)) {
+  const adsTxt = readFileSync(adsPath, "utf8");
+  const expectedAdsLine = `google.com, ${publisherId}, DIRECT, f08c47fec0942fa0`;
+  if (!adsTxt.includes(expectedAdsLine)) {
+    infrastructureErrors.push(
+      `ads.txt missing authorized Google publisher line: ${expectedAdsLine}`
+    );
+  }
+}
+
+const robotsPath = join(outDir, "robots.txt");
+if (existsSync(robotsPath)) {
+  const robotsTxt = readFileSync(robotsPath, "utf8");
+  if (!robotsTxt.includes("User-Agent: *") && !robotsTxt.includes("User-agent: *")) {
+    infrastructureErrors.push("robots.txt missing wildcard user-agent rule");
+  }
+  if (!robotsTxt.includes("https://geometrydashspam.cc/sitemap.xml")) {
+    infrastructureErrors.push("robots.txt missing canonical sitemap URL");
+  }
+}
+
+const manifestPath = join(outDir, "manifest.webmanifest");
+if (existsSync(manifestPath)) {
+  const manifest = JSON.parse(readFileSync(manifestPath, "utf8"));
+  if (manifest.name !== "Geometry Dash Spam") {
+    infrastructureErrors.push(
+      `manifest name is "${manifest.name ?? "missing"}", expected "Geometry Dash Spam"`
+    );
+  }
+  if (manifest.start_url !== "/") {
+    infrastructureErrors.push(
+      `manifest start_url is "${manifest.start_url ?? "missing"}", expected "/"`
+    );
+  }
+}
+
+const layoutSource = readFileSync(join(process.cwd(), "app", "layout.tsx"), "utf8");
+if (!layoutSource.includes(`client=ca-${publisherId}`)) {
+  infrastructureErrors.push(
+    `AdSense script client does not match ads.txt publisher ID ${publisherId}`
+  );
 }
 
 const metadataErrors = [];
@@ -643,6 +690,7 @@ if (
   unexpected.length ||
   metadataFiles.length ||
   metadataErrors.length ||
+  infrastructureErrors.length ||
   redirectErrors.length ||
   internalLinkErrors.length ||
   sitemapRouteErrors.length ||
@@ -698,6 +746,11 @@ if (
     for (const error of contentErrors) console.error(`- ${error}`);
   }
 
+  if (infrastructureErrors.length) {
+    console.error("Site infrastructure errors:");
+    for (const error of infrastructureErrors) console.error(`- ${error}`);
+  }
+
   if (redirectErrors.length) {
     console.error("Legacy redirect errors:");
     for (const error of redirectErrors) console.error(`- ${error}`);
@@ -730,5 +783,5 @@ if (
 }
 
 console.log(
-  `Static export verified: ${requiredRoutes.length} core routes, metadata checks, permanent legacy redirects, search-snippet length checks, sitemap freshness checks, noindex utility policy, core-page authority leakage checks, HTML sitemap priority-link checks, Wraith data-to-page checks, ${htmlFiles.length} HTML files with internal-link checks, sitemap URL/canonical/title/description/OpenGraph/indexability integrity, sitemap.xml and robots.txt.`
+  `Static export verified: ${requiredRoutes.length} core routes, metadata checks, ads/robots/manifest checks, permanent legacy redirects, search-snippet length checks, sitemap freshness checks, noindex utility policy, core-page authority leakage checks, HTML sitemap priority-link checks, Wraith data-to-page checks, ${htmlFiles.length} HTML files with internal-link checks, sitemap URL/canonical/title/description/OpenGraph/indexability integrity, sitemap.xml and robots.txt.`
 );
