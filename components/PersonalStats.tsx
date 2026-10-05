@@ -131,7 +131,7 @@ export default function PersonalStats() {
                         <Trophy className="w-6 h-6 text-yellow-500" />
                         My Local Records
                     </h2>
-                    <p className="text-slate-400 text-sm">Your personal best scores are saved securely in your browser.</p>
+                    <p className="text-slate-400 text-sm">Your personal best scores are stored locally in this browser and are not uploaded by this dashboard.</p>
                 </div>
                 
                 <button 
