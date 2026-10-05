@@ -42,7 +42,7 @@ const CpsTest: React.FC = () => {
   
   const [copied, setCopied] = useState(false);
   
-  const [soundEnabled, setSoundEnabled] = useState(true);
+  const [soundEnabled, setSoundEnabled] = useState(false);
   const [bestScores, setBestScores] = useState<Record<number, number>>({});
   const [runHistory, setRunHistory] = useState<CpsRun[]>([]);
   
@@ -55,6 +55,8 @@ const CpsTest: React.FC = () => {
 
   useEffect(() => {
     if (typeof window !== 'undefined') {
+      setSoundEnabled(localStorage.getItem('cpsSoundEnabled') === 'true');
+
       const saved = localStorage.getItem('cpsBestScores');
       if (saved) {
         try {
@@ -112,6 +114,16 @@ const CpsTest: React.FC = () => {
     clicksRef.current += 1;
     clickTimesRef.current.push(now);
     setClicks(clicksRef.current);
+  };
+
+  const toggleSound = () => {
+    const next = !soundEnabled;
+    setSoundEnabled(next);
+    localStorage.setItem('cpsSoundEnabled', String(next));
+
+    if (!next && audioCtxRef.current?.state === 'running') {
+      void audioCtxRef.current.suspend();
+    }
   };
 
   const playInputSound = () => {
@@ -356,7 +368,7 @@ const CpsTest: React.FC = () => {
               </div>
               <div className="flex items-center gap-4">
                  <button 
-                  onClick={() => setSoundEnabled(!soundEnabled)}
+                  onClick={toggleSound}
                   aria-label={soundEnabled ? "Mute click sound" : "Enable click sound"}
                   aria-pressed={soundEnabled}
                   className={`p-3 rounded-xl border transition-colors ${soundEnabled ? 'bg-blue-600/20 border-blue-500/50 text-blue-400 hover:bg-blue-600/30' : 'bg-slate-800 border-white/10 text-slate-500 hover:text-slate-300'}`}
