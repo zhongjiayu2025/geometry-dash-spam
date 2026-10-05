@@ -290,14 +290,14 @@ const CpsTest: React.FC = () => {
       <Breadcrumbs items={[{ label: 'CPS Test', href: '/cps-test', active: true }]} />
 
       {/* Time Selector - Critical for SEO (1s CPS Test, 5s CPS Test keywords) */}
-      <div className="flex flex-wrap justify-center gap-2 mb-8">
+      <div className="flex flex-nowrap justify-start sm:justify-center gap-2 mb-5 sm:mb-8 overflow-x-auto overscroll-x-contain pb-1">
           {[1, 3, 5, 10, 30, 60].map(sec => (
               <button
                 key={sec}
                 onClick={() => handleDurationChange(sec)}
                 disabled={active}
                 className={`
-                    flex items-center gap-2 px-4 py-2 rounded-full font-mono text-sm font-bold border transition-all
+                    flex shrink-0 items-center gap-2 px-4 py-2 rounded-full font-mono text-sm font-bold border transition-all
                     ${selectedDuration === sec 
                         ? 'bg-blue-600 border-blue-400 text-white shadow-[0_0_15px_rgba(37,99,235,0.4)]' 
                         : 'bg-slate-900/50 border-white/10 text-slate-400 hover:bg-slate-800 hover:text-white'}
@@ -310,9 +310,9 @@ const CpsTest: React.FC = () => {
           ))}
       </div>
 
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-8 items-stretch mb-16">
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-5 md:gap-8 items-stretch mb-10 md:mb-16">
         {/* Click Area */}
-        <div className="relative aspect-square md:aspect-auto md:h-[400px]">
+        <div className="relative h-[300px] sm:h-[360px] md:h-[400px] md:aspect-auto">
           <button
             onPointerDown={handlePointerDown}
             onKeyDown={handleKeyDown}
@@ -336,15 +336,15 @@ const CpsTest: React.FC = () => {
 
             {!active && !finished && (
               <>
-                <MousePointer2 className="w-16 h-16 text-white mb-4 animate-bounce" />
-                <span className="text-3xl font-display font-bold text-white tracking-widest">CLICK TO START</span>
+                <MousePointer2 className="w-12 h-12 sm:w-16 sm:h-16 text-white mb-3 sm:mb-4 animate-bounce" />
+                <span className="text-2xl sm:text-3xl font-display font-bold text-white tracking-widest">CLICK TO START</span>
                 <span className="text-blue-200 mt-2 font-mono text-sm">OR PRESS SPACE · {selectedDuration} SECOND TEST</span>
               </>
             )}
             
             {active && (
               <>
-                <span className="text-8xl font-display font-black text-white drop-shadow-lg scale-110 transition-transform">{clicks}</span>
+                <span className="text-6xl sm:text-8xl font-display font-black text-white drop-shadow-lg scale-110 transition-transform">{clicks}</span>
                 <span className="text-blue-200 mt-4 font-mono uppercase tracking-widest">Clicks</span>
               </>
             )}
@@ -358,7 +358,7 @@ const CpsTest: React.FC = () => {
         {/* Stats & Rank Panel */}
         <div className="flex flex-col gap-4">
            {/* Timer & Controls */}
-           <div className="bg-slate-900/50 backdrop-blur border border-white/10 p-6 rounded-2xl flex items-center justify-between">
+           <div className="bg-slate-900/50 backdrop-blur border border-white/10 p-4 sm:p-6 rounded-2xl flex items-center justify-between">
               <div className="flex items-center gap-3">
                  <div className="p-3 rounded-lg bg-slate-800 text-blue-400">
                     <Timer className="w-6 h-6" />
@@ -385,11 +385,11 @@ const CpsTest: React.FC = () => {
            </div>
 
            {/* Result Main */}
-           <div className="flex-grow bg-slate-900/50 backdrop-blur border border-white/10 p-8 rounded-2xl flex flex-col items-center justify-center text-center relative overflow-hidden group">
+           <div className="flex-grow bg-slate-900/50 backdrop-blur border border-white/10 p-5 sm:p-8 rounded-2xl flex flex-col items-center justify-center text-center relative overflow-hidden group">
                <div className="absolute inset-0 bg-blue-600/5 group-hover:bg-blue-600/10 transition-colors"></div>
                
                <h3 className="text-slate-400 font-bold uppercase tracking-widest mb-2 relative z-10">Your Speed</h3>
-               <div className="text-7xl font-display font-black text-white mb-2 text-glow relative z-10">{finished ? cps : (active ? cps : '0.00')}</div>
+               <div className="text-5xl sm:text-7xl font-display font-black text-white mb-2 text-glow relative z-10">{finished ? cps : (active ? cps : '0.00')}</div>
                <div className="text-xl text-blue-400 font-mono relative z-10 mb-6">CPS</div>
                
                {currentBest && (
@@ -409,18 +409,18 @@ const CpsTest: React.FC = () => {
                )}
 
                {finished && (
-                 <div className="grid grid-cols-3 gap-2 w-full mb-6 relative z-10">
-                   <div className="bg-black/25 rounded-lg p-3">
+                 <div className="grid grid-cols-3 gap-1.5 sm:gap-2 w-full mb-5 sm:mb-6 relative z-10">
+                   <div className="bg-black/25 rounded-lg p-2 sm:p-3">
                      <div className="text-[10px] uppercase tracking-wider text-slate-500">Peak 1s CPS</div>
                      <div className="font-mono font-bold text-white">{timingStats.peakCps.toFixed(2)}</div>
                    </div>
-                   <div className="bg-black/25 rounded-lg p-3">
+                   <div className="bg-black/25 rounded-lg p-2 sm:p-3">
                      <div className="text-[10px] uppercase tracking-wider text-slate-500">Consistency</div>
                      <div className="font-mono font-bold text-white">
                        {timingStats.consistency === null ? 'N/A' : `${timingStats.consistency.toFixed(0)}%`}
                      </div>
                    </div>
-                   <div className="bg-black/25 rounded-lg p-3">
+                   <div className="bg-black/25 rounded-lg p-2 sm:p-3">
                      <div className="text-[10px] uppercase tracking-wider text-slate-500">Avg Interval</div>
                      <div className="font-mono font-bold text-white">
                        {timingStats.averageInterval === null ? 'N/A' : `${timingStats.averageInterval.toFixed(0)}ms`}
@@ -430,10 +430,10 @@ const CpsTest: React.FC = () => {
                )}
 
                {finished && (
-                 <div className="animate-in fade-in duration-300 relative z-10 flex gap-3">
+                 <div className="animate-in fade-in duration-300 relative z-10 flex flex-wrap justify-center gap-2 sm:gap-3">
                    <button 
                     onClick={reset}
-                    className="px-6 py-3 bg-white text-blue-900 font-bold rounded-lg flex items-center gap-2 hover:bg-blue-50 transition-colors shadow-lg"
+                    className="px-4 py-2.5 sm:px-6 sm:py-3 bg-white text-blue-900 font-bold rounded-lg flex items-center gap-2 hover:bg-blue-50 transition-colors shadow-lg"
                    >
                      <RotateCcw className="w-5 h-5" /> TRY AGAIN
                    </button>
