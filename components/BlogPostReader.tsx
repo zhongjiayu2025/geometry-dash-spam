@@ -1,21 +1,17 @@
 "use client";
 
-import React, { useEffect } from 'react';
+import React, { useState } from 'react';
 import Link from 'next/link';
 import Image from 'next/image';
 import { BlogPost } from '../data/blogContent';
-import { ArrowLeft, Calendar, Clock, Share2, Facebook, Twitter, Linkedin, Zap, MousePointer2, List, ChevronRight, Home } from 'lucide-react';
+import { Calendar, Clock, Share2, Check, Facebook, Twitter, Linkedin, Zap, MousePointer2, List, ChevronRight, Home } from 'lucide-react';
 
 interface BlogPostProps {
   post: BlogPost;
 }
 
 const BlogPostReader: React.FC<BlogPostProps> = ({ post }) => {
-  
-  // Next.js handles scroll restoration, but this ensures top of article
-  useEffect(() => {
-    window.scrollTo(0, 0);
-  }, [post]);
+  const [copied, setCopied] = useState(false);
 
   const handleShare = (platform: 'twitter' | 'facebook' | 'linkedin') => {
       const url = encodeURIComponent(window.location.href);
@@ -36,9 +32,14 @@ const BlogPostReader: React.FC<BlogPostProps> = ({ post }) => {
       window.open(shareUrl, '_blank', 'noopener,noreferrer');
   };
 
-  const copyLink = () => {
-      navigator.clipboard.writeText(window.location.href);
-      // Optional: Add a toast notification here
+  const copyLink = async () => {
+      try {
+        await navigator.clipboard.writeText(window.location.href);
+        setCopied(true);
+        window.setTimeout(() => setCopied(false), 1800);
+      } catch {
+        setCopied(false);
+      }
   };
 
   const scrollToSection = (id: string) => {
@@ -53,7 +54,7 @@ const BlogPostReader: React.FC<BlogPostProps> = ({ post }) => {
       
       {/* Visual Breadcrumbs for SEO and Navigation */}
       <nav aria-label="Breadcrumb" className="flex items-center gap-2 text-xs md:text-sm text-slate-500 mb-6 font-mono overflow-x-auto whitespace-nowrap pb-2 scrollbar-hide">
-        <Link href="/" className="hover:text-blue-400 flex items-center gap-1 transition-colors">
+        <Link href="/geometry-dash-wave" className="hover:text-blue-400 flex items-center gap-1 transition-colors">
            <Home className="w-3 h-3" /> Home
         </Link>
         <ChevronRight className="w-3 h-3 text-slate-700" />
@@ -82,14 +83,17 @@ const BlogPostReader: React.FC<BlogPostProps> = ({ post }) => {
             <div className="flex items-center gap-6 text-sm text-slate-400 font-mono">
                 {/* Semantic Time Element */}
                 <span className="flex items-center gap-2">
-                    <Calendar className="w-4 h-4" /> 
-                    <time dateTime={new Date(post.date).toISOString()}>{post.date}</time>
+                    <Calendar className="w-4 h-4" />
+                    <span>
+                      Published <time dateTime={new Date(post.date).toISOString()}>{post.date}</time>
+                      {post.updated && <> · Updated <time dateTime={new Date(post.updated).toISOString()}>{post.updated}</time></>}
+                    </span>
                 </span>
                 <span className="flex items-center gap-2"><Clock className="w-4 h-4" /> {post.readTime}</span>
             </div>
             
             <div className="flex gap-4">
-                <button onClick={copyLink} className="text-slate-400 hover:text-white transition-colors" title="Copy Link"><Share2 className="w-5 h-5" /></button>
+                <button onClick={copyLink} className="text-slate-400 hover:text-white transition-colors" title={copied ? "Copied" : "Copy link"} aria-label={copied ? "Link copied" : "Copy article link"}>{copied ? <Check className="w-5 h-5 text-green-400" /> : <Share2 className="w-5 h-5" />}</button>
             </div>
         </div>
       </header>
@@ -170,7 +174,7 @@ const BlogPostReader: React.FC<BlogPostProps> = ({ post }) => {
                         href="/"
                         className="w-full block py-2 bg-blue-600 hover:bg-blue-500 text-white text-xs font-bold rounded uppercase tracking-wider transition-colors"
                     >
-                        Start Simulator
+                        Open Wave Trainer
                     </Link>
                  </div>
              </div>
@@ -192,7 +196,7 @@ const BlogPostReader: React.FC<BlogPostProps> = ({ post }) => {
                 href="/"
                 className="px-6 py-3 bg-blue-600 hover:bg-blue-500 text-white font-bold rounded-lg shadow-lg shadow-blue-900/50 flex items-center justify-center gap-2 transition-all transform hover:scale-105"
              >
-                <Zap className="w-5 h-5" /> Launch Wave Sim
+                <Zap className="w-5 h-5" /> Open Spam Test
              </Link>
              <Link 
                 href="/cps-test"
@@ -207,8 +211,8 @@ const BlogPostReader: React.FC<BlogPostProps> = ({ post }) => {
       <div className="mt-8 pt-8 border-t border-white/10 flex flex-col md:flex-row items-center justify-between gap-6 bg-slate-900/30 p-8 rounded-2xl">
          <div>
              <p className="text-slate-400 text-sm font-mono mb-2 uppercase tracking-widest">Written By</p>
-             <h4 className="text-xl font-bold text-white">GD Spam Team</h4>
-             <p className="text-slate-500 text-sm mt-1">Dedicated to pushing the limits of human clicking potential.</p>
+             <h4 className="text-xl font-bold text-white">Geometry Dash Spam Editorial</h4>
+             <p className="text-slate-500 text-sm mt-1">Maintains the site&apos;s browser tools and source-checked training guides.</p>
          </div>
          <div className="flex gap-4">
              <button onClick={() => handleShare('twitter')} className="p-3 bg-slate-800 rounded-full hover:bg-blue-600 transition-colors text-white" aria-label="Share on Twitter"><Twitter className="w-4 h-4" /></button>
