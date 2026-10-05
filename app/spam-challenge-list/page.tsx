@@ -20,7 +20,7 @@ export const metadata: Metadata = {
     type: "website",
   },
   twitter: {
-    card: "summary",
+    card: "summary_large_image",
     title: "Geometry Dash Spam Challenge List | Current SCL Guide",
     description:
       "Use the current Spam Challenge List source, learn what the SCL ranks and how it differs from Pointercrate's Demon List.",
