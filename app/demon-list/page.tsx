@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import DemonListTable from "../../components/DemonListTable";
+import Breadcrumbs from "../../components/Breadcrumbs";
 import { DEMONS, DEMON_SOURCE_URL, DEMON_VERIFIED_AT } from "../../data/demons";
 
 const currentNumberOne = DEMONS[0];
@@ -72,6 +73,7 @@ export default function DemonListPage() {
     <>
       <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(schema) }} />
       <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(faqSchema) }} />
+      <Breadcrumbs items={[{ label: "Demon List", href: "/demon-list" }]} />
       <header className="mx-auto mb-8 max-w-4xl">
         <p className="mb-2 text-xs font-bold uppercase tracking-[0.2em] text-purple-400">
           Rankings · source checked {DEMON_VERIFIED_AT}
