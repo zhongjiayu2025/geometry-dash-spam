@@ -30,15 +30,42 @@ const WAVE_REFERENCES = [
   { name: "Slaughterhouse", note: "Contains demanding wave sections where timing consistency matters." },
 ];
 
+const waveFaqs = [
+  {
+    q: "What are wave demons in Geometry Dash?",
+    a: "Wave demons are an informal player label for Demon levels where wave control is a major execution challenge. Pointercrate does not maintain a separate official wave-only ranking.",
+  },
+  {
+    q: "Is there an official Geometry Dash wave demon list?",
+    a: "No. Pointercrate ranks Extreme Demons overall. This page uses dated Pointercrate Main List positions only as context for wave-focused practice references.",
+  },
+  {
+    q: "How should I practice Geometry Dash wave demons?",
+    a: "Start with wider corridors and shorter sections, focus on repeatable press-and-release timing, then add tighter gaps and longer runs. Raw CPS is less useful if the wave path is not stable.",
+  },
+];
+
 export default function WaveDemonsPage() {
   const entries = WAVE_REFERENCES.map((reference) => ({
     ...reference,
     demon: DEMONS.find((item) => item.level === reference.name),
   })).filter((item) => item.demon);
 
+  const faqSchema = {
+    "@context": "https://schema.org",
+    "@type": "FAQPage",
+    mainEntity: waveFaqs.map((item) => ({
+      "@type": "Question",
+      name: item.q,
+      acceptedAnswer: { "@type": "Answer", text: item.a },
+    })),
+  };
+
   return (
     <article className="mx-auto max-w-5xl">
       <Breadcrumbs items={[{ label: "Demon List", href: "/demon-list" }, { label: "Wave Demons", href: "/demon-list/wave-demons" }]} />
+      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(faqSchema) }} />
+
       <header className="mb-8 max-w-4xl">
         <p className="mb-2 text-xs font-bold uppercase tracking-[0.2em] text-blue-400">
           Skill-focused guide · list checked {DEMON_VERIFIED_AT}
@@ -52,6 +79,15 @@ export default function WaveDemonsPage() {
           displayed ranks come from the dated Main List snapshot, not from a separate wave ranking.
         </p>
       </header>
+
+      <section className="mb-8 rounded-2xl border border-blue-500/20 bg-blue-950/15 p-5 md:p-6">
+        <div className="mb-2 text-xs font-bold uppercase tracking-[0.18em] text-blue-300">Quick answer</div>
+        <p className="leading-7 text-slate-300">
+          There is <strong className="text-white">no official wave-only Demon List</strong>. This guide
+          uses the current Pointercrate Main List snapshot for rank context, then highlights levels where wave control is a meaningful practice focus.
+          For hands-on practice, use the <Link href="/geometry-dash-wave" className="text-blue-400 hover:underline">Geometry Dash Wave Trainer</Link>.
+        </p>
+      </section>
 
       <section className="mb-10 grid gap-4 md:grid-cols-2">
         {entries.map(({ demon, note }) => demon && (
@@ -83,6 +119,18 @@ export default function WaveDemonsPage() {
         ))}
       </section>
 
+      <section className="mb-10">
+        <h2 className="mb-4 text-2xl font-bold text-white">Geometry Dash Wave Demons FAQ</h2>
+        <div className="grid gap-4 md:grid-cols-3">
+          {waveFaqs.map((item) => (
+            <div key={item.q} className="rounded-xl border border-white/10 bg-slate-900/30 p-5">
+              <h3 className="mb-2 font-bold text-white">{item.q}</h3>
+              <p className="text-sm leading-6 text-slate-400">{item.a}</p>
+            </div>
+          ))}
+        </div>
+      </section>
+
       <div className="rounded-xl border border-white/10 bg-slate-900/25 p-5 text-sm text-slate-400">
         Rankings can change.{" "}
         <a href={DEMON_SOURCE_URL} target="_blank" rel="noopener noreferrer" className="text-blue-400 hover:underline">
@@ -93,6 +141,7 @@ export default function WaveDemonsPage() {
 
       <div className="mt-8 flex flex-wrap gap-3">
         <Link href="/geometry-dash-wave" className="rounded-lg bg-blue-600 px-4 py-2 text-sm font-bold text-white">Open Wave Trainer</Link>
+        <Link href="/demon-list/spam-demons" className="rounded-lg border border-white/10 px-4 py-2 text-sm font-bold text-white">Spam Demonlist</Link>
         <Link href="/demon-list" className="rounded-lg border border-white/10 px-4 py-2 text-sm font-bold text-white">Full Demon List</Link>
         <Link href="/" className="rounded-lg border border-white/10 px-4 py-2 text-sm font-bold text-white">Spam Test</Link>
       </div>
