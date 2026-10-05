@@ -1,4 +1,5 @@
 import DoubleClickTest from "../../components/DoubleClickTest";
+import InputToolGuide from "../../components/InputToolGuide";
 import { Metadata } from "next";
 
 export const metadata: Metadata = {
@@ -32,6 +33,7 @@ export default function DoubleClickPage() {
         </p>
       </div>
       <DoubleClickTest />
+      <InputToolGuide tool="double-click" />
     </>
   );
 }
