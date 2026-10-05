@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import Link from "next/link";
+import Breadcrumbs from "../../components/Breadcrumbs";
 
 export const metadata: Metadata = {
   title: "Easiest Demons in Geometry Dash | 5 Beginner Picks",
@@ -55,6 +56,7 @@ export default function EasiestDemonsPage() {
 
   return (
     <>
+      <Breadcrumbs items={[{ label: "Easiest Demons", href: "/easiest-demons" }]} />
       <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(faqSchema) }} />
     <article className="mx-auto max-w-5xl">
       <header className="mx-auto mb-8 max-w-4xl">
