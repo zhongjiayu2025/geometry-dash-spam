@@ -8,6 +8,17 @@ export const metadata: Metadata = {
   description:
     "Browse a sourced Geometry Dash Demon List snapshot with the current top demons, verification date and related hardest-level guides.",
   alternates: { canonical: "/demon-list" },
+  openGraph: {
+    title: "Geometry Dash Demon List – Hardest Demons Ranked",
+    description: "Browse a sourced Geometry Dash Demon List snapshot with the current top demons, verification date and related hardest-level guides.",
+    url: "https://geometrydashspam.cc/demon-list",
+    type: "website",
+  },
+  twitter: {
+    card: "summary",
+    title: "Geometry Dash Demon List – Hardest Demons Ranked",
+    description: "Browse a sourced Geometry Dash Demon List snapshot with the current top demons, verification date and related hardest-level guides.",
+  },
 };
 
 export default function DemonListPage() {
