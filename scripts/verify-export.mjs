@@ -625,16 +625,33 @@ if (existsSync(sitemapPath)) {
       );
     }
 
-    if (ogImage !== "https://geometrydashspam.cc/opengraph-image") {
+    if (!ogImage?.startsWith("https://")) {
       sitemapMetadataErrors.push(
-        `${route}: og:image is "${ogImage ?? "missing"}", expected shared social preview image`
+        `${route}: og:image is "${ogImage ?? "missing"}", expected an absolute HTTPS social preview image`
       );
     }
 
-    if (twitterImage !== "https://geometrydashspam.cc/twitter-image") {
+    if (!twitterImage?.startsWith("https://")) {
       sitemapMetadataErrors.push(
-        `${route}: twitter:image is "${twitterImage ?? "missing"}", expected shared social preview image`
+        `${route}: twitter:image is "${twitterImage ?? "missing"}", expected an absolute HTTPS social preview image`
       );
+    }
+
+    if (!route.startsWith("/blog/")) {
+      const expectedOgPrefix = "https://geometrydashspam.cc/opengraph-image";
+      const expectedTwitterPrefix = "https://geometrydashspam.cc/twitter-image";
+
+      if (ogImage && !ogImage.startsWith(expectedOgPrefix)) {
+        sitemapMetadataErrors.push(
+          `${route}: og:image is "${ogImage}", expected shared Geometry Dash Spam preview image`
+        );
+      }
+
+      if (twitterImage && !twitterImage.startsWith(expectedTwitterPrefix)) {
+        sitemapMetadataErrors.push(
+          `${route}: twitter:image is "${twitterImage}", expected shared Geometry Dash Spam preview image`
+        );
+      }
     }
   }
 
