@@ -14,48 +14,44 @@ export const viewport: Viewport = {
 };
 
 export const metadata: Metadata = {
-  // CRITICAL FOR SEO: Sets the base URL for all relative URLs (canonical, og:image, etc.)
   metadataBase: new URL("https://geometrydashspam.cc"),
   title: {
-    default: "Geometry Dash Spam Test | Ultimate Wave Simulator",
-    template: "%s | Geometry Dash Spam"
+    default: "Geometry Dash Spam Test – Wave Spam Simulator & Click Test",
+    template: "%s | Geometry Dash Spam",
   },
-  description: "Master the wave with the ultimate Geometry Dash Spam Test. Free online simulator to train spam consistency, improve CPS, and beat Extreme Demons.",
-  keywords: ["geometry dash spam", "geometry dash spam test", "wave simulator", "gd spam", "cps test", "jitter click", "butterfly click", "click speed test"],
-  alternates: {
-    canonical: './', // Now resolves to absolute URL automatically thanks to metadataBase
-  },
+  description:
+    "Play the Geometry Dash Spam Test online. Practice wave spam, measure CPS and click consistency, and train for difficult Geometry Dash levels.",
+  keywords: [
+    "geometry dash spam",
+    "geometry dash spam test",
+    "geometry dash wave spam",
+    "geometry dash wave",
+    "geometry dash cps test",
+    "gd cps test",
+  ],
   icons: {
-    icon: '/logo.svg',
-    shortcut: '/logo.svg',
-    apple: '/logo.svg',
-    other: {
-      rel: 'apple-touch-icon-precomposed',
-      url: '/logo.svg',
-    },
+    icon: "/logo.svg",
+    shortcut: "/logo.svg",
+    apple: "/logo.svg",
   },
   verification: {
     google: "Yz_6YlW_BzjxZVMUNDmQKQV3n-Jf8cRUr6sMnqJDzyQ",
   },
-  appleWebApp: {
-    capable: true,
-    statusBarStyle: "default",
-    title: "Geometry Dash Spam Test",
-  },
   openGraph: {
     type: "website",
     url: "https://geometrydashspam.cc",
-    siteName: "Geometry Dash Spam Test",
-    title: "Geometry Dash Spam Test",
-    description: "Test your clicking speed and precision.",
-    images: [{ url: "https://geometrydashspam.cc/logo.svg" }],
-    locale: 'en_US',
+    siteName: "Geometry Dash Spam",
+    title: "Geometry Dash Spam Test – Wave Spam Simulator & Click Test",
+    description:
+      "Practice Geometry Dash wave spam and measure your clicking consistency with a free browser-based trainer.",
+    images: [{ url: "/logo.svg", alt: "Geometry Dash Spam" }],
+    locale: "en_US",
   },
   twitter: {
-    card: "summary_large_image",
+    card: "summary",
     title: "Geometry Dash Spam Test",
-    description: "Master the wave with the ultimate simulator.",
-    images: ["https://geometrydashspam.cc/logo.svg"],
+    description: "Practice wave spam and measure CPS and click consistency.",
+    images: ["/logo.svg"],
   },
 };
 
@@ -64,21 +60,13 @@ export default function RootLayout({
 }: Readonly<{
   children: React.ReactNode;
 }>) {
-  // Global Schema for Organization
-  const organizationSchema = {
+  const websiteSchema = {
     "@context": "https://schema.org",
-    "@type": "Organization",
-    "name": "Geometry Dash Spam Test",
-    "url": "https://geometrydashspam.cc",
-    "logo": "https://geometrydashspam.cc/logo.svg",
-    "sameAs": [
-      "https://twitter.com/geometrydash", // Example social link
-    ],
-    "contactPoint": {
-      "@type": "ContactPoint",
-      "email": "info@geometrydashspam.cc",
-      "contactType": "customer support"
-    }
+    "@type": "WebSite",
+    name: "Geometry Dash Spam",
+    url: "https://geometrydashspam.cc",
+    description:
+      "Browser-based Geometry Dash spam, wave and CPS training tools.",
   };
 
   return (
@@ -88,10 +76,6 @@ export default function RootLayout({
         <link rel="dns-prefetch" href="https://pagead2.googlesyndication.com" />
         <link rel="preconnect" href="https://googleads.g.doubleclick.net" />
         <link rel="dns-prefetch" href="https://googleads.g.doubleclick.net" />
-        <link rel="preconnect" href="https://fonts.googleapis.com" />
-        <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="anonymous" />
-        <link rel="dns-prefetch" href="https://fonts.googleapis.com" />
-        <link rel="dns-prefetch" href="https://fonts.gstatic.com" />
       </head>
       <body className={`${inter.variable} ${orbitron.variable} min-h-screen bg-[#020617] text-slate-200 font-sans selection:bg-blue-500 selection:text-white flex flex-col`}>
         <Script
@@ -102,24 +86,22 @@ export default function RootLayout({
         />
         <script
           type="application/ld+json"
-          dangerouslySetInnerHTML={{ __html: JSON.stringify(organizationSchema) }}
+          dangerouslySetInnerHTML={{ __html: JSON.stringify(websiteSchema) }}
         />
-        
-        {/* Background Effects */}
+
         <div className="fixed inset-0 pointer-events-none z-0">
-          <div className="absolute inset-0 bg-grid opacity-20"></div>
-          <div className="absolute top-0 left-1/2 -translate-x-1/2 w-[1000px] h-[600px] rounded-full blur-[120px] opacity-15 bg-blue-600 transition-colors duration-1000"></div>
+          <div className="absolute inset-0 bg-grid opacity-15"></div>
+          <div className="absolute top-0 left-1/2 -translate-x-1/2 w-[900px] h-[520px] rounded-full blur-[120px] opacity-10 bg-blue-600"></div>
           <div className="absolute bottom-0 left-0 right-0 h-32 bg-gradient-to-t from-[#020617] to-transparent"></div>
         </div>
 
         <Header />
-        
-        <main className="relative z-10 flex-grow pt-24 md:pt-32 pb-12 px-4 w-full max-w-7xl mx-auto">
-           {children}
+
+        <main className="relative z-10 flex-grow pt-24 md:pt-28 pb-12 px-4 w-full max-w-7xl mx-auto">
+          {children}
         </main>
 
         <Footer />
-        <Script src="//pl28827470.effectivegatecpm.com/a5/02/4f/a5024f416ca331965f268098798e5cd1.js" strategy="lazyOnload" />
       </body>
     </html>
   );
