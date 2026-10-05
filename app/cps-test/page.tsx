@@ -2,20 +2,20 @@ import CpsTest from "../../components/CpsTest";
 import { Metadata } from "next";
 
 export const metadata: Metadata = {
-  title: "Geometry Dash CPS Test | GD Spam Click Test",
+  title: "Geometry Dash CPS Test (GD CPS Test) | Spam Click Test",
   description:
-    "Take a Geometry Dash CPS test and spam click test in 1, 3, 5, 10, 30 or 60 seconds. Measure click speed, peak CPS, consistency and local personal bests.",
+    "Take a Geometry Dash CPS test (GD CPS test) and spam click test in 1, 3, 5, 10, 30 or 60 seconds. Measure click speed, peak CPS and consistency.",
   alternates: {
     canonical: "/cps-test",
   },
   openGraph: {
-    title: "Geometry Dash CPS Test | GD Spam Click Test",
+    title: "Geometry Dash CPS Test (GD CPS Test) | Spam Click Test",
     description: "Run a Geometry Dash click test or spam click test from 1 to 60 seconds and compare CPS, peak CPS and consistency.",
     url: "https://geometrydashspam.cc/cps-test",
   },
   twitter: {
     card: "summary",
-    title: "Geometry Dash CPS Test | GD Spam Click Test",
+    title: "Geometry Dash CPS Test (GD CPS Test) | Spam Click Test",
     description: "Run a Geometry Dash click test or spam click test from 1 to 60 seconds and compare CPS, peak CPS and consistency.",
   },
 };
