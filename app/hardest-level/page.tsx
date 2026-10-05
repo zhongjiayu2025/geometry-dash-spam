@@ -24,6 +24,21 @@ export const metadata: Metadata = {
   },
 };
 
+const hardestFaqs = [
+  {
+    q: "What is the hardest Geometry Dash level right now?",
+    a: `As checked ${DEMON_VERIFIED_AT}, Pointercrate ranks ${currentHardest.level} by ${currentHardest.publisher} at #1 on its community Demon List.`,
+  },
+  {
+    q: "Is the hardest Geometry Dash level an official RobTop ranking?",
+    a: "No. This page uses Pointercrate, a community-run Demon List. It is not an official RobTop Games ranking.",
+  },
+  {
+    q: "Can the hardest Geometry Dash level change?",
+    a: "Yes. Demon List positions change when new levels are placed or existing levels are re-evaluated, so the verification date and live source matter.",
+  },
+];
+
 export default function HardestLevelPage() {
   const numberOne = currentHardest;
   const schema = {
@@ -40,10 +55,21 @@ export default function HardestLevelPage() {
     },
   };
 
+  const faqSchema = {
+    "@context": "https://schema.org",
+    "@type": "FAQPage",
+    mainEntity: hardestFaqs.map((item) => ({
+      "@type": "Question",
+      name: item.q,
+      acceptedAnswer: { "@type": "Answer", text: item.a },
+    })),
+  };
+
   return (
     <>
       <Breadcrumbs items={[{ label: "Hardest Level", href: "/hardest-level" }]} />
       <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(schema) }} />
+      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(faqSchema) }} />
       <article className="mx-auto max-w-4xl">
       <header className="mb-8">
         <p className="mb-2 text-xs font-bold uppercase tracking-[0.2em] text-purple-400">
@@ -53,9 +79,9 @@ export default function HardestLevelPage() {
           Geometry Dash Hardest Level: {numberOne.level}
         </h1>
         <div className="rounded-2xl border border-purple-500/25 bg-purple-950/20 p-6 text-lg leading-8 text-slate-200">
-          <strong className="text-white">Current answer:</strong> as of <strong>{DEMON_VERIFIED_AT}</strong>, Pointercrate ranks{" "}
-          <strong className="text-white">{numberOne.level}</strong> by {numberOne.publisher} at #1 on its Geometry Dash Demonlist.
-          This is a community ranking, not an official RobTop Games difficulty list, and positions can change.
+          <div className="mb-2 text-xs font-bold uppercase tracking-[0.18em] text-purple-300">Quick answer</div>
+          <strong className="text-white">The current hardest Geometry Dash level is {numberOne.level}</strong> according to Pointercrate's community Demon List,
+          checked <strong>{DEMON_VERIFIED_AT}</strong>. It was published by {numberOne.publisher}. Rankings can change, and this is not an official RobTop Games list.
         </div>
       </header>
 
@@ -82,6 +108,18 @@ export default function HardestLevelPage() {
         <a href={DEMON_SOURCE_URL} target="_blank" rel="noopener noreferrer" className="inline-flex text-blue-400 hover:text-blue-300">
           Open the live Pointercrate Demonlist →
         </a>
+      </section>
+
+      <section className="mb-10">
+        <h2 className="mb-4 text-2xl font-bold text-white">Hardest Geometry Dash Level FAQ</h2>
+        <div className="grid gap-4 md:grid-cols-3">
+          {hardestFaqs.map((item) => (
+            <div key={item.q} className="rounded-xl border border-white/10 bg-slate-900/30 p-5">
+              <h3 className="mb-2 font-bold text-white">{item.q}</h3>
+              <p className="text-sm leading-6 text-slate-400">{item.a}</p>
+            </div>
+          ))}
+        </div>
       </section>
 
       <div className="flex flex-wrap gap-3">
