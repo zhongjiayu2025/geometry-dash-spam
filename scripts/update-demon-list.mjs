@@ -1,50 +1,131 @@
 import { readFileSync, writeFileSync } from "node:fs";
 
 const API_URL = "https://pointercrate.com/api/v2/demons/listed/?limit=50";
+const PAGE_URL = "https://pointercrate.com/demonlist/?submitter=true";
 const DATA_PATH = new URL("../data/demons.ts", import.meta.url);
 
 const MAX_AGE_DAYS = 7;
-const RETRIES = 3;
-const TIMEOUT_MS = 25000;
+const TIMEOUT_MS = 60000;
 
-const sleep = (ms) => new Promise((resolve) => setTimeout(resolve, ms));
+async function fetchWithTimeout(url, headers = {}) {
+  const controller = new AbortController();
+  const timeout = setTimeout(() => controller.abort(), TIMEOUT_MS);
 
-async function fetchRankedDemons() {
-  let lastError;
+  try {
+    return await fetch(url, {
+      headers: {
+        "User-Agent": "geometrydashspam.cc demon-list refresh",
+        ...headers,
+      },
+      signal: controller.signal,
+    });
+  } finally {
+    clearTimeout(timeout);
+  }
+}
 
-  for (let attempt = 1; attempt <= RETRIES; attempt += 1) {
-    const controller = new AbortController();
-    const timeout = setTimeout(() => controller.abort(), TIMEOUT_MS);
+async function fetchFromApi() {
+  const response = await fetchWithTimeout(API_URL, {
+    Accept: "application/json",
+  });
 
-    try {
-      const response = await fetch(API_URL, {
-        headers: {
-          Accept: "application/json",
-          "User-Agent": "geometrydashspam.cc demon-list refresh",
-        },
-        signal: controller.signal,
-      });
-
-      if (!response.ok) {
-        throw new Error(`Pointercrate API returned HTTP ${response.status}`);
-      }
-
-      const data = await response.json();
-
-      if (!Array.isArray(data)) {
-        throw new Error("Pointercrate API response was not an array");
-      }
-
-      return data;
-    } catch (error) {
-      lastError = error;
-      if (attempt < RETRIES) await sleep(attempt * 2000);
-    } finally {
-      clearTimeout(timeout);
-    }
+  if (!response.ok) {
+    throw new Error(`Pointercrate API returned HTTP ${response.status}`);
   }
 
-  throw lastError;
+  const data = await response.json();
+
+  if (!Array.isArray(data)) {
+    throw new Error("Pointercrate API response was not an array");
+  }
+
+  return data;
+}
+
+function decodeHtml(value) {
+  return value
+    .replace(/&#(\d+);/g, (_, code) => String.fromCodePoint(Number(code)))
+    .replace(/&#x([0-9a-f]+);/gi, (_, code) =>
+      String.fromCodePoint(Number.parseInt(code, 16))
+    )
+    .replaceAll("&nbsp;", " ")
+    .replaceAll("&amp;", "&")
+    .replaceAll("&quot;", '"')
+    .replaceAll("&#39;", "'")
+    .replaceAll("&lt;", "<")
+    .replaceAll("&gt;", ">");
+}
+
+function parseRankedDemonsFromHtml(html) {
+  const text = decodeHtml(
+    html
+      .replace(/<script\b[^>]*>[\s\S]*?<\/script>/gi, " ")
+      .replace(/<style\b[^>]*>[\s\S]*?<\/style>/gi, " ")
+      .replace(/<[^>]+>/g, " ")
+  )
+    .replace(/[\u2068\u2069\u200e\u200f]/g, "")
+    .replace(/\s+/g, " ")
+    .trim();
+
+  const entries = [];
+  const pattern =
+    /#\s*(\d+)\s*[–-]\s*(.*?)\s+published by\s+(.*?)\s+(?=\d+(?:\.\d+)?\s*\(|#\s*\d+\s*[–-])/g;
+
+  for (const match of text.matchAll(pattern)) {
+    const position = Number(match[1]);
+    if (position < 1 || position > 50) continue;
+
+    entries.push({
+      position,
+      name: match[2].trim(),
+      publisher: { name: match[3].trim() },
+    });
+  }
+
+  const unique = new Map();
+  for (const item of entries) {
+    if (!unique.has(item.position)) unique.set(item.position, item);
+  }
+
+  return [...unique.values()].sort((a, b) => a.position - b.position);
+}
+
+async function fetchFromPage() {
+  const response = await fetchWithTimeout(PAGE_URL, {
+    Accept: "text/html,application/xhtml+xml",
+  });
+
+  if (!response.ok) {
+    throw new Error(`Pointercrate page returned HTTP ${response.status}`);
+  }
+
+  const html = await response.text();
+  const parsed = parseRankedDemonsFromHtml(html);
+
+  if (parsed.length < 50) {
+    throw new Error(`Could only parse ${parsed.length} top-50 entries from Pointercrate HTML`);
+  }
+
+  return parsed;
+}
+
+async function fetchRankedDemons() {
+  try {
+    const data = await fetchFromApi();
+    console.log("Loaded Demon List from Pointercrate API.");
+    return data;
+  } catch (apiError) {
+    console.warn(`Pointercrate API unavailable: ${apiError.message}`);
+  }
+
+  try {
+    const data = await fetchFromPage();
+    console.log("Loaded Demon List from Pointercrate HTML fallback.");
+    return data;
+  } catch (pageError) {
+    console.warn(`Pointercrate page fallback unavailable: ${pageError.message}`);
+    return null;
+  }
 }
 
 function normalize(items) {
@@ -144,7 +225,16 @@ ${rows}
 
 const source = readFileSync(DATA_PATH, "utf8");
 const current = readCurrentState(source);
-const fetched = normalize(await fetchRankedDemons());
+const raw = await fetchRankedDemons();
+
+if (!raw) {
+  console.warn(
+    `Pointercrate could not be reached. Keeping the last verified snapshot from ${current.verifiedAt ?? "an unknown date"}.`
+  );
+  process.exit(0);
+}
+
+const fetched = normalize(raw);
 const today = new Date().toISOString().slice(0, 10);
 
 const rankingChanged = !sameEntries(current.entries, fetched);
