@@ -5,19 +5,19 @@ const SOURCE_URL = "https://geometrydash.wiki.gg/wiki/Collectibles";
 const CHECKED_AT = "2026-10-05";
 
 export const metadata: Metadata = {
-  title: "Geometry Dash Difficulty Faces – Ratings & Demon Difficulties",
+  title: "Geometry Dash Difficulty Faces | All Ratings Explained",
   description:
-    "Geometry Dash difficulty faces explained: Auto, Easy, Normal, Hard, Harder, Insane and Demon, plus all five Demon sub-difficulties.",
+    "Geometry Dash difficulty faces explained from Auto to Demon, including star ranges and all five Demon sub-difficulties: Easy, Medium, Hard, Insane and Extreme."
   alternates: { canonical: "/geometry-dash-difficulty-faces" },
   openGraph: {
-    title: "Geometry Dash Difficulty Faces – Ratings & Demon Difficulties",
+    title: "Geometry Dash Difficulty Faces | All Ratings Explained",
     description: "Geometry Dash difficulty faces explained: Auto, Easy, Normal, Hard, Harder, Insane and Demon, plus all five Demon sub-difficulties.",
     url: "https://geometrydashspam.cc/geometry-dash-difficulty-faces",
     type: "website",
   },
   twitter: {
     card: "summary",
-    title: "Geometry Dash Difficulty Faces – Ratings & Demon Difficulties",
+    title: "Geometry Dash Difficulty Faces | All Ratings Explained",
     description: "Geometry Dash difficulty faces explained: Auto, Easy, Normal, Hard, Harder, Insane and Demon, plus all five Demon sub-difficulties.",
   },
 };
@@ -30,6 +30,21 @@ const baseDifficulties = [
   { name: "Harder", stars: "6–7★", symbol: "H+", tone: "text-orange-300 border-orange-500/30 bg-orange-500/10", note: "Higher-rated non-Demon difficulty." },
   { name: "Insane", stars: "8–9★", symbol: "I", tone: "text-pink-300 border-pink-500/30 bg-pink-500/10", note: "Highest standard non-Demon rating." },
   { name: "Demon", stars: "10★", symbol: "D", tone: "text-red-300 border-red-500/30 bg-red-500/10", note: "Demon levels use five community-voted sub-difficulties." },
+];
+
+const difficultyFaqs = [
+  {
+    q: "What are the Geometry Dash difficulty faces?",
+    a: "For rated user levels, the main difficulty scale is Auto, Easy, Normal, Hard, Harder, Insane and Demon. Demon levels also have five community-voted sub-difficulties.",
+  },
+  {
+    q: "How many stars do Geometry Dash difficulty ratings give?",
+    a: "Rated user levels generally award 1 star for Auto, 2 for Easy, 3 for Normal, 4–5 for Hard, 6–7 for Harder, 8–9 for Insane and 10 for Demon.",
+  },
+  {
+    q: "What are the five Demon difficulties?",
+    a: "The Demon sub-difficulties are Easy Demon, Medium Demon, Hard Demon, Insane Demon and Extreme Demon.",
+  },
 ];
 
 const demonDifficulties = [
@@ -53,9 +68,20 @@ export default function DifficultyFacesPage() {
     })),
   };
 
+  const faqSchema = {
+    "@context": "https://schema.org",
+    "@type": "FAQPage",
+    mainEntity: difficultyFaqs.map((item) => ({
+      "@type": "Question",
+      name: item.q,
+      acceptedAnswer: { "@type": "Answer", text: item.a },
+    })),
+  };
+
   return (
     <>
       <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(schema) }} />
+      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(faqSchema) }} />
 
       <article className="mx-auto max-w-5xl">
         <header className="mb-10 max-w-4xl">
@@ -71,6 +97,14 @@ export default function DifficultyFacesPage() {
             Easy, Medium, Hard, Insane and Extreme Demon.
           </p>
         </header>
+
+        <section className="mb-8 rounded-2xl border border-blue-500/20 bg-blue-950/15 p-5 md:p-6">
+          <div className="mb-2 text-xs font-bold uppercase tracking-[0.18em] text-blue-300">Quick answer</div>
+          <p className="leading-7 text-slate-300">
+            The rated user-level scale is <strong className="text-white">Auto → Easy → Normal → Hard → Harder → Insane → Demon</strong>.
+            Demon then splits into Easy, Medium, Hard, Insane and Extreme Demon. The cards below use original letter markers rather than copied game artwork.
+          </p>
+        </section>
 
         <section className="mb-12">
           <h2 className="mb-5 text-2xl font-bold text-white">Standard difficulty ratings</h2>
@@ -123,6 +157,18 @@ export default function DifficultyFacesPage() {
             <p className="text-sm leading-6 text-slate-400">
               No. Official main levels have their own star values. The star ranges above describe rated user levels.
             </p>
+          </div>
+        </section>
+
+        <section className="mb-10">
+          <h2 className="mb-4 text-2xl font-bold text-white">Geometry Dash Difficulty Faces FAQ</h2>
+          <div className="grid gap-4 md:grid-cols-3">
+            {difficultyFaqs.map((item) => (
+              <div key={item.q} className="rounded-xl border border-white/10 bg-slate-900/30 p-5">
+                <h3 className="mb-2 font-bold text-white">{item.q}</h3>
+                <p className="text-sm leading-6 text-slate-400">{item.a}</p>
+              </div>
+            ))}
           </div>
         </section>
 
