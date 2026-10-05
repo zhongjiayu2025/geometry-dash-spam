@@ -841,6 +841,27 @@ for (const route of supportGuideRoutes) {
   }
 }
 
+const intentClusterErrors = [];
+const intentClusterLinks = new Map([
+  ["/demon-list", ["/spam-challenge-list", "/demon-list/spam-demons"]],
+  ["/spam-challenge-list", ["/demon-list", "/demon-list/spam-demons"]],
+  ["/demon-list/spam-demons", ["/demon-list", "/spam-challenge-list"]],
+]);
+
+for (const [route, expectedLinks] of intentClusterLinks) {
+  const path = exportedPath(route);
+  if (!path) continue;
+  const html = readFileSync(path, "utf8");
+
+  for (const expectedLink of expectedLinks) {
+    if (!html.includes(`href="${expectedLink}"`)) {
+      intentClusterErrors.push(
+        `${route}: missing intent-separation link to ${expectedLink}`
+      );
+    }
+  }
+}
+
 const contentErrors = [];
 
 const codesExportPath = exportedPath("/geometry-dash-codes");
@@ -903,6 +924,7 @@ if (
   authorityLeakErrors.length ||
   htmlSitemapErrors.length ||
   supportGuideErrors.length ||
+  intentClusterErrors.length ||
   contentErrors.length
 ) {
   console.error("Static export verification failed.");
@@ -954,6 +976,11 @@ if (
     for (const error of supportGuideErrors) console.error(`- ${error}`);
   }
 
+  if (intentClusterErrors.length) {
+    console.error("Search-intent cluster errors:");
+    for (const error of intentClusterErrors) console.error(`- ${error}`);
+  }
+
   if (contentErrors.length) {
     console.error("Data-to-page content errors:");
     for (const error of contentErrors) console.error(`- ${error}`);
@@ -996,5 +1023,5 @@ if (
 }
 
 console.log(
-  `Static export verified: ${requiredRoutes.length} core routes, metadata checks, ads/robots/manifest checks, permanent legacy redirects, search-snippet length checks, H1/title/description uniqueness checks, sitemap freshness checks, noindex utility policy, core-page authority leakage checks, HTML sitemap priority-link checks, indexable support-page guide checks, Wraith data-to-page checks, ${htmlFiles.length} HTML files with internal-link checks, sitemap URL/canonical/title/description/OpenGraph/indexability integrity, sitemap.xml and robots.txt.`
+  `Static export verified: ${requiredRoutes.length} core routes, metadata checks, ads/robots/manifest checks, permanent legacy redirects, search-snippet length checks, H1/title/description uniqueness checks, sitemap freshness checks, noindex utility policy, core-page authority leakage checks, HTML sitemap priority-link checks, indexable support-page guide checks, search-intent cluster checks, Wraith data-to-page checks, ${htmlFiles.length} HTML files with internal-link checks, sitemap URL/canonical/title/description/OpenGraph/indexability integrity, sitemap.xml and robots.txt.`
 );
