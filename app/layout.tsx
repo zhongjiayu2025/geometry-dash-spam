@@ -16,11 +16,11 @@ export const viewport: Viewport = {
 export const metadata: Metadata = {
   metadataBase: new URL("https://geometrydashspam.cc"),
   title: {
-    default: "Geometry Dash Spam Test – Play Wave Spam Online",
+    default: "Geometry Dash Spam Test – Wave Spam Trainer Online",
     template: "%s | Geometry Dash Spam",
   },
   description:
-    "Play a free Geometry Dash spam test online with no download. Practice wave spam, track CPS and click consistency, and train normal or mini wave control.",
+    "Practice Geometry Dash spam, wave control and CPS with free browser-based training tools, sourced demon references and no account required.",
   keywords: [
     "geometry dash spam",
     "geometry dash spam test",
@@ -41,16 +41,16 @@ export const metadata: Metadata = {
     type: "website",
     url: "https://geometrydashspam.cc",
     siteName: "Geometry Dash Spam",
-    title: "Geometry Dash Spam Test – Play Wave Spam Online",
+    title: "Geometry Dash Spam Test – Wave Spam Trainer Online",
     description:
-      "Play Geometry Dash wave spam online and compare CPS and click consistency in a free browser trainer.",
+      "Practice Geometry Dash wave spam online and compare CPS, click consistency and repeatable control in a free browser trainer.",
     images: [{ url: "/logo.svg", alt: "Geometry Dash Spam" }],
     locale: "en_US",
   },
   twitter: {
     card: "summary",
     title: "Geometry Dash Spam Test",
-    description: "Practice wave spam and measure CPS and click consistency.",
+    description: "Practice Geometry Dash wave spam and measure CPS, click consistency and control.",
     images: ["/logo.svg"],
   },
 };
