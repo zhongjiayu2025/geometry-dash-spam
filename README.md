@@ -1,20 +1,68 @@
-<div align="center">
-<img width="1200" height="475" alt="GHBanner" src="https://ai.google.dev/static/site-assets/images/share-ais-513315318.png" />
-</div>
+# Geometry Dash Spam
 
-# Run and deploy your AI Studio app
+Source code for **geometrydashspam.cc**, a browser-based Geometry Dash training and reference site focused on spam, wave control, CPS and demon-list discovery.
 
-This contains everything you need to run your app locally.
+## Core pages
 
-View your app in AI Studio: https://ai.studio/apps/676c3af5-a6c8-4814-b6b3-892e213645b4
+- `/` — Geometry Dash Spam Test
+- `/geometry-dash-wave` — Wave trainer
+- `/cps-test` — Geometry Dash CPS test
+- `/demon-list` — Sourced Demon List snapshot
+- `/hardest-level` — Current hardest-level answer page
+- `/easiest-demons` — Beginner demon route
+- `/geometry-dash-clicker` — Lightweight clicker game
 
-## Run Locally
+Secondary mouse, keyboard, reaction and memory tools remain available under **More Tools**.
 
-**Prerequisites:**  Node.js
+## Tech stack
 
+- Next.js App Router
+- React
+- TypeScript
+- Tailwind CSS
+- Static export (`output: "export"`)
 
-1. Install dependencies:
-   `npm install`
-2. Set the `GEMINI_API_KEY` in [.env.local](.env.local) to your Gemini API key
-3. Run the app:
-   `npm run dev`
+The project is intentionally designed to run without a paid database or application server. Local personal-best data is stored in the browser where appropriate.
+
+## Development
+
+Requirements: Node.js 20+ recommended.
+
+```bash
+npm install
+npm run dev
+```
+
+Production build:
+
+```bash
+npm run build
+```
+
+## SEO and content policy
+
+- Preserve established URLs such as `/cps-test`.
+- Keep one clear primary search intent per core page.
+- Do not publish fabricated ratings, player counts, interviews or precision claims.
+- Time-sensitive Demon List claims must show a source and a verification date.
+- Sitemap entries must resolve to real indexable pages.
+
+## Deployment
+
+The site is configured for static export and can be deployed to Cloudflare Pages or any static host.
+
+Build command:
+
+```bash
+npm run build
+```
+
+Output directory:
+
+```text
+out
+```
+
+## Disclaimer
+
+This is a fan-made training and reference project and is not affiliated with RobTop Games.
