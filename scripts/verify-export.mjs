@@ -71,7 +71,7 @@ const metadataExpectations = {
     canonical: "https://geometrydashspam.cc/demon-list/wave-demons",
   },
   "/hardest-level": {
-    title: `Hardest Geometry Dash Level: ${currentDemonName}`,
+    title: `Geometry Dash Hardest Level: ${currentDemonName}`,
     description: `As checked ${demonDate}, Pointercrate ranks ${currentDemonName}`,
     canonical: "https://geometrydashspam.cc/hardest-level",
   },
