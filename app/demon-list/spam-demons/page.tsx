@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import Link from "next/link";
+import Breadcrumbs from "../../../components/Breadcrumbs";
 import { DEMONS, DEMON_SOURCE_URL, DEMON_VERIFIED_AT } from "../../../data/demons";
 
 export const metadata: Metadata = {
@@ -57,6 +58,7 @@ export default function SpamDemonsPage() {
 
   return (
     <article className="mx-auto max-w-5xl">
+      <Breadcrumbs items={[{ label: "Demon List", href: "/demon-list" }, { label: "Spam Demonlist", href: "/demon-list/spam-demons" }]} />
       <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(faqSchema) }} />
       <header className="mb-8 max-w-4xl">
         <p className="mb-2 text-xs font-bold uppercase tracking-[0.2em] text-blue-400">
