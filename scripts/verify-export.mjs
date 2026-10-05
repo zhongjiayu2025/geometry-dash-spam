@@ -472,6 +472,30 @@ for (const route of coreAuthorityRoutes) {
   }
 }
 
+const htmlSitemapErrors = [];
+const htmlSitemapPath = exportedPath("/sitemap");
+const htmlSitemapPriorityRoutes = [
+  "/geometry-dash-wave",
+  "/cps-test",
+  "/demon-list",
+  "/spam-challenge-list",
+  "/geometry-dash-codes",
+  "/hardest-level",
+  "/geometry-dash-breeze",
+  "/dashmetry",
+];
+
+if (htmlSitemapPath) {
+  const htmlSitemap = readFileSync(htmlSitemapPath, "utf8");
+  for (const route of htmlSitemapPriorityRoutes) {
+    if (!htmlSitemap.includes(`href="${route}"`)) {
+      htmlSitemapErrors.push(`/sitemap: missing priority link ${route}`);
+    }
+  }
+} else {
+  htmlSitemapErrors.push("/sitemap: HTML sitemap page was not exported");
+}
+
 const contentErrors = [];
 
 const codesExportPath = exportedPath("/geometry-dash-codes");
@@ -528,6 +552,7 @@ if (
   sitemapMetadataErrors.length ||
   noindexErrors.length ||
   authorityLeakErrors.length ||
+  htmlSitemapErrors.length ||
   contentErrors.length
 ) {
   console.error("Static export verification failed.");
@@ -557,6 +582,11 @@ if (
   if (authorityLeakErrors.length) {
     console.error("Core-page authority leakage:");
     for (const error of authorityLeakErrors) console.error(`- ${error}`);
+  }
+
+  if (htmlSitemapErrors.length) {
+    console.error("HTML sitemap errors:");
+    for (const error of htmlSitemapErrors) console.error(`- ${error}`);
   }
 
   if (contentErrors.length) {
@@ -591,5 +621,5 @@ if (
 }
 
 console.log(
-  `Static export verified: ${requiredRoutes.length} core routes, metadata checks, noindex utility policy, core-page authority leakage checks, Wraith data-to-page checks, ${htmlFiles.length} HTML files with internal-link checks, sitemap URL/canonical/title/description/OpenGraph/indexability integrity, sitemap.xml and robots.txt.`
+  `Static export verified: ${requiredRoutes.length} core routes, metadata checks, noindex utility policy, core-page authority leakage checks, HTML sitemap priority-link checks, Wraith data-to-page checks, ${htmlFiles.length} HTML files with internal-link checks, sitemap URL/canonical/title/description/OpenGraph/indexability integrity, sitemap.xml and robots.txt.`
 );

@@ -275,6 +275,7 @@ export const SitemapPage = () => (
             { view: "/geometry-dash-wave", label: "Geometry Dash Wave Trainer", desc: "Normal, mini, spam, precision and endless presets." },
             { view: "/cps-test", label: "Geometry Dash CPS Test", desc: "1–60 second click speed and timing tests." },
             { view: "/demon-list", label: "Geometry Dash Demon List", desc: "Sourced top-50 Pointercrate snapshot." },
+            { view: "/spam-challenge-list", label: "Spam Challenge List", desc: "Current SCL entry point for ranked Geometry Dash spam challenges." },
             { view: "/hardest-level", label: "Hardest Geometry Dash Level", desc: "Current #1 answer with verification date." },
             { view: "/easiest-demons", label: "Easiest Demons", desc: "Beginner-oriented practice references." },
             { view: "/demon-list/wave-demons", label: "Wave Demons", desc: "Wave-focused Demon List references." },
