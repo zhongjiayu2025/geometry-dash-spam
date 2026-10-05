@@ -1,6 +1,7 @@
 import CpsTest from "../../components/CpsTest";
 import Breadcrumbs from "../../components/Breadcrumbs";
 import { Metadata } from "next";
+import Link from "next/link";
 
 export const metadata: Metadata = {
   title: "Geometry Dash CPS Test (GD CPS Test) | Spam Click Test",
@@ -104,7 +105,7 @@ export default function CpsTestPage() {
           <p className="mb-3 text-sm leading-6 text-slate-400">
             A click score does not measure whether rapid inputs stay controllable in a wave corridor.
           </p>
-          <a href="/" className="text-sm font-semibold text-blue-400 hover:text-blue-300">Open the Geometry Dash Spam Test →</a>
+          <Link href="/geometry-dash-wave" className="text-sm font-semibold text-blue-400 hover:text-blue-300">Open the Geometry Dash Wave Trainer →</Link>
         </div>
       </section>
 
