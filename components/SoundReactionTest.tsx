@@ -16,6 +16,14 @@ export default function SoundReactionTest() {
     const timeoutRef = useRef<NodeJS.Timeout | null>(null);
     const audioContextRef = useRef<AudioContext | null>(null);
 
+    useEffect(() => {
+        const saved = localStorage.getItem('soundReactionBest');
+        if (saved) {
+            const parsed = Number(saved);
+            if (Number.isFinite(parsed)) setBestTime(parsed);
+        }
+    }, []);
+
     const createBeep = () => {
         if (!audioContextRef.current) {
             audioContextRef.current = new (window.AudioContext || (window as any).webkitAudioContext)();
@@ -87,6 +95,7 @@ export default function SoundReactionTest() {
             
             if (bestTime === null || time < bestTime) {
                 setBestTime(time);
+                localStorage.setItem('soundReactionBest', time.toString());
             }
             
             setGameState('result');
@@ -127,10 +136,9 @@ export default function SoundReactionTest() {
                     </div>
 
                     <div
-                        onMouseDown={handleInteraction}
-                        onTouchStart={handleInteraction}
+                        onPointerDown={(event) => handleInteraction(event as any)}
                         className={`
-                            w-full h-80 rounded-3xl border-2 flex flex-col items-center justify-center gap-4 transition-all duration-300 select-none cursor-pointer
+                            touch-none w-full h-80 rounded-3xl border-2 flex flex-col items-center justify-center gap-4 transition-all duration-300 select-none cursor-pointer
                             ${gameState === 'idle' ? 'bg-violet-900/10 border-violet-500/20 hover:bg-violet-800/20 hover:border-violet-500/30' : ''}
                             ${gameState === 'waiting' ? 'bg-amber-900/40 border-amber-500/40' : ''}
                             ${gameState === 'ready' ? 'bg-green-600/40 border-green-400/50' : ''}
