@@ -1,9 +1,17 @@
 import { MetadataRoute } from "next";
 import { BLOG_POSTS } from "../data/blogContent";
+import { DEMON_VERIFIED_AT } from "../data/demons";
 
 export const dynamic = "force-static";
 
 const UPDATED = "2026-10-05";
+
+const DEMON_ROUTES = new Set([
+  "/demon-list",
+  "/demon-list/wave-demons",
+  "/demon-list/spam-demons",
+  "/hardest-level",
+]);
 
 const CORE_ROUTES = [
   "",
@@ -55,7 +63,7 @@ export default function sitemap(): MetadataRoute.Sitemap {
 
   const routeEntries: MetadataRoute.Sitemap = CORE_ROUTES.map((route) => ({
     url: `${baseUrl}${route}`,
-    lastModified: UPDATED,
+    lastModified: DEMON_ROUTES.has(route) ? DEMON_VERIFIED_AT : UPDATED,
   }));
 
   const blogEntries: MetadataRoute.Sitemap = BLOG_POSTS.map((post) => ({
