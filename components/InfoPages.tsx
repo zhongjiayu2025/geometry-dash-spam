@@ -269,6 +269,8 @@ export const SitemapPage = () => (
             { view: "/demon-list/wave-demons", label: "Wave Demons", desc: "Wave-focused Demon List references." },
             { view: "/demon-list/spam-demons", label: "Spam Demons", desc: "Rapid-input practice references." },
             { view: "/geometry-dash-clicker", label: "Geometry Dash Clicker", desc: "Local-save orb clicker game." },
+            { view: "/geometry-dash-codes", label: "Geometry Dash Codes", desc: "Vault, Vault of Secrets, Chamber of Time and Wraith codes." },
+            { view: "/geometry-dash-vault-of-secrets-codes", label: "Vault of Secrets Codes", desc: "Dedicated code list and unlock instructions." },
             { view: "/jitter-click", label: "Jitter Click Test", desc: "Jitter clicking practice." },
             { view: "/butterfly-click", label: "Butterfly Click Test", desc: "Two-finger clicking practice." },
             { view: "/drag-click", label: "Drag Click Test", desc: "Drag-click input practice." },
