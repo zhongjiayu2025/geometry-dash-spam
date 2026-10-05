@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import WaveSimulator from "../../components/WaveSimulator";
+import Breadcrumbs from "../../components/Breadcrumbs";
 
 export const metadata: Metadata = {
   title: "Geometry Dash Wave | Wave Spam Test & Trainer",
@@ -61,6 +62,7 @@ export default function GeometryDashWavePage() {
     <>
       <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(schema) }} />
       <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(faqSchema) }} />
+      <Breadcrumbs items={[{ label: "Geometry Dash Wave", href: "/geometry-dash-wave" }]} />
       <header className="mx-auto mb-8 max-w-4xl text-center">
         <p className="mb-2 text-xs font-bold uppercase tracking-[0.2em] text-blue-400">Wave practice</p>
         <h1 className="mb-4 text-3xl font-display font-bold text-white md:text-5xl">Geometry Dash Wave</h1>
