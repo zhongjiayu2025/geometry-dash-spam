@@ -2,12 +2,12 @@ import RightClickTest from "../../components/RightClickTest";
 import { Metadata } from "next";
 
 export const metadata: Metadata = {
-    title: "Right Click CPS Test | RMB Speed Benchmark",
-    description: "Test your Right Mouse Button speed. Vital for MOBA kite-mechanics and Minecraft bridging. How fast is your middle finger?",
+  title: "Right Click CPS Test | RMB Click Speed Test",
+  description:
+    "Measure right-mouse-button clicks per second with a simple browser-based RMB speed test.",
+  alternates: { canonical: "/right-click" },
 };
 
 export default function RightClickPage() {
-    return (
-        <RightClickTest />
-    );
+  return <RightClickTest />;
 }
