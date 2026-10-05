@@ -4,18 +4,20 @@ import React, { useState } from "react";
 import Link from "next/link";
 import Image from "next/image";
 import { usePathname } from "next/navigation";
-import { Activity, BookOpen, ChevronDown, Gamepad2, Keyboard, Menu, MousePointer2, Trophy, X } from "lucide-react";
+import { Activity, BookOpen, ChevronDown, Gamepad2, KeyRound, Keyboard, Menu, MousePointer2, Trophy, X } from "lucide-react";
 
 const coreItems = [
   { href: "/", label: "Spam Test", icon: Gamepad2 },
   { href: "/geometry-dash-wave", label: "Wave", icon: Activity },
   { href: "/cps-test", label: "CPS Test", icon: MousePointer2 },
   { href: "/demon-list", label: "Demon List", icon: Trophy },
-  { href: "/geometry-dash-clicker", label: "Clicker", icon: MousePointer2 },
+  { href: "/geometry-dash-codes", label: "Codes", icon: KeyRound },
   { href: "/blog", label: "Guides", icon: BookOpen },
 ];
 
 const moreItems = [
+  ["/geometry-dash-clicker", "Geometry Dash Clicker"],
+  ["/geometry-dash-vault-of-secrets-codes", "Vault of Secrets Codes"],
   ["/jitter-click", "Jitter Click"],
   ["/butterfly-click", "Butterfly Click"],
   ["/drag-click", "Drag Click"],
