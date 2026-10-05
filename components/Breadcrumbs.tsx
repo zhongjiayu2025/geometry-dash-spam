@@ -14,8 +14,29 @@ interface BreadcrumbsProps {
 }
 
 const Breadcrumbs: React.FC<BreadcrumbsProps> = ({ items }) => {
+  const schemaItems = [
+    { label: "Home", href: "/" },
+    ...items,
+  ];
+
+  const breadcrumbSchema = {
+    "@context": "https://schema.org",
+    "@type": "BreadcrumbList",
+    itemListElement: schemaItems.map((item, index) => ({
+      "@type": "ListItem",
+      position: index + 1,
+      name: item.label,
+      item: `https://geometrydashspam.cc${item.href === "/" ? "" : item.href}`,
+    })),
+  };
+
   return (
-    <nav aria-label="Breadcrumb" className="w-full max-w-5xl mx-auto mb-6">
+    <>
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumbSchema) }}
+      />
+      <nav aria-label="Breadcrumb" className="w-full max-w-5xl mx-auto mb-5">
       <ol className="flex items-center flex-wrap gap-2 text-xs md:text-sm font-mono text-slate-500">
         <li className="flex items-center gap-2">
           <Link href="/" className="hover:text-blue-400 flex items-center gap-1 transition-colors">
@@ -41,6 +62,7 @@ const Breadcrumbs: React.FC<BreadcrumbsProps> = ({ items }) => {
         ))}
       </ol>
     </nav>
+    </>
   );
 };
 
