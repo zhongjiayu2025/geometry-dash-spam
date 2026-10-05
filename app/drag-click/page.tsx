@@ -1,4 +1,5 @@
 import DragClickTest from "../../components/DragClickTest";
+import InputToolGuide from "../../components/InputToolGuide";
 import { Metadata } from "next";
 
 export const metadata: Metadata = {
@@ -32,6 +33,7 @@ export default function DragClickPage() {
         </p>
       </div>
       <DragClickTest />
+      <InputToolGuide tool="drag" />
     </>
   );
 }
