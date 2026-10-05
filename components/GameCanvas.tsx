@@ -366,6 +366,10 @@ const GameCanvas: React.FC<GameCanvasProps> = memo(({ difficulty, status, onStat
     const secondsPerBeat = 60.0 / tempo;
     const lookahead = 0.1;
 
+    if (nextNoteTimeRef.current < ctx.currentTime - 0.25) {
+        nextNoteTimeRef.current = ctx.currentTime + 0.05;
+    }
+
     while (nextNoteTimeRef.current < ctx.currentTime + lookahead) {
         const sixteenth = noteIndexRef.current % 16;
         if (sixteenth % 4 === 0) playKick(nextNoteTimeRef.current);
@@ -1074,6 +1078,27 @@ const GameCanvas: React.FC<GameCanvasProps> = memo(({ difficulty, status, onStat
       }
       return () => stopMusic();
   }, [status, startMusic, stopMusic]);
+
+  useEffect(() => {
+      const releaseInput = () => {
+          gameState.current.isHolding = false;
+      };
+
+      const handleVisibilityChange = () => {
+          if (document.hidden) {
+              releaseInput();
+          }
+          gameState.current.lastFrameTime = performance.now();
+      };
+
+      window.addEventListener('blur', releaseInput);
+      document.addEventListener('visibilitychange', handleVisibilityChange);
+
+      return () => {
+          window.removeEventListener('blur', releaseInput);
+          document.removeEventListener('visibilitychange', handleVisibilityChange);
+      };
+  }, []);
 
   useEffect(() => {
       const handleKeyDown = (e: KeyboardEvent) => {
