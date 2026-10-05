@@ -272,6 +272,8 @@ export const SitemapPage = () => (
             { view: "/geometry-dash-clicker", label: "Geometry Dash Clicker", desc: "Local-save orb clicker game." },
             { view: "/geometry-dash-codes", label: "Geometry Dash Codes", desc: "Vault, Vault of Secrets, Chamber of Time and Wraith codes." },
             { view: "/geometry-dash-vault-of-secrets-codes", label: "Vault of Secrets Codes", desc: "Dedicated code list and unlock instructions." },
+            { view: "/how-to-get-diamonds-geometry-dash", label: "How to Get Diamonds", desc: "Official diamond sources and progression routine." },
+            { view: "/how-to-get-gold-keys-geometry-dash", label: "How to Get Gold Keys", desc: "Event and Secret Room methods plus Treasure Room use." },
             { view: "/jitter-click", label: "Jitter Click Test", desc: "Jitter clicking practice." },
             { view: "/butterfly-click", label: "Butterfly Click Test", desc: "Two-finger clicking practice." },
             { view: "/drag-click", label: "Drag Click Test", desc: "Drag-click input practice." },
