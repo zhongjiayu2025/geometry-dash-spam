@@ -90,7 +90,7 @@ const metadataExpectations = {
   },
   "/demon-list": {
     title: "Geometry Dash Demon List",
-    description: "Current Geometry Dash Demon List top 50",
+    description: "Current Geometry Dash Demon List / Demonlist top 50",
     canonical: "https://geometrydashspam.cc/demon-list",
   },
   "/demon-list/spam-demons": {
@@ -424,6 +424,34 @@ for (const route of noindexUtilityRoutes) {
   }
 }
 
+const coreAuthorityRoutes = [
+  "/",
+  "/geometry-dash-wave",
+  "/cps-test",
+  "/demon-list",
+  "/geometry-dash-codes",
+  "/hardest-level",
+];
+
+const authorityLeakErrors = [];
+
+for (const route of coreAuthorityRoutes) {
+  const path = exportedPath(route);
+  if (!path) continue;
+
+  const html = readFileSync(path, "utf8");
+  for (const noindexRoute of noindexUtilityRoutes) {
+    const escaped = noindexRoute.replace(/[.*+?^${}()|[\]\\]/g, "\\const contentErrors = [];");
+    const linkPattern = new RegExp(`href=["']${escaped}(?:[#?"'][^>]*)?`, "i");
+
+    if (linkPattern.test(html)) {
+      authorityLeakErrors.push(
+        `${route}: core page links to noindex utility ${noindexRoute}`
+      );
+    }
+  }
+}
+
 const contentErrors = [];
 
 const codesExportPath = exportedPath("/geometry-dash-codes");
@@ -479,6 +507,7 @@ if (
   sitemapPolicyErrors.length ||
   sitemapMetadataErrors.length ||
   noindexErrors.length ||
+  authorityLeakErrors.length ||
   contentErrors.length
 ) {
   console.error("Static export verification failed.");
@@ -503,6 +532,11 @@ if (
   if (noindexErrors.length) {
     console.error("Noindex utility errors:");
     for (const error of noindexErrors) console.error(`- ${error}`);
+  }
+
+  if (authorityLeakErrors.length) {
+    console.error("Core-page authority leakage:");
+    for (const error of authorityLeakErrors) console.error(`- ${error}`);
   }
 
   if (contentErrors.length) {
@@ -537,5 +571,5 @@ if (
 }
 
 console.log(
-  `Static export verified: ${requiredRoutes.length} core routes, metadata checks, noindex utility policy, Wraith data-to-page checks, ${htmlFiles.length} HTML files with internal-link checks, sitemap URL/canonical/title/description/OpenGraph/indexability integrity, sitemap.xml and robots.txt.`
+  `Static export verified: ${requiredRoutes.length} core routes, metadata checks, noindex utility policy, core-page authority leakage checks, Wraith data-to-page checks, ${htmlFiles.length} HTML files with internal-link checks, sitemap URL/canonical/title/description/OpenGraph/indexability integrity, sitemap.xml and robots.txt.`
 );
