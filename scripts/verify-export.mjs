@@ -61,6 +61,8 @@ const removedGhostRoutes = [
   "/10-second-cps-test",
   "/reaction-time",
   "/stats",
+  "/blog/top-spam-levels-2026",
+  "/blog/interview-top-players",
 ];
 
 const noindexUtilityRoutes = [
@@ -261,6 +263,8 @@ const expectedRedirects = new Map([
   ["/10-second-cps-test", "/cps-test"],
   ["/reaction-time", "/reaction-test"],
   ["/stats", "/dashboard"],
+  ["/blog/top-spam-levels-2026", "/blog/notable-wave-spam-levels"],
+  ["/blog/interview-top-players", "/blog/evaluate-geometry-dash-spam-advice"],
 ]);
 
 if (existsSync(redirectsPath)) {

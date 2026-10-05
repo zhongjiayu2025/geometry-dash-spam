@@ -238,7 +238,7 @@ export const BLOG_POSTS: BlogPost[] = [
   },
   {
     id: "5",
-    slug: "top-spam-levels-2026",
+    slug: "notable-wave-spam-levels",
     title: "Notable Wave and Spam Levels in Geometry Dash",
     excerpt:
       "A non-ranking list of well-known levels associated with difficult wave control and rapid-input sections, with links back to the current Demon List.",
@@ -427,7 +427,7 @@ export const BLOG_POSTS: BlogPost[] = [
   },
   {
     id: "10",
-    slug: "interview-top-players",
+    slug: "evaluate-geometry-dash-spam-advice",
     title: "How to Evaluate Geometry Dash Spam Advice Online",
     excerpt:
       "A checklist for separating useful training advice from unsupported player claims, fake interviews and made-up performance numbers.",
