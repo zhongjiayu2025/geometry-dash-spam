@@ -170,6 +170,36 @@ function internalTargetExists(href) {
 
 collectHtmlFiles(outDir);
 
+const sitemapPath = join(outDir, "sitemap.xml");
+const sitemapRouteErrors = [];
+const sitemapPolicyErrors = [];
+
+if (existsSync(sitemapPath)) {
+  const sitemapXml = readFileSync(sitemapPath, "utf8");
+  const sitemapRoutes = [
+    ...sitemapXml.matchAll(/<loc>https:\/\/geometrydashspam\.cc([^<]*)<\/loc>/g),
+  ].map((match) => match[1] || "/");
+
+  for (const route of sitemapRoutes) {
+    if (!internalTargetExists(route)) {
+      sitemapRouteErrors.push(route);
+    }
+  }
+
+  for (const noindexRoute of ["/dashboard", "/leaderboard"]) {
+    if (sitemapRoutes.includes(noindexRoute)) {
+      sitemapPolicyErrors.push(`${noindexRoute} should not be present in sitemap.xml`);
+    }
+  }
+
+  const duplicates = sitemapRoutes.filter(
+    (route, index) => sitemapRoutes.indexOf(route) !== index
+  );
+  for (const route of [...new Set(duplicates)]) {
+    sitemapPolicyErrors.push(`duplicate sitemap URL: ${route}`);
+  }
+}
+
 const internalLinkErrors = [];
 const seenBrokenLinks = new Set();
 
@@ -194,7 +224,9 @@ if (
   unexpected.length ||
   metadataFiles.length ||
   metadataErrors.length ||
-  internalLinkErrors.length
+  internalLinkErrors.length ||
+  sitemapRouteErrors.length ||
+  sitemapPolicyErrors.length
 ) {
   console.error("Static export verification failed.");
 
@@ -223,9 +255,19 @@ if (
     }
   }
 
+  if (sitemapRouteErrors.length) {
+    console.error("Sitemap URLs without an exported target:");
+    for (const route of sitemapRouteErrors) console.error(`- ${route}`);
+  }
+
+  if (sitemapPolicyErrors.length) {
+    console.error("Sitemap policy errors:");
+    for (const error of sitemapPolicyErrors) console.error(`- ${error}`);
+  }
+
   process.exit(1);
 }
 
 console.log(
-  `Static export verified: ${requiredRoutes.length} core routes, metadata checks, ${htmlFiles.length} HTML files with internal-link checks, sitemap.xml and robots.txt.`
+  `Static export verified: ${requiredRoutes.length} core routes, metadata checks, ${htmlFiles.length} HTML files with internal-link checks, sitemap URL integrity, sitemap.xml and robots.txt.`
 );
