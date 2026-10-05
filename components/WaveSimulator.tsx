@@ -15,7 +15,7 @@ interface WaveSimulatorProps {
   variant?: 'spam' | 'wave';
 }
 
-type WavePreset = 'normal' | 'mini' | 'spam' | 'precision' | 'endless';
+type WavePreset = 'normal' | 'mini' | 'spam' | 'precision' | 'endless' | 'custom';
 
 const WAVE_PRESETS: Array<{ id: WavePreset; label: string; description: string }> = [
   { id: 'normal', label: 'Normal Wave', description: 'Balanced wave control practice.' },
@@ -54,11 +54,12 @@ const WaveSimulator: React.FC<WaveSimulatorProps> = ({ variant = 'spam' }) => {
   });
   
   const [gameStatus, setGameStatus] = useState<GameStatus>(GameStatus.Idle);
-  const [wavePreset, setWavePreset] = useState<WavePreset>('normal');
+  const [wavePreset, setWavePreset] = useState<WavePreset>('custom');
   const isWavePage = variant === 'wave';
 
   const handleDifficultySelect = (newDiff: Difficulty) => {
     setDifficulty(newDiff);
+    setWavePreset('custom');
     setGameStatus(GameStatus.Idle);
     localStorage.setItem('gd_spam_last_difficulty', newDiff);
   };
@@ -66,6 +67,7 @@ const WaveSimulator: React.FC<WaveSimulatorProps> = ({ variant = 'spam' }) => {
   const toggleEndless = () => {
     const newState = !isEndless;
     setIsEndless(newState);
+    setWavePreset('custom');
     localStorage.setItem('gd_spam_endless_mode', String(newState));
     setGameStatus(GameStatus.Idle);
   };
@@ -73,6 +75,7 @@ const WaveSimulator: React.FC<WaveSimulatorProps> = ({ variant = 'spam' }) => {
   const toggleMini = () => {
     const newState = !isMini;
     setIsMini(newState);
+    setWavePreset('custom');
     localStorage.setItem('gd_spam_mini_mode', String(newState));
     setGameStatus(GameStatus.Idle);
   };
@@ -104,6 +107,9 @@ const WaveSimulator: React.FC<WaveSimulatorProps> = ({ variant = 'spam' }) => {
       setIsEndless(true);
     }
 
+    localStorage.setItem('gd_spam_last_difficulty', preset === 'normal' || preset === 'endless' ? Difficulty.Hard : preset === 'mini' ? Difficulty.Insane : preset === 'spam' ? Difficulty.EasyDemon : Difficulty.ExtremeDemon);
+    localStorage.setItem('gd_spam_mini_mode', String(preset === 'mini' || preset === 'spam'));
+    localStorage.setItem('gd_spam_endless_mode', String(preset === 'endless'));
     setGameStatus(GameStatus.Idle);
   };
 
