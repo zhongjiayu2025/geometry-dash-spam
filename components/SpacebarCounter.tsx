@@ -3,7 +3,7 @@
 import React, { useState, useEffect, useCallback, useRef } from 'react';
 import dynamic from 'next/dynamic';
 const RelatedTools = dynamic(() => import('./RelatedTools'));
-import { Keyboard, RotateCcw, Zap, Gauge, Trophy, Volume2, VolumeX, Share2, Check } from 'lucide-react';
+import { Keyboard, RotateCcw, Zap, Trophy, Volume2, VolumeX, Share2, Check } from 'lucide-react';
 
 
 const playKeySound = (audioCtx: AudioContext | null) => {
@@ -241,83 +241,34 @@ const SpacebarCounter: React.FC = () => {
           </div>
       </div>
 
-      {/* SEO CONTENT SECTION */}
-      <section className="space-y-12 pb-12">
-          
+      <section className="space-y-8 pb-12">
           <div className="bg-slate-900/40 border border-white/5 rounded-2xl p-8 md:p-12">
              <h2 className="text-3xl font-display font-bold text-white mb-6 flex items-center gap-3">
-                 <Keyboard className="w-8 h-8 text-purple-500"/> Why is the Spacebar King in Geometry Dash?
+                 <Keyboard className="w-8 h-8 text-purple-500"/> Spacebar spam as a separate input skill
              </h2>
-             <div className="prose prose-invert prose-lg max-w-none text-slate-300">
-                 <p>
-                     While the mouse allows for micro-adjustments in ship flying, the <strong>spacebar</strong> is often preferred for "Endurance Spam" sections in Geometry Dash. This is because the thumb is the strongest digit on the human hand, capable of sustaining repetitive motion longer than the index finger without cramping.
-                 </p>
-                 <div className="grid grid-cols-1 md:grid-cols-2 gap-8 mt-6">
-                     <div>
-                         <h4 className="text-white font-bold mb-2">Advantages of Spacebar Spam:</h4>
-                         <ul className="list-disc pl-5 space-y-2 text-sm">
-                             <li><strong>Higher Stamina:</strong> The thumb has more muscle mass.</li>
-                             <li><strong>Mechanical Switches:</strong> Keyboards often have faster actuation points (e.g., Cherry MX Silver) compared to standard mouse switches.</li>
-                             <li><strong>Stability:</strong> Pressing a keyboard key doesn't move your crosshair/aim like clicking a mouse might.</li>
-                         </ul>
-                     </div>
-                     <div>
-                         <h4 className="text-white font-bold mb-2">When to use it:</h4>
-                         <p className="text-sm">
-                             Use the spacebar for long, straight wave corridors or UFO sections where rhythm is key. Avoid it for rapid direction changes where the travel distance of the key (3-4mm) might be too slow compared to a mouse click (0.5mm).
-                         </p>
-                     </div>
-                 </div>
+             <div className="space-y-4 text-slate-300 leading-relaxed">
+               <p>
+                 Some players prefer a keyboard key while others prefer a mouse button. The useful comparison is personal: which input lets you keep a repeatable rhythm without losing control?
+               </p>
+               <p>
+                 This test counts registered spacebar presses over ten seconds. It does not measure switch actuation distance, keyboard scan rate or end-to-end hardware latency.
+               </p>
              </div>
           </div>
 
-          {/* TABLE SEO OPTIMIZATION: Link Bait for "Best Switches for Spam" */}
-          <div className="bg-slate-900/40 border border-white/5 rounded-2xl p-8">
-              <h3 className="text-xl font-bold text-white mb-4 flex items-center gap-2">
-                  <Gauge className="w-5 h-5 text-purple-400" /> Best Keyboard Switches for Speed Spam
-              </h3>
-              <p className="text-sm text-slate-400 mb-6">
-                  Not all mechanical switches are equal. For Geometry Dash spam, you need a high actuation point and light operating force.
-              </p>
-              
-              <div className="overflow-x-auto">
-                  <table className="w-full text-left border-collapse">
-                      <thead>
-                          <tr className="border-b border-white/10 text-slate-500 text-xs uppercase tracking-wider">
-                              <th className="p-3 font-medium">Switch Type</th>
-                              <th className="p-3 font-medium">Actuation Distance</th>
-                              <th className="p-3 font-medium">Force</th>
-                              <th className="p-3 font-medium">Spam Rating</th>
-                          </tr>
-                      </thead>
-                      <tbody className="text-sm text-slate-300">
-                          <tr className="border-b border-white/5 bg-white/5">
-                              <td className="p-3 font-bold text-white">Cherry MX Silver (Speed)</td>
-                              <td className="p-3">1.2 mm</td>
-                              <td className="p-3">45g</td>
-                              <td className="p-3 text-purple-400">★★★★★</td>
-                          </tr>
-                          <tr className="border-b border-white/5">
-                              <td className="p-3 font-bold text-white">Gateron Red</td>
-                              <td className="p-3">2.0 mm</td>
-                              <td className="p-3">45g</td>
-                              <td className="p-3 text-purple-400">★★★★☆</td>
-                          </tr>
-                          <tr className="border-b border-white/5 bg-white/5">
-                              <td className="p-3 font-bold text-white">Razer Opto-Mechanical</td>
-                              <td className="p-3">1.0 mm</td>
-                              <td className="p-3">40g</td>
-                              <td className="p-3 text-purple-400">★★★★★</td>
-                          </tr>
-                          <tr className="border-b border-white/5">
-                              <td className="p-3 font-bold text-white">Cherry MX Blue (Clicky)</td>
-                              <td className="p-3">2.2 mm</td>
-                              <td className="p-3">60g</td>
-                              <td className="p-3 text-slate-500">★★☆☆☆</td>
-                          </tr>
-                      </tbody>
-                  </table>
-              </div>
+          <div className="grid gap-4 md:grid-cols-3">
+            <div className="rounded-xl border border-white/10 bg-slate-900/30 p-5">
+              <h3 className="font-bold text-white mb-2">Compare the same duration</h3>
+              <p className="text-sm leading-6 text-slate-400">Use repeated 10-second runs when comparing keyboards or techniques.</p>
+            </div>
+            <div className="rounded-xl border border-white/10 bg-slate-900/30 p-5">
+              <h3 className="font-bold text-white mb-2">Separate speed from hardware specs</h3>
+              <p className="text-sm leading-6 text-slate-400">Actuation force, travel and scan behavior vary by exact keyboard and switch implementation.</p>
+            </div>
+            <div className="rounded-xl border border-white/10 bg-slate-900/30 p-5">
+              <h3 className="font-bold text-white mb-2">Stop if it hurts</h3>
+              <p className="text-sm leading-6 text-slate-400">Repeated high-effort pressing can become uncomfortable; take breaks instead of forcing longer sessions.</p>
+            </div>
           </div>
 
           <RelatedTools currentTool="spacebar" />
