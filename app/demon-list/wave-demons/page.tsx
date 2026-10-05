@@ -15,7 +15,7 @@ export const metadata: Metadata = {
     type: "website",
   },
   twitter: {
-    card: "summary",
+    card: "summary_large_image",
     title: "Geometry Dash Wave Demons – Wave Practice Guide",
     description: "Explore wave-focused Geometry Dash demon practice references with current Pointercrate positions, source date and a dedicated wave trainer.",
   },
