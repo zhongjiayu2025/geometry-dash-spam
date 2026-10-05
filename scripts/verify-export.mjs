@@ -85,6 +85,16 @@ const metadataExpectations = {
     description: "Geometry Dash codes for The Vault",
     canonical: "https://geometrydashspam.cc/geometry-dash-codes",
   },
+  "/geometry-dash-vault-of-secrets-codes": {
+    title: "Geometry Dash Vault of Secrets Codes",
+    description: "Geometry Dash Vault of Secrets codes",
+    canonical: "https://geometrydashspam.cc/geometry-dash-vault-of-secrets-codes",
+  },
+  "/how-to-get-gold-keys-geometry-dash": {
+    title: "How to Get Gold Keys in Geometry Dash",
+    description: "How to get Gold Keys in Geometry Dash",
+    canonical: "https://geometrydashspam.cc/how-to-get-gold-keys-geometry-dash",
+  },
   "/geometry-dash-difficulty-faces": {
     title: "Geometry Dash Difficulty Faces",
     description: "Geometry Dash difficulty faces explained",
