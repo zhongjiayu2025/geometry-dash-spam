@@ -33,8 +33,6 @@ export const metadata: Metadata = {
     title: demonListTitle,
     description: demonListDescription,
     url: "https://geometrydashspam.cc/demon-list",
-    isPartOf: { "@id": "https://geometrydashspam.cc/#website" },
-    publisher: { "@id": "https://geometrydashspam.cc/#organization" },
     type: "website",
   },
   twitter: {
@@ -50,6 +48,8 @@ export default function DemonListPage() {
     "@type": "CollectionPage",
     name: "Geometry Dash Demon List",
     url: "https://geometrydashspam.cc/demon-list",
+    isPartOf: { "@id": "https://geometrydashspam.cc/#website" },
+    publisher: { "@id": "https://geometrydashspam.cc/#organization" },
     dateModified: DEMON_VERIFIED_AT,
     isBasedOn: DEMON_SOURCE_URL,
     mainEntity: {
