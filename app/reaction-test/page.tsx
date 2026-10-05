@@ -6,6 +6,17 @@ export const metadata: Metadata = {
   description:
     "Measure browser-based visual response time by clicking when the screen changes. Results depend on your device, display and browser.",
   alternates: { canonical: "/reaction-test" },
+  openGraph: {
+    title: "Reaction Time Test (ms) | Visual Response Test",
+    description: "Measure browser-based visual response time by clicking when the screen changes. Results depend on your device, display and browser.",
+    url: "https://geometrydashspam.cc/reaction-test",
+    type: "website",
+  },
+  twitter: {
+    card: "summary",
+    title: "Reaction Time Test (ms) | Visual Response Test",
+    description: "Measure browser-based visual response time by clicking when the screen changes. Results depend on your device, display and browser.",
+  },
 };
 
 export default function ReactionTestPage() {
