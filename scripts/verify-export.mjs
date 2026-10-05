@@ -106,6 +106,20 @@ for (const [route, expected] of Object.entries(metadataExpectations)) {
   if (!html.includes(`rel="canonical" href="${expected.canonical}"`)) {
     metadataErrors.push(`${route}: canonical is not "${expected.canonical}"`);
   }
+
+  if (
+    route !== "/" &&
+    !html.includes(`property="og:url" content="${expected.canonical}"`)
+  ) {
+    metadataErrors.push(`${route}: og:url is not page-specific`);
+  }
+
+  if (
+    route !== "/" &&
+    !html.match(/<meta[^>]+property="og:title"[^>]+content="[^"]+"/i)
+  ) {
+    metadataErrors.push(`${route}: missing page-specific og:title`);
+  }
 }
 
 if (missing.length || unexpected.length || metadataFiles.length || metadataErrors.length) {
