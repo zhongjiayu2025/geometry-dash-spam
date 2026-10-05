@@ -22,6 +22,7 @@ export default function sitemap(): MetadataRoute.Sitemap {
     "/how-to-get-diamonds-geometry-dash",
     "/how-to-get-gold-keys-geometry-dash",
     "/geometry-dash-difficulty-faces",
+    "/geometry-dash-stuttering-high-end-pc",
     "/jitter-click",
     "/butterfly-click",
     "/drag-click",
