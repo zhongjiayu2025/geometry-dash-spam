@@ -33,6 +33,8 @@ const RightClickTest: React.FC = () => {
   
   const timerRef = useRef<number | null>(null);
   const audioCtxRef = useRef<AudioContext | null>(null);
+  const clicksRef = useRef(0);
+  const startTimeRef = useRef(0);
 
   useEffect(() => {
     if (typeof window !== 'undefined') {
@@ -48,8 +50,11 @@ const RightClickTest: React.FC = () => {
   }, []);
 
   const startTest = () => {
+    const now = performance.now();
     setActive(true);
     setFinished(false);
+    clicksRef.current = 1;
+    startTimeRef.current = now;
     setClicks(1);
     setTimeLeft(10.00);
   };
@@ -66,13 +71,16 @@ const RightClickTest: React.FC = () => {
       startTest();
       return;
     }
-    setClicks(c => c + 1);
+    clicksRef.current += 1;
+    setClicks(clicksRef.current);
   };
 
   const reset = (e?: React.MouseEvent) => {
     e?.stopPropagation();
     setActive(false);
     setFinished(false);
+    clicksRef.current = 0;
+    startTimeRef.current = 0;
     setClicks(0);
     setTimeLeft(10.00);
     if (timerRef.current) clearInterval(timerRef.current);
@@ -80,34 +88,35 @@ const RightClickTest: React.FC = () => {
 
   useEffect(() => {
     if (active && !finished) {
-      const startTime = Date.now();
       timerRef.current = window.setInterval(() => {
-        const elapsed = (Date.now() - startTime) / 1000;
+        const elapsed = (performance.now() - startTimeRef.current) / 1000;
         const remaining = Math.max(0, 10 - elapsed);
         setTimeLeft(remaining);
-        
+
         if (remaining <= 0) {
           setFinished(true);
           setActive(false);
           if (timerRef.current) clearInterval(timerRef.current);
-          
+
+          const finalClicks = clicksRef.current;
+          setClicks(finalClicks);
           setBestCps(prev => {
-              const finalCps = clicks / 10;
-              if (prev === null || finalCps > prev) {
-                  localStorage.setItem('rightClickBest', finalCps.toString());
-                  return finalCps;
-              }
-              return prev;
+            const finalCps = finalClicks / 10;
+            if (prev === null || finalCps > prev) {
+              localStorage.setItem('rightClickBest', finalCps.toString());
+              return finalCps;
+            }
+            return prev;
           });
         }
-      }, 10);
+      }, 33);
     }
     return () => {
       if (timerRef.current) clearInterval(timerRef.current);
     };
-  }, [active, finished, clicks]);
+  }, [active, finished]);
 
-  const cps = finished ? (clicks / 10).toFixed(2) : (active ? (clicks / (10 - timeLeft)).toFixed(1) : "0.00");
+  const cps = finished ? (clicks / 10).toFixed(2) : (active ? (clicks / Math.max(0.05, 10 - timeLeft)).toFixed(1) : "0.00");
 
   const shareScore = async (e: React.MouseEvent) => {
     e.stopPropagation();
@@ -134,7 +143,7 @@ const RightClickTest: React.FC = () => {
             Right Click CPS Test
          </h1>
          <p className="text-slate-400 max-w-2xl mx-auto">
-            Most people never test their right mouse button. How fast is your middle finger?
+            Measure your right-mouse-button click speed over a repeatable 10-second test.
          </p>
       </div>
 
@@ -239,12 +248,12 @@ const RightClickTest: React.FC = () => {
         <h2 className="text-3xl font-display font-bold text-white mb-6">Why Test Right Click CPS?</h2>
         <div className="space-y-4 text-slate-300">
             <p>
-                While Geometry Dash primarily uses the Left Mouse Button (LMB) or Spacebar, testing your <strong>Right Click CPS</strong> is essential for overall gaming health.
+                While Geometry Dash primarily uses the Left Mouse Button (LMB) or Spacebar, a <strong>Right Click CPS</strong> test can help you compare how quickly the right button registers repeated clicks.
             </p>
             <ul className="list-disc pl-5 space-y-2">
                 <li><strong>MOBA Games:</strong> Games like League of Legends and Dota 2 rely almost exclusively on rapid right-clicking for movement.</li>
                 <li><strong>Minecraft Bridging:</strong> Techniques like God-bridging often require high RMB CPS.</li>
-                <li><strong>Switch Health:</strong> Often the right mouse switch wears out differently than the left. This test helps you identify if your right switch is missing clicks or double-clicking inadvertently.</li>
+                <li><strong>Switch Health:</strong> Repeated tests can reveal obvious inconsistencies, but this browser tool cannot diagnose switch wear on its own.</li>
             </ul>
         </div>
       </section>
