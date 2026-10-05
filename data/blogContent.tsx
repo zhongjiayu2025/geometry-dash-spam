@@ -7,6 +7,7 @@ export interface BlogPost {
   title: string;
   excerpt: string;
   date: string;
+  updated?: string;
   readTime: string;
   coverImage: string;
   content: React.ReactNode;
@@ -27,7 +28,8 @@ export const BLOG_POSTS: BlogPost[] = [
     title: "What Is Spam in Geometry Dash? Wave, CPS and Control Explained",
     excerpt:
       "A practical explanation of Geometry Dash spam, why wave spam is difficult, and how CPS and timing consistency fit together.",
-    date: "October 5, 2026",
+    date: "January 10, 2026",
+    updated: "October 5, 2026",
     readTime: "7 min read",
     coverImage:
       "https://images.unsplash.com/photo-1550745165-9bc0b252726f?q=80&w=2070&auto=format&fit=crop",
@@ -99,7 +101,8 @@ export const BLOG_POSTS: BlogPost[] = [
     title: "How to Improve CPS for Geometry Dash Without Losing Control",
     excerpt:
       "A practical CPS training routine built around repeatable tests, click timing and short practice blocks rather than unsupported target numbers.",
-    date: "October 5, 2026",
+    date: "January 10, 2026",
+    updated: "October 5, 2026",
     readTime: "7 min read",
     coverImage:
       "https://images.unsplash.com/photo-1614726365345-0377fa1f513a?q=80&w=2070&auto=format&fit=crop",
@@ -166,7 +169,8 @@ export const BLOG_POSTS: BlogPost[] = [
     title: "How to Choose a Mouse for Geometry Dash Spam",
     excerpt:
       "What actually matters when comparing mice for Geometry Dash: click feel, debounce behavior, polling, shape and repeatable comfort.",
-    date: "October 5, 2026",
+    date: "January 10, 2026",
+    updated: "October 5, 2026",
     readTime: "6 min read",
     coverImage:
       "https://images.unsplash.com/photo-1527814050087-3793815479db?q=80&w=2028&auto=format&fit=crop",
@@ -203,7 +207,8 @@ export const BLOG_POSTS: BlogPost[] = [
     title: "Wave vs UFO vs Ship Spam: How the Input Skills Differ",
     excerpt:
       "Wave, UFO and ship sections can all involve rapid inputs, but the control problem is different in each mode.",
-    date: "October 5, 2026",
+    date: "January 10, 2026",
+    updated: "October 5, 2026",
     readTime: "5 min read",
     coverImage:
       "https://images.unsplash.com/photo-1518770660439-4636190af475?q=80&w=2070&auto=format&fit=crop",
@@ -237,7 +242,8 @@ export const BLOG_POSTS: BlogPost[] = [
     title: "Notable Wave and Spam Levels in Geometry Dash",
     excerpt:
       "A non-ranking list of well-known levels associated with difficult wave control and rapid-input sections, with links back to the current Demon List.",
-    date: "October 5, 2026",
+    date: "January 10, 2026",
+    updated: "October 5, 2026",
     readTime: "6 min read",
     coverImage:
       "https://images.unsplash.com/photo-1535905557558-afc4877a26fc?q=80&w=2574&auto=format&fit=crop",
@@ -273,7 +279,8 @@ export const BLOG_POSTS: BlogPost[] = [
     title: "30-Day Geometry Dash Spam Practice Plan",
     excerpt:
       "A conservative month-long practice structure for improving consistency, wave control and test repeatability without promising a fixed CPS gain.",
-    date: "October 5, 2026",
+    date: "January 10, 2026",
+    updated: "October 5, 2026",
     readTime: "6 min read",
     coverImage:
       "https://images.unsplash.com/photo-1517836357463-d25dfeac3438?q=80&w=2070&auto=format&fit=crop",
@@ -316,7 +323,8 @@ export const BLOG_POSTS: BlogPost[] = [
     title: "Why Click Timing Consistency Matters in Geometry Dash",
     excerpt:
       "A measurement-focused explanation of click intervals, variance and why stable timing can matter more than a one-run CPS peak.",
-    date: "October 5, 2026",
+    date: "January 10, 2026",
+    updated: "October 5, 2026",
     readTime: "5 min read",
     coverImage:
       "https://images.unsplash.com/photo-1532094349884-543bc11b234d?q=80&w=2070&auto=format&fit=crop",
@@ -350,7 +358,8 @@ export const BLOG_POSTS: BlogPost[] = [
     title: "Mobile vs PC for Geometry Dash Spam: What Actually Changes",
     excerpt:
       "A practical comparison of touch, mouse and keyboard input without assuming one platform is always faster.",
-    date: "October 5, 2026",
+    date: "January 10, 2026",
+    updated: "October 5, 2026",
     readTime: "5 min read",
     coverImage:
       "https://images.unsplash.com/photo-1512941937669-90a1b58e7e9c?q=80&w=2070&auto=format&fit=crop",
@@ -380,7 +389,8 @@ export const BLOG_POSTS: BlogPost[] = [
     title: "10 Common Geometry Dash Spam Mistakes and How to Fix Them",
     excerpt:
       "Ten practical reasons spam practice becomes inconsistent, from chasing peak CPS to changing settings too often.",
-    date: "October 5, 2026",
+    date: "January 10, 2026",
+    updated: "October 5, 2026",
     readTime: "6 min read",
     coverImage:
       "https://images.unsplash.com/photo-1455849318743-b2233052fcff?q=80&w=2069&auto=format&fit=crop",
@@ -421,7 +431,8 @@ export const BLOG_POSTS: BlogPost[] = [
     title: "How to Evaluate Geometry Dash Spam Advice Online",
     excerpt:
       "A checklist for separating useful training advice from unsupported player claims, fake interviews and made-up performance numbers.",
-    date: "October 5, 2026",
+    date: "January 10, 2026",
+    updated: "October 5, 2026",
     readTime: "5 min read",
     coverImage:
       "https://images.unsplash.com/photo-1542751371-adc38448a05e?q=80&w=2070&auto=format&fit=crop",
