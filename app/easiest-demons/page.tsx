@@ -6,6 +6,17 @@ export const metadata: Metadata = {
   description:
     "A beginner-focused Geometry Dash Easy Demon guide with common starter picks, skill focus and a practical progression path.",
   alternates: { canonical: "/easiest-demons" },
+  openGraph: {
+    title: "Easiest Demons in Geometry Dash – Beginner Practice Guide",
+    description: "A beginner-focused Geometry Dash Easy Demon guide with common starter picks, skill focus and a practical progression path.",
+    url: "https://geometrydashspam.cc/easiest-demons",
+    type: "website",
+  },
+  twitter: {
+    card: "summary",
+    title: "Easiest Demons in Geometry Dash – Beginner Practice Guide",
+    description: "A beginner-focused Geometry Dash Easy Demon guide with common starter picks, skill focus and a practical progression path.",
+  },
 };
 
 const recommendations = [
