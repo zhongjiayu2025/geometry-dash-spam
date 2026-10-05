@@ -281,7 +281,7 @@ const ButterflyClickTest: React.FC = () => {
         <div className="bg-gradient-to-r from-purple-900/20 to-pink-900/20 border border-pink-500/20 rounded-2xl p-8">
              <h3 className="text-2xl font-bold text-white mb-4">Why use Butterfly Clicking in Geometry Dash?</h3>
              <p className="text-slate-300 leading-relaxed">
-                Unlike Minecraft PVP where pure speed matters, Geometry Dash requires consistency. Butterfly clicking is excellent for <strong>Endurance Spam</strong> (long wave sections) because it splits the workload between two fingers. Splitting inputs between two fingers may feel easier for some players, but sustainable speed differs by person and setup.
+                Butterfly clicking splits repeated inputs between two fingers, which may feel more sustainable or controllable for some players during longer rapid-input sections. That does not make it universally better for Geometry Dash: compare it with your normal method using the same device, test length and wave difficulty, then keep the technique that produces the most repeatable control.
              </p>
         </div>
 
