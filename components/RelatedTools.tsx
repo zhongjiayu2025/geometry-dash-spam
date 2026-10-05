@@ -197,7 +197,7 @@ type ToolKey = keyof typeof TOOLS;
 const RECOMMENDATIONS: Record<string, ToolKey[]> = {
   game: ["wave", "cps", "demonList"],
   wave: ["game", "cps", "demonList"],
-  cps: ["game", "jitter", "butterfly"],
+  cps: ["game", "wave", "demonList"],
   jitter: ["cps", "butterfly", "game"],
   butterfly: ["cps", "jitter", "game"],
   dragClick: ["cps", "doubleClick", "game"],
