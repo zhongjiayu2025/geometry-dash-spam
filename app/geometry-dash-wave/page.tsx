@@ -15,7 +15,7 @@ export const metadata: Metadata = {
     type: "website",
   },
   twitter: {
-    card: "summary",
+    card: "summary_large_image",
     title: "Geometry Dash Wave – Play Online Wave Spam Trainer",
     description: "Practice Geometry Dash wave and wave spam online with normal, mini, precision and endless training modes. Compare CPS, timing and control in your browser.",
   },
