@@ -12,7 +12,10 @@ interface UserStats {
     jitterCps: number | null;
     butterflyCps: number | null;
     rightClickCps: number | null;
+    dragPeakCps: number | null;
     spacebarCps: number | null;
+    reactionMs: number | null;
+    soundReactionMs: number | null;
     aimScore: number | null;
     typingWpm: number | null;
     chimpScore: number | null;
@@ -25,7 +28,10 @@ export default function PersonalStats() {
         jitterCps: null,
         butterflyCps: null,
         rightClickCps: null,
+        dragPeakCps: null,
         spacebarCps: null,
+        reactionMs: null,
+        soundReactionMs: null,
         aimScore: null,
         typingWpm: null,
         chimpScore: null,
@@ -56,10 +62,13 @@ export default function PersonalStats() {
                 jitterCps: loadStat('jitterClickBest'),
                 butterflyCps: loadStat('butterflyClickBest'),
                 rightClickCps: loadStat('rightClickBest'),
+                dragPeakCps: loadStat('dragClickBest'),
                 spacebarCps: loadStat('spacebarBest'),
+                reactionMs: loadStat('reactionBestScore'),
+                soundReactionMs: loadStat('soundReactionBest'),
                 aimScore: loadStat('aimTrainerBest'),
                 typingWpm: loadStat('typingTestBestWpm'),
-                chimpScore: loadStat('chimpTestBest'),
+                chimpScore: loadStat('chimpBestScore'),
                 visualMemoryScore: loadStat('visualMemoryBest')
             });
         }
@@ -71,10 +80,13 @@ export default function PersonalStats() {
             localStorage.removeItem('jitterClickBest');
             localStorage.removeItem('butterflyClickBest');
             localStorage.removeItem('rightClickBest');
+            localStorage.removeItem('dragClickBest');
             localStorage.removeItem('spacebarBest');
+            localStorage.removeItem('reactionBestScore');
+            localStorage.removeItem('soundReactionBest');
             localStorage.removeItem('aimTrainerBest');
             localStorage.removeItem('typingTestBestWpm');
-            localStorage.removeItem('chimpTestBest');
+            localStorage.removeItem('chimpBestScore');
             localStorage.removeItem('visualMemoryBest');
             
             setStats({
@@ -82,7 +94,10 @@ export default function PersonalStats() {
                 jitterCps: null,
                 butterflyCps: null,
                 rightClickCps: null,
+                dragPeakCps: null,
                 spacebarCps: null,
+                reactionMs: null,
+                soundReactionMs: null,
                 aimScore: null,
                 typingWpm: null,
                 chimpScore: null,
@@ -165,6 +180,9 @@ export default function PersonalStats() {
                 <StatCard title="Jitter Click Best" value={stats.jitterCps?.toFixed(2)} unit="CPS" icon={Activity} href="/jitter-click" emptyText="Try the 10s Jitter click test" />
                 <StatCard title="Butterfly Click Best" value={stats.butterflyCps?.toFixed(2)} unit="CPS" icon={MousePointer2} href="/butterfly-click" emptyText="Try the 10s Butterfly test" />
                 <StatCard title="Right Click Best" value={stats.rightClickCps?.toFixed(2)} unit="CPS" icon={MousePointer2} href="/right-click" emptyText="Try the Right Click test" />
+                <StatCard title="Drag Click Peak" value={stats.dragPeakCps?.toFixed(0)} unit="CPS" icon={MousePointer2} href="/drag-click" emptyText="Try the Drag Click test" />
+                <StatCard title="Visual Reaction Best" value={stats.reactionMs?.toFixed(0)} unit="ms" icon={Timer} href="/reaction-test" emptyText="Try the visual reaction test" />
+                <StatCard title="Sound Reaction Best" value={stats.soundReactionMs?.toFixed(0)} unit="ms" icon={Timer} href="/sound-reaction" emptyText="Try the audio reaction test" />
                 
                 {/* Aim & Keyboard */}
                 <StatCard title="Aim Trainer Best" value={stats.aimScore} unit="Targets" icon={Target} href="/aim-trainer" emptyText="Play the 30s Aim challenge" />
