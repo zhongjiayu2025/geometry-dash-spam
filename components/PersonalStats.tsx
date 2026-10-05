@@ -15,6 +15,7 @@ interface WaveRun {
     clicks: number;
     result: "won" | "lost";
     timestamp: number;
+    mode: string;
 }
 
 interface UserStats {
@@ -75,7 +76,26 @@ export default function PersonalStats() {
                 if (!key?.startsWith('gd_spam_runs_')) continue;
 
                 const stored = loadObj(key);
-                if (Array.isArray(stored)) waveRuns.push(...stored);
+                if (Array.isArray(stored)) {
+                    const suffix = key.slice('gd_spam_runs_'.length);
+                    const parts = suffix.split('_');
+                    const inputMode = parts.at(-1) === 'mini' ? 'Mini' : 'Normal';
+                    const runMode = parts.at(-2) === 'endless' ? 'Endless' : '15s';
+                    const difficulty = parts.slice(0, -2).join('_') || 'Unknown';
+
+                    waveRuns.push(
+                        ...stored.map((run: Partial<WaveRun>) => ({
+                            time: Number(run.time || 0),
+                            averageCps: Number(run.averageCps || 0),
+                            peakCps: Number(run.peakCps || 0),
+                            timingSd: Number(run.timingSd || 0),
+                            clicks: Number(run.clicks || 0),
+                            result: run.result === 'won' ? 'won' : 'lost',
+                            timestamp: Number(run.timestamp || 0),
+                            mode: run.mode || `${difficulty} · ${inputMode} · ${runMode}`,
+                        }))
+                    );
+                }
             }
             waveRuns.sort((a, b) => (b.timestamp || 0) - (a.timestamp || 0));
 
@@ -143,15 +163,9 @@ export default function PersonalStats() {
     if (!mounted) return null;
 
     const recentWaveRuns = stats.waveRuns.slice(0, 10);
-    const waveBest = stats.waveRuns.length
-        ? Math.max(...stats.waveRuns.map((run) => run.time))
-        : null;
-    const waveAverageTime = recentWaveRuns.length
-        ? recentWaveRuns.reduce((sum, run) => sum + run.time, 0) / recentWaveRuns.length
-        : null;
-    const waveAverageCps = recentWaveRuns.length
-        ? recentWaveRuns.reduce((sum, run) => sum + run.averageCps, 0) / recentWaveRuns.length
-        : null;
+    const latestWaveRun = recentWaveRuns[0] ?? null;
+    const completedWaveRuns = stats.waveRuns.filter((run) => run.result === 'won').length;
+    const recentModes = new Set(recentWaveRuns.map((run) => run.mode)).size;
 
     const StatCard = ({ title, value, unit, icon: Icon, href, emptyText }: any) => {
         const hasValue = value !== null && value !== undefined && !isNaN(value);
@@ -220,26 +234,44 @@ export default function PersonalStats() {
                     </div>
 
                     {stats.waveRuns.length ? (
-                        <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
-                            <div className="rounded-xl border border-white/5 bg-black/30 p-4">
-                                <div className="text-xs uppercase tracking-wider text-slate-500">Saved Runs</div>
-                                <div className="mt-1 text-3xl font-display font-bold text-white">{stats.waveRuns.length}</div>
+                        <>
+                            <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
+                                <div className="rounded-xl border border-white/5 bg-black/30 p-4">
+                                    <div className="text-xs uppercase tracking-wider text-slate-500">Saved Runs</div>
+                                    <div className="mt-1 text-3xl font-display font-bold text-white">{stats.waveRuns.length}</div>
+                                </div>
+                                <div className="rounded-xl border border-white/5 bg-black/30 p-4">
+                                    <div className="text-xs uppercase tracking-wider text-slate-500">Completed Runs</div>
+                                    <div className="mt-1 text-3xl font-display font-bold text-white">{completedWaveRuns}</div>
+                                </div>
+                                <div className="rounded-xl border border-white/5 bg-black/30 p-4">
+                                    <div className="text-xs uppercase tracking-wider text-slate-500">Latest Survival</div>
+                                    <div className="mt-1 text-3xl font-display font-bold text-white">{latestWaveRun?.time.toFixed(2)}s</div>
+                                    <div className="mt-1 text-xs text-slate-500">{latestWaveRun?.mode}</div>
+                                </div>
+                                <div className="rounded-xl border border-white/5 bg-black/30 p-4">
+                                    <div className="text-xs uppercase tracking-wider text-slate-500">Latest CPS</div>
+                                    <div className="mt-1 text-3xl font-display font-bold text-white">{latestWaveRun?.averageCps.toFixed(2)}</div>
+                                    <div className="mt-1 text-xs text-slate-500">{recentModes} mode{recentModes === 1 ? '' : 's'} in recent history</div>
+                                </div>
                             </div>
-                            <div className="rounded-xl border border-white/5 bg-black/30 p-4">
-                                <div className="text-xs uppercase tracking-wider text-slate-500">Best Survival</div>
-                                <div className="mt-1 text-3xl font-display font-bold text-white">{waveBest?.toFixed(2)}s</div>
+
+                            <div className="mt-5 grid gap-2">
+                                {recentWaveRuns.slice(0, 5).map((run, index) => (
+                                    <div key={`${run.timestamp}-${index}`} className="flex flex-col gap-2 rounded-xl border border-white/5 bg-black/20 p-3 sm:flex-row sm:items-center sm:justify-between">
+                                        <div>
+                                            <div className="text-sm font-semibold text-white">{run.mode}</div>
+                                            <div className="text-xs text-slate-500">{run.result === 'won' ? 'Completed' : 'Crashed'} · {run.clicks} inputs</div>
+                                        </div>
+                                        <div className="flex gap-4 text-xs font-mono text-slate-300">
+                                            <span>{run.time.toFixed(2)}s</span>
+                                            <span>{run.averageCps.toFixed(2)} CPS</span>
+                                            <span>{run.peakCps.toFixed(2)} peak</span>
+                                        </div>
+                                    </div>
+                                ))}
                             </div>
-                            <div className="rounded-xl border border-white/5 bg-black/30 p-4">
-                                <div className="text-xs uppercase tracking-wider text-slate-500">Recent Avg Survival</div>
-                                <div className="mt-1 text-3xl font-display font-bold text-white">{waveAverageTime?.toFixed(2)}s</div>
-                                <div className="mt-1 text-xs text-slate-500">last {recentWaveRuns.length} saved runs</div>
-                            </div>
-                            <div className="rounded-xl border border-white/5 bg-black/30 p-4">
-                                <div className="text-xs uppercase tracking-wider text-slate-500">Recent Avg CPS</div>
-                                <div className="mt-1 text-3xl font-display font-bold text-white">{waveAverageCps?.toFixed(2)}</div>
-                                <div className="mt-1 text-xs text-slate-500">browser-local only</div>
-                            </div>
-                        </div>
+                        </>
                     ) : (
                         <p className="text-sm leading-6 text-slate-400">
                             No saved spam runs yet. Complete or crash a run to start a browser-only training history.
