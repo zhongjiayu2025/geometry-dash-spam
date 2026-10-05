@@ -6,6 +6,17 @@ export const metadata: Metadata = {
   description:
     "Measure browser-observed mouse-wheel scrolling speed during a timed test.",
   alternates: { canonical: "/scroll-test" },
+  openGraph: {
+    title: "Scroll Speed Test | Mouse Wheel Speed Test",
+    description: "Measure browser-observed mouse-wheel scrolling speed during a timed test.",
+    url: "https://geometrydashspam.cc/scroll-test",
+    type: "website",
+  },
+  twitter: {
+    card: "summary",
+    title: "Scroll Speed Test | Mouse Wheel Speed Test",
+    description: "Measure browser-observed mouse-wheel scrolling speed during a timed test.",
+  },
 };
 
 export default function ScrollTestPage() {
