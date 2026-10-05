@@ -6,6 +6,17 @@ export const metadata: Metadata = {
   description:
     "Practice browser-based mouse precision and target clicking with a lightweight aim trainer.",
   alternates: { canonical: "/aim-trainer" },
+  openGraph: {
+    title: "Aim Trainer | Mouse Accuracy & Precision Practice",
+    description: "Practice browser-based mouse precision and target clicking with a lightweight aim trainer.",
+    url: "https://geometrydashspam.cc/aim-trainer",
+    type: "website",
+  },
+  twitter: {
+    card: "summary",
+    title: "Aim Trainer | Mouse Accuracy & Precision Practice",
+    description: "Practice browser-based mouse precision and target clicking with a lightweight aim trainer.",
+  },
 };
 
 export default function AimTrainerPage() {
