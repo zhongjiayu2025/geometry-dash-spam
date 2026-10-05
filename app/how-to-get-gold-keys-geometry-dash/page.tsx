@@ -1,11 +1,13 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import Breadcrumbs from "../../components/Breadcrumbs";
+import { VAULT_CODES_CHECKED_AT, WRAITH_CODES } from "../../data/vaultCodes";
 
 const COLLECTIBLES_SOURCE = "https://geometrydash.wiki.gg/wiki/Collectibles";
 const EVENT_SOURCE = "https://geometrydash.wiki.gg/wiki/Event_Level";
 const TREASURE_SOURCE = "https://geometrydash.wiki.gg/wiki/Treasure_Room";
-const CHECKED_AT = "2026-10-05";
+const CHECKED_AT = VAULT_CODES_CHECKED_AT;
+const CURRENT_GOLD_KEY_WRAITH_CODES = WRAITH_CODES.filter((item) => item.reward.includes("Gold Key"));
 
 export const metadata: Metadata = {
   title: "How to Get Gold Keys in Geometry Dash | Current Methods",
@@ -28,7 +30,7 @@ export const metadata: Metadata = {
 const goldKeyFaqs = [
   {
     q: "How do you get Gold Keys in Geometry Dash?",
-    a: "The Geometry Dash Wiki source used for this guide lists two routes: reward chests from specific Event Levels and eligible Secret Room/Wraith codes.",
+    a: `The Geometry Dash Wiki source used for this guide lists two routes: reward chests from specific Event Levels and eligible Secret Room/Wraith codes. In the current checked code data, ${CURRENT_GOLD_KEY_WRAITH_CODES.map((item) => item.code).join(", ")} grants a Gold Key.`,
   },
   {
     q: "Where do you use Gold Keys?",
@@ -55,7 +57,7 @@ export default function GoldKeysPage() {
       {
         "@type": "HowToStep",
         name: "Redeem eligible Secret Room codes",
-        text: "Some active Wraith/Secret Room codes can grant Gold Keys or key rewards.",
+        text: `Some active Wraith/Secret Room codes grant Gold Keys. In the current checked code data: ${CURRENT_GOLD_KEY_WRAITH_CODES.map((item) => item.code).join(", ")}.`,
       },
       {
         "@type": "HowToStep",
@@ -122,9 +124,22 @@ export default function GoldKeysPage() {
             <p className="mb-2 text-xs font-bold uppercase tracking-wider text-purple-400">Method 2</p>
             <h2 className="mb-3 text-2xl font-bold text-white">Use eligible Wraith codes</h2>
             <p className="leading-7 text-slate-400">
-              The Secret Room, commonly called The Wraith, uses server-side codes. Some code rewards can include keys.
+              The Secret Room, commonly called The Wraith, uses server-side codes. Some rewards include keys, but Demon Keys and Gold Keys are different.
               Because Wraith codes can be enabled or disabled without a client update, use the current code list rather than an old screenshot.
             </p>
+            {CURRENT_GOLD_KEY_WRAITH_CODES.length > 0 && (
+              <div className="mt-4 rounded-xl border border-yellow-500/15 bg-black/20 p-4">
+                <div className="mb-2 text-xs font-bold uppercase tracking-wider text-yellow-300">Current checked Gold Key code</div>
+                <div className="flex flex-wrap gap-2">
+                  {CURRENT_GOLD_KEY_WRAITH_CODES.map((item) => (
+                    <code key={item.code} className="rounded-md border border-white/10 bg-slate-950/60 px-2.5 py-1.5 text-sm text-white">
+                      {item.code}
+                    </code>
+                  ))}
+                </div>
+                <p className="mt-2 text-xs leading-5 text-slate-500">Checked {CHECKED_AT}. Server-side availability can change.</p>
+              </div>
+            )}
             <Link href="/geometry-dash-codes#wraith" className="mt-4 inline-block text-sm font-semibold text-blue-400 hover:underline">
               Open current Wraith codes →
             </Link>
