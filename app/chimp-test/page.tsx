@@ -6,6 +6,17 @@ export const metadata: Metadata = {
   description:
     "Test visual sequence memory by remembering numbered positions before they are hidden.",
   alternates: { canonical: "/chimp-test" },
+  openGraph: {
+    title: "Chimp Test | Number Sequence Memory Test",
+    description: "Test visual sequence memory by remembering numbered positions before they are hidden.",
+    url: "https://geometrydashspam.cc/chimp-test",
+    type: "website",
+  },
+  twitter: {
+    card: "summary",
+    title: "Chimp Test | Number Sequence Memory Test",
+    description: "Test visual sequence memory by remembering numbered positions before they are hidden.",
+  },
 };
 
 export default function ChimpTestPage() {
