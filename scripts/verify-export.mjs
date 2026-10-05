@@ -397,6 +397,12 @@ if (existsSync(sitemapPath)) {
     }
   }
 
+  for (const route of requiredRoutes) {
+    if (!sitemapRoutes.includes(route)) {
+      sitemapPolicyErrors.push(`required indexable route missing from sitemap.xml: ${route}`);
+    }
+  }
+
   for (const noindexRoute of ["/dashboard", "/leaderboard", ...noindexUtilityRoutes]) {
     if (sitemapRoutes.includes(noindexRoute)) {
       sitemapPolicyErrors.push(`${noindexRoute} should not be present in sitemap.xml`);

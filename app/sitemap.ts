@@ -28,6 +28,7 @@ const CORE_ROUTES = [
   "/demon-list",
   "/demon-list/wave-demons",
   "/demon-list/spam-demons",
+  "/spam-challenge-list",
   "/hardest-level",
   "/easiest-demons",
   "/geometry-dash-clicker",
