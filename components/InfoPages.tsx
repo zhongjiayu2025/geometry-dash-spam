@@ -177,7 +177,7 @@ export const PrivacyPage = () => (
           Supported tools store settings and personal-best values in your browser&apos;s local storage. That local data is used to restore your preferences and records on the same browser.
         </p>
         <p>
-          Examples include selected difficulty, sound settings, CPS best scores and clicker progress.
+          Examples include selected difficulty, sound settings, CPS best scores, recent CPS and wave-run history, wave personal bests and clicker progress.
         </p>
       </SectionCard>
 
