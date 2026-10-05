@@ -42,73 +42,6 @@ async function fetchFromApi() {
   return data;
 }
 
-function decodeHtml(value) {
-  return value
-    .replace(/&#(\d+);/g, (_, code) => String.fromCodePoint(Number(code)))
-    .replace(/&#x([0-9a-f]+);/gi, (_, code) =>
-      String.fromCodePoint(Number.parseInt(code, 16))
-    )
-    .replaceAll("&nbsp;", " ")
-    .replaceAll("&amp;", "&")
-    .replaceAll("&quot;", '"')
-    .replaceAll("&#39;", "'")
-    .replaceAll("&lt;", "<")
-    .replaceAll("&gt;", ">");
-}
-
-function parseRankedDemonsFromHtml(html) {
-  const text = decodeHtml(
-    html
-      .replace(/<script\b[^>]*>[\s\S]*?<\/script>/gi, " ")
-      .replace(/<style\b[^>]*>[\s\S]*?<\/style>/gi, " ")
-      .replace(/<[^>]+>/g, " ")
-  )
-    .replace(/[\u2068\u2069\u200e\u200f]/g, "")
-    .replace(/\s+/g, " ")
-    .trim();
-
-  const entries = [];
-  const pattern =
-    /#\s*(\d+)\s*[–-]\s*(.*?)\s+published by\s+(.*?)\s+(?=\d+(?:\.\d+)?\s*\(|#\s*\d+\s*[–-])/g;
-
-  for (const match of text.matchAll(pattern)) {
-    const position = Number(match[1]);
-    if (position < 1 || position > 50) continue;
-
-    entries.push({
-      position,
-      name: match[2].trim(),
-      publisher: { name: match[3].trim() },
-    });
-  }
-
-  const unique = new Map();
-  for (const item of entries) {
-    if (!unique.has(item.position)) unique.set(item.position, item);
-  }
-
-  return [...unique.values()].sort((a, b) => a.position - b.position);
-}
-
-async function fetchFromPage() {
-  const response = await fetchWithTimeout(PAGE_URL, {
-    Accept: "text/html,application/xhtml+xml",
-  });
-
-  if (!response.ok) {
-    throw new Error(`Pointercrate page returned HTTP ${response.status}`);
-  }
-
-  const html = await response.text();
-  const parsed = parseRankedDemonsFromHtml(html);
-
-  if (parsed.length < 50) {
-    throw new Error(`Could only parse ${parsed.length} top-50 entries from Pointercrate HTML`);
-  }
-
-  return parsed;
-}
-
 async function fetchRankedDemons() {
   try {
     const data = await fetchFromApi();
@@ -116,14 +49,6 @@ async function fetchRankedDemons() {
     return data;
   } catch (apiError) {
     console.warn(`Pointercrate API unavailable: ${apiError.message}`);
-  }
-
-  try {
-    const data = await fetchFromPage();
-    console.log("Loaded Demon List from Pointercrate HTML fallback.");
-    return data;
-  } catch (pageError) {
-    console.warn(`Pointercrate page fallback unavailable: ${pageError.message}`);
     return null;
   }
 }
