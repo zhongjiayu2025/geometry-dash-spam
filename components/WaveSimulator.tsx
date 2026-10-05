@@ -7,7 +7,7 @@ import dynamic from 'next/dynamic';
 import { Difficulty, GameStatus } from '../types';
 import { DIFFICULTY_CONFIGS } from '../constants';
 import DifficultySelector from './DifficultySelector';
-import { Infinity as InfinityIcon, Minimize2, Star, MousePointerClick, Activity, Keyboard, Timer, Calendar } from 'lucide-react';
+import { Infinity as InfinityIcon, Minimize2, Star, MousePointerClick, Activity, Keyboard, Timer } from 'lucide-react';
 
 const GameCanvas = dynamic(() => import('./GameCanvas'), { ssr: false });
 
@@ -108,9 +108,6 @@ const WaveSimulator: React.FC<WaveSimulatorProps> = ({ variant = 'spam' }) => {
   };
 
   const currentConfig = DIFFICULTY_CONFIGS[difficulty];
-
-  // Generate today's date for dynamic content
-  const today = new Date().toLocaleDateString('en-US', { weekday: 'long', month: 'short', day: 'numeric' });
 
   // Schema 1: HowTo
   const howToSchema = {
@@ -254,10 +251,10 @@ const WaveSimulator: React.FC<WaveSimulatorProps> = ({ variant = 'spam' }) => {
               
               <div className="flex items-start gap-4 relative z-10">
                   <div className="p-3 bg-yellow-500/20 rounded-lg text-yellow-400">
-                      <Calendar className="w-6 h-6" />
+                      <Star className="w-6 h-6" />
                   </div>
                   <div>
-                      <div className="text-yellow-400 font-bold uppercase tracking-widest text-xs mb-1">Daily Practice • {today}</div>
+                      <div className="text-yellow-400 font-bold uppercase tracking-widest text-xs mb-1">Practice Drill</div>
                       <h3 className="text-xl font-display font-bold text-white mb-1">15-Second Mini Wave Drill</h3>
                       <p className="text-slate-400 text-sm max-w-md">
                           Practice goal: Survive <span className="text-white font-bold">15 seconds</span> on <span className="text-white font-bold">Insane</span> difficulty using <span className="text-white font-bold">Mini Wave</span>.
