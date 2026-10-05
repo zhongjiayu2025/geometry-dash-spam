@@ -6,6 +6,17 @@ export const metadata: Metadata = {
   description:
     "Practice drag clicking and measure registered click speed in a browser-based test.",
   alternates: { canonical: "/drag-click" },
+  openGraph: {
+    title: "Drag Click Test | Friction Clicking Practice",
+    description: "Practice drag clicking and measure registered click speed in a browser-based test.",
+    url: "https://geometrydashspam.cc/drag-click",
+    type: "website",
+  },
+  twitter: {
+    card: "summary",
+    title: "Drag Click Test | Friction Clicking Practice",
+    description: "Practice drag clicking and measure registered click speed in a browser-based test.",
+  },
 };
 
 export default function DragClickPage() {
