@@ -109,7 +109,7 @@ export default function GoldKeysPage() {
             <h2 className="mb-3 text-2xl font-bold text-white">Complete eligible Event Levels</h2>
             <p className="leading-7 text-slate-400">
               Event Level completion gives a reward chest. Depending on the event, that chest can contain a Demon Key or a Gold Key.
-              The wiki notes that all Demon Event levels to date, plus some non-Demon events, have awarded Gold Keys.
+              The reward depends on the specific Event Level, so check the current event/source instead of assuming every event gives a Gold Key.
             </p>
             <a href={EVENT_SOURCE} target="_blank" rel="noopener noreferrer" className="mt-4 inline-block text-sm font-semibold text-blue-400 hover:underline">
               Check Event Level source →
