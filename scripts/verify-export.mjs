@@ -3,8 +3,25 @@ import { join } from "node:path";
 
 const outDir = join(process.cwd(), "out");
 const demonSource = readFileSync(join(process.cwd(), "data", "demons.ts"), "utf8");
+const vaultSource = readFileSync(join(process.cwd(), "data", "vaultCodes.ts"), "utf8");
 const demonDate = demonSource.match(/DEMON_VERIFIED_AT = "([^"]+)"/)?.[1];
 const currentDemon = demonSource.match(/\{ rank: 1, level: "((?:\\.|[^"])*)"/)?.[1];
+
+const wraithBlock = vaultSource.match(
+  /export const WRAITH_CODES:[\s\S]*?= \[([\s\S]*?)\n\];/
+)?.[1];
+
+if (!wraithBlock) {
+  throw new Error("Could not read WRAITH_CODES for export verification.");
+}
+
+const wraithEntries = [
+  ...wraithBlock.matchAll(/\{ code: "([^"]+)", reward: "([^"]+)"/g),
+].map((match) => ({ code: match[1], reward: match[2] }));
+
+const goldKeyWraithCodes = wraithEntries
+  .filter((item) => item.reward.includes("Gold Key"))
+  .map((item) => item.code);
 
 if (!demonDate || !currentDemon) {
   throw new Error("Could not read the current #1 Demon List entry for export verification.");
@@ -362,6 +379,32 @@ if (existsSync(sitemapPath)) {
   }
 }
 
+const contentErrors = [];
+
+const codesExportPath = exportedPath("/geometry-dash-codes");
+if (codesExportPath) {
+  const codesHtml = readFileSync(codesExportPath, "utf8");
+  for (const item of wraithEntries) {
+    if (!codesHtml.includes(item.code)) {
+      contentErrors.push(
+        `/geometry-dash-codes: missing Wraith code from source data: ${item.code}`
+      );
+    }
+  }
+}
+
+const goldKeysExportPath = exportedPath("/how-to-get-gold-keys-geometry-dash");
+if (goldKeysExportPath) {
+  const goldKeysHtml = readFileSync(goldKeysExportPath, "utf8");
+  for (const code of goldKeyWraithCodes) {
+    if (!goldKeysHtml.includes(code)) {
+      contentErrors.push(
+        `/how-to-get-gold-keys-geometry-dash: missing current Gold Key Wraith code: ${code}`
+      );
+    }
+  }
+}
+
 const internalLinkErrors = [];
 const seenBrokenLinks = new Set();
 
@@ -389,7 +432,8 @@ if (
   internalLinkErrors.length ||
   sitemapRouteErrors.length ||
   sitemapPolicyErrors.length ||
-  sitemapMetadataErrors.length
+  sitemapMetadataErrors.length ||
+  contentErrors.length
 ) {
   console.error("Static export verification failed.");
 
@@ -408,6 +452,11 @@ if (
   if (metadataErrors.length) {
     console.error("Metadata errors:");
     for (const error of metadataErrors) console.error(`- ${error}`);
+  }
+
+  if (contentErrors.length) {
+    console.error("Data-to-page content errors:");
+    for (const error of contentErrors) console.error(`- ${error}`);
   }
 
   if (internalLinkErrors.length) {
@@ -437,5 +486,5 @@ if (
 }
 
 console.log(
-  `Static export verified: ${requiredRoutes.length} core routes, metadata checks, ${htmlFiles.length} HTML files with internal-link checks, sitemap URL/canonical/title/description/OpenGraph/indexability integrity, sitemap.xml and robots.txt.`
+  `Static export verified: ${requiredRoutes.length} core routes, metadata checks, Wraith data-to-page checks, ${htmlFiles.length} HTML files with internal-link checks, sitemap URL/canonical/title/description/OpenGraph/indexability integrity, sitemap.xml and robots.txt.`
 );
