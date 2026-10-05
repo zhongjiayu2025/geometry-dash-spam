@@ -184,7 +184,7 @@ export default function AimTrainer() {
                     <div className="flex w-full justify-between items-center mb-4 bg-slate-900/50 p-4 rounded-2xl border border-white/5">
                         <div className="text-center">
                             <div className="text-sm text-slate-400 font-bold uppercase tracking-wider mb-1">Time Left</div>
-                            <div className="text-3xl md:text-4xl font-display font-bold text-white">{timeLeft}s</div>
+                            <div className="text-3xl md:text-4xl font-display font-bold text-white">{timeLeft.toFixed(2)}s</div>
                         </div>
                         <div className="text-center">
                             <div className="text-sm text-slate-400 font-bold uppercase tracking-wider mb-1">Score</div>
@@ -233,7 +233,7 @@ export default function AimTrainer() {
                                     Start Aim Trainer
                                 </h3>
                                 <p className="text-slate-500 mt-2 text-sm max-w-sm mx-auto px-4">
-                                    Click the targets as fast as you can. Any clicks outside the target count as a miss. Test your mouse precision!
+                                    Click the targets as quickly and accurately as you can. Pointer presses outside the target count as misses.
                                 </p>
                             </div>
                         </button>
@@ -273,7 +273,7 @@ export default function AimTrainer() {
                                         <div className="text-3xl font-bold text-white">{accuracy}%</div>
                                     </div>
                                     <div className="bg-slate-900/50 p-4 rounded-xl border border-white/5">
-                                        <div className="text-sm text-slate-400 uppercase tracking-wider mb-1">Avg Target Interval</div>
+                                        <div className="text-sm text-slate-400 uppercase tracking-wider mb-1">Avg Hit Interval</div>
                                         <div className="text-3xl font-bold text-yellow-400">{averageTime}ms</div>
                                     </div>
                                 </div>
