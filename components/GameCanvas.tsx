@@ -109,6 +109,10 @@ const GameCanvas: React.FC<GameCanvasProps> = memo(({ difficulty, status, onStat
   const [copied, setCopied] = useState<boolean>(false);
   
   useEffect(() => {
+    lowVisualsRef.current =
+      window.matchMedia('(pointer: coarse)').matches ||
+      window.matchMedia('(max-width: 640px)').matches;
+
     setIsMuted(localStorage.getItem('gd_spam_muted') === 'true');
     const savedMotion = localStorage.getItem('gd_spam_reduce_motion');
     setReduceMotion(
@@ -230,6 +234,7 @@ const GameCanvas: React.FC<GameCanvasProps> = memo(({ difficulty, status, onStat
   });
 
   const requestRef = useRef<number | undefined>(undefined);
+  const lowVisualsRef = useRef(false);
 
   // --- AUDIO SYSTEM (ENHANCED) ---
   const initAudio = useCallback(() => {
@@ -511,7 +516,8 @@ const GameCanvas: React.FC<GameCanvasProps> = memo(({ difficulty, status, onStat
   const createExplosion = (x: number, y: number, color: string) => {
     if (reduceMotion) return;
     const random = gameState.current.rng;
-    for (let i = 0; i < 20; i++) {
+    const particleCount = lowVisualsRef.current ? 10 : 20;
+    for (let i = 0; i < particleCount; i++) {
       const angle = random() * Math.PI * 2;
       const speed = random() * 10 + 5;
       gameState.current.particles.push({
@@ -593,7 +599,8 @@ const GameCanvas: React.FC<GameCanvasProps> = memo(({ difficulty, status, onStat
   const initStars = (width: number, height: number) => {
       gameState.current.stars = [];
       const random = gameState.current.rng;
-      for(let i=0; i<40; i++) {
+      const starCount = lowVisualsRef.current ? 20 : 40;
+      for(let i=0; i<starCount; i++) {
           gameState.current.stars.push({
               x: random() * width,
               y: random() * height,
@@ -679,7 +686,8 @@ const GameCanvas: React.FC<GameCanvasProps> = memo(({ difficulty, status, onStat
         gameState.current.lastFrameTime = now;
         gameState.current.runTime += frameDeltaMs;
 
-        if (now - lastHudUpdateRef.current >= 50) {
+        const hudInterval = lowVisualsRef.current ? 100 : 50;
+        if (now - lastHudUpdateRef.current >= hudInterval) {
             setDisplayTime(gameState.current.runTime / 1000);
             lastHudUpdateRef.current = now;
         }
@@ -741,11 +749,13 @@ const GameCanvas: React.FC<GameCanvasProps> = memo(({ difficulty, status, onStat
         }
 
         gameState.current.trailAccumulator += frameFactor;
-        if (gameState.current.trailAccumulator >= 2) {
+        const trailStep = lowVisualsRef.current ? 3 : 2;
+        const maxTrailPoints = lowVisualsRef.current ? 18 : 30;
+        if (gameState.current.trailAccumulator >= trailStep) {
             const w = isMini ? 4 : 8;
             gameState.current.trail.push({ x: gameState.current.playerX, y: gameState.current.playerY, w });
-            if (gameState.current.trail.length > 30) gameState.current.trail.shift();
-            gameState.current.trailAccumulator %= 2;
+            if (gameState.current.trail.length > maxTrailPoints) gameState.current.trail.shift();
+            gameState.current.trailAccumulator %= trailStep;
         }
 
         for (let i = 0; i < gameState.current.trail.length; i++) {
@@ -806,8 +816,10 @@ const GameCanvas: React.FC<GameCanvasProps> = memo(({ difficulty, status, onStat
     ctx.fillStyle = gameState.current.baseColor;
     ctx.fillRect(0, 0, canvas.width, 10);
     ctx.fillRect(0, canvas.height - 10, canvas.width, 10);
-    ctx.shadowBlur = 15;
-    ctx.shadowColor = gameState.current.baseColor;
+    if (!lowVisualsRef.current && !reduceMotion) {
+        ctx.shadowBlur = 15;
+        ctx.shadowColor = gameState.current.baseColor;
+    }
     ctx.strokeStyle = '#fff';
     ctx.lineWidth = 2;
     ctx.beginPath(); ctx.moveTo(0, 10); ctx.lineTo(canvas.width, 10); ctx.stroke();
@@ -818,19 +830,25 @@ const GameCanvas: React.FC<GameCanvasProps> = memo(({ difficulty, status, onStat
         const x = obs.x - gameState.current.distanceTraveled;
         if (x > -obs.width && x < canvas.width) {
             
-            const gradTop = ctx.createLinearGradient(x, 0, x, obs.topHeight);
-            gradTop.addColorStop(0, gameState.current.baseColor);
-            gradTop.addColorStop(1, `${gameState.current.baseColor}44`); 
+            if (lowVisualsRef.current || reduceMotion) {
+                ctx.fillStyle = `${gameState.current.baseColor}88`;
+                ctx.fillRect(x, 0, obs.width, obs.topHeight);
+                ctx.fillRect(x, obs.bottomY, obs.width, canvas.height - obs.bottomY);
+            } else {
+                const gradTop = ctx.createLinearGradient(0, 0, 0, obs.topHeight);
+                gradTop.addColorStop(0, gameState.current.baseColor);
+                gradTop.addColorStop(1, `${gameState.current.baseColor}44`);
 
-            const gradBottom = ctx.createLinearGradient(x, obs.bottomY, x, canvas.height);
-            gradBottom.addColorStop(0, `${gameState.current.baseColor}44`);
-            gradBottom.addColorStop(1, gameState.current.baseColor);
+                const gradBottom = ctx.createLinearGradient(0, obs.bottomY, 0, canvas.height);
+                gradBottom.addColorStop(0, `${gameState.current.baseColor}44`);
+                gradBottom.addColorStop(1, gameState.current.baseColor);
 
-            ctx.fillStyle = gradTop;
-            ctx.fillRect(x, 0, obs.width, obs.topHeight);
-            
-            ctx.fillStyle = gradBottom;
-            ctx.fillRect(x, obs.bottomY, obs.width, canvas.height - obs.bottomY);
+                ctx.fillStyle = gradTop;
+                ctx.fillRect(x, 0, obs.width, obs.topHeight);
+
+                ctx.fillStyle = gradBottom;
+                ctx.fillRect(x, obs.bottomY, obs.width, canvas.height - obs.bottomY);
+            }
             
             ctx.strokeStyle = '#fff';
             ctx.lineWidth = 2;
@@ -885,8 +903,10 @@ const GameCanvas: React.FC<GameCanvasProps> = memo(({ difficulty, status, onStat
     }
 
     if (status !== GameStatus.Lost) {
-        ctx.shadowBlur = 20;
-        ctx.shadowColor = '#fff';
+        if (!lowVisualsRef.current && !reduceMotion) {
+            ctx.shadowBlur = 20;
+            ctx.shadowColor = '#fff';
+        }
         ctx.save();
         ctx.translate(gameState.current.playerX, gameState.current.playerY);
         const rotation = gameState.current.velocityY > 0 ? 45 : -45;
