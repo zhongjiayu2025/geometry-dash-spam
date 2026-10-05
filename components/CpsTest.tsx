@@ -1,7 +1,7 @@
 
 "use client";
 
-import React, { useState, useEffect, useRef } from 'react';
+import React, { useState, useEffect, useRef, useCallback } from 'react';
 import { MousePointer2, RotateCcw, Timer, Check, Clock, Trophy, Share2, ArrowRight, Volume2, VolumeX } from 'lucide-react';
 import Link from 'next/link';
 
@@ -47,6 +47,7 @@ const CpsTest: React.FC = () => {
   const [runHistory, setRunHistory] = useState<CpsRun[]>([]);
   
   const timerRef = useRef<number | null>(null);
+  const endTimerRef = useRef<number | null>(null);
   const audioCtxRef = useRef<AudioContext | null>(null);
   const clicksRef = useRef(0);
   const testStartRef = useRef(0);
@@ -105,8 +106,11 @@ const CpsTest: React.FC = () => {
       return;
     }
 
+    const now = performance.now();
+    if (now - testStartRef.current >= selectedDuration * 1000) return;
+
     clicksRef.current += 1;
-    clickTimesRef.current.push(performance.now());
+    clickTimesRef.current.push(now);
     setClicks(clicksRef.current);
   };
 
@@ -153,6 +157,7 @@ const CpsTest: React.FC = () => {
     setTimeLeft(selectedDuration);
     setCopied(false);
     if (timerRef.current) clearInterval(timerRef.current);
+    if (endTimerRef.current) clearTimeout(endTimerRef.current);
   };
 
   const shareScore = async (e: React.MouseEvent) => {
@@ -173,50 +178,59 @@ const CpsTest: React.FC = () => {
      setTimeout(() => setCopied(false), 2000);
   };
 
+  const finishTest = useCallback(() => {
+    const finalClicks = clicksRef.current;
+    const finalCps = finalClicks / selectedDuration;
+
+    setTimeLeft(0);
+    setFinished(true);
+    setActive(false);
+    setClicks(finalClicks);
+
+    setRunHistory(prev => {
+      const nextRun: CpsRun = {
+        duration: selectedDuration,
+        clicks: finalClicks,
+        cps: Number(finalCps.toFixed(2)),
+        timestamp: Date.now(),
+      };
+      const next = [nextRun, ...prev].slice(0, 20);
+      localStorage.setItem('cpsRunHistory', JSON.stringify(next));
+      return next;
+    });
+
+    setBestScores(prev => {
+      const newBests = { ...prev };
+      if (!newBests[selectedDuration] || finalCps > newBests[selectedDuration]) {
+        newBests[selectedDuration] = finalCps;
+        localStorage.setItem('cpsBestScores', JSON.stringify(newBests));
+      }
+      return newBests;
+    });
+  }, [selectedDuration]);
+
   useEffect(() => {
     if (active && !finished) {
-      timerRef.current = window.setInterval(() => {
+      const updateTimer = () => {
         const elapsed = (performance.now() - testStartRef.current) / 1000;
-        const remaining = Math.max(0, selectedDuration - elapsed);
-        setTimeLeft(remaining);
+        setTimeLeft(Math.max(0, selectedDuration - elapsed));
+      };
 
-        if (remaining <= 0) {
-          setFinished(true);
-          setActive(false);
-          if (timerRef.current) clearInterval(timerRef.current);
+      updateTimer();
+      timerRef.current = window.setInterval(updateTimer, 100);
 
-          const finalClicks = clicksRef.current;
-          const finalCps = finalClicks / selectedDuration;
-          setClicks(finalClicks);
-
-          setRunHistory(prev => {
-            const nextRun: CpsRun = {
-              duration: selectedDuration,
-              clicks: finalClicks,
-              cps: Number(finalCps.toFixed(2)),
-              timestamp: Date.now(),
-            };
-            const next = [nextRun, ...prev].slice(0, 20);
-            localStorage.setItem('cpsRunHistory', JSON.stringify(next));
-            return next;
-          });
-
-          setBestScores(prev => {
-            const newBests = { ...prev };
-            if (!newBests[selectedDuration] || finalCps > newBests[selectedDuration]) {
-              newBests[selectedDuration] = finalCps;
-              localStorage.setItem('cpsBestScores', JSON.stringify(newBests));
-            }
-            return newBests;
-          });
-        }
-      }, 100);
+      const elapsedMs = performance.now() - testStartRef.current;
+      endTimerRef.current = window.setTimeout(
+        finishTest,
+        Math.max(0, selectedDuration * 1000 - elapsedMs)
+      );
     }
 
     return () => {
       if (timerRef.current) clearInterval(timerRef.current);
+      if (endTimerRef.current) clearTimeout(endTimerRef.current);
     };
-  }, [active, finished, selectedDuration]);
+  }, [active, finished, selectedDuration, finishTest]);
 
   const cps = finished
     ? (clicks / selectedDuration).toFixed(2)
