@@ -383,6 +383,17 @@ if (!layoutSource.includes(`client=ca-${publisherId}`)) {
   );
 }
 
+if (
+  !layoutSource.includes('href="#main-content"') ||
+  !layoutSource.includes('id="main-content"')
+) {
+  infrastructureErrors.push("Root layout must include a keyboard skip link targeting #main-content");
+}
+
+if (!layoutSource.includes('"max-image-preview": "large"')) {
+  infrastructureErrors.push("Root metadata must allow large Google image previews");
+}
+
 const metadataErrors = [];
 
 for (const [route, expected] of Object.entries(metadataExpectations)) {
@@ -473,6 +484,16 @@ const snippetQualityErrors = [];
 const semanticErrors = [];
 const sitemapTitleOwners = new Map();
 const sitemapDescriptionOwners = new Map();
+const largeCardRoutes = new Set([
+  "/",
+  "/geometry-dash-wave",
+  "/cps-test",
+  "/demon-list",
+  "/spam-challenge-list",
+  "/demon-list/wave-demons",
+  "/demon-list/spam-demons",
+  "/hardest-level",
+]);
 
 if (existsSync(sitemapPath)) {
   const sitemapXml = readFileSync(sitemapPath, "utf8");
@@ -537,6 +558,7 @@ if (existsSync(sitemapPath)) {
     const ogLocale = metaContent(html, "property", "og:locale");
     const ogImage = metaContent(html, "property", "og:image");
     const twitterImage = metaContent(html, "name", "twitter:image");
+    const twitterCard = metaContent(html, "name", "twitter:card");
     const h1Count = (html.match(/<h1\b/gi) || []).length;
 
     if (h1Count !== 1) {
@@ -637,6 +659,12 @@ if (existsSync(sitemapPath)) {
       );
     }
 
+    if (largeCardRoutes.has(route) && twitterCard !== "summary_large_image") {
+      sitemapMetadataErrors.push(
+        `${route}: twitter:card is "${twitterCard ?? "missing"}", expected "summary_large_image"`
+      );
+    }
+
     if (!route.startsWith("/blog/")) {
       const expectedOgPrefix = "https://geometrydashspam.cc/opengraph-image";
       const expectedTwitterPrefix = "https://geometrydashspam.cc/twitter-image";
@@ -725,6 +753,21 @@ for (const route of coreAuthorityRoutes) {
     if (leaks) {
       authorityLeakErrors.push(
         `${route}: core page links to noindex utility ${noindexRoute}`
+      );
+    }
+  }
+}
+
+const homeAuthorityPath = exportedPath("/");
+if (homeAuthorityPath) {
+  const homeHtml = readFileSync(homeAuthorityPath, "utf8");
+  for (const deferredRoute of ["/dashmetry", "/geometry-dash-breeze"]) {
+    if (
+      homeHtml.includes(`href="${deferredRoute}"`) ||
+      homeHtml.includes(`href='${deferredRoute}'`)
+    ) {
+      authorityLeakErrors.push(
+        `/: homepage should not directly promote deferred related-game route ${deferredRoute}`
       );
     }
   }
