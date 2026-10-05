@@ -86,6 +86,13 @@ export default function RootLayout({
         <link rel="preconnect" href="https://googleads.g.doubleclick.net" />
         <link rel="dns-prefetch" href="https://googleads.g.doubleclick.net" />
         <link rel="describedby" href="/llms.txt" type="text/markdown" />
+        <meta property="og:image" content="https://geometrydashspam.cc/opengraph-image" />
+        <meta property="og:image:width" content="1200" />
+        <meta property="og:image:height" content="630" />
+        <meta property="og:image:type" content="image/png" />
+        <meta property="og:image:alt" content="Geometry Dash Spam — Spam, Wave and CPS browser practice tools" />
+        <meta name="twitter:image" content="https://geometrydashspam.cc/twitter-image" />
+        <meta name="twitter:image:alt" content="Geometry Dash Spam — Spam, Wave and CPS browser practice tools" />
       </head>
       <body className={`${inter.variable} ${orbitron.variable} min-h-screen bg-[#020617] text-slate-200 font-sans selection:bg-blue-500 selection:text-white flex flex-col`}>
         <Script
