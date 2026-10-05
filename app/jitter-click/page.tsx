@@ -7,7 +7,7 @@ export const metadata: Metadata = {
     description: "Run a 10-second jitter click test and compare browser-registered CPS. Practice a rapid clicking technique without relying on claimed benchmark speeds.",
     alternates: {
         canonical: '/jitter-click',
-    }
+    },
   openGraph: {
     title: "Jitter Click Test | 10-Second CPS Practice",
     description: "Run a 10-second jitter click test and compare browser-registered CPS. Practice a rapid clicking technique without relying on claimed benchmark speeds.",
