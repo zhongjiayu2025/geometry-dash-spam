@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import VaultCodeTable from "../../components/VaultCodeTable";
+import Breadcrumbs from "../../components/Breadcrumbs";
 import {
   VAULT_CODES_CHECKED_AT,
   VAULT_OF_SECRETS_CODES,
@@ -54,6 +55,7 @@ export default function VaultOfSecretsCodesPage() {
   return (
     <>
       <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(faqSchema) }} />
+      <Breadcrumbs items={[{ label: "Codes", href: "/geometry-dash-codes" }, { label: "Vault of Secrets", href: "/geometry-dash-vault-of-secrets-codes" }]} />
     <article className="mx-auto max-w-5xl">
       <header className="mb-10 max-w-4xl">
         <p className="mb-2 text-xs font-bold uppercase tracking-[0.2em] text-purple-400">
