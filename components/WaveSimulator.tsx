@@ -151,12 +151,15 @@ const WaveSimulator: React.FC<WaveSimulatorProps> = ({ variant = 'spam' }) => {
     <div className="flex flex-col items-center w-full animate-in fade-in duration-500">
       <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(howToSchema) }} />
       
-      {isWavePage && (
-        <section className="w-full max-w-5xl mb-6 rounded-2xl border border-white/10 bg-slate-900/35 p-4 md:p-5">
+      <section className="w-full max-w-5xl mb-6 rounded-2xl border border-white/10 bg-slate-900/35 p-4 md:p-5">
           <div className="flex flex-col gap-2 md:flex-row md:items-end md:justify-between mb-4">
             <div>
-              <p className="text-[11px] uppercase tracking-[0.2em] text-blue-400 font-bold">Wave training presets</p>
-              <h2 className="text-xl font-display font-bold text-white">Choose the skill you want to train</h2>
+              <p className="text-[11px] uppercase tracking-[0.2em] text-blue-400 font-bold">
+                {isWavePage ? "Wave training presets" : "Spam training presets"}
+              </p>
+              <h2 className="text-xl font-display font-bold text-white">
+                {isWavePage ? "Choose the skill you want to train" : "Choose a Geometry Dash spam drill"}
+              </h2>
             </div>
             <p className="text-xs text-slate-500">Presets set difficulty, Mini Wave and Endless Mode for you.</p>
           </div>
@@ -180,7 +183,6 @@ const WaveSimulator: React.FC<WaveSimulatorProps> = ({ variant = 'spam' }) => {
             ))}
           </div>
         </section>
-      )}
 
       <DifficultySelector 
         currentDifficulty={difficulty} 
@@ -298,12 +300,12 @@ const WaveSimulator: React.FC<WaveSimulatorProps> = ({ variant = 'spam' }) => {
             <Link href="/jitter-click" className="bg-slate-900/60 border border-white/5 rounded-xl p-4 hover:border-orange-400/50 hover:bg-slate-900 transition-all cursor-pointer group block">
                 <Activity className="w-8 h-8 text-orange-500 mb-3 group-hover:scale-110 transition-transform"/>
                 <h4 className="font-bold text-white text-sm mb-1">Jitter Click</h4>
-                <p className="text-xs text-slate-400">Learn advanced vibration.</p>
+                <p className="text-xs text-slate-400">Compare a rapid clicking method.</p>
             </Link>
             <Link href="/spacebar-counter" className="bg-slate-900/60 border border-white/5 rounded-xl p-4 hover:border-purple-400/50 hover:bg-slate-900 transition-all cursor-pointer group block">
                 <Keyboard className="w-8 h-8 text-purple-500 mb-3 group-hover:scale-110 transition-transform"/>
                 <h4 className="font-bold text-white text-sm mb-1">Spacebar</h4>
-                <p className="text-xs text-slate-400">Test keyboard latency.</p>
+                <p className="text-xs text-slate-400">Test repeated key presses.</p>
             </Link>
             <Link href="/reaction-test" className="bg-slate-900/60 border border-white/5 rounded-xl p-4 hover:border-green-400/50 hover:bg-slate-900 transition-all cursor-pointer group block">
                 <Timer className="w-8 h-8 text-green-500 mb-3 group-hover:scale-110 transition-transform"/>
