@@ -9,6 +9,17 @@ export const metadata: Metadata = {
   description:
     "Learn how to get diamonds in Geometry Dash through daily chests, quests, Daily and Weekly levels, Treasure Room chests, Gauntlets and Paths.",
   alternates: { canonical: "/how-to-get-diamonds-geometry-dash" },
+  openGraph: {
+    title: "How to Get Diamonds in Geometry Dash – All Main Methods",
+    description: "Learn how to get diamonds in Geometry Dash through daily chests, quests, Daily and Weekly levels, Treasure Room chests, Gauntlets and Paths.",
+    url: "https://geometrydashspam.cc/how-to-get-diamonds-geometry-dash",
+    type: "website",
+  },
+  twitter: {
+    card: "summary",
+    title: "How to Get Diamonds in Geometry Dash – All Main Methods",
+    description: "Learn how to get diamonds in Geometry Dash through daily chests, quests, Daily and Weekly levels, Treasure Room chests, Gauntlets and Paths.",
+  },
 };
 
 const methods = [
