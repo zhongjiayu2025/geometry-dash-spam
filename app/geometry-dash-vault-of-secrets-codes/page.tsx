@@ -9,19 +9,19 @@ import {
 } from "../../data/vaultCodes";
 
 export const metadata: Metadata = {
-  title: "Geometry Dash Vault of Secrets Codes | All Codes & Unlock",
+  title: "Geometry Dash Vault of Secrets Codes | All Codes",
   description:
     "Geometry Dash Vault of Secrets codes with brainpower, octocube, seven, glubfub, cod3breaker and The Challenge, plus the 50-diamond unlock steps.",
   alternates: { canonical: "/geometry-dash-vault-of-secrets-codes" },
   openGraph: {
-    title: "Geometry Dash Vault of Secrets Codes | All Codes & Unlock",
+    title: "Geometry Dash Vault of Secrets Codes | All Codes",
     description: "Geometry Dash Vault of Secrets codes with brainpower, octocube, seven, glubfub, cod3breaker and The Challenge, plus the 50-diamond unlock steps.",
     url: "https://geometrydashspam.cc/geometry-dash-vault-of-secrets-codes",
     type: "website",
   },
   twitter: {
     card: "summary",
-    title: "Geometry Dash Vault of Secrets Codes | All Codes & Unlock",
+    title: "Geometry Dash Vault of Secrets Codes | All Codes",
     description: "Geometry Dash Vault of Secrets codes with brainpower, octocube, seven, glubfub, cod3breaker and The Challenge, plus the 50-diamond unlock steps.",
   },
 };

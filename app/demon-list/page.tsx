@@ -5,7 +5,7 @@ import Breadcrumbs from "../../components/Breadcrumbs";
 import { DEMONS, DEMON_SOURCE_URL, DEMON_VERIFIED_AT } from "../../data/demons";
 
 const currentNumberOne = DEMONS[0];
-const demonListTitle = `Geometry Dash Demon List (Demonlist) | Top 50 & #1 ${currentNumberOne.level}`;
+const demonListTitle = `Geometry Dash Demon List | Top 50 & #1 ${currentNumberOne.level}`;
 const demonListDescription = `Current Geometry Dash Demon List / Demonlist top 50 from a dated Pointercrate snapshot. Checked ${DEMON_VERIFIED_AT}: ${currentNumberOne.level} by ${currentNumberOne.publisher} is #1.`;
 const isGriefPlacementDay =
   currentNumberOne.level === "GRIEF" && DEMON_VERIFIED_AT === "2026-10-05";

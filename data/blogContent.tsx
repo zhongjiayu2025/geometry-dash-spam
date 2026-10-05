@@ -25,7 +25,7 @@ export const BLOG_POSTS: BlogPost[] = [
   {
     id: "1",
     slug: "what-is-spam-geometry-dash-guide",
-    title: "What Is Spam in Geometry Dash? Wave, CPS and Control Explained",
+    title: "What Is Spam in Geometry Dash? Wave, CPS & Control",
     excerpt:
       "A practical explanation of Geometry Dash spam, why wave spam is difficult, and how CPS and timing consistency fit together.",
     date: "January 10, 2026",
