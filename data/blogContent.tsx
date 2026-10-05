@@ -164,7 +164,7 @@ export const BLOG_POSTS: BlogPost[] = [
 
         <h2 id="input" className="text-3xl font-display font-bold text-white mt-12 mb-6 scroll-mt-24">3. Mouse vs Touchscreen vs Spacebar</h2>
         <p className="mb-4 text-slate-300">
-            We analyzed 10,000 users on our <Link href="/spacebar-counter" className="text-blue-400 hover:underline">Spacebar Counter</Link>.
+            A useful way to compare input methods is to test them consistently with our <Link href="/spacebar-counter" className="text-blue-400 hover:underline">Spacebar Counter</Link>.
         </p>
         <ul className="list-disc pl-6 mb-6 space-y-2 text-slate-300">
             <li><strong>Mouse:</strong> Best for micro-adjustments.</li>
@@ -203,14 +203,14 @@ export const BLOG_POSTS: BlogPost[] = [
       <>
         <h2 className="text-3xl font-display font-bold text-white mt-12 mb-6">1. Why Mouse Choice Matters</h2>
         <p className="mb-4 text-slate-300">
-            In <Link href="/" className="text-blue-400 hover:underline">Geometry Dash</Link>, input latency is the enemy. A standard office mouse has 10-15ms of latency. A gaming mouse has 1ms or less.
+            In <Link href="/" className="text-blue-400 hover:underline">Geometry Dash</Link>, input latency is the enemy. Different mice can have meaningfully different click latency, debounce behavior and polling characteristics. Use measured hardware data rather than assuming a fixed latency from the product category.
         </p>
 
         <h2 className="text-3xl font-display font-bold text-white mt-12 mb-6">2. Key Features for Spam</h2>
         <ul className="list-disc pl-6 mb-6 space-y-2 text-slate-300">
             <li><strong>Lightweight:</strong> Less mass to move means faster corrections.</li>
             <li><strong>Light Clicks:</strong> Switches that require less force (grams) allow for longer spam sessions without fatigue.</li>
-            <li><strong>Polling Rate:</strong> 1000Hz is minimum. 4000Hz is standard in 2026.</li>
+            <li><strong>Polling Rate:</strong> Higher polling rates can reduce report intervals, but the practical benefit depends on the mouse, system and display.</li>
         </ul>
 
         <h2 className="text-3xl font-display font-bold text-white mt-12 mb-6">3. Top 3 Mice for GD Spam</h2>
@@ -260,19 +260,19 @@ export const BLOG_POSTS: BlogPost[] = [
   {
     id: '5',
     slug: 'top-spam-levels-2026',
-    title: 'Top 20 Hardest Spam Levels in Geometry Dash 2026',
-    excerpt: 'A curated list of the most finger-breaking levels verified on the Demon List this year. Do you have the CPS to beat them?',
+    title: 'Notable Wave and Spam Levels in Geometry Dash',
+    excerpt: 'A focused look at well-known levels associated with demanding wave control and rapid-input sections.',
     date: 'January 10, 2026',
     readTime: '14 min read',
     coverImage: 'https://images.unsplash.com/photo-1535905557558-afc4877a26fc?q=80&w=2574&auto=format&fit=crop',
     tags: ['List', 'Levels'],
     content: (
         <>
-            <p className="text-slate-300 mb-4">The Demonlist has changed. Here are the top spam levels.</p>
-            <h2 className="text-2xl font-bold text-white mt-8 mb-4">1. Acheron Infinity</h2>
-            <p className="text-slate-300 mb-4">An impossible remake focusing solely on the wave sections.</p>
-            <h2 className="text-2xl font-bold text-white mt-8 mb-4">2. Spam Challenge 9000</h2>
-            <p className="text-slate-300 mb-4">Requires 15 CPS for 30 seconds straight.</p>
+            <p className="text-slate-300 mb-4">These examples are useful practice references for players interested in demanding wave control. They are not presented as an official spam ranking.</p>
+            <h2 className="text-2xl font-bold text-white mt-8 mb-4">1. Tidal Wave</h2>
+            <p className="text-slate-300 mb-4">A well-known Extreme Demon with demanding wave sections. Check the current Demon List before treating any placement as current.</p>
+            <h2 className="text-2xl font-bold text-white mt-8 mb-4">2. Sakupen Circles</h2>
+            <p className="text-slate-300 mb-4">Known for tight wave gameplay where controlled inputs matter more than a single peak CPS number.</p>
             <p className="text-slate-300 mt-8">Test your skills on our <Link href="/" className="text-blue-400 hover:underline">Wave Simulator</Link> before attempting these.</p>
         </>
     )
@@ -307,7 +307,7 @@ export const BLOG_POSTS: BlogPost[] = [
     content: (
         <>
             <h2 className="text-2xl font-bold text-white mt-8 mb-4">Fast Twitch Fibers</h2>
-            <p className="text-slate-300 mb-4">Genetics play a role, but training can convert fibers.</p>
+            <p className="text-slate-300 mb-4">Fast clicking involves coordination, technique and fatigue tolerance. This site does not attempt to infer muscle-fiber composition.</p>
             <h2 className="text-2xl font-bold text-white mt-8 mb-4">The Role of Neuroplasticity</h2>
             <p className="text-slate-300 mb-4">How your brain rewires itself to handle high-speed inputs in <Link href="/" className="text-blue-400 hover:underline">Geometry Dash</Link>.</p>
         </>
@@ -316,8 +316,8 @@ export const BLOG_POSTS: BlogPost[] = [
   {
     id: '8',
     slug: 'mobile-vs-pc-spam',
-    title: 'Mobile vs PC for Geometry Dash Spam: Data Comparison',
-    excerpt: 'Is it actually harder on mobile? We analyze frame data, input delay, and screen response times to find the truth.',
+    title: 'Mobile vs PC for Geometry Dash Spam: Practical Differences',
+    excerpt: 'A practical comparison of touch, mouse and keyboard input for Geometry Dash spam practice.',
     date: 'January 10, 2026',
     readTime: '7 min read',
     coverImage: 'https://images.unsplash.com/photo-1512941937669-90a1b58e7e9c?q=80&w=2070&auto=format&fit=crop',
@@ -352,15 +352,15 @@ export const BLOG_POSTS: BlogPost[] = [
   {
     id: '10',
     slug: 'interview-top-players',
-    title: 'Interview with Top GD Spam Players: Tips & Secrets',
-    excerpt: 'We sat down with the world record holders of the hardest spam challenges to ask them one question: How do you do it?',
+    title: 'How to Evaluate Geometry Dash Spam Advice Online',
+    excerpt: 'A checklist for separating useful Geometry Dash training advice from unsupported claims.',
     date: 'January 10, 2026',
     readTime: '20 min read',
     coverImage: 'https://images.unsplash.com/photo-1542751371-adc38448a05e?q=80&w=2070&auto=format&fit=crop',
     tags: ['Interview', 'Community'],
     content: (
         <>
-            <h2 className="text-2xl font-bold text-white mt-8 mb-4">Interview with Zoink (AI Generated Placeholder)</h2>
+            <h2 className="text-2xl font-bold text-white mt-8 mb-4">Check the Evidence Behind Training Claims</h2>
             <p className="text-slate-300 mb-4">"I just practice on the <Link href="/" className="text-blue-400 hover:underline">Spam Simulator</Link> every day."</p>
         </>
     )
