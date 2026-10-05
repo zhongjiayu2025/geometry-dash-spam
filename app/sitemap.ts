@@ -21,6 +21,7 @@ export default function sitemap(): MetadataRoute.Sitemap {
     "/geometry-dash-vault-of-secrets-codes",
     "/how-to-get-diamonds-geometry-dash",
     "/how-to-get-gold-keys-geometry-dash",
+    "/geometry-dash-difficulty-faces",
     "/jitter-click",
     "/butterfly-click",
     "/drag-click",
