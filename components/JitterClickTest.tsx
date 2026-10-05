@@ -145,13 +145,13 @@ const JitterClickTest: React.FC = () => {
 
       <div className="text-center mb-8">
          <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-orange-500/10 border border-orange-500/20 text-xs font-mono text-orange-400 mb-4">
-            <Zap className="w-3 h-3" /> ADVANCED TECHNIQUE
+            <Zap className="w-3 h-3" /> CLICKING TECHNIQUE
          </div>
          <h1 className="text-4xl md:text-6xl font-display font-black text-white mb-4 drop-shadow-2xl uppercase">
             Jitter Click Test
          </h1>
          <p className="text-slate-400 max-w-2xl mx-auto">
-            Test your arm vibration speed. Practice jitter clicking and compare a repeatable 10-second CPS result.
+            Practice jitter clicking and compare a repeatable 10-second browser-registered CPS result.
          </p>
       </div>
 
@@ -255,19 +255,19 @@ const JitterClickTest: React.FC = () => {
         <div className="bg-slate-900/40 border border-white/5 rounded-2xl p-8 md:p-12">
             <h2 className="text-3xl font-display font-bold text-white mb-6 flex items-center gap-3">
                 <CheckCircle className="text-orange-500 w-8 h-8" /> 
-                How to Jitter Click: The Ultimate Guide
+                How to Practice Jitter Clicking
             </h2>
             <div className="grid grid-cols-1 md:grid-cols-2 gap-8 text-slate-300 leading-relaxed">
                 <div>
                     <p className="mb-4">
-                        <strong>Jitter clicking</strong> is a technique used by competitive Geometry Dash and Minecraft players to achieve high clicks per second (CPS) by vibrating the muscles in their forearm rather than using the finger muscles alone. The technique can change click speed and control, but results vary by player and setup.
+                        <strong>Jitter clicking</strong> is a rapid clicking technique that uses controlled tension and small repeated movements. Browser-registered CPS can vary by player, mouse, operating system and browser, so repeated tests on the same setup are more useful than comparing against a universal target.
                     </p>
                     <h4 className="text-white font-bold mb-2 mt-6">Step-by-Step Technique:</h4>
                     <ol className="space-y-2 list-decimal pl-5">
-                        <li><strong>Grip:</strong> Use a "Claw Grip" or "Fingertip Grip". Your hand should not rest heavily on the mouse.</li>
-                        <li><strong>Tension:</strong> Use only light, controlled tension. Do not force involuntary shaking or continue if the motion feels painful.</li>
-                        <li><strong>Transfer:</strong> Direct this vibration into your index finger tip.</li>
-                        <li><strong>Aiming:</strong> This is the hard part. Use your wrist or thumb to stabilize the mouse while your finger vibrates.</li>
+                        <li><strong>Start lightly:</strong> Use a comfortable grip and avoid forcing the motion.</li>
+                        <li><strong>Keep tests short:</strong> Compare several brief runs instead of one long high-effort attempt.</li>
+                        <li><strong>Track control:</strong> A faster result is only useful if you can still click where and when you intend.</li>
+                        <li><strong>Stop on discomfort:</strong> End the session if you feel pain, numbness or unusual strain.</li>
                     </ol>
                 </div>
                 <div className="space-y-6">
@@ -276,16 +276,16 @@ const JitterClickTest: React.FC = () => {
                             <AlertTriangle className="w-5 h-5" /> Safety Warning
                         </h3>
                         <p className="text-sm">
-                            Jitter clicking places significant stress on your forearm and wrist tendons. Repeated high-effort clicking can cause discomfort. Keep practice brief, take breaks, and stop if you feel pain or numbness.
+                            Repeated high-effort clicking can be uncomfortable. Keep practice brief, take breaks, and stop if you feel pain, numbness or unusual strain.
                         </p>
                     </div>
                     
                     <div className="bg-slate-800/50 p-6 rounded-xl border border-white/5">
                         <h4 className="text-white font-bold mb-2">Pros vs Cons</h4>
                         <ul className="text-sm space-y-2">
-                            <li className="flex justify-between"><span className="text-green-400">Can raise click rate</span> <span className="text-red-400">Hard to Aim</span></li>
-                            <li className="flex justify-between"><span className="text-green-400">No Special Mouse Needed</span> <span className="text-red-400">High Fatigue</span></li>
-                            <li className="flex justify-between"><span className="text-green-400">No special hardware required</span> <span className="text-red-400">Can be tiring</span></li>
+                            <li className="flex justify-between"><span className="text-green-400">Rapid repeated input</span> <span className="text-red-400">Can reduce precision</span></li>
+                            <li className="flex justify-between"><span className="text-green-400">Easy to test in-browser</span> <span className="text-red-400">Can be tiring</span></li>
+                            <li className="flex justify-between"><span className="text-green-400">Comparable over fixed durations</span> <span className="text-red-400">Results vary by setup</span></li>
                         </ul>
                     </div>
                 </div>
@@ -297,17 +297,17 @@ const JitterClickTest: React.FC = () => {
             <div className="bg-slate-900/30 p-6 rounded-xl border border-white/5">
                 <Crosshair className="w-8 h-8 text-blue-500 mb-4" />
                 <h3 className="font-bold text-white mb-2">Is Jitter Clicking good for Geometry Dash?</h3>
-                <p className="text-sm text-slate-400">Yes, specifically for spam wave sections. However, it's risky for sections requiring precision flying because the vibration makes fine movements difficult.</p>
+                <p className="text-sm text-slate-400">It can be one way to produce rapid repeated inputs, but it may reduce fine control. For Geometry Dash wave practice, compare raw CPS with whether the input rhythm stays controllable.</p>
             </div>
             <div className="bg-slate-900/30 p-6 rounded-xl border border-white/5">
                 <MousePointer2 className="w-8 h-8 text-purple-500 mb-4" />
                 <h3 className="font-bold text-white mb-2">Butterfly vs Jitter Clicking?</h3>
-                <p className="text-sm text-slate-400">Butterfly clicking is generally faster (15-20 CPS) and less tiring, but requires a mouse with double-clicking switches. Jitter works on any mouse but is harder to master.</p>
+                <p className="text-sm text-slate-400">They use different input motions, so one may feel faster or more controllable for a particular player. Compare both with the same test duration and the same device instead of assuming one universal winner.</p>
             </div>
             <div className="bg-slate-900/30 p-6 rounded-xl border border-white/5">
                 <Trophy className="w-8 h-8 text-yellow-500 mb-4" />
-                <h3 className="font-bold text-white mb-2">World Record Jitter Click?</h3>
-                <p className="text-sm text-slate-400">The highest consistent Jitter Click speed recorded is around 16 CPS, though some players can burst up to 18 CPS for short durations.</p>
+                <h3 className="font-bold text-white mb-2">Why do jitter CPS scores vary?</h3>
+                <p className="text-sm text-slate-400">Input hardware, browser event handling, test duration and technique all affect the number your browser records. Repeated tests on the same setup are the most comparable.</p>
             </div>
         </div>
 
@@ -325,10 +325,10 @@ const JitterClickTest: React.FC = () => {
                     <BookOpen className="h-4 w-4" /> Improve Your Form
                 </div>
                 <h3 className="font-display text-2xl font-bold text-white group-hover:text-orange-200">
-                   Hurting your hand while Jittering?
+                   Losing control while clicking faster?
                 </h3>
                 <p className="max-w-xl text-slate-400">
-                    Jitter clicking can lead to injury if done incorrectly. Read our guide on the "10 Common Spam Mistakes" to fix your posture and reduce strain.
+                    Use the spam-mistakes guide to separate raw speed from repeatable timing and avoid treating maximum CPS as the only training goal.
                 </p>
             </div>
             <div className="flex h-12 w-12 items-center justify-center rounded-full bg-orange-600 text-white shadow-lg shadow-orange-900/50 transition-transform group-hover:translate-x-2 group-hover:scale-110">
