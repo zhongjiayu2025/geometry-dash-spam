@@ -125,9 +125,9 @@ export default function RootLayout({
           dangerouslySetInnerHTML={{ __html: JSON.stringify(websiteSchema) }}
         />
 
-        <div className="fixed inset-0 pointer-events-none z-0">
+        <div aria-hidden="true" className="fixed inset-0 pointer-events-none z-0">
           <div className="absolute inset-0 bg-grid opacity-15"></div>
-          <div className="absolute top-0 left-1/2 -translate-x-1/2 w-[900px] h-[520px] rounded-full blur-[120px] opacity-10 bg-blue-600"></div>
+          <div className="absolute top-0 left-1/2 hidden -translate-x-1/2 w-[900px] h-[520px] rounded-full blur-[120px] opacity-10 bg-blue-600 md:block"></div>
           <div className="absolute bottom-0 left-0 right-0 h-32 bg-gradient-to-t from-[#020617] to-transparent"></div>
         </div>
 
