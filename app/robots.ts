@@ -7,7 +7,6 @@ export default function robots(): MetadataRoute.Robots {
     rules: {
       userAgent: "*",
       allow: "/",
-      disallow: ["/dashboard", "/leaderboard"],
     },
     sitemap: "https://geometrydashspam.cc/sitemap.xml",
   };
