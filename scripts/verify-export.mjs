@@ -470,6 +470,9 @@ const sitemapRouteErrors = [];
 const sitemapPolicyErrors = [];
 const sitemapMetadataErrors = [];
 const snippetQualityErrors = [];
+const semanticErrors = [];
+const sitemapTitleOwners = new Map();
+const sitemapDescriptionOwners = new Map();
 
 if (existsSync(sitemapPath)) {
   const sitemapXml = readFileSync(sitemapPath, "utf8");
@@ -530,6 +533,35 @@ if (existsSync(sitemapPath)) {
     const ogUrl = metaContent(html, "property", "og:url");
     const ogTitle = metaContent(html, "property", "og:title");
     const ogDescription = metaContent(html, "property", "og:description");
+    const h1Count = (html.match(/<h1\b/gi) || []).length;
+
+    if (h1Count !== 1) {
+      semanticErrors.push(
+        `${route}: expected exactly one <h1>, found ${h1Count}`
+      );
+    }
+
+    if (title) {
+      const owner = sitemapTitleOwners.get(title);
+      if (owner && owner !== route) {
+        semanticErrors.push(
+          `${route}: duplicate title also used by ${owner}: "${title}"`
+        );
+      } else {
+        sitemapTitleOwners.set(title, route);
+      }
+    }
+
+    if (description) {
+      const owner = sitemapDescriptionOwners.get(description);
+      if (owner && owner !== route) {
+        semanticErrors.push(
+          `${route}: duplicate meta description also used by ${owner}`
+        );
+      } else {
+        sitemapDescriptionOwners.set(description, route);
+      }
+    }
 
     if (!title) {
       sitemapMetadataErrors.push(`${route}: missing <title>`);
@@ -734,6 +766,7 @@ if (
   sitemapPolicyErrors.length ||
   sitemapMetadataErrors.length ||
   snippetQualityErrors.length ||
+  semanticErrors.length ||
   noindexErrors.length ||
   authorityLeakErrors.length ||
   htmlSitemapErrors.length ||
@@ -756,6 +789,11 @@ if (
   if (metadataErrors.length) {
     console.error("Metadata errors:");
     for (const error of metadataErrors) console.error(`- ${error}`);
+  }
+
+  if (semanticErrors.length) {
+    console.error("Indexable-page semantic errors:");
+    for (const error of semanticErrors) console.error(`- ${error}`);
   }
 
   if (snippetQualityErrors.length) {
@@ -820,5 +858,5 @@ if (
 }
 
 console.log(
-  `Static export verified: ${requiredRoutes.length} core routes, metadata checks, ads/robots/manifest checks, permanent legacy redirects, search-snippet length checks, sitemap freshness checks, noindex utility policy, core-page authority leakage checks, HTML sitemap priority-link checks, Wraith data-to-page checks, ${htmlFiles.length} HTML files with internal-link checks, sitemap URL/canonical/title/description/OpenGraph/indexability integrity, sitemap.xml and robots.txt.`
+  `Static export verified: ${requiredRoutes.length} core routes, metadata checks, ads/robots/manifest checks, permanent legacy redirects, search-snippet length checks, H1/title/description uniqueness checks, sitemap freshness checks, noindex utility policy, core-page authority leakage checks, HTML sitemap priority-link checks, Wraith data-to-page checks, ${htmlFiles.length} HTML files with internal-link checks, sitemap URL/canonical/title/description/OpenGraph/indexability integrity, sitemap.xml and robots.txt.`
 );
