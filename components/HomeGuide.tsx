@@ -67,10 +67,10 @@ export default function HomeGuide() {
         <div>
           <h2 className="text-2xl font-display font-bold text-white mb-4">How to practice wave spam</h2>
           <ol className="space-y-3 text-slate-400">
-            <li><strong className="text-slate-200">1. Start wide.</strong> Use an easier difficulty until your inputs are repeatable.</li>
-            <li><strong className="text-slate-200">2. Measure speed separately.</strong> Use the CPS test to find your sustainable rate.</li>
-            <li><strong className="text-slate-200">3. Tighten the corridor.</strong> Increase difficulty only when control remains stable.</li>
-            <li><strong className="text-slate-200">4. Stop if your hand hurts.</strong> Short practice sessions are preferable to grinding through pain.</li>
+            <li><strong className="text-slate-200">Start wide.</strong> Use an easier difficulty until your inputs are repeatable.</li>
+            <li><strong className="text-slate-200">Measure speed separately.</strong> Use the CPS test to find your sustainable rate.</li>
+            <li><strong className="text-slate-200">Tighten the corridor.</strong> Increase difficulty only when control remains stable.</li>
+            <li><strong className="text-slate-200">Stop if your hand hurts.</strong> Short practice sessions are preferable to grinding through pain.</li>
           </ol>
         </div>
         <div className="rounded-2xl border border-white/10 bg-black/20 p-6">
