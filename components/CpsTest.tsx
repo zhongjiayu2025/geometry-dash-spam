@@ -201,12 +201,18 @@ const CpsTest: React.FC = () => {
     const mean = intervals.reduce((sum, value) => sum + value, 0) / intervals.length;
     const variance = intervals.reduce((sum, value) => sum + Math.pow(value - mean, 2), 0) / intervals.length;
     const stdDev = Math.sqrt(variance);
-    const fastest = Math.min(...intervals);
     const coefficient = mean > 0 ? stdDev / mean : 0;
+
+    let left = 0;
+    let peakCps = 0;
+    for (let right = 0; right < times.length; right++) {
+      while (times[right] - times[left] > 1000) left++;
+      peakCps = Math.max(peakCps, right - left + 1);
+    }
 
     return {
       averageInterval: mean,
-      peakCps: fastest > 0 ? 1000 / fastest : 0,
+      peakCps,
       consistency: Math.max(0, Math.min(100, 100 - coefficient * 100)),
     };
   };
@@ -349,7 +355,7 @@ const CpsTest: React.FC = () => {
                {finished && (
                  <div className="grid grid-cols-3 gap-2 w-full mb-6 relative z-10">
                    <div className="bg-black/25 rounded-lg p-3">
-                     <div className="text-[10px] uppercase tracking-wider text-slate-500">Peak CPS</div>
+                     <div className="text-[10px] uppercase tracking-wider text-slate-500">Peak 1s CPS</div>
                      <div className="font-mono font-bold text-white">{timingStats.peakCps.toFixed(2)}</div>
                    </div>
                    <div className="bg-black/25 rounded-lg p-3">
