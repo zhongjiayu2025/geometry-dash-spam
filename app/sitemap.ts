@@ -36,6 +36,8 @@ const CORE_ROUTES = [
   "/how-to-get-gold-keys-geometry-dash",
   "/geometry-dash-difficulty-faces",
   "/geometry-dash-stuttering-high-end-pc",
+  "/geometry-dash-breeze",
+  "/dashmetry",
   "/jitter-click",
   "/butterfly-click",
   "/drag-click",

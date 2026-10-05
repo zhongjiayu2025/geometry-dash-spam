@@ -329,6 +329,22 @@ export const SitemapPage = () => (
       </div>
 
       <div className="bg-slate-950/30 border border-white/5 rounded-xl p-6">
+        <h2 className="text-2xl font-display font-bold text-white mb-4 border-b border-white/10 pb-2">
+          Related Rhythm Games
+        </h2>
+        <div className="grid gap-3">
+          <Link href="/geometry-dash-breeze" className="group block rounded-lg border border-white/5 bg-black/15 p-4 hover:border-sky-500/30">
+            <div className="font-bold text-sky-400 group-hover:underline">Geometry Dash Breeze</div>
+            <p className="mt-1 text-sm text-slate-400">Fan-made spinoff with source-checked release and platform information.</p>
+          </Link>
+          <Link href="/dashmetry" className="group block rounded-lg border border-white/5 bg-black/15 p-4 hover:border-cyan-500/30">
+            <div className="font-bold text-cyan-400 group-hover:underline">Dashmetry / Challenge Rush</div>
+            <p className="mt-1 text-sm text-slate-400">Legacy Dashmetry search intent connected to the current Challenge Rush game.</p>
+          </Link>
+        </div>
+      </div>
+
+      <div className="bg-slate-950/30 border border-white/5 rounded-xl p-6">
         <h2 className="text-2xl font-display font-bold text-white mb-6 border-b border-white/10 pb-2">
           Guides & Articles
         </h2>

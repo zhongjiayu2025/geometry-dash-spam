@@ -119,6 +119,23 @@ export default function HomeGuide() {
       </div>
 
       <div>
+        <h2 className="text-2xl md:text-3xl font-display font-bold text-white mb-3">Related rhythm-platformer searches</h2>
+        <p className="mb-5 max-w-3xl text-sm leading-6 text-slate-500">
+          These pages cover nearby search intent without mixing separate projects into the official Geometry Dash reference pages.
+        </p>
+        <div className="grid gap-4 md:grid-cols-2">
+          <Link href="/geometry-dash-breeze" className="rounded-xl border border-sky-500/20 bg-sky-950/10 p-5 hover:border-sky-400/40">
+            <h3 className="mb-2 font-bold text-white">Geometry Dash Breeze</h3>
+            <p className="text-sm leading-6 text-slate-400">Fan-made spinoff, current GitHub release, platforms and known launch issue.</p>
+          </Link>
+          <Link href="/dashmetry" className="rounded-xl border border-cyan-500/20 bg-cyan-950/10 p-5 hover:border-cyan-400/40">
+            <h3 className="mb-2 font-bold text-white">Dashmetry / Challenge Rush</h3>
+            <p className="text-sm leading-6 text-slate-400">What happened to Dashmetry, where the current game lives and how it differs from Geometry Dash.</p>
+          </Link>
+        </div>
+      </div>
+
+      <div>
         <h2 className="text-2xl md:text-3xl font-display font-bold text-white mb-6">Geometry Dash spam FAQ</h2>
         <div className="space-y-4">
           {faqs.map((item) => (

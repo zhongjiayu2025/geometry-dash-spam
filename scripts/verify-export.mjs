@@ -45,6 +45,8 @@ const requiredRoutes = [
   "/how-to-get-gold-keys-geometry-dash",
   "/geometry-dash-difficulty-faces",
   "/geometry-dash-stuttering-high-end-pc",
+  "/geometry-dash-breeze",
+  "/dashmetry",
   "/blog",
 ];
 
@@ -145,6 +147,16 @@ const metadataExpectations = {
     title: "Easiest Demons in Geometry Dash",
     description: "easiest demons in Geometry Dash",
     canonical: "https://geometrydashspam.cc/easiest-demons",
+  },
+  "/geometry-dash-breeze": {
+    title: "Geometry Dash Breeze",
+    description: "Geometry Dash Breeze is a fan-made spinoff",
+    canonical: "https://geometrydashspam.cc/geometry-dash-breeze",
+  },
+  "/dashmetry": {
+    title: "Dashmetry Is Now Challenge Rush",
+    description: "Dashmetry is now Challenge Rush",
+    canonical: "https://geometrydashspam.cc/dashmetry",
   },
   "/about": {
     title: "About Geometry Dash Spam",
