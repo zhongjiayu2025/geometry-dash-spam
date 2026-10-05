@@ -11,9 +11,24 @@ export const metadata: Metadata = {
 
 export default function HardestLevelPage() {
   const numberOne = DEMONS[0];
+  const schema = {
+    "@context": "https://schema.org",
+    "@type": "WebPage",
+    name: "What Is the Hardest Level in Geometry Dash?",
+    url: "https://geometrydashspam.cc/hardest-level",
+    dateModified: DEMON_VERIFIED_AT,
+    isBasedOn: DEMON_SOURCE_URL,
+    about: {
+      "@type": "Thing",
+      name: numberOne.level,
+      description: `Pointercrate Demonlist #1 as checked on ${DEMON_VERIFIED_AT}`,
+    },
+  };
 
   return (
-    <article className="mx-auto max-w-4xl">
+    <>
+      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(schema) }} />
+      <article className="mx-auto max-w-4xl">
       <header className="mb-8">
         <p className="mb-2 text-xs font-bold uppercase tracking-[0.2em] text-purple-400">
           Checked {DEMON_VERIFIED_AT}
@@ -57,6 +72,7 @@ export default function HardestLevelPage() {
         <Link href="/demon-list" className="rounded-lg bg-white px-4 py-2 text-sm font-bold text-black">Full Demon List</Link>
         <Link href="/geometry-dash-wave" className="rounded-lg border border-white/10 px-4 py-2 text-sm font-bold text-white">Practice Wave</Link>
       </div>
-    </article>
+      </article>
+    </>
   );
 }
