@@ -1,4 +1,5 @@
 import KeyboardGhostingTest from "../../components/KeyboardGhostingTest";
+import InputToolGuide from "../../components/InputToolGuide";
 import { Metadata } from "next";
 
 export const metadata: Metadata = {
@@ -20,5 +21,10 @@ export const metadata: Metadata = {
 };
 
 export default function KeyboardGhostingPage() {
-  return <KeyboardGhostingTest />;
+  return (
+    <>
+      <KeyboardGhostingTest />
+      <InputToolGuide tool="keyboard-ghosting" />
+    </>
+  );
 }
