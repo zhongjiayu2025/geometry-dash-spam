@@ -3,8 +3,8 @@ import JitterClickTest from "../../components/JitterClickTest";
 import { Metadata } from "next";
 
 export const metadata: Metadata = {
-    title: "Jitter Click Test | Vibration Clicking Technique Tutorial",
-    description: "Learn to Jitter Click safely. Increase your CPS to 14+ with our vibration technique tutorial and speed test. Essential for spam wave.",
+    title: "Jitter Click Test | 10-Second CPS Practice",
+    description: "Run a 10-second jitter click test and compare browser-registered CPS. Practice a rapid clicking technique without relying on claimed benchmark speeds.",
     alternates: {
         canonical: '/jitter-click',
     }
@@ -16,7 +16,7 @@ export default function JitterClickPage() {
         "@type": "WebApplication",
         "name": "Jitter Click Test",
         "url": "https://geometrydashspam.cc/jitter-click",
-        "description": "Learn to Jitter Click safely. Increase your CPS to 14+ with our vibration technique tutorial and speed test. Essential for spam wave.",
+        "description": "Run a 10-second jitter click test and compare browser-registered CPS. Practice a rapid clicking technique without relying on claimed benchmark speeds.",
         "applicationCategory": "UtilityApplication",
         "operatingSystem": "Any",
         "offers": {
