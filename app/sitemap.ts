@@ -17,6 +17,7 @@ const DEMON_ROUTES = new Set([
 const CODE_ROUTES = new Set([
   "/geometry-dash-codes",
   "/geometry-dash-vault-of-secrets-codes",
+  "/how-to-get-gold-keys-geometry-dash",
 ]);
 
 const CORE_ROUTES = [
