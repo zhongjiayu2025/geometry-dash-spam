@@ -5,6 +5,7 @@ export const metadata: Metadata = {
   title: "Browser & System Info | Device Information Viewer",
   description:
     "View screen, browser and device information exposed to this page through standard web APIs.",
+  robots: { index: false, follow: true },
   alternates: { canonical: "/system-info" },
   openGraph: {
     title: "Browser & System Info | Device Information Viewer",

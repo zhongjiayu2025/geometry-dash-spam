@@ -5,6 +5,7 @@ export const metadata: Metadata = {
   title: "Scroll Speed Test | Mouse Wheel Speed Test",
   description:
     "Measure browser-observed mouse-wheel scrolling speed during a timed test.",
+  robots: { index: false, follow: true },
   alternates: { canonical: "/scroll-test" },
   openGraph: {
     title: "Scroll Speed Test | Mouse Wheel Speed Test",

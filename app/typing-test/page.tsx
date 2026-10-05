@@ -5,6 +5,7 @@ export const metadata: Metadata = {
   title: "Typing Speed Test | 60-Second WPM Test",
   description:
     "Take a 60-second browser typing test and measure words per minute.",
+  robots: { index: false, follow: true },
   alternates: { canonical: "/typing-test" },
   openGraph: {
     title: "Typing Speed Test | 60-Second WPM Test",

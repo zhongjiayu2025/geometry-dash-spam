@@ -5,6 +5,7 @@ export const metadata: Metadata = {
   title: "Refresh Rate Test | Browser Display Hz Estimate",
   description:
     "Estimate the display refresh cadence observed by requestAnimationFrame in your browser.",
+  robots: { index: false, follow: true },
   alternates: { canonical: "/refresh-rate" },
   openGraph: {
     title: "Refresh Rate Test | Browser Display Hz Estimate",

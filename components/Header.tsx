@@ -18,34 +18,38 @@ const coreItems = [
 const moreItems = [
   ["/dashboard", "My Local Stats"],
   ["/geometry-dash-clicker", "Geometry Dash Clicker"],
+  ["/hardest-level", "Hardest Level"],
+  ["/easiest-demons", "Easiest Demons"],
   ["/geometry-dash-difficulty-faces", "Difficulty Faces"],
   ["/geometry-dash-vault-of-secrets-codes", "Vault of Secrets Codes"],
+  ["/how-to-get-diamonds-geometry-dash", "Get Diamonds"],
+  ["/how-to-get-gold-keys-geometry-dash", "Get Gold Keys"],
   ["/geometry-dash-stuttering-high-end-pc", "PC Stutter Guide"],
   ["/jitter-click", "Jitter Click"],
   ["/butterfly-click", "Butterfly Click"],
   ["/drag-click", "Drag Click"],
+  ["/right-click", "Right Click CPS"],
+  ["/double-click", "Double Click Test"],
   ["/spacebar-counter", "Spacebar Counter"],
   ["/polling-rate", "Mouse Polling Rate"],
-  ["/keyboard-latency", "Keyboard Latency"],
-  ["/reaction-test", "Reaction Time"],
-  ["/aim-trainer", "Aim Trainer"],
-  ["/typing-test", "Typing Test"],
-  ["/visual-memory", "Visual Memory"],
-  ["/chimp-test", "Chimp Test"],
-  ["/refresh-rate", "Refresh Rate"],
-  ["/system-info", "System Info"],
+  ["/keyboard-latency", "Keyboard Timing"],
+  ["/keyboard-ghosting", "Keyboard Ghosting"],
+  ["/key-rollover", "Key Rollover"],
 ] as const;
 
 const mobileMoreItems = [
-  ["/dashboard", "My Local Stats"],
+  ["/hardest-level", "Hardest Level"],
+  ["/easiest-demons", "Easiest Demons"],
+  ["/geometry-dash-difficulty-faces", "Difficulty Faces"],
+  ["/geometry-dash-vault-of-secrets-codes", "Vault of Secrets Codes"],
+  ["/how-to-get-diamonds-geometry-dash", "Get Diamonds"],
+  ["/how-to-get-gold-keys-geometry-dash", "Get Gold Keys"],
+  ["/geometry-dash-stuttering-high-end-pc", "PC Stutter Guide"],
   ["/geometry-dash-clicker", "Geometry Dash Clicker"],
   ["/jitter-click", "Jitter Click"],
   ["/butterfly-click", "Butterfly Click"],
-  ["/drag-click", "Drag Click"],
+  ["/spacebar-counter", "Spacebar Counter"],
   ["/polling-rate", "Mouse Polling Rate"],
-  ["/reaction-test", "Reaction Time"],
-  ["/refresh-rate", "Refresh Rate"],
-  ["/system-info", "System Info"],
 ] as const;
 
 export default function Header() {
@@ -78,7 +82,7 @@ export default function Header() {
           <div className="relative" onMouseEnter={() => setMoreOpen(true)} onMouseLeave={() => setMoreOpen(false)}>
             <button onClick={() => setMoreOpen((v) => !v)} className="flex items-center gap-1.5 px-3 py-2 rounded-lg text-sm text-slate-400 hover:text-white hover:bg-white/5" aria-haspopup="true" aria-expanded={moreOpen}>
               <Keyboard className="w-4 h-4" />
-              More Tools
+              More GD Tools
               <ChevronDown className="w-3 h-3" />
             </button>
             {moreOpen && (
@@ -108,7 +112,7 @@ export default function Header() {
               </Link>
             ))}
             <div className="mt-3 pt-3 border-t border-white/10">
-              <p className="px-4 mb-2 text-xs uppercase tracking-widest text-slate-500">More Tools</p>
+              <p className="px-4 mb-2 text-xs uppercase tracking-widest text-slate-500">More GD Tools</p>
               {mobileMoreItems.map(([href, label]) => (
                 <Link key={href} href={href} onClick={() => setMobileOpen(false)} className="block px-4 py-2.5 rounded-lg text-slate-400 hover:text-white hover:bg-white/5">{label}</Link>
               ))}

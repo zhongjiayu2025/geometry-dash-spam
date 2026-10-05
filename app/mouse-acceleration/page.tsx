@@ -5,6 +5,7 @@ export const metadata: Metadata = {
   title: "Mouse Acceleration Test | Pointer Movement Consistency Check",
   description:
     "Compare browser-reported pointer movement to look for signs of acceleration or inconsistent scaling. This cannot directly read operating-system settings.",
+  robots: { index: false, follow: true },
   alternates: { canonical: "/mouse-acceleration" },
   openGraph: {
     title: "Mouse Acceleration Test | Pointer Movement Consistency Check",

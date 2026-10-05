@@ -5,6 +5,7 @@ export const metadata: Metadata = {
   title: "Reaction Time Test (ms) | Visual Response Test",
   description:
     "Measure browser-based visual response time by clicking when the screen changes. Results depend on your device, display and browser.",
+  robots: { index: false, follow: true },
   alternates: { canonical: "/reaction-test" },
   openGraph: {
     title: "Reaction Time Test (ms) | Visual Response Test",

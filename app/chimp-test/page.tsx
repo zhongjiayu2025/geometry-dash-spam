@@ -5,6 +5,7 @@ export const metadata: Metadata = {
   title: "Chimp Test | Number Sequence Memory Test",
   description:
     "Test visual sequence memory by remembering numbered positions before they are hidden.",
+  robots: { index: false, follow: true },
   alternates: { canonical: "/chimp-test" },
   openGraph: {
     title: "Chimp Test | Number Sequence Memory Test",

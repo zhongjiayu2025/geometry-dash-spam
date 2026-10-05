@@ -5,6 +5,7 @@ export const metadata: Metadata = {
   title: "BPM Tapper | Rhythm & Beat Finder",
   description:
     "Tap along with a song to estimate its beats per minute and practice steady rhythm.",
+  robots: { index: false, follow: true },
   alternates: { canonical: "/bpm-tapper" },
   openGraph: {
     title: "BPM Tapper | Rhythm & Beat Finder",

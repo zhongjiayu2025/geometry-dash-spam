@@ -56,6 +56,20 @@ const removedGhostRoutes = [
   "/stats",
 ];
 
+const noindexUtilityRoutes = [
+  "/reaction-test",
+  "/sound-reaction",
+  "/aim-trainer",
+  "/typing-test",
+  "/visual-memory",
+  "/chimp-test",
+  "/refresh-rate",
+  "/system-info",
+  "/scroll-test",
+  "/mouse-acceleration",
+  "/bpm-tapper",
+];
+
 const metadataExpectations = {
   "/": {
     title: "Geometry Dash Spam Test",
@@ -365,7 +379,7 @@ if (existsSync(sitemapPath)) {
     }
   }
 
-  for (const noindexRoute of ["/dashboard", "/leaderboard"]) {
+  for (const noindexRoute of ["/dashboard", "/leaderboard", ...noindexUtilityRoutes]) {
     if (sitemapRoutes.includes(noindexRoute)) {
       sitemapPolicyErrors.push(`${noindexRoute} should not be present in sitemap.xml`);
     }
@@ -376,6 +390,25 @@ if (existsSync(sitemapPath)) {
   );
   for (const route of [...new Set(duplicates)]) {
     sitemapPolicyErrors.push(`duplicate sitemap URL: ${route}`);
+  }
+}
+
+const noindexErrors = [];
+
+for (const route of noindexUtilityRoutes) {
+  const path = exportedPath(route);
+  if (!path) {
+    noindexErrors.push(`${route}: expected utility route was not exported`);
+    continue;
+  }
+
+  const html = readFileSync(path, "utf8");
+  const robots = metaContent(html, "name", "robots");
+
+  if (!robots?.toLowerCase().includes("noindex")) {
+    noindexErrors.push(
+      `${route}: expected noindex robots directive, found "${robots ?? "missing"}"`
+    );
   }
 }
 
@@ -433,6 +466,7 @@ if (
   sitemapRouteErrors.length ||
   sitemapPolicyErrors.length ||
   sitemapMetadataErrors.length ||
+  noindexErrors.length ||
   contentErrors.length
 ) {
   console.error("Static export verification failed.");
@@ -452,6 +486,11 @@ if (
   if (metadataErrors.length) {
     console.error("Metadata errors:");
     for (const error of metadataErrors) console.error(`- ${error}`);
+  }
+
+  if (noindexErrors.length) {
+    console.error("Noindex utility errors:");
+    for (const error of noindexErrors) console.error(`- ${error}`);
   }
 
   if (contentErrors.length) {
@@ -486,5 +525,5 @@ if (
 }
 
 console.log(
-  `Static export verified: ${requiredRoutes.length} core routes, metadata checks, Wraith data-to-page checks, ${htmlFiles.length} HTML files with internal-link checks, sitemap URL/canonical/title/description/OpenGraph/indexability integrity, sitemap.xml and robots.txt.`
+  `Static export verified: ${requiredRoutes.length} core routes, metadata checks, noindex utility policy, Wraith data-to-page checks, ${htmlFiles.length} HTML files with internal-link checks, sitemap URL/canonical/title/description/OpenGraph/indexability integrity, sitemap.xml and robots.txt.`
 );

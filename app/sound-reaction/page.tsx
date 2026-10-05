@@ -5,6 +5,7 @@ export const metadata: Metadata = {
   title: "Sound Reaction Time Test | Audio Response Test",
   description:
     "Measure browser-based response time to an audio cue. Device, audio output and browser timing can affect results.",
+  robots: { index: false, follow: true },
   alternates: { canonical: "/sound-reaction" },
   openGraph: {
     title: "Sound Reaction Time Test | Audio Response Test",

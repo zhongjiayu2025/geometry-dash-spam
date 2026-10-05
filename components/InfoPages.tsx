@@ -303,26 +303,23 @@ export const SitemapPage = () => (
 
       <div id="browser-utilities" className="bg-slate-950/30 border border-white/5 rounded-xl p-6">
         <h2 className="text-2xl font-display font-bold text-white mb-3 border-b border-white/10 pb-2">
-          Browser Utilities
+          Input & Hardware Tools
         </h2>
         <p className="mb-5 text-sm leading-6 text-slate-500">
-          Supporting input, display and practice utilities. These are secondary to the Geometry Dash spam, wave, CPS, Demon and code pages above.
+          Supporting click, keyboard and hardware diagnostics that directly relate to Geometry Dash input practice. General-purpose browser tests are intentionally kept out of the search sitemap.
         </p>
         <div className="grid gap-2 sm:grid-cols-2">
           {[
             ["/jitter-click", "Jitter Click"],
             ["/butterfly-click", "Butterfly Click"],
             ["/drag-click", "Drag Click"],
+            ["/right-click", "Right Click CPS"],
+            ["/double-click", "Double Click Test"],
             ["/spacebar-counter", "Spacebar Counter"],
             ["/polling-rate", "Mouse Polling Rate"],
             ["/keyboard-latency", "Keyboard Timing"],
-            ["/reaction-test", "Reaction Time"],
-            ["/aim-trainer", "Aim Trainer"],
-            ["/typing-test", "Typing Test"],
-            ["/visual-memory", "Visual Memory"],
-            ["/chimp-test", "Chimp Test"],
-            ["/refresh-rate", "Refresh Rate"],
-            ["/system-info", "System Info"],
+            ["/keyboard-ghosting", "Keyboard Ghosting"],
+            ["/key-rollover", "Key Rollover"],
           ].map(([href, label]) => (
             <Link key={href} href={href} className="rounded-lg border border-white/5 bg-black/15 px-3 py-2 text-sm text-slate-400 hover:border-blue-500/30 hover:text-white">
               {label}

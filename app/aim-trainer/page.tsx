@@ -5,6 +5,7 @@ export const metadata: Metadata = {
   title: "Aim Trainer | Mouse Accuracy & Precision Practice",
   description:
     "Practice browser-based mouse precision and target clicking with a lightweight aim trainer.",
+  robots: { index: false, follow: true },
   alternates: { canonical: "/aim-trainer" },
   openGraph: {
     title: "Aim Trainer | Mouse Accuracy & Precision Practice",
