@@ -1,4 +1,5 @@
 import SpacebarCounter from "../../components/SpacebarCounter";
+import InputToolGuide from "../../components/InputToolGuide";
 import { Metadata } from "next";
 
 export const metadata: Metadata = {
@@ -32,6 +33,7 @@ export default function SpacebarCounterPage() {
         </p>
       </div>
       <SpacebarCounter />
+      <InputToolGuide tool="spacebar" />
     </>
   );
 }
