@@ -28,6 +28,21 @@ export const metadata: Metadata = {
   },
 };
 
+const codeFaqs = [
+  {
+    q: "Where do I enter Geometry Dash vault codes?",
+    a: "Use the code in the matching room: The Vault, Vault of Secrets, Chamber of Time or the Secret Room/Wraith. Codes from one room generally do not work in another.",
+  },
+  {
+    q: "Are The Vault and Vault of Secrets the same thing?",
+    a: "No. They are separate code rooms with different unlock requirements and different code lists. The Vault uses user coins to unlock, while the Vault of Secrets requires diamonds.",
+  },
+  {
+    q: "Why is a Geometry Dash code not working?",
+    a: "Check that you are in the correct room, that its unlock requirement is complete, and that the reward has not already been redeemed. Wraith codes can also be enabled or disabled server-side.",
+  },
+];
+
 export default function GeometryDashCodesPage() {
   const schema = {
     "@context": "https://schema.org",
@@ -38,9 +53,20 @@ export default function GeometryDashCodesPage() {
     about: { "@type": "VideoGame", name: "Geometry Dash" },
   };
 
+  const faqSchema = {
+    "@context": "https://schema.org",
+    "@type": "FAQPage",
+    mainEntity: codeFaqs.map((item) => ({
+      "@type": "Question",
+      name: item.q,
+      acceptedAnswer: { "@type": "Answer", text: item.a },
+    })),
+  };
+
   return (
     <>
       <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(schema) }} />
+      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(faqSchema) }} />
 
       <article className="mx-auto max-w-5xl">
         <header className="mb-10 max-w-4xl">
@@ -140,6 +166,18 @@ export default function GeometryDashCodesPage() {
           <p className="leading-7 text-slate-400">
             Check that you are in the correct vault, that any unlock requirement is complete, and that a one-time reward has not already been redeemed. For Wraith codes, an internet connection is required and server-side availability can change.
           </p>
+        </section>
+
+        <section className="mt-10">
+          <h2 className="mb-4 text-2xl font-bold text-white">Geometry Dash Codes FAQ</h2>
+          <div className="grid gap-4 md:grid-cols-3">
+            {codeFaqs.map((item) => (
+              <div key={item.q} className="rounded-xl border border-white/10 bg-slate-900/30 p-5">
+                <h3 className="mb-2 font-bold text-white">{item.q}</h3>
+                <p className="text-sm leading-6 text-slate-400">{item.a}</p>
+              </div>
+            ))}
+          </div>
         </section>
       </article>
     </>
