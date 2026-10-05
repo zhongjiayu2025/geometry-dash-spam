@@ -108,7 +108,10 @@ export default function PersonalStats() {
 
     if (!mounted) return null;
 
-    const StatCard = ({ title, value, unit, icon: Icon, href, emptyText }: any) => (
+    const StatCard = ({ title, value, unit, icon: Icon, href, emptyText }: any) => {
+        const hasValue = value !== null && value !== undefined && !isNaN(value);
+
+        return (
         <div className="bg-slate-900/40 border border-white/5 rounded-2xl p-6 relative overflow-hidden group hover:border-blue-500/30 transition-colors">
             <div className="flex items-center gap-3 mb-4 relative z-10">
                 <div className="p-2.5 rounded-xl bg-slate-800 text-slate-400 group-hover:text-blue-400 group-hover:bg-blue-500/10 transition-colors">
@@ -118,7 +121,7 @@ export default function PersonalStats() {
             </div>
             
             <div className="relative z-10 mb-6">
-                {value !== null && value !== undefined && (!isNaN(value)) ? (
+                {hasValue ? (
                     <div className="flex items-end gap-2">
                         <span className="text-4xl font-display font-bold text-white drop-shadow-md">{value}</span>
                         <span className="text-slate-400 font-mono mb-1">{unit}</span>
@@ -129,14 +132,15 @@ export default function PersonalStats() {
             </div>
 
             <Link href={href} className="inline-flex items-center gap-2 text-sm font-bold text-blue-400 hover:text-blue-300 transition-colors relative z-10">
-                {value !== null ? "Improve Score" : "Take Test"} <ArrowRight className="w-4 h-4" />
+                {hasValue ? "Improve Score" : "Take Test"} <ArrowRight className="w-4 h-4" />
             </Link>
             
             <div className="absolute -bottom-8 -right-8 text-white/[0.02] group-hover:text-blue-500/5 transition-colors pointer-events-none">
                 <Icon className="w-48 h-48" />
             </div>
         </div>
-    );
+        );
+    };
 
     return (
         <div className="w-full max-w-6xl mx-auto px-4 md:px-0">
