@@ -23,6 +23,8 @@ export const metadata: Metadata = {
   openGraph: {
     type: "website",
     url: "https://geometrydashspam.cc",
+    isPartOf: { "@id": "https://geometrydashspam.cc/#website" },
+    publisher: { "@id": "https://geometrydashspam.cc/#organization" },
     title: "Geometry Dash Spam Test – Wave Spam Trainer Online",
     description:
       "Play a Geometry Dash spam test online, practice wave spam and train repeatable input control in a free browser-based simulator.",
