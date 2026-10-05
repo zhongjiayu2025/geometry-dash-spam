@@ -6,6 +6,17 @@ export const metadata: Metadata = {
   description:
     "Compare browser-reported pointer movement to look for signs of acceleration or inconsistent scaling. This cannot directly read operating-system settings.",
   alternates: { canonical: "/mouse-acceleration" },
+  openGraph: {
+    title: "Mouse Acceleration Test | Pointer Movement Consistency Check",
+    description: "Compare browser-reported pointer movement to look for signs of acceleration or inconsistent scaling. This cannot directly read operating-system settings.",
+    url: "https://geometrydashspam.cc/mouse-acceleration",
+    type: "website",
+  },
+  twitter: {
+    card: "summary",
+    title: "Mouse Acceleration Test | Pointer Movement Consistency Check",
+    description: "Compare browser-reported pointer movement to look for signs of acceleration or inconsistent scaling. This cannot directly read operating-system settings.",
+  },
 };
 
 export default function MouseAccelerationPage() {
