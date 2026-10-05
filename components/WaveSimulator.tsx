@@ -7,7 +7,7 @@ import dynamic from 'next/dynamic';
 import { Difficulty, GameStatus } from '../types';
 import { DIFFICULTY_CONFIGS } from '../constants';
 import DifficultySelector from './DifficultySelector';
-import { Infinity as InfinityIcon, Minimize2, Star, MousePointerClick, Activity, Keyboard } from 'lucide-react';
+import { Infinity as InfinityIcon, Minimize2, Star, MousePointerClick, Activity, ListOrdered, Trophy } from 'lucide-react';
 
 const GameCanvas = dynamic(() => import('./GameCanvas'), { ssr: false });
 
@@ -296,35 +296,50 @@ const WaveSimulator: React.FC<WaveSimulatorProps> = ({ variant = 'spam' }) => {
       </div>
       )}
 
-      {/* Quick Access Training Modules (Modified to use Link) */}
+      {/* Core next steps */}
       <div className="w-full max-w-5xl mt-8 mb-8">
-        <h3 className="text-xl font-display font-bold text-white mb-4 px-2 border-l-4 border-blue-500">{isWavePage ? 'Wave Practice Toolkit' : 'More Geometry Dash Spam Tests'}</h3>
+        <h3 className="text-xl font-display font-bold text-white mb-4 px-2 border-l-4 border-blue-500">
+          {isWavePage ? 'Continue Wave Training' : 'Continue Geometry Dash Spam Training'}
+        </h3>
         <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-            <Link href="/cps-test" className="bg-slate-900/60 border border-white/5 rounded-xl p-4 hover:border-blue-400/50 hover:bg-slate-900 transition-all cursor-pointer group block">
-                <MousePointerClick className="w-8 h-8 text-blue-500 mb-3 group-hover:scale-110 transition-transform"/>
-                <h4 className="font-bold text-white text-sm mb-1">CPS Test</h4>
-                <p className="text-xs text-slate-400">Measure raw clicking speed.</p>
-            </Link>
-            <Link href="/jitter-click" className="bg-slate-900/60 border border-white/5 rounded-xl p-4 hover:border-orange-400/50 hover:bg-slate-900 transition-all cursor-pointer group block">
-                <Activity className="w-8 h-8 text-orange-500 mb-3 group-hover:scale-110 transition-transform"/>
-                <h4 className="font-bold text-white text-sm mb-1">Jitter Click</h4>
-                <p className="text-xs text-slate-400">Compare a rapid clicking method.</p>
-            </Link>
-            <Link href="/spacebar-counter" className="bg-slate-900/60 border border-white/5 rounded-xl p-4 hover:border-purple-400/50 hover:bg-slate-900 transition-all cursor-pointer group block">
-                <Keyboard className="w-8 h-8 text-purple-500 mb-3 group-hover:scale-110 transition-transform"/>
-                <h4 className="font-bold text-white text-sm mb-1">Spacebar</h4>
-                <p className="text-xs text-slate-400">Test repeated key presses.</p>
-            </Link>
-            <Link
-                href={isWavePage ? "/demon-list/wave-demons" : "/demon-list/spam-demons"}
-                className="bg-slate-900/60 border border-white/5 rounded-xl p-4 hover:border-green-400/50 hover:bg-slate-900 transition-all cursor-pointer group block"
-            >
-                <Star className="w-8 h-8 text-green-500 mb-3 group-hover:scale-110 transition-transform"/>
-                <h4 className="font-bold text-white text-sm mb-1">{isWavePage ? "Wave Demons" : "Spam Demons"}</h4>
-                <p className="text-xs text-slate-400">
-                  {isWavePage ? "Practice with wave-focused demon references." : "Explore rapid-input demon references."}
-                </p>
-            </Link>
+          <Link href="/cps-test" className="bg-slate-900/60 border border-white/5 rounded-xl p-4 hover:border-blue-400/50 hover:bg-slate-900 transition-all group block">
+            <MousePointerClick className="w-8 h-8 text-blue-500 mb-3 group-hover:scale-110 transition-transform"/>
+            <h4 className="font-bold text-white text-sm mb-1">CPS Test</h4>
+            <p className="text-xs text-slate-400">Measure raw click speed and timing.</p>
+          </Link>
+
+          <Link
+            href={isWavePage ? "/" : "/geometry-dash-wave"}
+            className="bg-slate-900/60 border border-white/5 rounded-xl p-4 hover:border-cyan-400/50 hover:bg-slate-900 transition-all group block"
+          >
+            <Activity className="w-8 h-8 text-cyan-500 mb-3 group-hover:scale-110 transition-transform"/>
+            <h4 className="font-bold text-white text-sm mb-1">{isWavePage ? "Spam Test" : "Wave Trainer"}</h4>
+            <p className="text-xs text-slate-400">
+              {isWavePage ? "Return to the core spam-control trainer." : "Turn click speed into controlled wave movement."}
+            </p>
+          </Link>
+
+          <Link
+            href={isWavePage ? "/demon-list/wave-demons" : "/spam-challenge-list"}
+            className="bg-slate-900/60 border border-white/5 rounded-xl p-4 hover:border-fuchsia-400/50 hover:bg-slate-900 transition-all group block"
+          >
+            <ListOrdered className="w-8 h-8 text-fuchsia-500 mb-3 group-hover:scale-110 transition-transform"/>
+            <h4 className="font-bold text-white text-sm mb-1">{isWavePage ? "Wave Demons" : "Spam Challenge List"}</h4>
+            <p className="text-xs text-slate-400">
+              {isWavePage ? "Use wave-focused Demon references for practice." : "Check the current SCL entry point and rules."}
+            </p>
+          </Link>
+
+          <Link
+            href={isWavePage ? "/demon-list" : "/demon-list/spam-demons"}
+            className="bg-slate-900/60 border border-white/5 rounded-xl p-4 hover:border-purple-400/50 hover:bg-slate-900 transition-all group block"
+          >
+            <Trophy className="w-8 h-8 text-purple-500 mb-3 group-hover:scale-110 transition-transform"/>
+            <h4 className="font-bold text-white text-sm mb-1">{isWavePage ? "Demon List" : "Spam Demons"}</h4>
+            <p className="text-xs text-slate-400">
+              {isWavePage ? "See the sourced top-50 Demon List snapshot." : "Explore spam-heavy Demon practice references."}
+            </p>
+          </Link>
         </div>
       </div>
     </div>
