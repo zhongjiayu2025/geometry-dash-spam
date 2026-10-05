@@ -109,7 +109,11 @@ const GameCanvas: React.FC<GameCanvasProps> = memo(({ difficulty, status, onStat
   
   useEffect(() => {
     setIsMuted(localStorage.getItem('gd_spam_muted') === 'true');
-    setReduceMotion(localStorage.getItem('gd_spam_reduce_motion') === 'true');
+    const savedMotion = localStorage.getItem('gd_spam_reduce_motion');
+    setReduceMotion(
+      savedMotion === 'true' ||
+      (savedMotion === null && window.matchMedia('(prefers-reduced-motion: reduce)').matches)
+    );
     loadHighScore();
     loadRunHistory();
   }, [difficulty.id, isEndless, isMini]);
@@ -1163,6 +1167,7 @@ const GameCanvas: React.FC<GameCanvasProps> = memo(({ difficulty, status, onStat
           <div className="flex gap-2 pointer-events-auto">
               <button 
                   aria-label={reduceMotion ? "Enable motion effects" : "Reduce motion effects"}
+                  aria-pressed={reduceMotion}
                   title={reduceMotion ? "Enable Motion/Pulse" : "Reduce Motion/Shake"}
                   onClick={toggleMotion} 
                   className={`p-2 rounded-full backdrop-blur-md transition-colors border border-transparent ${reduceMotion ? 'bg-blue-600 text-white border-blue-400' : 'bg-black/40 text-white/70 hover:bg-black/60 hover:text-white'}`}
@@ -1171,6 +1176,7 @@ const GameCanvas: React.FC<GameCanvasProps> = memo(({ difficulty, status, onStat
               </button>
               <button 
                   aria-label={isFullscreen ? "Exit fullscreen" : "Enter fullscreen"}
+                  aria-pressed={isFullscreen}
                   title="Toggle Fullscreen"
                   onClick={(e) => { e.stopPropagation(); toggleFullscreen(); }} 
                   className="p-2 bg-black/40 hover:bg-black/60 rounded-full text-white/70 hover:text-white backdrop-blur-md transition-colors"
@@ -1179,6 +1185,7 @@ const GameCanvas: React.FC<GameCanvasProps> = memo(({ difficulty, status, onStat
               </button>
               <button 
                   aria-label={isMuted ? "Unmute" : "Mute"}
+                  aria-pressed={isMuted}
                   onClick={(e) => { e.stopPropagation(); setIsMuted(!isMuted); localStorage.setItem('gd_spam_muted', String(!isMuted)); }} 
                   className="p-2 bg-black/40 hover:bg-black/60 rounded-full text-white/70 hover:text-white backdrop-blur-md transition-colors"
               >
