@@ -93,9 +93,15 @@ export default function ChimpTest() {
                     setBestScore(level);
                 }
 
+                if (level >= 40) {
+                    setGameState('finished');
+                    return;
+                }
+
                 setTimeout(() => {
-                    setLevel(prev => prev + 1);
-                    generateLevel(level + 1);
+                    const nextLevel = level + 1;
+                    setLevel(nextLevel);
+                    generateLevel(nextLevel);
                 }, 500);
             } else {
                 setNextExpected(prev => prev + 1);
