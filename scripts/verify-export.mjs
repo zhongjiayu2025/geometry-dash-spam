@@ -380,6 +380,8 @@ const layoutSource = readFileSync(join(process.cwd(), "app", "layout.tsx"), "utf
 const headerSource = readFileSync(join(process.cwd(), "components", "Header.tsx"), "utf8");
 const cpsClientSource = readFileSync(join(process.cwd(), "components", "CpsTest.tsx"), "utf8");
 const waveClientSource = readFileSync(join(process.cwd(), "components", "WaveSimulator.tsx"), "utf8");
+const gameCanvasSource = readFileSync(join(process.cwd(), "components", "GameCanvas.tsx"), "utf8");
+const demonListSource = readFileSync(join(process.cwd(), "components", "DemonListTable.tsx"), "utf8");
 const homeSource = readFileSync(join(process.cwd(), "app", "page.tsx"), "utf8");
 if (!layoutSource.includes(`client=ca-${publisherId}`)) {
   infrastructureErrors.push(
@@ -416,6 +418,30 @@ if (waveClientSource.includes("Core next steps") || waveClientSource.includes("H
 
 if (homeSource.includes('next/dynamic') && homeSource.includes("HomeGuide")) {
   infrastructureErrors.push("HomeGuide should be server-rendered directly, not wrapped in next/dynamic");
+}
+
+if (
+  !gameCanvasSource.includes("frameDeltaMs") ||
+  !gameCanvasSource.includes("difficulty.speed * frameFactor") ||
+  !gameCanvasSource.includes("playerY += gameState.current.velocityY * frameFactor") ||
+  gameCanvasSource.includes("runTime = now - gameState.current.startTime")
+) {
+  infrastructureErrors.push("Wave physics must remain delta-time normalized instead of frame-rate dependent");
+}
+
+if (
+  !cpsClientSource.includes("pendingTouchRef") ||
+  !cpsClientSource.includes("touch-pan-y") ||
+  !cpsClientSource.includes("touch-none")
+) {
+  infrastructureErrors.push("CPS mobile input must allow scrolling before a test and lock touch only while active");
+}
+
+const demonFilteredRenderCount = (demonListSource.match(/filtered\.map\(/g) || []).length;
+if (demonFilteredRenderCount !== 1) {
+  infrastructureErrors.push(
+    `Demon List should render filtered results once across breakpoints, found ${demonFilteredRenderCount} filtered maps`
+  );
 }
 
 const metadataErrors = [];
