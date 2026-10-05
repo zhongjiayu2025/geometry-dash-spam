@@ -1,6 +1,11 @@
 name: Refresh Demon List
 
 on:
+  push:
+    branches: [main]
+    paths:
+      - "scripts/update-demon-list.mjs"
+      - ".github/workflows/demon-list-refresh.yml"
   schedule:
     - cron: "17 4 * * *"
   workflow_dispatch:
