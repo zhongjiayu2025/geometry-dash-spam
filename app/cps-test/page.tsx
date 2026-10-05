@@ -4,7 +4,7 @@ import { Metadata } from "next";
 export const metadata: Metadata = {
   title: "Geometry Dash CPS Test – GD Click Speed Test 1–60 Seconds",
   description:
-    "Take a Geometry Dash CPS test in 1, 3, 5, 10, 30 or 60 seconds. Measure clicks per second, compare personal bests and train sustainable click speed.",
+    "Take a Geometry Dash CPS test and GD click test in 1, 3, 5, 10, 30 or 60 seconds. Measure clicks per second, timing consistency and local personal bests.",
   alternates: {
     canonical: "/cps-test",
   },
@@ -52,7 +52,7 @@ export default function CpsTestPage() {
           Geometry Dash CPS Test
         </h1>
         <p className="text-slate-400 max-w-2xl mx-auto text-sm md:text-base">
-          Measure clicks per second, track local personal bests and compare sustainable speed across multiple test lengths.
+          Use this Geometry Dash click test to measure CPS, timing consistency and local personal bests across 1, 3, 5, 10, 30 and 60 second modes.
         </p>
       </header>
       <CpsTest />
