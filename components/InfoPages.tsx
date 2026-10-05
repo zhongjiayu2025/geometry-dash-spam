@@ -269,7 +269,7 @@ export const SitemapPage = () => (
     <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
       <div className="bg-slate-950/30 border border-white/5 rounded-xl p-6">
         <h2 className="text-2xl font-display font-bold text-white mb-6 border-b border-white/10 pb-2">
-          Core & Tools
+          Geometry Dash Core & Reference
         </h2>
         <ul className="space-y-4">
           {[
@@ -288,19 +288,7 @@ export const SitemapPage = () => (
             { view: "/how-to-get-gold-keys-geometry-dash", label: "How to Get Gold Keys", desc: "Event and Secret Room methods plus Treasure Room use." },
             { view: "/geometry-dash-difficulty-faces", label: "Geometry Dash Difficulty Faces", desc: "Difficulty ratings, star ranges and Demon sub-difficulties." },
             { view: "/geometry-dash-stuttering-high-end-pc", label: "Geometry Dash PC Stuttering", desc: "Evidence-aware troubleshooting for high-end PC frame stutter." },
-            { view: "/jitter-click", label: "Jitter Click Test", desc: "Jitter clicking practice." },
-            { view: "/butterfly-click", label: "Butterfly Click Test", desc: "Two-finger clicking practice." },
-            { view: "/drag-click", label: "Drag Click Test", desc: "Drag-click input practice." },
-            { view: "/spacebar-counter", label: "Spacebar Counter", desc: "Keyboard press counter." },
-            { view: "/polling-rate", label: "Mouse Polling Rate", desc: "Browser-observed pointer report rate." },
-            { view: "/keyboard-latency", label: "Keyboard Latency Test", desc: "Browser-side key timing utility." },
-            { view: "/reaction-test", label: "Reaction Time Test", desc: "Visual response practice." },
-            { view: "/aim-trainer", label: "Aim Trainer", desc: "Mouse precision practice." },
-            { view: "/typing-test", label: "Typing Test", desc: "Typing speed practice." },
-            { view: "/visual-memory", label: "Visual Memory", desc: "Pattern memory practice." },
-            { view: "/chimp-test", label: "Chimp Test", desc: "Sequence memory practice." },
-            { view: "/refresh-rate", label: "Refresh Rate Test", desc: "Browser-observed display refresh rate." },
-            { view: "/system-info", label: "System Information", desc: "Browser-exposed device information." },
+
           ].map((item) => (
             <li key={item.view}>
               <Link href={item.view} className="group block">
@@ -313,6 +301,36 @@ export const SitemapPage = () => (
             </li>
           ))}
         </ul>
+      </div>
+
+      <div id="browser-utilities" className="bg-slate-950/30 border border-white/5 rounded-xl p-6">
+        <h2 className="text-2xl font-display font-bold text-white mb-3 border-b border-white/10 pb-2">
+          Browser Utilities
+        </h2>
+        <p className="mb-5 text-sm leading-6 text-slate-500">
+          Supporting input, display and practice utilities. These are secondary to the Geometry Dash spam, wave, CPS, Demon and code pages above.
+        </p>
+        <div className="grid gap-2 sm:grid-cols-2">
+          {[
+            ["/jitter-click", "Jitter Click"],
+            ["/butterfly-click", "Butterfly Click"],
+            ["/drag-click", "Drag Click"],
+            ["/spacebar-counter", "Spacebar Counter"],
+            ["/polling-rate", "Mouse Polling Rate"],
+            ["/keyboard-latency", "Keyboard Timing"],
+            ["/reaction-test", "Reaction Time"],
+            ["/aim-trainer", "Aim Trainer"],
+            ["/typing-test", "Typing Test"],
+            ["/visual-memory", "Visual Memory"],
+            ["/chimp-test", "Chimp Test"],
+            ["/refresh-rate", "Refresh Rate"],
+            ["/system-info", "System Info"],
+          ].map(([href, label]) => (
+            <Link key={href} href={href} className="rounded-lg border border-white/5 bg-black/15 px-3 py-2 text-sm text-slate-400 hover:border-blue-500/30 hover:text-white">
+              {label}
+            </Link>
+          ))}
+        </div>
       </div>
 
       <div className="bg-slate-950/30 border border-white/5 rounded-xl p-6">
