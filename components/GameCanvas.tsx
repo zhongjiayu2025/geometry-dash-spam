@@ -1089,7 +1089,7 @@ const GameCanvas: React.FC<GameCanvasProps> = memo(({ difficulty, status, onStat
   return (
     <div 
       className={`relative w-full transition-all duration-500 mx-auto select-none touch-none group bg-slate-950 rounded-lg overflow-hidden
-        ${isFullscreen ? 'fixed inset-0 z-50 h-screen max-w-none rounded-none' : 'max-w-5xl h-[360px] sm:h-auto sm:aspect-video md:h-[500px]'}
+        ${isFullscreen ? 'fixed inset-0 z-50 h-screen max-w-none rounded-none' : 'max-w-5xl h-[330px] sm:h-auto sm:aspect-video md:h-[500px]'}
       `}
       ref={containerRef}
       style={{
@@ -1104,16 +1104,16 @@ const GameCanvas: React.FC<GameCanvasProps> = memo(({ difficulty, status, onStat
       />
 
       {/* --- HUD --- */}
-      <div className="absolute top-4 left-4 right-4 flex justify-between items-start pointer-events-none">
+      <div className="absolute top-3 left-3 right-3 sm:top-4 sm:left-4 sm:right-4 flex justify-between items-start pointer-events-none">
           <div className="flex flex-col gap-1">
-              <div className="text-4xl font-display font-black text-white italic drop-shadow-lg tabular-nums">
+              <div className="text-3xl sm:text-4xl font-display font-black text-white italic drop-shadow-lg tabular-nums">
                   {status === GameStatus.Playing
                     ? displayTime.toFixed(2)
                     : (gameState.current.runTime / 1000).toFixed(2)
                   }s
               </div>
               {!isEndless ? (
-                <div className="w-48 h-2 bg-slate-800 rounded-full overflow-hidden border border-white/10">
+                <div className="w-32 sm:w-48 h-2 bg-slate-800 rounded-full overflow-hidden border border-white/10">
                    <div 
                       className="h-full bg-white shadow-[0_0_10px_white] transition-all duration-75"
                       style={{ width: `${Math.min(100, (gameState.current.distanceTraveled / gameState.current.finishLineX) * 100)}%` }}
@@ -1154,15 +1154,21 @@ const GameCanvas: React.FC<GameCanvasProps> = memo(({ difficulty, status, onStat
           </div>
       </div>
 
+      {status === GameStatus.Playing && (
+        <div className="absolute bottom-3 left-1/2 z-10 -translate-x-1/2 rounded-full border border-white/10 bg-black/55 px-3 py-1.5 text-[10px] font-bold uppercase tracking-[0.14em] text-slate-300 backdrop-blur sm:hidden pointer-events-none">
+          Hold = rise · release = fall
+        </div>
+      )}
+
       {/* --- START SCREEN --- */}
       {status === GameStatus.Idle && (
         <div className="absolute inset-0 flex flex-col items-center justify-center bg-black/70 backdrop-blur-[2px] z-10 animate-in fade-in duration-300 pointer-events-none">
-          <div className="text-center space-y-6 p-8 border border-white/10 bg-black/50 rounded-2xl shadow-2xl backdrop-blur-md max-w-md mx-4 pointer-events-auto">
-              <h2 className="text-5xl font-display font-black text-white mb-2 tracking-tight" style={{ textShadow: `0 0 20px ${difficulty.color}` }}>
+          <div className="text-center space-y-4 sm:space-y-6 p-4 sm:p-8 border border-white/10 bg-black/55 rounded-2xl shadow-2xl backdrop-blur-md w-[calc(100%-1.5rem)] max-w-md mx-3 sm:mx-4 pointer-events-auto">
+              <h2 className="text-3xl sm:text-5xl font-display font-black text-white mb-1 sm:mb-2 tracking-tight" style={{ textShadow: `0 0 20px ${difficulty.color}` }}>
                 {difficulty.label.toUpperCase()}
               </h2>
               <div className="h-1 w-24 mx-auto rounded-full" style={{ backgroundColor: difficulty.color }}></div>
-              <div className="flex justify-center gap-8 text-sm font-mono text-slate-400">
+              <div className="flex justify-center gap-6 sm:gap-8 text-xs sm:text-sm font-mono text-slate-400">
                   <div className="flex flex-col items-center">
                       <span className="text-white font-bold">{isEndless ? '∞' : '15s'}</span>
                       <span className="text-xs uppercase">Goal</span>
@@ -1175,7 +1181,7 @@ const GameCanvas: React.FC<GameCanvasProps> = memo(({ difficulty, status, onStat
               
               <button
                 onClick={() => { initAudio(); onStatusChange(GameStatus.Playing); }}
-                className="group relative w-full py-4 bg-white text-black font-display font-black text-xl rounded hover:scale-[1.02] transition-transform overflow-hidden"
+                className="group relative w-full py-3 sm:py-4 bg-white text-black font-display font-black text-lg sm:text-xl rounded hover:scale-[1.02] transition-transform overflow-hidden"
               >
                 <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/50 to-transparent translate-x-[-100%] group-hover:translate-x-[100%] transition-transform duration-500"></div>
                 <span className="relative z-10 flex items-center justify-center gap-2">
@@ -1183,8 +1189,8 @@ const GameCanvas: React.FC<GameCanvasProps> = memo(({ difficulty, status, onStat
                 </span>
               </button>
               
-              <div className="text-xs text-slate-400 animate-pulse flex flex-col gap-1">
-                 <span>Click or Press Space to Play</span>
+              <div className="text-[11px] sm:text-xs text-slate-400 flex flex-col gap-1">
+                 <span>Hold/touch to rise · release to fall · Space/↑ on keyboard</span>
                  {highScore > 0 && <span className="text-yellow-500 font-bold">Personal Best: {highScore.toFixed(2)}s</span>}
                  {recentRuns.length > 0 && (
                    <span className="text-slate-500">
@@ -1201,53 +1207,53 @@ const GameCanvas: React.FC<GameCanvasProps> = memo(({ difficulty, status, onStat
       {/* --- GAME OVER SCREEN --- */}
       {status === GameStatus.Lost && (
          <div className="absolute inset-0 flex flex-col items-center justify-center bg-red-900/40 backdrop-blur-sm z-20 animate-in zoom-in duration-100 pointer-events-none">
-             <div className="pointer-events-auto flex flex-col items-center bg-black/50 p-8 rounded-2xl border border-white/10 backdrop-blur-md shadow-2xl" onClick={(e) => e.stopPropagation()}>
+             <div className="pointer-events-auto flex max-h-[calc(100%-1rem)] w-[calc(100%-1rem)] max-w-md flex-col items-center overflow-y-auto bg-black/55 p-4 sm:p-8 rounded-2xl border border-white/10 backdrop-blur-md shadow-2xl" onClick={(e) => e.stopPropagation()}>
                 {isNewBest && (
                     <div className="mb-4 flex items-center gap-2 px-4 py-1 bg-yellow-500 text-black font-black uppercase tracking-widest rounded-full animate-bounce shadow-lg shadow-yellow-500/50">
                         <Crown className="w-4 h-4" /> New Best Score!
                     </div>
                 )}
                 
-                <AlertTriangle className="w-16 h-16 text-red-500 mb-2 drop-shadow-[0_0_20px_rgba(239,68,68,0.5)]" />
-                <h2 className="text-5xl font-display font-black text-white mb-2 tracking-tighter">CRASHED</h2>
+                <AlertTriangle className="w-10 h-10 sm:w-16 sm:h-16 text-red-500 mb-1 sm:mb-2 drop-shadow-[0_0_20px_rgba(239,68,68,0.5)]" />
+                <h2 className="text-3xl sm:text-5xl font-display font-black text-white mb-2 tracking-tighter">CRASHED</h2>
                 
-                <div className="grid grid-cols-2 gap-3 w-full mb-6">
-                    <div className="bg-white/5 p-3 rounded-lg text-center">
+                <div className="grid grid-cols-2 gap-2 sm:gap-3 w-full mb-4 sm:mb-6">
+                    <div className="bg-white/5 p-2 sm:p-3 rounded-lg text-center">
                         <div className="text-xs text-slate-400 uppercase tracking-wider mb-1">Survival</div>
                         <div className="text-xl font-mono font-bold text-white">{(gameState.current.runTime / 1000).toFixed(2)}s</div>
                     </div>
-                    <div className="bg-white/5 p-3 rounded-lg text-center">
+                    <div className="bg-white/5 p-2 sm:p-3 rounded-lg text-center">
                         <div className="text-xs text-slate-400 uppercase tracking-wider mb-1">Local Best</div>
                         <div className="text-xl font-mono font-bold text-yellow-400">{highScore.toFixed(2)}s</div>
                     </div>
-                    <div className="bg-white/5 p-3 rounded-lg text-center">
+                    <div className="bg-white/5 p-2 sm:p-3 rounded-lg text-center">
                         <div className="text-xs text-slate-400 uppercase tracking-wider mb-1">Average CPS</div>
                         <div className="text-xl font-mono font-bold text-blue-300">{runStats.averageCps.toFixed(2)}</div>
                     </div>
-                    <div className="bg-white/5 p-3 rounded-lg text-center">
+                    <div className="bg-white/5 p-2 sm:p-3 rounded-lg text-center">
                         <div className="text-xs text-slate-400 uppercase tracking-wider mb-1">Clicks</div>
                         <div className="text-xl font-mono font-bold text-white">{runStats.clickCount}</div>
                     </div>
-                    <div className="bg-white/5 p-3 rounded-lg text-center">
+                    <div className="bg-white/5 p-2 sm:p-3 rounded-lg text-center">
                         <div className="text-xs text-slate-400 uppercase tracking-wider mb-1">Peak CPS</div>
                         <div className="text-xl font-mono font-bold text-purple-300">{runStats.peakCps.toFixed(2)}</div>
                     </div>
-                    <div className="bg-white/5 p-3 rounded-lg text-center">
+                    <div className="bg-white/5 p-2 sm:p-3 rounded-lg text-center">
                         <div className="text-xs text-slate-400 uppercase tracking-wider mb-1">Timing SD</div>
                         <div className="text-xl font-mono font-bold text-white">{runStats.intervalStdDev.toFixed(0)}ms</div>
                     </div>
                 </div>
 
-                <div className="flex gap-3">
+                <div className="flex flex-wrap justify-center gap-2 sm:gap-3">
                      <button 
                         onClick={() => { resetGame(); onStatusChange(GameStatus.Playing); }}
-                        className="px-6 py-3 bg-white text-black font-bold rounded hover:bg-slate-200 transition-colors flex items-center gap-2 shadow-lg"
+                        className="px-4 py-2.5 sm:px-6 sm:py-3 bg-white text-black font-bold rounded hover:bg-slate-200 transition-colors flex items-center gap-2 shadow-lg"
                     >
                         <RotateCcw className="w-4 h-4" /> RETRY
                     </button>
                     <button 
                         onClick={handleShareClick}
-                        className="px-6 py-3 bg-blue-600 hover:bg-blue-500 text-white font-bold rounded transition-colors flex items-center gap-2 shadow-lg"
+                        className="px-4 py-2.5 sm:px-6 sm:py-3 bg-blue-600 hover:bg-blue-500 text-white font-bold rounded transition-colors flex items-center gap-2 shadow-lg"
                     >
                         <Share2 className="w-4 h-4" /> SHARE
                     </button>
@@ -1266,48 +1272,48 @@ const GameCanvas: React.FC<GameCanvasProps> = memo(({ difficulty, status, onStat
       {/* --- WIN SCREEN --- */}
       {status === GameStatus.Won && (
          <div className="absolute inset-0 flex flex-col items-center justify-center bg-green-900/40 backdrop-blur-sm z-20 animate-in zoom-in duration-500 pointer-events-auto" onClick={(e) => e.stopPropagation()}>
-             <div className="bg-black/50 p-8 rounded-2xl border border-white/10 backdrop-blur-md flex flex-col items-center shadow-2xl">
+             <div className="max-h-[calc(100%-1rem)] w-[calc(100%-1rem)] max-w-md overflow-y-auto bg-black/55 p-4 sm:p-8 rounded-2xl border border-white/10 backdrop-blur-md flex flex-col items-center shadow-2xl">
                 {isNewBest && (
                     <div className="mb-4 flex items-center gap-2 px-4 py-1 bg-yellow-500 text-black font-black uppercase tracking-widest rounded-full animate-bounce shadow-lg shadow-yellow-500/50">
                         <Crown className="w-4 h-4" /> New Best Score!
                     </div>
                 )}
                 
-                <Trophy className="w-20 h-20 text-yellow-400 mb-4 drop-shadow-[0_0_30px_rgba(250,204,21,0.6)] animate-bounce" />
-                <h2 className="text-5xl font-display font-black text-white mb-2 tracking-tighter">COMPLETE!</h2>
+                <Trophy className="w-12 h-12 sm:w-20 sm:h-20 text-yellow-400 mb-2 sm:mb-4 drop-shadow-[0_0_30px_rgba(250,204,21,0.6)] animate-bounce" />
+                <h2 className="text-3xl sm:text-5xl font-display font-black text-white mb-2 tracking-tighter">COMPLETE!</h2>
                 
-                <div className="flex items-center gap-2 mb-4">
+                <div className="flex items-center gap-2 mb-3 sm:mb-4">
                     <Zap className="w-5 h-5 text-yellow-400" />
                     <p className="text-green-100 font-mono text-lg">
                         Consistency Score: <span className="text-white font-bold text-xl">{consistency}</span>
                     </p>
                 </div>
 
-                <div className="grid grid-cols-3 gap-3 w-full mb-6">
-                    <div className="bg-white/5 p-3 rounded-lg text-center">
+                <div className="grid grid-cols-3 gap-2 sm:gap-3 w-full mb-4 sm:mb-6">
+                    <div className="bg-white/5 p-2 sm:p-3 rounded-lg text-center">
                         <div className="text-[10px] text-slate-400 uppercase tracking-wider mb-1">Average CPS</div>
                         <div className="text-lg font-mono font-bold text-blue-300">{runStats.averageCps.toFixed(2)}</div>
                     </div>
-                    <div className="bg-white/5 p-3 rounded-lg text-center">
+                    <div className="bg-white/5 p-2 sm:p-3 rounded-lg text-center">
                         <div className="text-[10px] text-slate-400 uppercase tracking-wider mb-1">Peak CPS</div>
                         <div className="text-lg font-mono font-bold text-purple-300">{runStats.peakCps.toFixed(2)}</div>
                     </div>
-                    <div className="bg-white/5 p-3 rounded-lg text-center">
+                    <div className="bg-white/5 p-2 sm:p-3 rounded-lg text-center">
                         <div className="text-[10px] text-slate-400 uppercase tracking-wider mb-1">Clicks</div>
                         <div className="text-lg font-mono font-bold text-white">{runStats.clickCount}</div>
                     </div>
                 </div>
 
-                <div className="flex gap-3 mb-4">
+                <div className="flex flex-wrap justify-center gap-2 sm:gap-3 mb-3 sm:mb-4">
                      <button 
                         onClick={() => { resetGame(); onStatusChange(GameStatus.Playing); }}
-                        className="px-6 py-3 bg-white text-black font-bold rounded hover:bg-slate-200 transition-colors flex items-center gap-2 shadow-lg"
+                        className="px-4 py-2.5 sm:px-6 sm:py-3 bg-white text-black font-bold rounded hover:bg-slate-200 transition-colors flex items-center gap-2 shadow-lg"
                     >
                         <RotateCcw className="w-4 h-4" /> REPLAY
                     </button>
                     <button 
                         onClick={handleShareClick}
-                        className="px-6 py-3 bg-blue-600 hover:bg-blue-500 text-white font-bold rounded transition-colors flex items-center gap-2 shadow-lg"
+                        className="px-4 py-2.5 sm:px-6 sm:py-3 bg-blue-600 hover:bg-blue-500 text-white font-bold rounded transition-colors flex items-center gap-2 shadow-lg"
                     >
                         <Share2 className="w-4 h-4" /> SHARE
                     </button>
