@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import Link from "next/link";
+import Breadcrumbs from "../../components/Breadcrumbs";
 
 const COLLECTIBLES_SOURCE = "https://geometrydash.wiki.gg/wiki/Collectibles";
 const EVENT_SOURCE = "https://geometrydash.wiki.gg/wiki/Event_Level";
@@ -76,6 +77,7 @@ export default function GoldKeysPage() {
 
   return (
     <>
+      <Breadcrumbs items={[{ label: "How to Get Gold Keys", href: "/how-to-get-gold-keys-geometry-dash" }]} />
       <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(schema) }} />
       <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(faqSchema) }} />
 
