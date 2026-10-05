@@ -42,7 +42,7 @@ const removedGhostRoutes = [
 const metadataExpectations = {
   "/": {
     title: "Geometry Dash Spam Test",
-    description: "free Geometry Dash spam test online",
+    description: "Geometry Dash spam test",
     canonical: "https://geometrydashspam.cc",
   },
   "/geometry-dash-wave": {
@@ -62,7 +62,7 @@ const metadataExpectations = {
   },
   "/demon-list/spam-demons": {
     title: "Geometry Dash Spam Demon List",
-    description: "A Geometry Dash spam-focused practice list",
+    description: "Geometry Dash spam demonlist",
     canonical: "https://geometrydashspam.cc/demon-list/spam-demons",
   },
   "/demon-list/wave-demons": {
