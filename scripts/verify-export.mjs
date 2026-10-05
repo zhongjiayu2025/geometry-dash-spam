@@ -208,16 +208,26 @@ for (const [route, expected] of Object.entries(metadataExpectations)) {
 
   const html = readFileSync(path, "utf8");
 
-  if (!html.includes(`<title>${expected.title}`) && !html.includes(expected.title)) {
-    metadataErrors.push(`${route}: title does not include "${expected.title}"`);
+  const title = documentTitle(html);
+  const description = metaContent(html, "name", "description");
+  const canonical = canonicalHref(html);
+
+  if (!title?.startsWith(expected.title)) {
+    metadataErrors.push(
+      `${route}: title is "${title ?? "missing"}", expected prefix "${expected.title}"`
+    );
   }
 
-  if (!html.includes(expected.description)) {
-    metadataErrors.push(`${route}: description does not include "${expected.description}"`);
+  if (!description?.includes(expected.description)) {
+    metadataErrors.push(
+      `${route}: description is "${description ?? "missing"}", expected to include "${expected.description}"`
+    );
   }
 
-  if (!html.includes(`rel="canonical" href="${expected.canonical}"`)) {
-    metadataErrors.push(`${route}: canonical is not "${expected.canonical}"`);
+  if (canonical !== expected.canonical) {
+    metadataErrors.push(
+      `${route}: canonical is "${canonical ?? "missing"}", expected "${expected.canonical}"`
+    );
   }
 
   if (route !== "/") {
