@@ -1,4 +1,4 @@
-name: Refresh Demon List
+name: Refresh Search Data
 
 on:
   push:
@@ -7,7 +7,10 @@ on:
       - "scripts/update-demon-list.mjs"
       - "scripts/verify-demon-data.mjs"
       - "scripts/verify-vault-data.mjs"
+      - "scripts/verify-related-games.mjs"
       - "data/vaultCodes.ts"
+      - "app/dashmetry/page.tsx"
+      - "app/geometry-dash-breeze/page.tsx"
       - ".github/workflows/demon-list-refresh.yml"
   schedule:
     - cron: "17 4 * * *"
@@ -40,6 +43,9 @@ jobs:
 
       - name: Validate Wraith code freshness
         run: node scripts/verify-vault-data.mjs
+
+      - name: Validate related game source freshness
+        run: node scripts/verify-related-games.mjs
 
       - name: Commit changes
         shell: bash

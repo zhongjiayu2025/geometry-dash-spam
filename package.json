@@ -6,7 +6,7 @@
     "dev": "next dev",
     "build": "next build",
     "check": "tsc --noEmit",
-    "verify:data": "node scripts/verify-demon-data.mjs && node scripts/verify-vault-data.mjs",
+    "verify:data": "node scripts/verify-demon-data.mjs && node scripts/verify-vault-data.mjs && node scripts/verify-related-games.mjs",
     "verify:export": "node scripts/verify-export.mjs",
     "verify": "npm run verify:data && npm run verify:export",
     "start": "next start"
