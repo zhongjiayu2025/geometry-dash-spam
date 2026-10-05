@@ -375,13 +375,12 @@ const GameCanvas: React.FC<GameCanvasProps> = memo(({ difficulty, status, onStat
   }, [isMuted, playKick, playBass, playHiHat]);
 
   const startMusic = useCallback(() => {
-    if (musicSchedulerRef.current) return;
-    if (audioCtxRef.current) {
-        nextNoteTimeRef.current = audioCtxRef.current.currentTime + 0.1;
-        noteIndexRef.current = 0;
-        musicSchedulerRef.current = window.setInterval(scheduleMusic, 25);
-    }
-  }, [scheduleMusic]);
+    if (musicSchedulerRef.current || !audioCtxRef.current || isMuted) return;
+
+    nextNoteTimeRef.current = audioCtxRef.current.currentTime + 0.1;
+    noteIndexRef.current = 0;
+    musicSchedulerRef.current = window.setInterval(scheduleMusic, 25);
+  }, [isMuted, scheduleMusic]);
 
   const stopMusic = useCallback(() => {
     if (musicSchedulerRef.current) {
