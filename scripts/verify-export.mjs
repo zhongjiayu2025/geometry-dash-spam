@@ -104,11 +104,14 @@ function exportedPath(route) {
 }
 
 function metaContent(html, attribute, value) {
-  for (const match of html.matchAll(/<meta\b[^>]*>/gi)) {
+  const head = html.match(/<head\b[^>]*>([\s\S]*?)<\/head>/i)?.[1] ?? "";
+
+  for (const match of head.matchAll(/<meta\b[^>]*>/gi)) {
     const tag = match[0];
     if (!tag.includes(`${attribute}="${value}"`)) continue;
     return tag.match(/\bcontent="([^"]*)"/i)?.[1] ?? null;
   }
+
   return null;
 }
 
