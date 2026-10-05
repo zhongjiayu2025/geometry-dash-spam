@@ -68,16 +68,18 @@ export default async function BlogPostPage({ params }: { params: Promise<{ slug:
         "dateModified": new Date(post.updated ?? post.date).toISOString(),
         "author": {
             "@type": "Organization",
+            "@id": "https://geometrydashspam.cc/#editorial",
             "name": "Geometry Dash Spam Editorial",
-            "url": "https://geometrydashspam.cc"
+            "url": "https://geometrydashspam.cc/about",
+            "parentOrganization": {
+                "@id": "https://geometrydashspam.cc/#organization"
+            }
         },
         "publisher": {
-            "@type": "Organization",
-            "name": "Geometry Dash Spam",
-            "logo": {
-                "@type": "ImageObject",
-                "url": "https://geometrydashspam.cc/logo.svg"
-            }
+            "@id": "https://geometrydashspam.cc/#organization"
+        },
+        "isPartOf": {
+            "@id": "https://geometrydashspam.cc/#website"
         },
         "mainEntityOfPage": {
             "@type": "WebPage",

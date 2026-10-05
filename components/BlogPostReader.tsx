@@ -211,7 +211,11 @@ const BlogPostReader: React.FC<BlogPostProps> = ({ post }) => {
       <div className="mt-8 pt-8 border-t border-white/10 flex flex-col md:flex-row items-center justify-between gap-6 bg-slate-900/30 p-8 rounded-2xl">
          <div>
              <p className="text-slate-400 text-sm font-mono mb-2 uppercase tracking-widest">Written By</p>
-             <h4 className="text-xl font-bold text-white">Geometry Dash Spam Editorial</h4>
+             <h4 className="text-xl font-bold text-white">
+               <Link href="/about" rel="author" className="hover:text-blue-300 hover:underline">
+                 Geometry Dash Spam Editorial
+               </Link>
+             </h4>
              <p className="text-slate-500 text-sm mt-1">Maintains the site&apos;s browser tools and source-checked training guides.</p>
          </div>
          <div className="flex gap-4">

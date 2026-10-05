@@ -54,11 +54,30 @@ export default function RootLayout({
 }>) {
   const websiteSchema = {
     "@context": "https://schema.org",
-    "@type": "WebSite",
-    name: "Geometry Dash Spam",
-    url: "https://geometrydashspam.cc",
-    description:
-      "Browser-based Geometry Dash spam, wave and CPS training tools.",
+    "@graph": [
+      {
+        "@type": "Organization",
+        "@id": "https://geometrydashspam.cc/#organization",
+        name: "Geometry Dash Spam",
+        url: "https://geometrydashspam.cc",
+        logo: {
+          "@type": "ImageObject",
+          url: "https://geometrydashspam.cc/logo.svg",
+        },
+      },
+      {
+        "@type": "WebSite",
+        "@id": "https://geometrydashspam.cc/#website",
+        name: "Geometry Dash Spam",
+        url: "https://geometrydashspam.cc",
+        description:
+          "Browser-based Geometry Dash spam, wave and CPS training tools.",
+        publisher: {
+          "@id": "https://geometrydashspam.cc/#organization",
+        },
+        inLanguage: "en",
+      },
+    ],
   };
 
   return (
