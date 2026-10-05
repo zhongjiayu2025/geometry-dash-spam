@@ -33,6 +33,8 @@ const ButterflyClickTest: React.FC = () => {
   
   const timerRef = useRef<number | null>(null);
   const audioCtxRef = useRef<AudioContext | null>(null);
+  const clicksRef = useRef(0);
+  const startTimeRef = useRef(0);
 
   useEffect(() => {
     if (typeof window !== 'undefined') {
@@ -48,8 +50,11 @@ const ButterflyClickTest: React.FC = () => {
   }, []);
 
   const startTest = () => {
+    const now = performance.now();
     setActive(true);
     setFinished(false);
+    clicksRef.current = 1;
+    startTimeRef.current = now;
     setClicks(1);
     setTimeLeft(10.00);
   };
@@ -66,13 +71,16 @@ const ButterflyClickTest: React.FC = () => {
       startTest();
       return;
     }
-    setClicks(c => c + 1);
+    clicksRef.current += 1;
+    setClicks(clicksRef.current);
   };
 
   const reset = (e?: React.MouseEvent) => {
     e?.stopPropagation();
     setActive(false);
     setFinished(false);
+    clicksRef.current = 0;
+    startTimeRef.current = 0;
     setClicks(0);
     setTimeLeft(10.00);
     if (timerRef.current) clearInterval(timerRef.current);
@@ -80,34 +88,35 @@ const ButterflyClickTest: React.FC = () => {
 
   useEffect(() => {
     if (active && !finished) {
-      const startTime = Date.now();
       timerRef.current = window.setInterval(() => {
-        const elapsed = (Date.now() - startTime) / 1000;
+        const elapsed = (performance.now() - startTimeRef.current) / 1000;
         const remaining = Math.max(0, 10 - elapsed);
         setTimeLeft(remaining);
-        
+
         if (remaining <= 0) {
           setFinished(true);
           setActive(false);
           if (timerRef.current) clearInterval(timerRef.current);
-          
+
+          const finalClicks = clicksRef.current;
+          setClicks(finalClicks);
           setBestCps(prev => {
-              const finalCps = clicks / 10;
-              if (prev === null || finalCps > prev) {
-                  localStorage.setItem('butterflyClickBest', finalCps.toString());
-                  return finalCps;
-              }
-              return prev;
+            const finalCps = finalClicks / 10;
+            if (prev === null || finalCps > prev) {
+              localStorage.setItem('butterflyClickBest', finalCps.toString());
+              return finalCps;
+            }
+            return prev;
           });
         }
-      }, 10);
+      }, 33);
     }
     return () => {
       if (timerRef.current) clearInterval(timerRef.current);
     };
-  }, [active, finished, clicks]);
+  }, [active, finished]);
 
-  const cps = finished ? (clicks / 10).toFixed(2) : (active ? (clicks / (10 - timeLeft)).toFixed(1) : "0.00");
+  const cps = finished ? (clicks / 10).toFixed(2) : (active ? (clicks / Math.max(0.05, 10 - timeLeft)).toFixed(1) : "0.00");
 
   const shareScore = async (e: React.MouseEvent) => {
     e.stopPropagation();
@@ -134,7 +143,7 @@ const ButterflyClickTest: React.FC = () => {
             Butterfly Click Test
          </h1>
          <p className="text-slate-400 max-w-2xl mx-auto">
-            Master the double-finger rhythm. The preferred spam technique for wide mouse buttons.
+            Practice an alternating two-finger rhythm and compare your 10-second CPS result.
          </p>
       </div>
 
@@ -240,7 +249,7 @@ const ButterflyClickTest: React.FC = () => {
             <h2 className="text-3xl font-display font-bold text-white mb-6">What is Butterfly Clicking?</h2>
             <div className="prose prose-invert prose-lg max-w-none text-slate-300">
                 <p>
-                    <strong>Butterfly clicking</strong> involves using two fingers (usually the index and middle finger) to hit the mouse button in an alternating rhythm. This effectively doubles the number of inputs you can send compared to single-finger clicking, allowing players to reach 15-25 CPS.
+                    <strong>Butterfly clicking</strong> involves using two fingers (usually the index and middle finger) to hit the mouse button in an alternating rhythm. Alternating two fingers can change how quickly and consistently repeated clicks are produced, but results vary by player and mouse.
                 </p>
                 
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-8 mt-8">
@@ -251,7 +260,7 @@ const ButterflyClickTest: React.FC = () => {
                         <ul className="list-disc pl-5 space-y-2 text-sm">
                             <li><strong>Positioning:</strong> Place both fingers on the Left Mouse Button (LMB). Lift one while the other strikes.</li>
                             <li><strong>Rhythm:</strong> Think of it like a drum roll. Left-Right-Left-Right.</li>
-                            <li><strong>Double Clicking:</strong> The secret to "god-mode" speeds (20+ CPS) is using a mouse that registers a "bounce" or double click on every hit.</li>
+                            <li><strong>Double Clicking:</strong> Some mice may register unintended bounce or double clicks. Treat that as device behavior rather than a skill requirement.</li>
                         </ul>
                     </div>
                     <div>
@@ -259,9 +268,9 @@ const ButterflyClickTest: React.FC = () => {
                              <Mouse className="w-5 h-5 text-blue-400" /> Best Mice for Butterfly
                         </h3>
                          <ul className="list-disc pl-5 space-y-2 text-sm">
-                            <li><strong>Glorious Model O:</strong> The industry standard. Wide buttons and adjustable debounce time.</li>
-                            <li><strong>Razer Viper Mini:</strong> Good shape, but optical switches prevent double-clicking (capped at ~12-14 CPS).</li>
-                            <li><strong>Logitech G Pro:</strong> Harder to butterfly due to narrower buttons and heavier tension.</li>
+                            <li><strong>Glorious Model O:</strong> A commonly discussed shape for butterfly clicking; verify current switch and debounce behavior for the exact model.</li>
+                            <li><strong>Razer Viper Mini:</strong> Optical-switch behavior differs from mechanical debounce designs; compare your own results rather than assuming a fixed CPS cap.</li>
+                            <li><strong>Logitech G Pro:</strong> Button shape and click feel may suit some grips better than others.</li>
                         </ul>
                     </div>
                 </div>
@@ -272,18 +281,18 @@ const ButterflyClickTest: React.FC = () => {
         <div className="bg-gradient-to-r from-purple-900/20 to-pink-900/20 border border-pink-500/20 rounded-2xl p-8">
              <h3 className="text-2xl font-bold text-white mb-4">Why use Butterfly Clicking in Geometry Dash?</h3>
              <p className="text-slate-300 leading-relaxed">
-                Unlike Minecraft PVP where pure speed matters, Geometry Dash requires consistency. Butterfly clicking is excellent for <strong>Endurance Spam</strong> (long wave sections) because it splits the workload between two fingers. This drastically reduces fatigue, allowing you to maintain 10-12 CPS for minutes at a time without your hand locking up.
+                Unlike Minecraft PVP where pure speed matters, Geometry Dash requires consistency. Butterfly clicking is excellent for <strong>Endurance Spam</strong> (long wave sections) because it splits the workload between two fingers. Splitting inputs between two fingers may feel easier for some players, but sustainable speed differs by person and setup.
              </p>
         </div>
 
         <div className="flex flex-col md:flex-row gap-4">
              <div className="flex-1 bg-slate-950/50 p-6 rounded-xl border border-white/5">
                  <h4 className="font-bold text-white mb-2 flex items-center gap-2"><ShieldCheck className="w-4 h-4 text-green-400"/> Is it Cheating?</h4>
-                 <p className="text-xs text-slate-400">In Geometry Dash, Butterfly Clicking is legally considered legitimate input. However, using software to lower debounce time artificially to 0ms is a grey area on some Demon Lists.</p>
+                 <p className="text-xs text-slate-400">Rules can vary by leaderboard or community. Check the rules of the specific competition or list before using modified input behavior.</p>
              </div>
              <div className="flex-1 bg-slate-950/50 p-6 rounded-xl border border-white/5">
                  <h4 className="font-bold text-white mb-2 flex items-center gap-2"><Activity className="w-4 h-4 text-orange-400"/> Health Check</h4>
-                 <p className="text-xs text-slate-400">Butterfly clicking is safer than Jitter clicking for your tendons, but can still cause carpal tunnel if your wrist posture is poor.</p>
+                 <p className="text-xs text-slate-400">Any repetitive clicking technique can become uncomfortable. Use a relaxed posture, take breaks and stop if you feel pain or numbness.</p>
              </div>
         </div>
       </section>
