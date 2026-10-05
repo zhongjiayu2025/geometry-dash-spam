@@ -378,6 +378,9 @@ if (existsSync(llmsPath)) {
 
 const layoutSource = readFileSync(join(process.cwd(), "app", "layout.tsx"), "utf8");
 const headerSource = readFileSync(join(process.cwd(), "components", "Header.tsx"), "utf8");
+const cpsClientSource = readFileSync(join(process.cwd(), "components", "CpsTest.tsx"), "utf8");
+const waveClientSource = readFileSync(join(process.cwd(), "components", "WaveSimulator.tsx"), "utf8");
+const homeSource = readFileSync(join(process.cwd(), "app", "page.tsx"), "utf8");
 if (!layoutSource.includes(`client=ca-${publisherId}`)) {
   infrastructureErrors.push(
     `AdSense script client does not match ads.txt publisher ID ${publisherId}`
@@ -401,6 +404,18 @@ for (const utilityRoute of ["/jitter-click", "/butterfly-click", "/drag-click"])
       `Global Header should not promote lower-priority utility route ${utilityRoute}`
     );
   }
+}
+
+if (cpsClientSource.includes("RelatedTools") || cpsClientSource.includes("How is CPS Calculated?")) {
+  infrastructureErrors.push("CPS static guide content must stay outside the client test component");
+}
+
+if (waveClientSource.includes("Core next steps") || waveClientSource.includes("HowTo")) {
+  infrastructureErrors.push("Wave static links and HowTo schema must stay outside the client simulator component");
+}
+
+if (homeSource.includes('next/dynamic') && homeSource.includes("HomeGuide")) {
+  infrastructureErrors.push("HomeGuide should be server-rendered directly, not wrapped in next/dynamic");
 }
 
 const metadataErrors = [];
