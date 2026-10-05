@@ -12,9 +12,9 @@ const DifficultySelector: React.FC<DifficultySelectorProps> = ({ currentDifficul
   const activeConfig = DIFFICULTY_CONFIGS[currentDifficulty];
 
   return (
-    <div className="w-full max-w-5xl mx-auto mb-8 relative z-20">
+    <div className="w-full max-w-5xl mx-auto mb-4 md:mb-7 relative z-20">
       {/* Container */}
-      <div className="flex flex-wrap justify-center gap-2 md:gap-3 p-2 rounded-2xl bg-slate-900/40 backdrop-blur-md border border-white/5 shadow-2xl">
+      <div className="flex flex-nowrap md:flex-wrap justify-start md:justify-center gap-2 md:gap-3 p-2 rounded-2xl bg-slate-900/40 backdrop-blur-md border border-white/5 shadow-2xl overflow-x-auto overscroll-x-contain">
         {Object.values(DIFFICULTY_CONFIGS).map((config: DifficultyConfig) => {
           const isSelected = currentDifficulty === config.id;
           
@@ -24,7 +24,7 @@ const DifficultySelector: React.FC<DifficultySelectorProps> = ({ currentDifficul
               onClick={() => onSelect(config.id)}
               disabled={disabled}
               className={`
-                relative px-4 py-2 md:px-6 md:py-3 rounded-xl font-display font-bold text-xs md:text-sm tracking-wider uppercase transition-all duration-300
+                relative shrink-0 px-3 py-2 md:px-6 md:py-3 rounded-xl font-display font-bold text-[11px] md:text-sm tracking-wider uppercase transition-all duration-300
                 overflow-hidden group
                 ${disabled ? 'opacity-40 cursor-not-allowed grayscale' : 'cursor-pointer'}
                 ${isSelected 
@@ -45,7 +45,7 @@ const DifficultySelector: React.FC<DifficultySelectorProps> = ({ currentDifficul
       </div>
 
       {/* Dynamic Description Tag */}
-      <div className="flex justify-center mt-4">
+      <div className="flex justify-center mt-2 md:mt-4">
         <div 
           className="inline-flex items-center gap-3 px-4 py-1.5 rounded-full border bg-black/50 backdrop-blur-sm transition-colors duration-500"
           style={{ borderColor: `${activeConfig.color}40` }}
@@ -54,8 +54,8 @@ const DifficultySelector: React.FC<DifficultySelectorProps> = ({ currentDifficul
           <span className="text-xs md:text-sm text-slate-300 font-medium">
              {activeConfig.description}
           </span>
-          <span className="w-px h-3 bg-white/10 mx-1"></span>
-          <span className="text-[10px] md:text-xs font-mono text-slate-500 uppercase tracking-widest">
+          <span className="hidden sm:block w-px h-3 bg-white/10 mx-1"></span>
+          <span className="hidden sm:inline text-[10px] md:text-xs font-mono text-slate-500 uppercase tracking-widest">
             Speed: {activeConfig.speed} / Gap: {activeConfig.gap}px
           </span>
         </div>
