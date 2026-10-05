@@ -34,6 +34,7 @@ export default function Footer() {
               <Link href="/geometry-dash-vault-of-secrets-codes" className="text-slate-400 hover:text-white">Vault of Secrets Codes</Link>
               <Link href="/how-to-get-diamonds-geometry-dash" className="text-slate-400 hover:text-white">Get Diamonds</Link>
               <Link href="/how-to-get-gold-keys-geometry-dash" className="text-slate-400 hover:text-white">Get Gold Keys</Link>
+              <Link href="/geometry-dash-difficulty-faces" className="text-slate-400 hover:text-white">Difficulty Faces</Link>
               <Link href="/geometry-dash-clicker" className="text-slate-400 hover:text-white">Clicker</Link>
               <Link href="/blog" className="text-slate-400 hover:text-white">Guides</Link>
               <Link href="/about" className="text-slate-400 hover:text-white">About</Link>
