@@ -13,6 +13,8 @@ export const metadata: Metadata = {
     title: "Geometry Dash CPS Test (GD CPS Test) | Spam Click Test",
     description: "Run a Geometry Dash click test or spam click test from 1 to 60 seconds and compare CPS, peak CPS and consistency.",
     url: "https://geometrydashspam.cc/cps-test",
+    isPartOf: { "@id": "https://geometrydashspam.cc/#website" },
+    publisher: { "@id": "https://geometrydashspam.cc/#organization" },
     type: "website",
   },
   twitter: {
