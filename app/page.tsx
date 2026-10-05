@@ -1,10 +1,7 @@
-import dynamic from "next/dynamic";
 import { Metadata } from "next";
 import WaveSimulator from "../components/WaveSimulator";
-
-const HomeGuide = dynamic(() => import("../components/HomeGuide"), {
-  ssr: true,
-});
+import HomeGuide from "../components/HomeGuide";
+import CoreTrainingLinks from "../components/CoreTrainingLinks";
 
 export const metadata: Metadata = {
   title: "Geometry Dash Spam Test – Wave Spam Trainer Online",
@@ -54,12 +51,26 @@ export default function Home() {
       "A free browser-based Geometry Dash wave spam trainer for practicing control, click timing and consistency.",
   };
 
+  const howToSchema = {
+    "@context": "https://schema.org",
+    "@type": "HowTo",
+    name: "How to Practice Geometry Dash Spam",
+    description: "A browser-based drill for practicing rapid Geometry Dash wave inputs with controlled timing.",
+    step: [
+      { "@type": "HowToStep", name: "Choose a drill", text: "Select a preset and difficulty that you can control consistently." },
+      { "@type": "HowToStep", name: "Start the run", text: "Click, tap or use Space or Arrow Up to control the wave." },
+      { "@type": "HowToStep", name: "Keep the rhythm", text: "Use rapid repeated inputs while keeping the wave inside the practice corridor." },
+      { "@type": "HowToStep", name: "Compare the result", text: "Review survival time, CPS and timing consistency, then repeat the same setup." },
+    ],
+  };
+
   return (
     <>
       <script
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(softwareSchema) }}
       />
+      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(howToSchema) }} />
 
       <header className="mb-5 md:mb-8 text-center">
         <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-white/5 border border-white/10 text-[10px] md:text-xs font-mono text-slate-400 mb-3">
@@ -85,6 +96,7 @@ export default function Home() {
       </div>
 
       <WaveSimulator />
+      <CoreTrainingLinks variant="spam" />
       <HomeGuide />
     </>
   );
