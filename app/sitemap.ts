@@ -1,48 +1,79 @@
-import { MetadataRoute } from 'next';
+import { MetadataRoute } from "next";
+
+const UPDATED = "2026-10-05";
 
 export default function sitemap(): MetadataRoute.Sitemap {
-  const baseUrl = 'https://geometrydashspam.cc';
-  
-  // List all routes for better SEO indexing
+  const baseUrl = "https://geometrydashspam.cc";
+
   const routes = [
-    '',
-    '/jitter-click',
-    '/butterfly-click',
-    '/drag-click',
-    '/spacebar-counter',
-    '/scroll-test',
-    '/reaction-time',
-    '/sound-reaction',
-    '/chimp-test',
-    '/visual-memory',
-    '/aim-trainer',
-    '/keyboard-latency',
-    '/polling-rate',
-    '/mouse-acceleration',
-    '/keyboard-ghosting',
-    '/key-rollover',
-    '/bpm-tapper',
-    '/refresh-rate',
-    '/cps-test',
-    '/right-click',
-    '/double-click',
-    '/1-second-cps-test',
-    '/2-second-cps-test',
-    '/3-second-cps-test',
-    '/5-second-cps-test',
-    '/10-second-cps-test',
-    '/15-second-cps-test',
-    '/30-second-cps-test',
-    '/60-second-cps-test',
-    '/100-second-cps-test',
-    '/leaderboard',
-    '/stats'
+    "",
+    "/geometry-dash-wave",
+    "/cps-test",
+    "/demon-list",
+    "/hardest-level",
+    "/easiest-demons",
+    "/geometry-dash-clicker",
+    "/jitter-click",
+    "/butterfly-click",
+    "/drag-click",
+    "/spacebar-counter",
+    "/scroll-test",
+    "/reaction-test",
+    "/sound-reaction",
+    "/chimp-test",
+    "/visual-memory",
+    "/aim-trainer",
+    "/keyboard-latency",
+    "/polling-rate",
+    "/mouse-acceleration",
+    "/keyboard-ghosting",
+    "/key-rollover",
+    "/bpm-tapper",
+    "/refresh-rate",
+    "/right-click",
+    "/double-click",
+    "/typing-test",
+    "/system-info",
+    "/dashboard",
+    "/leaderboard",
+    "/blog",
+    "/about",
+    "/contact",
+    "/privacy",
+    "/terms",
+    "/sitemap",
   ];
 
-  return routes.map((route) => ({
-    url: `${baseUrl}${route}`,
-    lastModified: new Date(),
-    changeFrequency: 'weekly',
-    priority: route === '' ? 1 : 0.8,
-  }));
+  const blogSlugs = [
+    "what-is-spam-geometry-dash-guide",
+    "how-to-improve-cps-geometry-dash",
+    "best-mouse-for-spam-geometry-dash",
+    "wave-vs-ufo-spam",
+    "top-spam-levels-2026",
+    "30-day-spam-challenge",
+    "science-of-clicking",
+    "mobile-vs-pc-spam",
+    "common-spam-mistakes",
+    "interview-top-players",
+  ];
+
+  return [
+    ...routes.map((route) => ({
+      url: `${baseUrl}${route}`,
+      lastModified: UPDATED,
+      changeFrequency: route === "" || route === "/demon-list" ? ("weekly" as const) : ("monthly" as const),
+      priority:
+        route === ""
+          ? 1
+          : ["/geometry-dash-wave", "/cps-test", "/demon-list"].includes(route)
+          ? 0.9
+          : 0.6,
+    })),
+    ...blogSlugs.map((slug) => ({
+      url: `${baseUrl}/blog/${slug}`,
+      lastModified: UPDATED,
+      changeFrequency: "monthly" as const,
+      priority: 0.6,
+    })),
+  ];
 }
