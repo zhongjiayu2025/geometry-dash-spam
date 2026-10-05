@@ -175,7 +175,7 @@ const GameCanvas: React.FC<GameCanvasProps> = memo(({ difficulty, status, onStat
       }
   };
 
-  const saveHighScore = (time: number) => {
+  const saveHighScore = useCallback((time: number) => {
       const key = `gd_spam_best_${difficulty.id}_${isEndless ? 'endless' : 'timed'}_${isMini ? 'mini' : 'normal'}`;
       const currentBest = parseFloat(localStorage.getItem(key) || '0');
       if (time > currentBest) {
@@ -185,7 +185,7 @@ const GameCanvas: React.FC<GameCanvasProps> = memo(({ difficulty, status, onStat
           return true;
       }
       return false;
-  };
+  }, [difficulty.id, isEndless, isMini]);
   
   const [consistency, setConsistency] = useState<string>('100%');
   
@@ -589,9 +589,11 @@ const GameCanvas: React.FC<GameCanvasProps> = memo(({ difficulty, status, onStat
       mode: `${difficulty.label}${isMini ? " · Mini" : " · Normal"}${isEndless ? " · Endless" : " · 15s"}`,
     };
 
-    const next = [run, ...recentRuns].slice(0, 10);
-    localStorage.setItem(getRunHistoryKey(), JSON.stringify(next));
-    setRecentRuns(next);
+    setRecentRuns((previousRuns) => {
+      const next = [run, ...previousRuns].slice(0, 10);
+      localStorage.setItem(getRunHistoryKey(), JSON.stringify(next));
+      return next;
+    });
     runRecordedRef.current = true;
   };
 
