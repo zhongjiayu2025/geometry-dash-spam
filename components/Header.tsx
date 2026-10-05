@@ -27,9 +27,6 @@ const moreItems = [
   ["/how-to-get-gold-keys-geometry-dash", "Get Gold Keys"],
   ["/geometry-dash-stuttering-high-end-pc", "PC Stutter Guide"],
   ["/geometry-dash-clicker", "Geometry Dash Clicker"],
-  ["/jitter-click", "Jitter Click"],
-  ["/butterfly-click", "Butterfly Click"],
-  ["/drag-click", "Drag Click"],
 ] as const;
 
 const mobileMoreItems = [
@@ -44,9 +41,6 @@ const mobileMoreItems = [
   ["/how-to-get-gold-keys-geometry-dash", "Get Gold Keys"],
   ["/geometry-dash-stuttering-high-end-pc", "PC Stutter Guide"],
   ["/geometry-dash-clicker", "Geometry Dash Clicker"],
-  ["/jitter-click", "Jitter Click"],
-  ["/butterfly-click", "Butterfly Click"],
-  ["/drag-click", "Drag Click"],
 ] as const;
 
 export default function Header() {
