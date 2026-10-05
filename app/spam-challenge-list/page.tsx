@@ -17,8 +17,6 @@ export const metadata: Metadata = {
     description:
       "Use the current Spam Challenge List source, learn what the SCL ranks and how it differs from Pointercrate's Demon List.",
     url: "https://geometrydashspam.cc/spam-challenge-list",
-    isPartOf: { "@id": "https://geometrydashspam.cc/#website" },
-    publisher: { "@id": "https://geometrydashspam.cc/#organization" },
     type: "website",
   },
   twitter: {
@@ -50,6 +48,8 @@ export default function SpamChallengeListPage() {
     "@type": "WebPage",
     name: "Geometry Dash Spam Challenge List",
     url: "https://geometrydashspam.cc/spam-challenge-list",
+    isPartOf: { "@id": "https://geometrydashspam.cc/#website" },
+    publisher: { "@id": "https://geometrydashspam.cc/#organization" },
     dateModified: CHECKED_AT,
     isBasedOn: [LIST_SOURCE, LIST_HUB_SOURCE],
     about: {
