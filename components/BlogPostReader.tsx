@@ -54,7 +54,7 @@ const BlogPostReader: React.FC<BlogPostProps> = ({ post }) => {
       
       {/* Visual Breadcrumbs for SEO and Navigation */}
       <nav aria-label="Breadcrumb" className="flex items-center gap-2 text-xs md:text-sm text-slate-500 mb-6 font-mono overflow-x-auto whitespace-nowrap pb-2 scrollbar-hide">
-        <Link href="/geometry-dash-wave" className="hover:text-blue-400 flex items-center gap-1 transition-colors">
+        <Link href="/" className="hover:text-blue-400 flex items-center gap-1 transition-colors">
            <Home className="w-3 h-3" /> Home
         </Link>
         <ChevronRight className="w-3 h-3 text-slate-700" />
@@ -171,7 +171,7 @@ const BlogPostReader: React.FC<BlogPostProps> = ({ post }) => {
                     <h4 className="font-bold text-white mb-2 text-sm">Train Your Wave</h4>
                     <p className="text-xs text-slate-400 mb-4">Put this theory into practice now.</p>
                     <Link
-                        href="/"
+                        href="/geometry-dash-wave"
                         className="w-full block py-2 bg-blue-600 hover:bg-blue-500 text-white text-xs font-bold rounded uppercase tracking-wider transition-colors"
                     >
                         Open Wave Trainer
