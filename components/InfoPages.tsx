@@ -1,9 +1,22 @@
 "use client";
 
-import React, { useEffect } from 'react';
-import { Mail, Shield, FileText, Info, CheckCircle, AlertTriangle, ExternalLink, Server, Globe, Lock, Cookie, Map, ArrowRight } from 'lucide-react';
-import { BLOG_POSTS } from '../data/blogContent';
-import Link from 'next/link';
+import React from "react";
+import {
+  AlertTriangle,
+  ArrowRight,
+  CheckCircle,
+  Cookie,
+  ExternalLink,
+  FileText,
+  Globe,
+  Info,
+  Lock,
+  Mail,
+  Map,
+  Shield,
+} from "lucide-react";
+import { BLOG_POSTS } from "../data/blogContent";
+import Link from "next/link";
 
 interface InfoPageProps {
   title: string;
@@ -12,83 +25,97 @@ interface InfoPageProps {
   children: React.ReactNode;
 }
 
-const InfoPageLayout: React.FC<InfoPageProps> = ({ title, icon, lastUpdated, children }) => {
-  // useEffect(() => { window.scrollTo(0, 0); }, []); // Next.js handles scrolling on navigation
-  
-  return (
-    <div className="w-full max-w-5xl mx-auto animate-in fade-in slide-in-from-bottom-4 duration-500">
-      <div className="bg-slate-900/40 backdrop-blur-md border border-white/5 rounded-2xl p-6 md:p-12 shadow-2xl relative overflow-hidden">
-        
-        {/* Decorative Background */}
-        <div className="absolute top-0 right-0 w-96 h-96 bg-blue-600/5 rounded-full blur-[100px] -translate-y-1/2 translate-x-1/3 pointer-events-none"></div>
-
-        {/* Header Section */}
-        <div className="flex flex-col md:flex-row items-start md:items-center gap-6 mb-12 pb-8 border-b border-white/10 relative z-10">
-          <div className="p-5 bg-gradient-to-br from-blue-500/10 to-indigo-500/10 border border-blue-500/20 rounded-2xl text-blue-400 shadow-lg shadow-blue-900/20">
-            {icon}
-          </div>
-          <div>
-            <h1 className="text-4xl md:text-5xl font-display font-bold text-white mb-3 tracking-tight drop-shadow-sm">{title}</h1>
-            <div className="flex items-center gap-3 text-sm font-mono text-slate-400 bg-black/20 w-fit px-3 py-1 rounded-full border border-white/5">
-              <span className="w-2 h-2 rounded-full bg-green-500 animate-pulse"></span>
-              <span>Last Updated: {lastUpdated}</span>
-            </div>
-          </div>
+const InfoPageLayout: React.FC<InfoPageProps> = ({
+  title,
+  icon,
+  lastUpdated,
+  children,
+}) => (
+  <div className="w-full max-w-5xl mx-auto">
+    <div className="bg-slate-900/40 border border-white/5 rounded-2xl p-6 md:p-12 relative overflow-hidden">
+      <div className="absolute top-0 right-0 w-96 h-96 bg-blue-600/5 rounded-full blur-[100px] -translate-y-1/2 translate-x-1/3 pointer-events-none" />
+      <div className="flex flex-col md:flex-row items-start md:items-center gap-6 mb-12 pb-8 border-b border-white/10 relative z-10">
+        <div className="p-5 bg-blue-500/10 border border-blue-500/20 rounded-2xl text-blue-400">
+          {icon}
         </div>
-        
-        {/* Content Body */}
-        <div className="relative z-10">
-          {children}
+        <div>
+          <h1 className="text-4xl md:text-5xl font-display font-bold text-white mb-3 tracking-tight">
+            {title}
+          </h1>
+          <div className="text-sm font-mono text-slate-500">
+            Last updated: {lastUpdated}
+          </div>
         </div>
       </div>
-    </div>
-  );
-};
-
-const SectionCard: React.FC<{ title: string; icon?: React.ReactNode; children: React.ReactNode }> = ({ title, icon, children }) => (
-  <div className="bg-slate-950/30 border border-white/5 rounded-xl p-6 md:p-8 mb-6 hover:border-white/10 transition-colors">
-    <h3 className="text-xl md:text-2xl font-display font-bold text-white mb-4 flex items-center gap-3">
-      {icon && <span className="text-blue-500">{icon}</span>}
-      {title}
-    </h3>
-    <div className="text-slate-300 leading-relaxed space-y-4">
-      {children}
+      <div className="relative z-10">{children}</div>
     </div>
   </div>
 );
 
+const SectionCard: React.FC<{
+  title: string;
+  icon?: React.ReactNode;
+  children: React.ReactNode;
+}> = ({ title, icon, children }) => (
+  <section className="bg-slate-950/30 border border-white/5 rounded-xl p-6 md:p-8 mb-6">
+    <h2 className="text-xl md:text-2xl font-display font-bold text-white mb-4 flex items-center gap-3">
+      {icon && <span className="text-blue-500">{icon}</span>}
+      {title}
+    </h2>
+    <div className="text-slate-300 leading-relaxed space-y-4">{children}</div>
+  </section>
+);
+
 export const AboutPage = () => (
-  <InfoPageLayout title="About Us" icon={<Info className="w-10 h-10"/>} lastUpdated="October 5, 2026">
+  <InfoPageLayout
+    title="About Geometry Dash Spam"
+    icon={<Info className="w-10 h-10" />}
+    lastUpdated="October 5, 2026"
+  >
     <div className="space-y-8">
-      {/* Introduction */}
-      <div className="text-lg md:text-xl text-slate-200 leading-relaxed font-light border-l-4 border-blue-500 pl-6 py-2">
-        Welcome to <strong className="text-white">GeometryDashSpam.cc</strong>, the premier training facility engineered for Geometry Dash players who demand precision, speed, and consistency.
+      <div className="text-lg md:text-xl text-slate-200 leading-relaxed border-l-4 border-blue-500 pl-6 py-2">
+        <strong className="text-white">GeometryDashSpam.cc</strong> is a fan-made browser toolkit focused on Geometry Dash spam practice, wave control, CPS measurement and sourced Demon List reference pages.
       </div>
 
-      {/* Mission Section */}
-      <SectionCard title="Our Mission" icon={<Globe className="w-6 h-6"/>}>
+      <SectionCard title="What the site is for" icon={<Globe className="w-6 h-6" />}>
         <p>
-          The meta of Geometry Dash has evolved. With the rise of "Extreme Demons" like <em>Slaughterhouse</em>, <em>Sakupen Circles</em>, and <em>VSC</em>, the physical demands on players have never been higher. Standard gameplay often isn't enough to train the specific muscle memory required for sustained high-CPS (Clicks Per Second) wave sections.
+          The site separates raw input speed from movement control. The CPS Test measures browser-recorded click timing, while the Spam Test and Wave Trainer turn repeated input into a playable control exercise.
         </p>
         <p>
-          We built this platform to bridge that gap. By replicating 2.2 physics in a web environment, we allow you to isolate and train your spam mechanics without the frustration of loading times or level restart delays.
+          The simulator uses its own practice-oriented movement model. It is not presented as an exact recreation of the official Geometry Dash engine.
         </p>
       </SectionCard>
 
-      {/* Features Grid */}
       <div>
-        <h3 className="text-2xl font-display font-bold text-white mb-6">What We Offer</h3>
+        <h2 className="text-2xl font-display font-bold text-white mb-6">What we maintain</h2>
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
           {[
-            { title: 'Wave Simulator', desc: 'Adjustable physics from Easy to Extreme Demon.', icon: <CheckCircle className="w-5 h-5 text-green-400"/> },
-            { title: 'CPS Analytics', desc: 'Precise 10-second speed tests with graphs.', icon: <CheckCircle className="w-5 h-5 text-green-400"/> },
-            { title: 'Hardware Lab', desc: 'Spacebar latency and durability counters.', icon: <CheckCircle className="w-5 h-5 text-green-400"/> },
-            { title: 'Knowledge Base', desc: 'Guides on mice, health, and technique.', icon: <CheckCircle className="w-5 h-5 text-green-400"/> },
-          ].map((item, i) => (
-            <div key={i} className="flex items-start gap-4 p-4 rounded-xl bg-gradient-to-br from-slate-800/50 to-slate-900/50 border border-white/5 hover:border-blue-500/30 transition-all">
-              <div className="mt-1">{item.icon}</div>
+            {
+              title: "Spam & Wave Training",
+              desc: "Difficulty presets, Mini Wave, Endless Mode and browser-side run metrics.",
+            },
+            {
+              title: "CPS Measurement",
+              desc: "1–60 second tests with average CPS, rolling one-second peak and timing consistency.",
+            },
+            {
+              title: "Demon References",
+              desc: "A dated Pointercrate Main List snapshot plus skill-focused wave and spam guides.",
+            },
+            {
+              title: "Local Progress",
+              desc: "Personal bests and clicker progress stored in your browser without an account.",
+            },
+          ].map((item) => (
+            <div
+              key={item.title}
+              className="flex items-start gap-4 p-4 rounded-xl bg-slate-900/50 border border-white/5"
+            >
+              <CheckCircle className="w-5 h-5 text-green-400 mt-1 shrink-0" />
               <div>
-                <h4 className="font-bold text-white text-sm uppercase tracking-wide">{item.title}</h4>
+                <h3 className="font-bold text-white text-sm uppercase tracking-wide">
+                  {item.title}
+                </h3>
                 <p className="text-sm text-slate-400 mt-1">{item.desc}</p>
               </div>
             </div>
@@ -96,130 +123,151 @@ export const AboutPage = () => (
         </div>
       </div>
 
-      {/* Disclaimer */}
-      <div className="mt-8 p-4 bg-slate-900 rounded-lg border border-white/5 text-xs text-slate-500 text-center font-mono">
-        GeometryDashSpam.cc is a fan-made project and is not affiliated with RobTop Games. All game assets are inspired by the official game.
+      <div className="p-4 bg-slate-900 rounded-lg border border-white/5 text-xs text-slate-500 text-center font-mono">
+        GeometryDashSpam.cc is an independent fan-made project and is not affiliated with RobTop Games.
       </div>
     </div>
   </InfoPageLayout>
 );
 
 export const ContactPage = () => (
-  <InfoPageLayout title="Contact Us" icon={<Mail className="w-10 h-10"/>} lastUpdated="January 10, 2026">
+  <InfoPageLayout
+    title="Contact"
+    icon={<Mail className="w-10 h-10" />}
+    lastUpdated="October 5, 2026"
+  >
     <div className="space-y-8">
       <p className="text-lg text-slate-300">
-        Have a feature request? Found a physics bug? Or just want to show off your 15 CPS score? We want to hear from you.
+        Send bug reports, source corrections, privacy questions or feature suggestions by email.
       </p>
 
-      {/* Main Contact Card */}
-      <div className="p-8 md:p-12 rounded-3xl bg-gradient-to-br from-blue-900/40 to-indigo-900/20 border border-blue-500/30 flex flex-col items-center text-center space-y-6 shadow-2xl">
-        <div className="p-4 bg-blue-600 rounded-full shadow-lg shadow-blue-500/40">
-           <Mail className="w-8 h-8 text-white" />
+      <div className="p-8 md:p-12 rounded-3xl bg-blue-950/25 border border-blue-500/30 flex flex-col items-center text-center space-y-6">
+        <div className="p-4 bg-blue-600 rounded-full">
+          <Mail className="w-8 h-8 text-white" />
         </div>
         <div>
-          <h3 className="text-2xl font-bold text-white mb-2">General Inquiries</h3>
-          <p className="text-blue-200/80 max-w-md mx-auto">For support, partnerships, and bug reports, please email us directly.</p>
+          <h2 className="text-2xl font-bold text-white mb-2">Email</h2>
+          <p className="text-blue-200/80 max-w-md mx-auto">
+            Include the page URL and enough detail to reproduce a bug when possible.
+          </p>
         </div>
-        <a 
-          href="mailto:info@geometrydashspam.cc" 
-          className="px-8 py-4 bg-white hover:bg-slate-100 text-blue-900 font-bold text-lg rounded-xl transition-all transform hover:scale-105 shadow-xl flex items-center gap-3"
+        <a
+          href="mailto:info@geometrydashspam.cc"
+          className="px-6 py-3 bg-white hover:bg-slate-100 text-blue-900 font-bold rounded-xl transition-colors flex items-center gap-3"
         >
-          info@geometrydashspam.cc <ExternalLink className="w-5 h-5 opacity-50"/>
+          info@geometrydashspam.cc <ExternalLink className="w-4 h-4 opacity-50" />
         </a>
       </div>
 
-      {/* FAQ / Info */}
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-        <SectionCard title="Response Time">
-           We are a small, dedicated team. We aim to respond to all legitimate emails within <strong>24-48 hours</strong>.
-        </SectionCard>
-        <SectionCard title="Scope of Support">
-           We support our web tools only. For issues regarding the official Geometry Dash game account or servers, please contact RobTop Games.
-        </SectionCard>
-      </div>
+      <SectionCard title="Scope of support">
+        <p>
+          This contact address covers the tools and content on GeometryDashSpam.cc. For official Geometry Dash accounts, purchases or game-server issues, use RobTop Games&apos; official support channels.
+        </p>
+      </SectionCard>
     </div>
   </InfoPageLayout>
 );
 
 export const PrivacyPage = () => (
-  <InfoPageLayout title="Privacy Policy" icon={<Shield className="w-10 h-10"/>} lastUpdated="January 10, 2026">
+  <InfoPageLayout
+    title="Privacy Policy"
+    icon={<Shield className="w-10 h-10" />}
+    lastUpdated="October 5, 2026"
+  >
     <div className="space-y-4">
       <p className="mb-8 text-slate-300">
-        At <strong>GeometryDashSpam.cc</strong> ("we", "us"), protecting your privacy is paramount. This policy outlines exactly what we do (and don't do) with your data.
+        This policy describes the data used by GeometryDashSpam.cc and the browser features used to save local progress.
       </p>
 
-      <SectionCard title="1. Information Collection" icon={<Server className="w-5 h-5"/>}>
-        <p><strong>Personal Data:</strong> We do <span className="text-green-400 font-bold">NOT</span> collect names, addresses, phone numbers, or require account registration.</p>
-        <p><strong>Usage Data:</strong> We may collect anonymous metrics (browser type, device type, pages visited) to optimize our simulator's performance across different hardware.</p>
+      <SectionCard title="1. Accounts and personal data" icon={<Lock className="w-5 h-5" />}>
+        <p>
+          The site does not require an account for its training tools. Personal-best scores, trainer preferences and clicker progress are stored locally in your browser where those features are supported.
+        </p>
+        <p>
+          If you email us, the information in that message is necessarily provided to the email service used to receive and answer it.
+        </p>
       </SectionCard>
 
-      <SectionCard title="2. Local Storage & Cookies" icon={<Cookie className="w-5 h-5"/>}>
-        <p>We use standard local storage technology to improve your experience. This data lives 100% on your device and includes:</p>
-        <ul className="list-disc pl-5 space-y-2 mt-2 text-slate-400">
-           <li>Your personal "Best Time" records in the simulator.</li>
-           <li>Your preferred difficulty settings (so you don't have to reset them every visit).</li>
+      <SectionCard title="2. Local storage" icon={<Cookie className="w-5 h-5" />}>
+        <p>Local storage is used for features such as:</p>
+        <ul className="list-disc pl-5 space-y-2 text-slate-400">
+          <li>Spam-test personal bests and trainer preferences.</li>
+          <li>CPS personal-best scores.</li>
+          <li>Geometry Dash Clicker progress and achievements.</li>
         </ul>
-        <p className="mt-4 text-sm bg-slate-900/50 p-3 rounded border border-white/5">
-           <strong>Note:</strong> You can wipe this data anytime by clearing your browser cache. We never see it.
+        <p className="text-sm text-slate-400">
+          You can remove this information through your browser&apos;s site-data controls. Clearing local site data resets the saved progress.
         </p>
       </SectionCard>
 
-      <SectionCard title="3. Third-Party Services" icon={<Globe className="w-5 h-5"/>}>
+      <SectionCard title="3. Advertising and third parties" icon={<Globe className="w-5 h-5" />}>
         <p>
-           We may use trusted third-party services like Google Analytics to understand site traffic trends. These services may set their own cookies, governed by their respective privacy policies.
+          The site loads Google AdSense advertising. Google and its advertising partners may use cookies or similar technologies in accordance with their own policies and the consent choices available in your region.
+        </p>
+        <p>
+          We do not describe advertising identifiers or third-party cookies as local-only data because they are controlled by the relevant third-party service.
         </p>
       </SectionCard>
 
-      <SectionCard title="4. Children's Privacy" icon={<Lock className="w-5 h-5"/>}>
+      <SectionCard title="4. Children">
         <p>
-           Our tools are designed for general gaming audiences. We do not knowingly collect identifiable information from children under 13.
+          The site is a general gaming utility and does not provide account registration. If you believe personal information has been sent to us inappropriately, contact us so the issue can be reviewed.
         </p>
       </SectionCard>
 
       <div className="text-center pt-8 border-t border-white/10">
-        <p className="text-slate-500 text-sm">Questions? Contact us at <a href="mailto:info@geometrydashspam.cc" className="text-blue-400 hover:text-white transition-colors">info@geometrydashspam.cc</a></p>
+        <p className="text-slate-500 text-sm">
+          Privacy questions:{" "}
+          <a
+            href="mailto:info@geometrydashspam.cc"
+            className="text-blue-400 hover:text-white transition-colors"
+          >
+            info@geometrydashspam.cc
+          </a>
+        </p>
       </div>
     </div>
   </InfoPageLayout>
 );
 
 export const TermsPage = () => (
-  <InfoPageLayout title="Terms of Service" icon={<FileText className="w-10 h-10"/>} lastUpdated="January 10, 2026">
+  <InfoPageLayout
+    title="Terms of Use"
+    icon={<FileText className="w-10 h-10" />}
+    lastUpdated="October 5, 2026"
+  >
     <div className="space-y-6">
       <p className="text-slate-300 mb-6">
-        By accessing <strong>https://geometrydashspam.cc</strong>, you agree to the following terms. Please read them carefully.
+        These terms govern use of the browser tools and content provided on GeometryDashSpam.cc.
       </p>
 
-      <SectionCard title="1. Use License">
-        <p>We grant you a limited, revocable, non-exclusive license to access our tools for personal entertainment and training.</p>
-        <div className="mt-4">
-           <strong className="text-white block mb-2">You agree NOT to:</strong>
-           <ul className="grid gap-2">
-              <li className="flex items-center gap-2 text-sm text-slate-400"><div className="w-1.5 h-1.5 bg-red-500 rounded-full"></div> Reverse engineer the physics engine.</li>
-              <li className="flex items-center gap-2 text-sm text-slate-400"><div className="w-1.5 h-1.5 bg-red-500 rounded-full"></div> Use automated bots to falsify leaderboard scores (if applicable).</li>
-              <li className="flex items-center gap-2 text-sm text-slate-400"><div className="w-1.5 h-1.5 bg-red-500 rounded-full"></div> Frame or mirror this site without written consent.</li>
-           </ul>
-        </div>
+      <SectionCard title="1. Permitted use">
+        <p>
+          You may use the site for personal entertainment, practice and reference. Do not use automated traffic, abusive requests or other behavior intended to disrupt the service or falsify site-generated results.
+        </p>
       </SectionCard>
 
       <div className="bg-yellow-900/10 border border-yellow-500/20 rounded-xl p-6 md:p-8">
-        <h3 className="text-xl font-bold text-yellow-500 flex items-center gap-2 mb-4">
-           <AlertTriangle className="w-6 h-6" /> 2. Disclaimer & Warranty
-        </h3>
+        <h2 className="text-xl font-bold text-yellow-500 flex items-center gap-2 mb-4">
+          <AlertTriangle className="w-6 h-6" /> 2. Simulator disclaimer
+        </h2>
         <p className="text-slate-300 leading-relaxed">
-           The materials on GeometryDashSpam.cc are provided "as is". The simulator uses its own practice-oriented movement model and is not presented as a byte-for-byte recreation of the official game physics. We are not liable if your practice here does not perfectly translate to the Geometry Dash game client due to hardware differences.
+          The browser simulator is a practice tool with its own movement model. Results may differ from the official Geometry Dash game because of game physics, hardware, browser behavior and input devices.
         </p>
       </div>
 
-      <SectionCard title="3. Limitations of Liability">
+      <SectionCard title="3. Accuracy and availability">
         <p>
-           In no event shall GeometryDashSpam.cc be liable for any damages (including data loss or business interruption) arising out of the use or inability to use our website, even if we have been notified of the possibility of such damage.
+          We aim to keep tool behavior and sourced pages accurate, but rankings, external sources and browser behavior can change. Time-sensitive Demon List pages therefore show a verification date and link to the live source.
+        </p>
+        <p>
+          The site may be changed, interrupted or removed without guaranteeing uninterrupted availability.
         </p>
       </SectionCard>
 
-      <SectionCard title="4. Governing Law">
+      <SectionCard title="4. Third-party names and services">
         <p>
-           These terms are governed by the laws applicable to internet standards and international regulations. We reserve the right to update these terms at any time without prior notice.
+          Geometry Dash and related names belong to their respective owners. References to third-party websites, products or services do not imply endorsement or affiliation unless explicitly stated.
         </p>
       </SectionCard>
     </div>
@@ -227,93 +275,88 @@ export const TermsPage = () => (
 );
 
 export const SitemapPage = () => (
-  <InfoPageLayout title="Sitemap" icon={<Map className="w-10 h-10"/>} lastUpdated="January 10, 2026">
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-          
-          {/* Tools Section */}
-          <div className="bg-slate-950/30 border border-white/5 rounded-xl p-6">
-              <h3 className="text-2xl font-display font-bold text-white mb-6 border-b border-white/10 pb-2">Tools & Simulators</h3>
-              <ul className="space-y-4">
-                  {[
-                      { view: '/', label: 'Geometry Dash Spam Test', desc: 'Core wave-spam training tool.' },
-                      { view: '/geometry-dash-wave', label: 'Geometry Dash Wave Trainer', desc: 'Dedicated normal, mini and endless wave practice.' },
-                      { view: '/demon-list', label: 'Geometry Dash Demon List', desc: 'Sourced snapshot of the current hardest demons.' },
-                      { view: '/hardest-level', label: 'Hardest Geometry Dash Level', desc: 'Current #1 answer with verification date and source.' },
-                      { view: '/easiest-demons', label: 'Easiest Demons', desc: 'Beginner-focused demon progression guide.' },
-                      { view: '/geometry-dash-clicker', label: 'Geometry Dash Clicker', desc: 'Lightweight local-save clicker game.' },
-                      { view: '/cps-test', label: 'Geometry Dash CPS Test', desc: 'Measure clicks per second from 1 to 60 seconds.' },
-                      { view: '/jitter-click', label: 'Jitter Click Test', desc: 'Practice arm vibration.' },
-                      { view: '/butterfly-click', label: 'Butterfly Click Test', desc: 'Double clicking technique.' },
-                      { view: '/right-click', label: 'Right Click Test', desc: 'RMB Speed test.' },
-                      { view: '/drag-click', label: 'Drag Click Test', desc: 'Friction clicking test.' },
-                      { view: '/scroll-test', label: 'Scroll Speed Test', desc: 'Scroll wheel speed test.' },
-                      { view: '/spacebar-counter', label: 'Spacebar Counter', desc: 'Keyboard latency check.' },
-                      { view: '/bpm-tapper', label: 'BPM Tapper', desc: 'Find the BPM of any song.' },
-                      { view: '/aim-trainer', label: 'Aim Trainer', desc: 'Mouse accuracy and precision test.' },
-                      { view: '/chimp-test', label: 'Chimp Test', desc: 'Are you smarter than a chimpanzee?' },
-                      { view: '/visual-memory', label: 'Visual Memory Test', desc: 'Remember the pattern of squares.' },
-                      { view: '/key-rollover', label: 'Key Rollover Test', desc: 'Keyboard anti-ghosting test.' },
-                      { view: '/double-click', label: 'Double Click Test', desc: 'Mouse bounce issue checker.' },
-                      { view: '/polling-rate', label: 'Mouse Polling Rate', desc: 'Sensor Hz polling test.' },
-                      { view: '/sound-reaction', label: 'Audio Reaction Time', desc: 'Sound reaction speed test.' },
-                      { view: '/mouse-acceleration', label: 'Mouse Acceleration', desc: 'Check if Enhance Pointer Precision is enabled.' },
-                      { view: '/keyboard-latency', label: 'Keyboard Latency Test', desc: 'Measure how fast your keyboard scans inputs.' },
-                      { view: '/typing-test', label: 'Typing Speed Test', desc: 'Standard 60-second WPM typing test.' },
-                      { view: '/reaction-test', label: 'Reaction Time Test', desc: 'Visual reflex benchmark.' },
-                      { view: '/keyboard-ghosting', label: 'Keyboard Ghosting Test', desc: 'Test N-key rollover and matrix issues.' },
-                      { view: '/refresh-rate', label: 'Monitor Refresh Rate', desc: 'Check your screen Hz.' },
-                      { view: '/system-info', label: 'System Information', desc: 'Check what your browser exposes.' },
-                  ].map((item: any) => (
-                      <li key={item.view}>
-                          <Link 
-                             href={item.view}
-                             className="group block"
-                          >
-                              <div className="flex items-center gap-2 text-blue-400 font-bold group-hover:underline">
-                                  {item.label} <ArrowRight className="w-4 h-4 opacity-0 group-hover:opacity-100 transition-opacity"/>
-                              </div>
-                              <p className="text-sm text-slate-400">{item.desc}</p>
-                          </Link>
-                      </li>
-                  ))}
-              </ul>
-          </div>
-
-          {/* Blog Section */}
-          <div className="bg-slate-950/30 border border-white/5 rounded-xl p-6">
-              <h3 className="text-2xl font-display font-bold text-white mb-6 border-b border-white/10 pb-2">Guides & Articles</h3>
-              <ul className="space-y-4">
-                  {BLOG_POSTS.map(post => (
-                      <li key={post.id}>
-                          <Link 
-                             href={`/blog/${post.slug}`}
-                             className="group block"
-                          >
-                              <div className="flex items-center gap-2 text-purple-400 font-bold group-hover:underline">
-                                  {post.title}
-                              </div>
-                              <p className="text-xs text-slate-500 mt-1 line-clamp-1">{post.excerpt}</p>
-                          </Link>
-                      </li>
-                  ))}
-              </ul>
-          </div>
-          
-           {/* Meta Pages */}
-          <div className="md:col-span-2 bg-slate-950/30 border border-white/5 rounded-xl p-6">
-               <h3 className="text-xl font-bold text-slate-400 mb-4 uppercase tracking-widest text-sm">Legal & Info</h3>
-               <div className="flex flex-wrap gap-6">
-                   {['About', 'Contact', 'Privacy', 'Terms'].map(page => (
-                       <Link 
-                         key={page}
-                         href={`/${page.toLowerCase()}`}
-                         className="text-slate-300 hover:text-white hover:underline"
-                       >
-                           {page}
-                       </Link>
-                   ))}
-               </div>
-          </div>
+  <InfoPageLayout
+    title="Sitemap"
+    icon={<Map className="w-10 h-10" />}
+    lastUpdated="October 5, 2026"
+  >
+    <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+      <div className="bg-slate-950/30 border border-white/5 rounded-xl p-6">
+        <h2 className="text-2xl font-display font-bold text-white mb-6 border-b border-white/10 pb-2">
+          Core & Tools
+        </h2>
+        <ul className="space-y-4">
+          {[
+            { view: "/", label: "Geometry Dash Spam Test", desc: "Core wave-spam training tool." },
+            { view: "/geometry-dash-wave", label: "Geometry Dash Wave Trainer", desc: "Normal, mini, spam, precision and endless presets." },
+            { view: "/cps-test", label: "Geometry Dash CPS Test", desc: "1–60 second click speed and timing tests." },
+            { view: "/demon-list", label: "Geometry Dash Demon List", desc: "Sourced top-50 Pointercrate snapshot." },
+            { view: "/hardest-level", label: "Hardest Geometry Dash Level", desc: "Current #1 answer with verification date." },
+            { view: "/easiest-demons", label: "Easiest Demons", desc: "Beginner-oriented practice references." },
+            { view: "/demon-list/wave-demons", label: "Wave Demons", desc: "Wave-focused Demon List references." },
+            { view: "/demon-list/spam-demons", label: "Spam Demons", desc: "Rapid-input practice references." },
+            { view: "/geometry-dash-clicker", label: "Geometry Dash Clicker", desc: "Local-save orb clicker game." },
+            { view: "/jitter-click", label: "Jitter Click Test", desc: "Jitter clicking practice." },
+            { view: "/butterfly-click", label: "Butterfly Click Test", desc: "Two-finger clicking practice." },
+            { view: "/drag-click", label: "Drag Click Test", desc: "Drag-click input practice." },
+            { view: "/spacebar-counter", label: "Spacebar Counter", desc: "Keyboard press counter." },
+            { view: "/polling-rate", label: "Mouse Polling Rate", desc: "Browser-observed pointer report rate." },
+            { view: "/keyboard-latency", label: "Keyboard Latency Test", desc: "Browser-side key timing utility." },
+            { view: "/reaction-test", label: "Reaction Time Test", desc: "Visual response practice." },
+            { view: "/aim-trainer", label: "Aim Trainer", desc: "Mouse precision practice." },
+            { view: "/typing-test", label: "Typing Test", desc: "Typing speed practice." },
+            { view: "/visual-memory", label: "Visual Memory", desc: "Pattern memory practice." },
+            { view: "/chimp-test", label: "Chimp Test", desc: "Sequence memory practice." },
+            { view: "/refresh-rate", label: "Refresh Rate Test", desc: "Browser-observed display refresh rate." },
+            { view: "/system-info", label: "System Information", desc: "Browser-exposed device information." },
+          ].map((item) => (
+            <li key={item.view}>
+              <Link href={item.view} className="group block">
+                <div className="flex items-center gap-2 text-blue-400 font-bold group-hover:underline">
+                  {item.label}
+                  <ArrowRight className="w-4 h-4 opacity-0 group-hover:opacity-100 transition-opacity" />
+                </div>
+                <p className="text-sm text-slate-400">{item.desc}</p>
+              </Link>
+            </li>
+          ))}
+        </ul>
       </div>
+
+      <div className="bg-slate-950/30 border border-white/5 rounded-xl p-6">
+        <h2 className="text-2xl font-display font-bold text-white mb-6 border-b border-white/10 pb-2">
+          Guides & Articles
+        </h2>
+        <ul className="space-y-4">
+          {BLOG_POSTS.map((post) => (
+            <li key={post.id}>
+              <Link href={`/blog/${post.slug}`} className="group block">
+                <div className="flex items-center gap-2 text-purple-400 font-bold group-hover:underline">
+                  {post.title}
+                </div>
+                <p className="text-xs text-slate-500 mt-1 line-clamp-1">{post.excerpt}</p>
+              </Link>
+            </li>
+          ))}
+        </ul>
+      </div>
+
+      <div className="md:col-span-2 bg-slate-950/30 border border-white/5 rounded-xl p-6">
+        <h2 className="font-bold text-slate-400 mb-4 uppercase tracking-widest text-sm">
+          Legal & Info
+        </h2>
+        <div className="flex flex-wrap gap-6">
+          {["About", "Contact", "Privacy", "Terms"].map((page) => (
+            <Link
+              key={page}
+              href={`/${page.toLowerCase()}`}
+              className="text-slate-300 hover:text-white hover:underline"
+            >
+              {page}
+            </Link>
+          ))}
+        </div>
+      </div>
+    </div>
   </InfoPageLayout>
 );
