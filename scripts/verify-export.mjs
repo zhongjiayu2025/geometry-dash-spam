@@ -126,9 +126,16 @@ for (const [route, expected] of Object.entries(metadataExpectations)) {
 
   if (
     route !== "/" &&
-    !html.match(/<meta[^>]+property="og:title"[^>]+content="[^"]+"/i)
+    !html.includes(`property="og:title" content="${expected.title}`)
   ) {
-    metadataErrors.push(`${route}: missing page-specific og:title`);
+    metadataErrors.push(`${route}: og:title does not start with the page title`);
+  }
+
+  if (
+    route !== "/" &&
+    !html.includes('property="og:description"') 
+  ) {
+    metadataErrors.push(`${route}: missing page-specific og:description`);
   }
 }
 
