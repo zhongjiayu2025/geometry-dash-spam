@@ -5,22 +5,37 @@ const SOURCE_URL = "https://geometrydash.wiki.gg/wiki/Collectibles";
 const CHECKED_AT = "2026-10-05";
 
 export const metadata: Metadata = {
-  title: "How to Get Diamonds in Geometry Dash – All Main Methods",
+  title: "How to Get Diamonds in Geometry Dash | 6 Main Methods",
   description:
-    "Learn how to get diamonds in Geometry Dash through daily chests, quests, Daily and Weekly levels, Treasure Room chests, Gauntlets and Paths.",
+    "How to get diamonds in Geometry Dash: use daily chests, quests, Daily and Weekly levels, Treasure Room chests, Gauntlets and Paths."
   alternates: { canonical: "/how-to-get-diamonds-geometry-dash" },
   openGraph: {
-    title: "How to Get Diamonds in Geometry Dash – All Main Methods",
+    title: "How to Get Diamonds in Geometry Dash | 6 Main Methods",
     description: "Learn how to get diamonds in Geometry Dash through daily chests, quests, Daily and Weekly levels, Treasure Room chests, Gauntlets and Paths.",
     url: "https://geometrydashspam.cc/how-to-get-diamonds-geometry-dash",
     type: "website",
   },
   twitter: {
     card: "summary",
-    title: "How to Get Diamonds in Geometry Dash – All Main Methods",
+    title: "How to Get Diamonds in Geometry Dash | 6 Main Methods",
     description: "Learn how to get diamonds in Geometry Dash through daily chests, quests, Daily and Weekly levels, Treasure Room chests, Gauntlets and Paths.",
   },
 };
+
+const diamondFaqs = [
+  {
+    q: "What is the fastest repeatable way to get diamonds in Geometry Dash?",
+    a: "Use the repeatable sources first: claim daily chests, complete daily quests and make progress in the current Daily Level and Weekly Demon. Treasure Room chests, Gauntlets and Paths add more progression-based diamonds.",
+  },
+  {
+    q: "How many diamonds do you need for the Vault of Secrets?",
+    a: "The Vault of Secrets requires 50 diamonds to unlock.",
+  },
+  {
+    q: "Do diamonds also give Diamond Shards?",
+    a: "In Update 2.2, each Diamond earned also grants a Diamond Shard according to the Geometry Dash Wiki source used for this guide.",
+  },
+];
 
 const methods = [
   {
@@ -75,9 +90,20 @@ export default function DiamondsPage() {
     })),
   };
 
+  const faqSchema = {
+    "@context": "https://schema.org",
+    "@type": "FAQPage",
+    mainEntity: diamondFaqs.map((item) => ({
+      "@type": "Question",
+      name: item.q,
+      acceptedAnswer: { "@type": "Answer", text: item.a },
+    })),
+  };
+
   return (
     <>
       <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(schema) }} />
+      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(faqSchema) }} />
 
       <article className="mx-auto max-w-5xl">
         <header className="mb-10 max-w-4xl">
@@ -93,6 +119,15 @@ export default function DiamondsPage() {
             in Update 2.2, each diamond earned also grants a Diamond Shard.
           </p>
         </header>
+
+        <section className="mb-8 rounded-2xl border border-blue-500/20 bg-blue-950/15 p-5 md:p-6">
+          <div className="mb-2 text-xs font-bold uppercase tracking-[0.18em] text-blue-300">Quick answer</div>
+          <p className="leading-7 text-slate-300">
+            The main ways to get diamonds are <strong className="text-white">daily chests, daily quests, Daily/Weekly progress,
+            Treasure Room chests, Gauntlets and Paths</strong>. If your immediate goal is the Vault of Secrets, you need{" "}
+            <Link href="/geometry-dash-vault-of-secrets-codes" className="text-blue-400 hover:underline">50 diamonds</Link>.
+          </p>
+        </section>
 
         <section className="grid gap-4 md:grid-cols-2">
           {methods.map((method, index) => (
@@ -126,6 +161,18 @@ export default function DiamondsPage() {
             For non-Auto Daily/Weekly levels, the official wiki documents the available progress diamonds as
             two more than the level&apos;s star or moon rating. For example, a 10-star Demon has 12 progress diamonds available.
           </p>
+        </section>
+
+        <section className="mt-10">
+          <h2 className="mb-4 text-2xl font-bold text-white">Geometry Dash Diamonds FAQ</h2>
+          <div className="grid gap-4 md:grid-cols-3">
+            {diamondFaqs.map((item) => (
+              <div key={item.q} className="rounded-xl border border-white/10 bg-slate-900/30 p-5">
+                <h3 className="mb-2 font-bold text-white">{item.q}</h3>
+                <p className="text-sm leading-6 text-slate-400">{item.a}</p>
+              </div>
+            ))}
+          </div>
         </section>
 
         <div className="mt-8 flex flex-wrap gap-3">
