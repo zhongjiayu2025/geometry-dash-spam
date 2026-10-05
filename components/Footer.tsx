@@ -23,7 +23,7 @@ export default function Footer() {
               <Link href="/geometry-dash-wave" className="text-slate-400 hover:text-white">Wave Trainer</Link>
               <Link href="/cps-test" className="text-slate-400 hover:text-white">CPS Test</Link>
               <Link href="/demon-list" className="text-slate-400 hover:text-white">Demon List</Link>
-              <Link href="/geometry-dash-clicker" className="text-slate-400 hover:text-white">Clicker</Link>
+              <Link href="/geometry-dash-codes" className="text-slate-400 hover:text-white">Geometry Dash Codes</Link>
             </div>
           </div>
           <div>
@@ -31,6 +31,8 @@ export default function Footer() {
             <div className="grid gap-2 text-sm">
               <Link href="/hardest-level" className="text-slate-400 hover:text-white">Hardest Level</Link>
               <Link href="/easiest-demons" className="text-slate-400 hover:text-white">Easiest Demons</Link>
+              <Link href="/geometry-dash-vault-of-secrets-codes" className="text-slate-400 hover:text-white">Vault of Secrets Codes</Link>
+              <Link href="/geometry-dash-clicker" className="text-slate-400 hover:text-white">Clicker</Link>
               <Link href="/blog" className="text-slate-400 hover:text-white">Guides</Link>
               <Link href="/about" className="text-slate-400 hover:text-white">About</Link>
               <Link href="/contact" className="text-slate-400 hover:text-white">Contact</Link>
