@@ -6,6 +6,17 @@ export const metadata: Metadata = {
   description:
     "Count spacebar presses and measure press speed in your browser. This is not a direct keyboard hardware-latency measurement.",
   alternates: { canonical: "/spacebar-counter" },
+  openGraph: {
+    title: "Spacebar Counter | Spacebar CPS & Press Speed Test",
+    description: "Count spacebar presses and measure press speed in your browser. This is not a direct keyboard hardware-latency measurement.",
+    url: "https://geometrydashspam.cc/spacebar-counter",
+    type: "website",
+  },
+  twitter: {
+    card: "summary",
+    title: "Spacebar Counter | Spacebar CPS & Press Speed Test",
+    description: "Count spacebar presses and measure press speed in your browser. This is not a direct keyboard hardware-latency measurement.",
+  },
 };
 
 export default function SpacebarCounterPage() {
