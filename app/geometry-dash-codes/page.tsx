@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import VaultCodeTable from "../../components/VaultCodeTable";
+import Breadcrumbs from "../../components/Breadcrumbs";
 import {
   CHAMBER_CODES,
   THE_VAULT_CODES,
@@ -67,6 +68,7 @@ export default function GeometryDashCodesPage() {
     <>
       <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(schema) }} />
       <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(faqSchema) }} />
+      <Breadcrumbs items={[{ label: "Geometry Dash Codes", href: "/geometry-dash-codes" }]} />
 
       <article className="mx-auto max-w-5xl">
         <header className="mb-10 max-w-4xl">
