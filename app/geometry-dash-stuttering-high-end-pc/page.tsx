@@ -12,6 +12,17 @@ export const metadata: Metadata = {
   description:
     "Fix Geometry Dash stuttering on a high-end PC with a controlled checklist for overlays, background apps, VSync, Smooth Fix, display mode and refresh-rate checks.",
   alternates: { canonical: "/geometry-dash-stuttering-high-end-pc" },
+  openGraph: {
+    title: "Geometry Dash Stuttering on High-End PC – Troubleshooting Guide",
+    description: "Fix Geometry Dash stuttering on a high-end PC with a controlled checklist for overlays, background apps, VSync, Smooth Fix, display mode and refresh-rate checks.",
+    url: "https://geometrydashspam.cc/geometry-dash-stuttering-high-end-pc",
+    type: "website",
+  },
+  twitter: {
+    card: "summary",
+    title: "Geometry Dash Stuttering on High-End PC – Troubleshooting Guide",
+    description: "Fix Geometry Dash stuttering on a high-end PC with a controlled checklist for overlays, background apps, VSync, Smooth Fix, display mode and refresh-rate checks.",
+  },
 };
 
 const steps = [
