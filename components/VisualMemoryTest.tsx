@@ -36,8 +36,8 @@ export default function VisualMemoryTest() {
         
         setGridSize(currentGridSize);
         
-        const numActive = currentLevel + 2;
         const totalSquares = currentGridSize * currentGridSize;
+        const numActive = Math.min(currentLevel + 2, totalSquares);
         
         const newActive: number[] = [];
         while (newActive.length < numActive) {
