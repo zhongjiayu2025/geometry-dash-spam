@@ -214,34 +214,19 @@ const CpsTest: React.FC = () => {
   const timingStats = getTimingStats();
 
   const getRank = (score: number) => {
-    if (score < 5) return { label: "Stereo Madness", color: "text-slate-400" };
-    if (score < 7) return { label: "Harder", color: "text-yellow-400" };
-    if (score < 9) return { label: "Insane", color: "text-pink-400" };
-    if (score < 12) return { label: "Easy Demon", color: "text-blue-400" };
-    if (score < 15) return { label: "Extreme Demon", color: "text-purple-500" };
-    return { label: "GODLIKE", color: "text-red-500 animate-pulse" };
+    if (score < 5) return { label: "Baseline", color: "text-slate-300" };
+    if (score < 7) return { label: "Steady", color: "text-green-400" };
+    if (score < 9) return { label: "Fast", color: "text-blue-400" };
+    if (score < 12) return { label: "Very Fast", color: "text-cyan-300" };
+    if (score < 15) return { label: "Rapid", color: "text-purple-400" };
+    return { label: "Extreme Burst", color: "text-pink-400" };
   };
 
   const rank = finished ? getRank(cpsNum) : null;
   const currentBest = bestScores[selectedDuration];
 
-  const webAppSchema = {
-    "@context": "https://schema.org",
-    "@type": "WebApplication",
-    "name": `CPS Test - ${selectedDuration} Second Mode`,
-    "description": "Measure your raw clicks per second (CPS) accurately. Essential training for Geometry Dash, Minecraft PVP, and competitive gaming.",
-    "applicationCategory": "GameApplication",
-    "operatingSystem": "Any browser",
-    "offers": {
-      "@type": "Offer",
-      "price": "0",
-      "priceCurrency": "USD"
-    }
-  };
-
   return (
     <div className="w-full max-w-5xl mx-auto animate-in slide-in-from-bottom-4 duration-500">
-      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(webAppSchema) }} />
       <Breadcrumbs items={[{ label: 'CPS Test', href: '/cps-test', active: true }]} />
 
       {/* Time Selector - Critical for SEO (1s CPS Test, 5s CPS Test keywords) */}
@@ -354,7 +339,7 @@ const CpsTest: React.FC = () => {
                
                {finished && rank && (
                  <div className="animate-in zoom-in duration-300 mb-5 relative z-10">
-                    <div className="text-xs text-slate-500 uppercase tracking-widest mb-1">Rank Achieved</div>
+                    <div className="text-xs text-slate-500 uppercase tracking-widest mb-1">Speed Band</div>
                     <div className={`text-3xl font-display font-black ${rank.color} drop-shadow-md flex items-center justify-center gap-2`}>
                         <Trophy className="w-6 h-6" /> {rank.label}
                     </div>
