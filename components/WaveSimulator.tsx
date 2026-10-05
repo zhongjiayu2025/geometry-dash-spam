@@ -2,12 +2,11 @@
 "use client";
 
 import React, { useState } from 'react';
-import Link from 'next/link';
 import dynamic from 'next/dynamic';
 import { Difficulty, GameStatus } from '../types';
 import { DIFFICULTY_CONFIGS } from '../constants';
 import DifficultySelector from './DifficultySelector';
-import { Infinity as InfinityIcon, Minimize2, Star, MousePointerClick, Activity, ListOrdered, Trophy } from 'lucide-react';
+import { Infinity as InfinityIcon, Minimize2, Star } from 'lucide-react';
 
 const GameCanvas = dynamic(() => import('./GameCanvas'), { ssr: false });
 
@@ -115,42 +114,8 @@ const WaveSimulator: React.FC<WaveSimulatorProps> = ({ variant = 'spam' }) => {
 
   const currentConfig = DIFFICULTY_CONFIGS[difficulty];
 
-  // Schema 1: HowTo
-  const howToSchema = {
-    "@context": "https://schema.org",
-    "@type": "HowTo",
-    "name": isWavePage ? "How to Practice Geometry Dash Wave Control" : "How to Pass a Geometry Dash Spam Test",
-    "description": isWavePage
-      ? "A step-by-step guide to practicing Geometry Dash wave control with browser-based training presets."
-      : "A step-by-step guide to practicing the wave spam mechanic with our simulator.",
-    "step": [
-      {
-        "@type": "HowToStep",
-        "name": "Select Difficulty",
-        "text": "Choose a difficulty level for your Geometry Dash Spam Test. Beginners should start with 'Easy'."
-      },
-      {
-        "@type": "HowToStep",
-        "name": "Configure Wave Settings",
-        "text": "Toggle 'Mini Wave' if you want to practice faster vertical movement spam."
-      },
-      {
-        "@type": "HowToStep",
-        "name": "Start the Spam Test",
-        "text": "Press Spacebar or Click to begin. The wave moves up when holding and down when releasing."
-      },
-      {
-        "@type": "HowToStep",
-        "name": "Analyze Consistency",
-        "text": "After the run, check your 'Consistency Score' to see if you passed the spam test with even rhythm."
-      }
-    ]
-  };
-
   return (
     <div id="spam-test-tool" className="flex flex-col items-center w-full animate-in fade-in duration-500 scroll-mt-20">
-      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(howToSchema) }} />
-      
       <section className="w-full max-w-5xl mb-4 md:mb-6 rounded-2xl border border-white/10 bg-slate-900/35 p-3 md:p-5">
           <div className="flex flex-col gap-1 md:flex-row md:items-end md:justify-between mb-3 md:mb-4">
             <div>
@@ -296,52 +261,6 @@ const WaveSimulator: React.FC<WaveSimulatorProps> = ({ variant = 'spam' }) => {
       </div>
       )}
 
-      {/* Core next steps */}
-      <div className="w-full max-w-5xl mt-8 mb-8">
-        <h3 className="text-xl font-display font-bold text-white mb-4 px-2 border-l-4 border-blue-500">
-          {isWavePage ? 'Continue Wave Training' : 'Continue Geometry Dash Spam Training'}
-        </h3>
-        <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-          <Link href="/cps-test" className="bg-slate-900/60 border border-white/5 rounded-xl p-4 hover:border-blue-400/50 hover:bg-slate-900 transition-all group block">
-            <MousePointerClick className="w-8 h-8 text-blue-500 mb-3 group-hover:scale-110 transition-transform"/>
-            <h4 className="font-bold text-white text-sm mb-1">CPS Test</h4>
-            <p className="text-xs text-slate-400">Measure raw click speed and timing.</p>
-          </Link>
-
-          <Link
-            href={isWavePage ? "/" : "/geometry-dash-wave"}
-            className="bg-slate-900/60 border border-white/5 rounded-xl p-4 hover:border-cyan-400/50 hover:bg-slate-900 transition-all group block"
-          >
-            <Activity className="w-8 h-8 text-cyan-500 mb-3 group-hover:scale-110 transition-transform"/>
-            <h4 className="font-bold text-white text-sm mb-1">{isWavePage ? "Spam Test" : "Wave Trainer"}</h4>
-            <p className="text-xs text-slate-400">
-              {isWavePage ? "Return to the core spam-control trainer." : "Turn click speed into controlled wave movement."}
-            </p>
-          </Link>
-
-          <Link
-            href={isWavePage ? "/demon-list/wave-demons" : "/spam-challenge-list"}
-            className="bg-slate-900/60 border border-white/5 rounded-xl p-4 hover:border-fuchsia-400/50 hover:bg-slate-900 transition-all group block"
-          >
-            <ListOrdered className="w-8 h-8 text-fuchsia-500 mb-3 group-hover:scale-110 transition-transform"/>
-            <h4 className="font-bold text-white text-sm mb-1">{isWavePage ? "Wave Demons" : "Spam Challenge List"}</h4>
-            <p className="text-xs text-slate-400">
-              {isWavePage ? "Use wave-focused Demon references for practice." : "Check the current SCL entry point and rules."}
-            </p>
-          </Link>
-
-          <Link
-            href={isWavePage ? "/demon-list" : "/demon-list/spam-demons"}
-            className="bg-slate-900/60 border border-white/5 rounded-xl p-4 hover:border-purple-400/50 hover:bg-slate-900 transition-all group block"
-          >
-            <Trophy className="w-8 h-8 text-purple-500 mb-3 group-hover:scale-110 transition-transform"/>
-            <h4 className="font-bold text-white text-sm mb-1">{isWavePage ? "Demon List" : "Spam Demons"}</h4>
-            <p className="text-xs text-slate-400">
-              {isWavePage ? "See the sourced top-50 Demon List snapshot." : "Explore spam-heavy Demon practice references."}
-            </p>
-          </Link>
-        </div>
-      </div>
     </div>
   );
 };
