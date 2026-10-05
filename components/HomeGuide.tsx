@@ -77,7 +77,7 @@ export default function HomeGuide() {
           <BookOpen className="w-7 h-7 text-blue-400 mb-4" />
           <h2 className="text-xl font-bold text-white mb-3">Guides that support the tools</h2>
           <p className="text-sm text-slate-400 mb-4">
-            Guides should explain mechanics and training decisions, not invent player counts, ratings or testing claims. Read the practical training articles for more context.
+            Use the practical guides to compare clicking methods, wave control and training routines, with each browser metric explained in plain language.
           </p>
           <Link href="/blog" className="text-blue-400 hover:text-blue-300 font-semibold">Browse Geometry Dash guides →</Link>
         </div>
