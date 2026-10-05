@@ -2,12 +2,8 @@
 "use client";
 
 import React, { useState, useEffect, useRef } from 'react';
-import { MousePointer2, RotateCcw, Timer, Check, Clock, Trophy, Share2, BookOpen, ArrowRight, Volume2, VolumeX } from 'lucide-react';
+import { MousePointer2, RotateCcw, Timer, Check, Clock, Trophy, Share2, ArrowRight, Volume2, VolumeX } from 'lucide-react';
 import Link from 'next/link';
-import dynamic from "next/dynamic";
-
-const RelatedTools = dynamic(() => import('./RelatedTools'), { ssr: true });
-
 
 interface CpsRun {
   duration: number;
@@ -463,51 +459,6 @@ const CpsTest: React.FC = () => {
         )}
       </section>
 
-      {/* Featured Snippet Target: Mathematical Definition */}
-      <section className="mb-12 bg-blue-900/10 border border-blue-500/20 rounded-2xl p-8">
-          <h2 className="text-2xl font-display font-bold text-white mb-4">How is CPS Calculated?</h2>
-          <div className="flex flex-col md:flex-row gap-8 items-center">
-              <div className="bg-black/30 p-6 rounded-xl border border-white/5 font-mono text-slate-300 text-sm">
-                  <p className="mb-2"><span className="text-blue-400">CPS</span> = <span className="text-green-400">Total Clicks</span> / <span className="text-yellow-400">Time (seconds)</span></p>
-                  <p className="text-xs text-slate-500 mt-2">// Example:<br/>If you click 60 times in 5 seconds,<br/>60 / 5 = 12 CPS.</p>
-              </div>
-              <div className="text-slate-300 leading-relaxed">
-                  <p className="mb-2">
-                      <strong>CPS</strong> stands for <em>Clicks Per Second</em>. It is a metric used to measure the speed at which a person can press a mouse button or keyboard key.
-                  </p>
-                  <p>
-                      For <strong className="text-white">Geometry Dash</strong> practice, average CPS and click timing answer different questions. Use short modes for bursts and longer 30s or 60s modes to compare whether your pace stays repeatable.
-                  </p>
-              </div>
-          </div>
-      </section>
-
-      {/* INTERNAL LINKING: Contextual Guide Recommendation */}
-      <Link 
-        href="/blog/how-to-improve-cps-geometry-dash"
-        className="block mb-12 group relative overflow-hidden rounded-2xl border border-blue-500/30 bg-gradient-to-r from-blue-900/40 to-slate-900/40 p-8 transition-all hover:border-blue-400/50"
-      >
-         <div className="absolute right-0 top-0 h-full w-1/3 bg-blue-500/10 blur-[50px] transition-all group-hover:bg-blue-500/20"></div>
-         <div className="relative z-10 flex flex-col items-start gap-4 md:flex-row md:items-center md:justify-between">
-            <div className="space-y-2">
-                <div className="flex items-center gap-2 text-xs font-bold uppercase tracking-wider text-blue-400">
-                    <BookOpen className="h-4 w-4" /> Recommended Guide
-                </div>
-                <h3 className="font-display text-2xl font-bold text-white group-hover:text-blue-200">
-                    Improve CPS Without Losing Click Consistency
-                </h3>
-                <p className="max-w-xl text-slate-400">
-                    Compare normal, jitter and butterfly clicking with repeatable test durations, then train the method that stays most consistent for you.
-                </p>
-            </div>
-            <div className="flex h-12 w-12 items-center justify-center rounded-full bg-blue-600 text-white shadow-lg shadow-blue-900/50 transition-transform group-hover:translate-x-2 group-hover:scale-110">
-                <ArrowRight className="h-6 w-6" />
-            </div>
-         </div>
-      </Link>
-
-      {/* Cross-Link / Internal Navigation */}
-      <RelatedTools currentTool="cps" />
     </div>
   );
 };
