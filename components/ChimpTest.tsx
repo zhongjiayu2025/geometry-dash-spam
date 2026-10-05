@@ -106,7 +106,7 @@ export default function ChimpTest() {
     };
 
     const shareScore = async () => {
-        const text = `I reached Level ${level} on the Geometry Dash Chimp Test! Am I smarter than a chimp?`;
+        const text = `I reached Level ${level} on the Geometry Dash Chimp Test! How far can you get?`;
         const url = `https://geometrydashspam.cc/chimp-test`;
         if (typeof navigator !== 'undefined' && navigator.share) {
             try {
@@ -155,7 +155,7 @@ export default function ChimpTest() {
                                     </div>
                                 )}
                                 <p className="text-slate-400 mb-8">
-                                    Click the numbers in sequential order. After you click '1', the remaining numbers will hide. Can you beat the memory of a chimpanzee?
+                                    Click the numbers in sequential order. After you click '1', the remaining numbers will hide. See how many positions you can recall in sequence.
                                 </p>
                                 <button
                                     onClick={startGame}
@@ -239,7 +239,7 @@ export default function ChimpTest() {
                 </div>
             </div>
             
-            <RelatedTools currentTool="aimTrainer" />
+            <RelatedTools currentTool="chimpTest" />
         </div>
     );
 }
