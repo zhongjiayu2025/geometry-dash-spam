@@ -309,6 +309,9 @@ if (existsSync(sitemapPath)) {
     const description = metaContent(html, "name", "description");
     const canonical = canonicalHref(html);
     const robots = metaContent(html, "name", "robots");
+    const ogUrl = metaContent(html, "property", "og:url");
+    const ogTitle = metaContent(html, "property", "og:title");
+    const ogDescription = metaContent(html, "property", "og:description");
 
     if (!title) {
       sitemapMetadataErrors.push(`${route}: missing <title>`);
@@ -328,6 +331,20 @@ if (existsSync(sitemapPath)) {
       sitemapMetadataErrors.push(
         `${route}: sitemap URL is marked noindex`
       );
+    }
+
+    if (ogUrl !== expectedCanonical) {
+      sitemapMetadataErrors.push(
+        `${route}: og:url is "${ogUrl ?? "missing"}", expected "${expectedCanonical}"`
+      );
+    }
+
+    if (!ogTitle) {
+      sitemapMetadataErrors.push(`${route}: missing og:title`);
+    }
+
+    if (!ogDescription) {
+      sitemapMetadataErrors.push(`${route}: missing og:description`);
     }
   }
 
@@ -420,5 +437,5 @@ if (
 }
 
 console.log(
-  `Static export verified: ${requiredRoutes.length} core routes, metadata checks, ${htmlFiles.length} HTML files with internal-link checks, sitemap URL/canonical/title/description/indexability integrity, sitemap.xml and robots.txt.`
+  `Static export verified: ${requiredRoutes.length} core routes, metadata checks, ${htmlFiles.length} HTML files with internal-link checks, sitemap URL/canonical/title/description/OpenGraph/indexability integrity, sitemap.xml and robots.txt.`
 );
