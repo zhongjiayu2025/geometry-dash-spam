@@ -12,6 +12,17 @@ export const metadata: Metadata = {
   description:
     "Geometry Dash Vault of Secrets codes including brainpower, octocube, seven, glubfub, cod3breaker and The Challenge, with unlock notes.",
   alternates: { canonical: "/geometry-dash-vault-of-secrets-codes" },
+  openGraph: {
+    title: "Geometry Dash Vault of Secrets Codes – All Codes & Unlock Steps",
+    description: "Geometry Dash Vault of Secrets codes including brainpower, octocube, seven, glubfub, cod3breaker and The Challenge, with unlock notes.",
+    url: "https://geometrydashspam.cc/geometry-dash-vault-of-secrets-codes",
+    type: "website",
+  },
+  twitter: {
+    card: "summary",
+    title: "Geometry Dash Vault of Secrets Codes – All Codes & Unlock Steps",
+    description: "Geometry Dash Vault of Secrets codes including brainpower, octocube, seven, glubfub, cod3breaker and The Challenge, with unlock notes.",
+  },
 };
 
 export default function VaultOfSecretsCodesPage() {
