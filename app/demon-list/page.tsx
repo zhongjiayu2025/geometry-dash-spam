@@ -71,8 +71,8 @@ export default function DemonListPage() {
             <p className="text-sm leading-6 text-slate-400">Build a wave-focused practice path around the mechanic you want to improve.</p>
           </Link>
           <Link href="/demon-list/spam-demons" className="rounded-xl border border-white/10 bg-slate-900/30 p-6 hover:border-blue-500/40">
-            <h2 className="mb-2 text-xl font-bold text-white">Spam-heavy demons</h2>
-            <p className="text-sm leading-6 text-slate-400">Focus on rapid-input consistency without inventing an unofficial global ranking.</p>
+            <h2 className="mb-2 text-xl font-bold text-white">Spam demonlist guide</h2>
+            <p className="text-sm leading-6 text-slate-400">Explore rapid-input demon references while keeping the official Pointercrate ranking separate.</p>
           </Link>
         </section>
       </div>
