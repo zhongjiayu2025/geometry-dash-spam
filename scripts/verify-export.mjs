@@ -85,6 +85,26 @@ const metadataExpectations = {
     description: "Geometry Dash codes for The Vault",
     canonical: "https://geometrydashspam.cc/geometry-dash-codes",
   },
+  "/geometry-dash-difficulty-faces": {
+    title: "Geometry Dash Difficulty Faces",
+    description: "Geometry Dash difficulty faces explained",
+    canonical: "https://geometrydashspam.cc/geometry-dash-difficulty-faces",
+  },
+  "/geometry-dash-stuttering-high-end-pc": {
+    title: "Geometry Dash Stuttering on High-End PC",
+    description: "Troubleshoot Geometry Dash stuttering on a high-end PC",
+    canonical: "https://geometrydashspam.cc/geometry-dash-stuttering-high-end-pc",
+  },
+  "/how-to-get-diamonds-geometry-dash": {
+    title: "How to Get Diamonds in Geometry Dash",
+    description: "How to get diamonds in Geometry Dash",
+    canonical: "https://geometrydashspam.cc/how-to-get-diamonds-geometry-dash",
+  },
+  "/easiest-demons": {
+    title: "Easiest Demons in Geometry Dash",
+    description: "easiest demons in Geometry Dash",
+    canonical: "https://geometrydashspam.cc/easiest-demons",
+  },
 };
 
 function candidates(route) {
