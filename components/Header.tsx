@@ -19,6 +19,7 @@ const moreItems = [
   ["/geometry-dash-clicker", "Geometry Dash Clicker"],
   ["/geometry-dash-difficulty-faces", "Difficulty Faces"],
   ["/geometry-dash-vault-of-secrets-codes", "Vault of Secrets Codes"],
+  ["/geometry-dash-stuttering-high-end-pc", "PC Stutter Guide"],
   ["/jitter-click", "Jitter Click"],
   ["/butterfly-click", "Butterfly Click"],
   ["/drag-click", "Drag Click"],
