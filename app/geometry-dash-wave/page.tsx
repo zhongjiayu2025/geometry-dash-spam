@@ -120,10 +120,10 @@ export default function GeometryDashWavePage() {
         <section className="rounded-2xl border border-white/10 bg-black/20 p-6 md:p-8">
           <h2 className="mb-4 text-2xl font-bold text-white">How to practice Geometry Dash wave</h2>
           <ol className="space-y-3 text-sm leading-6 text-slate-400">
-            <li><strong className="text-white">1. Start with Normal Wave.</strong> Learn repeatable direction changes before narrowing the corridor.</li>
-            <li><strong className="text-white">2. Compare several runs.</strong> A single lucky survival time is less useful than similar results across multiple attempts.</li>
-            <li><strong className="text-white">3. Move to Mini or Wave Spam.</strong> Increase input density only after basic control is stable.</li>
-            <li><strong className="text-white">4. Use Precision last.</strong> Treat the hardest preset as a consistency check rather than a required benchmark.</li>
+            <li><strong className="text-white">Start with Normal Wave.</strong> Learn repeatable direction changes before narrowing the corridor.</li>
+            <li><strong className="text-white">Compare several runs.</strong> A single lucky survival time is less useful than similar results across multiple attempts.</li>
+            <li><strong className="text-white">Move to Mini or Wave Spam.</strong> Increase input density only after basic control is stable.</li>
+            <li><strong className="text-white">Use Precision last.</strong> Treat the hardest preset as a consistency check rather than a required benchmark.</li>
           </ol>
         </section>
 
