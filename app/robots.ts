@@ -1,13 +1,14 @@
-import { MetadataRoute } from 'next';
+import { MetadataRoute } from "next";
 
 export const dynamic = "force-static";
 
 export default function robots(): MetadataRoute.Robots {
   return {
     rules: {
-      userAgent: '*',
-      allow: '/',
+      userAgent: "*",
+      allow: "/",
+      disallow: ["/dashboard", "/leaderboard"],
     },
-    sitemap: 'https://geometrydashspam.cc/sitemap.xml',
+    sitemap: "https://geometrydashspam.cc/sitemap.xml",
   };
 }
