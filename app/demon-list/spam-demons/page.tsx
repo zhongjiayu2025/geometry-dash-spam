@@ -3,22 +3,33 @@ import Link from "next/link";
 import { DEMONS, DEMON_SOURCE_URL, DEMON_VERIFIED_AT } from "../../../data/demons";
 
 export const metadata: Metadata = {
-  title: "Geometry Dash Spam Demon List – Rapid Input Practice References",
+  title: "Geometry Dash Spam Demon List | Spam Demonlist Guide",
   description:
-    "A Geometry Dash spam-focused practice list using current Demon List positions for levels associated with demanding wave or rapid-input sections.",
+    "Looking for a Geometry Dash spam demonlist? See a sourced rapid-input reference guide using current Pointercrate positions, with wave and click-practice links.",
   alternates: { canonical: "/demon-list/spam-demons" },
   openGraph: {
-    title: "Geometry Dash Spam Demon List – Rapid Input Practice References",
-    description: "A Geometry Dash spam-focused practice list using current Demon List positions for levels associated with demanding wave or rapid-input sections.",
+    title: "Geometry Dash Spam Demon List | Spam Demonlist Guide",
+    description: "Looking for a Geometry Dash spam demonlist? See a sourced rapid-input reference guide using current Pointercrate positions, with wave and click-practice links.",
     url: "https://geometrydashspam.cc/demon-list/spam-demons",
     type: "website",
   },
   twitter: {
     card: "summary",
-    title: "Geometry Dash Spam Demon List – Rapid Input Practice References",
-    description: "A Geometry Dash spam-focused practice list using current Demon List positions for levels associated with demanding wave or rapid-input sections.",
+    title: "Geometry Dash Spam Demon List | Spam Demonlist Guide",
+    description: "Looking for a Geometry Dash spam demonlist? See a sourced rapid-input reference guide using current Pointercrate positions, with wave and click-practice links.",
   },
 };
+
+const spamFaqs = [
+  {
+    q: "Is there an official Geometry Dash spam demonlist?",
+    a: "No. Pointercrate ranks Extreme Demons overall, not by spam intensity. This page is a practice-oriented reference that keeps the official Pointercrate rank separate from the spam-focused grouping.",
+  },
+  {
+    q: "What makes a level useful for spam practice?",
+    a: "Rapid-input sections are useful references when they demand repeated clicks or taps while still requiring controlled timing, especially in wave-heavy gameplay.",
+  },
+];
 
 const SPAM_REFERENCES = [
   { name: "Sakupen Circles", note: "Tight wave sections make input spacing and rapid correction especially visible." },
@@ -34,8 +45,19 @@ export default function SpamDemonsPage() {
     demon: DEMONS.find((item) => item.level === reference.name),
   })).filter((item) => item.demon);
 
+  const faqSchema = {
+    "@context": "https://schema.org",
+    "@type": "FAQPage",
+    mainEntity: spamFaqs.map((item) => ({
+      "@type": "Question",
+      name: item.q,
+      acceptedAnswer: { "@type": "Answer", text: item.a },
+    })),
+  };
+
   return (
     <article className="mx-auto max-w-5xl">
+      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(faqSchema) }} />
       <header className="mb-8 max-w-4xl">
         <p className="mb-2 text-xs font-bold uppercase tracking-[0.2em] text-blue-400">
           Rapid-input practice · ranks checked {DEMON_VERIFIED_AT}
@@ -49,6 +71,14 @@ export default function SpamDemonsPage() {
           then groups a few levels that are useful references for rapid input, wave control and repeatable click timing.
         </p>
       </header>
+
+      <section className="mb-8 rounded-2xl border border-blue-500/20 bg-blue-950/15 p-6">
+        <div className="mb-2 text-xs font-bold uppercase tracking-[0.18em] text-blue-300">Quick answer</div>
+        <p className="leading-7 text-slate-300">
+          There is <strong className="text-white">no official spam-only Demonlist</strong>. Pointercrate ranks demons overall.
+          The entries below are a separate practice-oriented selection, while the rank badge always shows the dated Pointercrate Main List position.
+        </p>
+      </section>
 
       <section className="mb-10 grid gap-4 md:grid-cols-2">
         {entries.map(({ demon, note }) => demon && (
@@ -78,6 +108,18 @@ export default function SpamDemonsPage() {
             <p className="leading-7 text-slate-400">{body}</p>
           </div>
         ))}
+      </section>
+
+      <section className="mt-10">
+        <h2 className="mb-4 text-2xl font-bold text-white">Spam demonlist FAQ</h2>
+        <div className="grid gap-4 md:grid-cols-2">
+          {spamFaqs.map((item) => (
+            <div key={item.q} className="rounded-xl border border-white/10 bg-slate-900/30 p-5">
+              <h3 className="mb-2 font-bold text-white">{item.q}</h3>
+              <p className="text-sm leading-6 text-slate-400">{item.a}</p>
+            </div>
+          ))}
+        </div>
       </section>
 
       <div className="mt-8 rounded-xl border border-white/10 bg-slate-900/25 p-5 text-sm text-slate-400">
