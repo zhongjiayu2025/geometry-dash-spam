@@ -21,6 +21,17 @@ export const metadata: Metadata = {
   },
   description:
     "Practice Geometry Dash spam, wave control and CPS with free browser-based training tools, sourced demon references and no account required.",
+  robots: {
+    index: true,
+    follow: true,
+    googleBot: {
+      index: true,
+      follow: true,
+      "max-image-preview": "large",
+      "max-snippet": -1,
+      "max-video-preview": -1,
+    },
+  },
   icons: {
     icon: "/logo.svg",
     shortcut: "/logo.svg",
@@ -39,7 +50,7 @@ export const metadata: Metadata = {
     locale: "en_US",
   },
   twitter: {
-    card: "summary",
+    card: "summary_large_image",
     title: "Geometry Dash Spam Test",
     description: "Practice Geometry Dash wave spam and measure CPS, click consistency and control.",
   },
@@ -97,6 +108,12 @@ export default function RootLayout({
         <meta name="twitter:image:alt" content="Geometry Dash Spam — Spam, Wave and CPS browser practice tools" />
       </head>
       <body className={`${inter.variable} ${orbitron.variable} min-h-screen bg-[#020617] text-slate-200 font-sans selection:bg-blue-500 selection:text-white flex flex-col`}>
+        <a
+          href="#main-content"
+          className="sr-only z-[100] rounded-md bg-white px-4 py-2 font-semibold text-slate-950 focus:not-sr-only focus:fixed focus:left-4 focus:top-4"
+        >
+          Skip to main content
+        </a>
         <Script
           async
           src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-1528586776567779"
@@ -116,7 +133,7 @@ export default function RootLayout({
 
         <Header />
 
-        <main className="relative z-10 flex-grow pt-24 md:pt-28 pb-12 px-4 w-full max-w-7xl mx-auto">
+        <main id="main-content" tabIndex={-1} className="relative z-10 flex-grow pt-24 md:pt-28 pb-12 px-4 w-full max-w-7xl mx-auto">
           {children}
         </main>
 
