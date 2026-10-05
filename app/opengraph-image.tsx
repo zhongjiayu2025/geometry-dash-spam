@@ -55,7 +55,6 @@ export default function OpenGraphImage() {
             justifyContent: "center",
             width: 720,
             paddingLeft: 86,
-            zIndex: 2,
           }}
         >
           <div
