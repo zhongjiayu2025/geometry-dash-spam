@@ -9,6 +9,17 @@ export const metadata: Metadata = {
   description:
     "Geometry Dash difficulty faces explained: Auto, Easy, Normal, Hard, Harder, Insane and Demon, plus all five Demon sub-difficulties.",
   alternates: { canonical: "/geometry-dash-difficulty-faces" },
+  openGraph: {
+    title: "Geometry Dash Difficulty Faces – Ratings & Demon Difficulties",
+    description: "Geometry Dash difficulty faces explained: Auto, Easy, Normal, Hard, Harder, Insane and Demon, plus all five Demon sub-difficulties.",
+    url: "https://geometrydashspam.cc/geometry-dash-difficulty-faces",
+    type: "website",
+  },
+  twitter: {
+    card: "summary",
+    title: "Geometry Dash Difficulty Faces – Ratings & Demon Difficulties",
+    description: "Geometry Dash difficulty faces explained: Auto, Easy, Normal, Hard, Harder, Insane and Demon, plus all five Demon sub-difficulties.",
+  },
 };
 
 const baseDifficulties = [
