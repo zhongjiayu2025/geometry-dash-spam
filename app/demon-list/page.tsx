@@ -3,21 +3,24 @@ import Link from "next/link";
 import DemonListTable from "../../components/DemonListTable";
 import { DEMONS, DEMON_SOURCE_URL, DEMON_VERIFIED_AT } from "../../data/demons";
 
+const currentNumberOne = DEMONS[0];
+const demonListTitle = `Geometry Dash Demon List – ${currentNumberOne.level} #1 & Top 50`;
+const demonListDescription = `Browse a sourced Geometry Dash Demon List snapshot. As checked ${DEMON_VERIFIED_AT}, ${currentNumberOne.level} by ${currentNumberOne.publisher} is #1; search the current top 50.`;
+
 export const metadata: Metadata = {
-  title: "Geometry Dash Demon List – Hardest Demons Ranked",
-  description:
-    "Browse a sourced Geometry Dash Demon List snapshot with the current top demons, verification date and related hardest-level guides.",
+  title: demonListTitle,
+  description: demonListDescription,
   alternates: { canonical: "/demon-list" },
   openGraph: {
-    title: "Geometry Dash Demon List – Hardest Demons Ranked",
-    description: "Browse a sourced Geometry Dash Demon List snapshot with the current top demons, verification date and related hardest-level guides.",
+    title: demonListTitle,
+    description: demonListDescription,
     url: "https://geometrydashspam.cc/demon-list",
     type: "website",
   },
   twitter: {
     card: "summary",
-    title: "Geometry Dash Demon List – Hardest Demons Ranked",
-    description: "Browse a sourced Geometry Dash Demon List snapshot with the current top demons, verification date and related hardest-level guides.",
+    title: demonListTitle,
+    description: demonListDescription,
   },
 };
 
@@ -51,7 +54,9 @@ export default function DemonListPage() {
           Geometry Dash Demon List
         </h1>
         <p className="leading-7 text-slate-400">
-          This page provides a checked snapshot of the hardest demons on Pointercrate. Use the linked source whenever the exact current order matters because rankings can change.
+          As checked <strong className="text-slate-200">{DEMON_VERIFIED_AT}</strong>, Pointercrate ranks{" "}
+          <strong className="text-white">{currentNumberOne.level}</strong> by {currentNumberOne.publisher} at #1.
+          This page keeps a searchable top-50 snapshot; use the linked live source whenever the exact current order matters because rankings can change.
         </p>
       </header>
 
