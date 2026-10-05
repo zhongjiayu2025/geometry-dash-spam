@@ -221,6 +221,8 @@ const RECOMMENDATIONS: Record<string, ToolKey[]> = {
   typing: ["spacebar", "keyboardGhosting", "reaction"],
   systemInfo: ["refreshRate", "pollingRate", "keyboardLatency"],
   dashboard: ["cps", "game", "wave"],
+  rollover: ["keyboardGhosting", "keyboardLatency", "spacebar"],
+  bpm: ["game", "spacebar", "cps"],
 };
 
 export default function RelatedTools({ currentTool }: RelatedToolsProps) {
