@@ -7,7 +7,7 @@ import dynamic from 'next/dynamic';
 import { Difficulty, GameStatus } from '../types';
 import { DIFFICULTY_CONFIGS } from '../constants';
 import DifficultySelector from './DifficultySelector';
-import { Infinity as InfinityIcon, Minimize2, Star, MousePointerClick, Activity, Keyboard, Timer } from 'lucide-react';
+import { Infinity as InfinityIcon, Minimize2, Star, MousePointerClick, Activity, Keyboard } from 'lucide-react';
 
 const GameCanvas = dynamic(() => import('./GameCanvas'), { ssr: false });
 
@@ -312,10 +312,15 @@ const WaveSimulator: React.FC<WaveSimulatorProps> = ({ variant = 'spam' }) => {
                 <h4 className="font-bold text-white text-sm mb-1">Spacebar</h4>
                 <p className="text-xs text-slate-400">Test repeated key presses.</p>
             </Link>
-            <Link href="/reaction-test" className="bg-slate-900/60 border border-white/5 rounded-xl p-4 hover:border-green-400/50 hover:bg-slate-900 transition-all cursor-pointer group block">
-                <Timer className="w-8 h-8 text-green-500 mb-3 group-hover:scale-110 transition-transform"/>
-                <h4 className="font-bold text-white text-sm mb-1">Reaction</h4>
-                <p className="text-xs text-slate-400">Test visual reflexes.</p>
+            <Link
+                href={isWavePage ? "/demon-list/wave-demons" : "/demon-list/spam-demons"}
+                className="bg-slate-900/60 border border-white/5 rounded-xl p-4 hover:border-green-400/50 hover:bg-slate-900 transition-all cursor-pointer group block"
+            >
+                <Star className="w-8 h-8 text-green-500 mb-3 group-hover:scale-110 transition-transform"/>
+                <h4 className="font-bold text-white text-sm mb-1">{isWavePage ? "Wave Demons" : "Spam Demons"}</h4>
+                <p className="text-xs text-slate-400">
+                  {isWavePage ? "Practice with wave-focused demon references." : "Explore rapid-input demon references."}
+                </p>
             </Link>
         </div>
       </div>
