@@ -32,7 +32,7 @@ export default function GeometryDashWavePage() {
         </p>
       </header>
 
-      <WaveSimulator />
+      <WaveSimulator variant="wave" />
 
       <section className="mx-auto mt-14 max-w-5xl space-y-10">
         <div className="rounded-2xl border border-white/10 bg-slate-900/30 p-6 md:p-8">
