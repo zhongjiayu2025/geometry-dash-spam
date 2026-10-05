@@ -440,8 +440,27 @@ for (const route of coreAuthorityRoutes) {
   if (!path) continue;
 
   const html = readFileSync(path, "utf8");
+  const hrefs = [...html.matchAll(/href=["']([^"']+)["']/gi)].map(
+    (match) => match[1]
+  );
+
   for (const noindexRoute of noindexUtilityRoutes) {
-    const escaped = noindexRoute.replace(/[.*+?^${}()|[\]\\]/g, "\\const contentErrors = [];");
+    const leaks = hrefs.some(
+      (href) =>
+        href === noindexRoute ||
+        href.startsWith(`${noindexRoute}#`) ||
+        href.startsWith(`${noindexRoute}?`)
+    );
+
+    if (leaks) {
+      authorityLeakErrors.push(
+        `${route}: core page links to noindex utility ${noindexRoute}`
+      );
+    }
+  }
+}
+
+const contentErrors = [];");
     const linkPattern = new RegExp(`href=["']${escaped}(?:[#?"'][^>]*)?`, "i");
 
     if (linkPattern.test(html)) {
