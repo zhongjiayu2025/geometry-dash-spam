@@ -15,7 +15,7 @@ export const metadata: Metadata = {
     type: "website",
   },
   twitter: {
-    card: "summary",
+    card: "summary_large_image",
     title: "Geometry Dash Spam Demon List | Spam Demonlist Guide",
     description: "Looking for a Geometry Dash spam demonlist? See a sourced rapid-input reference guide using current Pointercrate positions, with wave and click-practice links.",
   },
