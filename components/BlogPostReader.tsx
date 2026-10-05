@@ -4,7 +4,7 @@ import React, { useState } from 'react';
 import Link from 'next/link';
 import Image from 'next/image';
 import { BlogPost } from '../data/blogContent';
-import { Calendar, Clock, Share2, Check, Facebook, Twitter, Linkedin, Zap, MousePointer2, List, ChevronRight, Home } from 'lucide-react';
+import { Calendar, Clock, Share2, Check, Zap, MousePointer2, List, ChevronRight, Home } from 'lucide-react';
 
 interface BlogPostProps {
   post: BlogPost;
@@ -215,9 +215,9 @@ const BlogPostReader: React.FC<BlogPostProps> = ({ post }) => {
              <p className="text-slate-500 text-sm mt-1">Maintains the site&apos;s browser tools and source-checked training guides.</p>
          </div>
          <div className="flex gap-4">
-             <button onClick={() => handleShare('twitter')} className="p-3 bg-slate-800 rounded-full hover:bg-blue-600 transition-colors text-white" aria-label="Share on Twitter"><Twitter className="w-4 h-4" /></button>
-             <button onClick={() => handleShare('facebook')} className="p-3 bg-slate-800 rounded-full hover:bg-blue-700 transition-colors text-white" aria-label="Share on Facebook"><Facebook className="w-4 h-4" /></button>
-             <button onClick={() => handleShare('linkedin')} className="p-3 bg-slate-800 rounded-full hover:bg-blue-500 transition-colors text-white" aria-label="Share on LinkedIn"><Linkedin className="w-4 h-4" /></button>
+             <button onClick={() => handleShare('twitter')} className="p-3 bg-slate-800 rounded-full hover:bg-blue-600 transition-colors text-white" aria-label="Share on Twitter"><span className="text-xs font-bold">X</span></button>
+             <button onClick={() => handleShare('facebook')} className="p-3 bg-slate-800 rounded-full hover:bg-blue-700 transition-colors text-white" aria-label="Share on Facebook"><span className="text-xs font-bold">f</span></button>
+             <button onClick={() => handleShare('linkedin')} className="p-3 bg-slate-800 rounded-full hover:bg-blue-500 transition-colors text-white" aria-label="Share on LinkedIn"><span className="text-[10px] font-bold">in</span></button>
          </div>
       </div>
 
