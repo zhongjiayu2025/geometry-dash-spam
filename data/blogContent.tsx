@@ -32,7 +32,7 @@ export const BLOG_POSTS: BlogPost[] = [
     updated: "October 5, 2026",
     readTime: "7 min read",
     coverImage:
-      "https://images.unsplash.com/photo-1550745165-9bc0b252726f?q=80&w=2070&auto=format&fit=crop",
+      "https://images.unsplash.com/photo-1550745165-9bc0b252726f?auto=format&fit=crop&w=1200&h=630&q=72",
     tags: ["Guide", "Spam", "Wave"],
     toc: [
       { id: "definition", title: "What Geometry Dash spam means" },
@@ -105,7 +105,7 @@ export const BLOG_POSTS: BlogPost[] = [
     updated: "October 5, 2026",
     readTime: "7 min read",
     coverImage:
-      "https://images.unsplash.com/photo-1614726365345-0377fa1f513a?q=80&w=2070&auto=format&fit=crop",
+      "https://images.unsplash.com/photo-1614726365345-0377fa1f513a?auto=format&fit=crop&w=1200&h=630&q=72",
     tags: ["Training", "CPS", "Technique"],
     toc: [
       { id: "baseline", title: "Measure a baseline" },
@@ -173,7 +173,7 @@ export const BLOG_POSTS: BlogPost[] = [
     updated: "October 5, 2026",
     readTime: "6 min read",
     coverImage:
-      "https://images.unsplash.com/photo-1527814050087-3793815479db?q=80&w=2028&auto=format&fit=crop",
+      "https://images.unsplash.com/photo-1527814050087-3793815479db?auto=format&fit=crop&w=1200&h=630&q=72",
     tags: ["Hardware", "Guide"],
     content: (
       <>
@@ -211,7 +211,7 @@ export const BLOG_POSTS: BlogPost[] = [
     updated: "October 5, 2026",
     readTime: "5 min read",
     coverImage:
-      "https://images.unsplash.com/photo-1518770660439-4636190af475?q=80&w=2070&auto=format&fit=crop",
+      "https://images.unsplash.com/photo-1518770660439-4636190af475?auto=format&fit=crop&w=1200&h=630&q=72",
     tags: ["Mechanics", "Wave"],
     content: (
       <>
@@ -246,7 +246,7 @@ export const BLOG_POSTS: BlogPost[] = [
     updated: "October 5, 2026",
     readTime: "6 min read",
     coverImage:
-      "https://images.unsplash.com/photo-1535905557558-afc4877a26fc?q=80&w=2574&auto=format&fit=crop",
+      "https://images.unsplash.com/photo-1535905557558-afc4877a26fc?auto=format&fit=crop&w=1200&h=630&q=72",
     tags: ["Levels", "Wave"],
     content: (
       <>
@@ -283,7 +283,7 @@ export const BLOG_POSTS: BlogPost[] = [
     updated: "October 5, 2026",
     readTime: "6 min read",
     coverImage:
-      "https://images.unsplash.com/photo-1517836357463-d25dfeac3438?q=80&w=2070&auto=format&fit=crop",
+      "https://images.unsplash.com/photo-1517836357463-d25dfeac3438?auto=format&fit=crop&w=1200&h=630&q=72",
     tags: ["Training", "Practice Plan"],
     content: (
       <>
@@ -327,7 +327,7 @@ export const BLOG_POSTS: BlogPost[] = [
     updated: "October 5, 2026",
     readTime: "5 min read",
     coverImage:
-      "https://images.unsplash.com/photo-1532094349884-543bc11b234d?q=80&w=2070&auto=format&fit=crop",
+      "https://images.unsplash.com/photo-1532094349884-543bc11b234d?auto=format&fit=crop&w=1200&h=630&q=72",
     tags: ["Measurement", "CPS"],
     content: (
       <>
@@ -362,7 +362,7 @@ export const BLOG_POSTS: BlogPost[] = [
     updated: "October 5, 2026",
     readTime: "5 min read",
     coverImage:
-      "https://images.unsplash.com/photo-1512941937669-90a1b58e7e9c?q=80&w=2070&auto=format&fit=crop",
+      "https://images.unsplash.com/photo-1512941937669-90a1b58e7e9c?auto=format&fit=crop&w=1200&h=630&q=72",
     tags: ["Mobile", "Input"],
     content: (
       <>
@@ -393,7 +393,7 @@ export const BLOG_POSTS: BlogPost[] = [
     updated: "October 5, 2026",
     readTime: "6 min read",
     coverImage:
-      "https://images.unsplash.com/photo-1455849318743-b2233052fcff?q=80&w=2069&auto=format&fit=crop",
+      "https://images.unsplash.com/photo-1455849318743-b2233052fcff?auto=format&fit=crop&w=1200&h=630&q=72",
     tags: ["Tips", "Training"],
     content: (
       <>
@@ -435,7 +435,7 @@ export const BLOG_POSTS: BlogPost[] = [
     updated: "October 5, 2026",
     readTime: "5 min read",
     coverImage:
-      "https://images.unsplash.com/photo-1542751371-adc38448a05e?q=80&w=2070&auto=format&fit=crop",
+      "https://images.unsplash.com/photo-1542751371-adc38448a05e?auto=format&fit=crop&w=1200&h=630&q=72",
     tags: ["Community", "Evidence"],
     content: (
       <>
