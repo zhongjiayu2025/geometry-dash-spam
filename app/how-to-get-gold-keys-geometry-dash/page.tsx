@@ -11,6 +11,17 @@ export const metadata: Metadata = {
   description:
     "Learn how to get Gold Keys in Geometry Dash from eligible Event Level reward chests and Secret Room codes, and where to use them.",
   alternates: { canonical: "/how-to-get-gold-keys-geometry-dash" },
+  openGraph: {
+    title: "How to Get Gold Keys in Geometry Dash – Current Methods",
+    description: "Learn how to get Gold Keys in Geometry Dash from eligible Event Level reward chests and Secret Room codes, and where to use them.",
+    url: "https://geometrydashspam.cc/how-to-get-gold-keys-geometry-dash",
+    type: "website",
+  },
+  twitter: {
+    card: "summary",
+    title: "How to Get Gold Keys in Geometry Dash – Current Methods",
+    description: "Learn how to get Gold Keys in Geometry Dash from eligible Event Level reward chests and Secret Room codes, and where to use them.",
+  },
 };
 
 export default function GoldKeysPage() {
