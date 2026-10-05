@@ -7,18 +7,18 @@ const CHECKED_AT = "2026-10-05";
 export const metadata: Metadata = {
   title: "How to Get Diamonds in Geometry Dash | 6 Main Methods",
   description:
-    "How to get diamonds in Geometry Dash: use daily chests, quests, Daily and Weekly levels, Treasure Room chests, Gauntlets and Paths."
+    "How to get diamonds in Geometry Dash: use daily chests, quests, Daily and Weekly levels, Treasure Room chests, Gauntlets and Paths.",
   alternates: { canonical: "/how-to-get-diamonds-geometry-dash" },
   openGraph: {
     title: "How to Get Diamonds in Geometry Dash | 6 Main Methods",
-    description: "Learn how to get diamonds in Geometry Dash through daily chests, quests, Daily and Weekly levels, Treasure Room chests, Gauntlets and Paths.",
+    description: "How to get diamonds in Geometry Dash: use daily chests, quests, Daily and Weekly levels, Treasure Room chests, Gauntlets and Paths.",
     url: "https://geometrydashspam.cc/how-to-get-diamonds-geometry-dash",
     type: "website",
   },
   twitter: {
     card: "summary",
     title: "How to Get Diamonds in Geometry Dash | 6 Main Methods",
-    description: "Learn how to get diamonds in Geometry Dash through daily chests, quests, Daily and Weekly levels, Treasure Room chests, Gauntlets and Paths.",
+    description: "How to get diamonds in Geometry Dash: use daily chests, quests, Daily and Weekly levels, Treasure Room chests, Gauntlets and Paths.",
   },
 };
 
