@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import DemonListTable from "../../components/DemonListTable";
-import { DEMON_SOURCE_URL, DEMON_VERIFIED_AT } from "../../data/demons";
+import { DEMONS, DEMON_SOURCE_URL, DEMON_VERIFIED_AT } from "../../data/demons";
 
 export const metadata: Metadata = {
   title: "Geometry Dash Demon List – Hardest Demons Ranked",
@@ -18,6 +18,15 @@ export default function DemonListPage() {
     url: "https://geometrydashspam.cc/demon-list",
     dateModified: DEMON_VERIFIED_AT,
     isBasedOn: DEMON_SOURCE_URL,
+    mainEntity: {
+      "@type": "ItemList",
+      numberOfItems: DEMONS.length,
+      itemListElement: DEMONS.map((item) => ({
+        "@type": "ListItem",
+        position: item.rank,
+        name: item.level,
+      })),
+    },
   };
 
   return (
