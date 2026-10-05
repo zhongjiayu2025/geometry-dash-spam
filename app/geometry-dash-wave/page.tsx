@@ -3,19 +3,19 @@ import Link from "next/link";
 import WaveSimulator from "../../components/WaveSimulator";
 
 export const metadata: Metadata = {
-  title: "Geometry Dash Wave – Wave Spam Trainer Online",
+  title: "Geometry Dash Wave | Wave Spam Test & Trainer",
   description:
-    "Practice Geometry Dash wave and wave spam online with normal, mini, precision and endless training modes. Compare CPS, timing and control in your browser.",
+    "Play a Geometry Dash wave trainer online for wave spam, mini wave and precision practice. Compare CPS, timing consistency and repeatable control in your browser.",
   alternates: { canonical: "/geometry-dash-wave" },
   openGraph: {
-    title: "Geometry Dash Wave – Wave Spam Trainer Online",
+    title: "Geometry Dash Wave | Wave Spam Test & Trainer",
     description: "Practice Geometry Dash wave and wave spam online with normal, mini, precision and endless training modes. Compare CPS, timing and control in your browser.",
     url: "https://geometrydashspam.cc/geometry-dash-wave",
     type: "website",
   },
   twitter: {
     card: "summary",
-    title: "Geometry Dash Wave – Wave Spam Trainer Online",
+    title: "Geometry Dash Wave | Wave Spam Test & Trainer",
     description: "Practice Geometry Dash wave and wave spam online with normal, mini, precision and endless training modes. Compare CPS, timing and control in your browser.",
   },
 };
@@ -63,13 +63,22 @@ export default function GeometryDashWavePage() {
       <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(faqSchema) }} />
       <header className="mx-auto mb-8 max-w-4xl text-center">
         <p className="mb-2 text-xs font-bold uppercase tracking-[0.2em] text-blue-400">Wave practice</p>
-        <h1 className="mb-4 text-3xl font-display font-bold text-white md:text-5xl">Geometry Dash Wave Trainer</h1>
+        <h1 className="mb-4 text-3xl font-display font-bold text-white md:text-5xl">Geometry Dash Wave</h1>
         <p className="leading-7 text-slate-400">
-          Practice <strong className="text-slate-200">Geometry Dash Wave</strong> movement and
+          Practice <strong className="text-slate-200">Geometry Dash wave</strong> movement and
           <strong className="text-slate-200"> wave spam</strong> with normal, mini, precision and endless presets.
-          The trainer separates rapid clicking from the harder part: keeping repeated inputs controlled.
+          The trainer separates raw click speed from the harder part: keeping repeated inputs controlled.
         </p>
       </header>
+
+      <section className="mx-auto mb-5 max-w-5xl rounded-2xl border border-blue-500/20 bg-blue-950/15 p-5 md:p-6">
+        <div className="mb-2 text-xs font-bold uppercase tracking-[0.18em] text-blue-300">Quick answer</div>
+        <p className="leading-7 text-slate-300">
+          The Geometry Dash wave changes direction when you press and release. Wave spam uses rapid repeated inputs,
+          but faster clicking only helps when the spacing between those inputs stays controlled. Use the trainer below
+          to practice the movement, then compare raw speed separately with the <Link href="/cps-test" className="text-blue-400 hover:underline">GD CPS Test</Link>.
+        </p>
+      </section>
 
       <WaveSimulator variant="wave" />
 
