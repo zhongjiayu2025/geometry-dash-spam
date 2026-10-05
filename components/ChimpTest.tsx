@@ -23,6 +23,18 @@ export default function ChimpTest() {
     }, []);
 
     const generateLevel = (currentLevel: number) => {
+        if (currentLevel > 40) {
+            setBestScore(prev => {
+                if (prev === null || 40 > prev) {
+                    localStorage.setItem('chimpBestScore', '40');
+                    return 40;
+                }
+                return prev;
+            });
+            setGameState('finished');
+            return;
+        }
+
         // Grid is approx 8x5
         const cols = 8;
         const rows = 5;
