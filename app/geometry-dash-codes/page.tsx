@@ -77,7 +77,7 @@ export default function GeometryDashCodesPage() {
               <p className="mt-1 text-sm text-slate-500">Unlock The Vault with 10 user coins.</p>
             </div>
             <a href={VAULT_SOURCES.vault} target="_blank" rel="noopener noreferrer" className="text-sm text-blue-400 hover:underline">
-              Source: Official Geometry Dash Wiki
+              Source: Geometry Dash Wiki
             </a>
           </div>
           <VaultCodeTable codes={THE_VAULT_CODES} label="The Vault codes" />
@@ -103,7 +103,7 @@ export default function GeometryDashCodesPage() {
               <p className="mt-1 text-sm text-slate-500">These fixed codes unlock icons, a color and other Icon Kit rewards.</p>
             </div>
             <a href={VAULT_SOURCES.chamber} target="_blank" rel="noopener noreferrer" className="text-sm text-blue-400 hover:underline">
-              Source: Official Geometry Dash Wiki
+              Source: Geometry Dash Wiki
             </a>
           </div>
           <VaultCodeTable codes={CHAMBER_CODES} label="Chamber of Time codes" />
@@ -118,7 +118,7 @@ export default function GeometryDashCodesPage() {
               </p>
             </div>
             <a href={VAULT_SOURCES.wraith} target="_blank" rel="noopener noreferrer" className="text-sm text-blue-400 hover:underline">
-              Source: Official Geometry Dash Wiki
+              Source: Geometry Dash Wiki
             </a>
           </div>
           <VaultCodeTable codes={WRAITH_CODES} label="Wraith codes" />
