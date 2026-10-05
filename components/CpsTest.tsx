@@ -137,7 +137,7 @@ const CpsTest: React.FC = () => {
   const shareScore = async (e: React.MouseEvent) => {
      e.stopPropagation();
      const score = (clicks / selectedDuration).toFixed(2);
-     const text = `I just hit ${score} CPS (${selectedDuration}s mode) on the Geometry Dash Spam Test! ⚡`;
+     const text = `I got ${score} CPS in the ${selectedDuration}s Geometry Dash CPS Test.`;
      const url = 'https://geometrydashspam.cc/cps-test';
 
      if (typeof navigator !== 'undefined' && navigator.share) {
@@ -403,7 +403,7 @@ const CpsTest: React.FC = () => {
                       <strong>CPS</strong> stands for <em>Clicks Per Second</em>. It is a metric used to measure the speed at which a person can press a mouse button or keyboard key.
                   </p>
                   <p>
-                      In <strong className="text-white">Geometry Dash</strong>, consistent CPS is more important than raw peak speed, which is why our test allows you to measure your consistency over longer durations like 30s or 60s.
+                      For <strong className="text-white">Geometry Dash</strong> practice, average CPS and click timing answer different questions. Use short modes for bursts and longer 30s or 60s modes to compare whether your pace stays repeatable.
                   </p>
               </div>
           </div>
@@ -421,10 +421,10 @@ const CpsTest: React.FC = () => {
                     <BookOpen className="h-4 w-4" /> Recommended Guide
                 </div>
                 <h3 className="font-display text-2xl font-bold text-white group-hover:text-blue-200">
-                    Stuck at 6 CPS? Learn Pro Clicking Techniques
+                    Improve CPS Without Losing Click Consistency
                 </h3>
                 <p className="max-w-xl text-slate-400">
-                    Discover how techniques like Jitter Clicking and Butterfly Clicking can instantly double your speed. Read our comprehensive guide.
+                    Compare normal, jitter and butterfly clicking with repeatable test durations, then train the method that stays most consistent for you.
                 </p>
             </div>
             <div className="flex h-12 w-12 items-center justify-center rounded-full bg-blue-600 text-white shadow-lg shadow-blue-900/50 transition-transform group-hover:translate-x-2 group-hover:scale-110">
