@@ -7,6 +7,17 @@ export const metadata: Metadata = {
   description:
     "A Geometry Dash spam-focused practice list using current Demon List positions for levels associated with demanding wave or rapid-input sections.",
   alternates: { canonical: "/demon-list/spam-demons" },
+  openGraph: {
+    title: "Geometry Dash Spam Demon List – Rapid Input Practice References",
+    description: "A Geometry Dash spam-focused practice list using current Demon List positions for levels associated with demanding wave or rapid-input sections.",
+    url: "https://geometrydashspam.cc/demon-list/spam-demons",
+    type: "website",
+  },
+  twitter: {
+    card: "summary",
+    title: "Geometry Dash Spam Demon List – Rapid Input Practice References",
+    description: "A Geometry Dash spam-focused practice list using current Demon List positions for levels associated with demanding wave or rapid-input sections.",
+  },
 };
 
 const SPAM_REFERENCES = [
