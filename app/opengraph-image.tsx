@@ -1,5 +1,7 @@
 import { ImageResponse } from "next/og";
 
+export const dynamic = "force-static";
+
 export const alt = "Geometry Dash Spam — Spam, Wave and CPS browser practice tools";
 export const size = {
   width: 1200,
