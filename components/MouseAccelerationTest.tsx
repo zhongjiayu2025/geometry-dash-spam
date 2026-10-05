@@ -39,7 +39,7 @@ export default function MouseAccelerationTest() {
         setDifference(0);
     };
 
-    const hasAccel = difference > 50;
+    const hasLargeDifference = difference > 50;
 
     return (
         <div className="w-full max-w-4xl mx-auto px-4 md:px-0">
@@ -111,23 +111,23 @@ export default function MouseAccelerationTest() {
                                     </div>
                                 </div>
 
-                                <div className={`p-6 rounded-2xl border ${hasAccel ? 'bg-rose-900/20 border-rose-500/50' : 'bg-emerald-900/20 border-emerald-500/50'}`}>
+                                <div className={`p-6 rounded-2xl border ${hasLargeDifference ? 'bg-rose-900/20 border-rose-500/50' : 'bg-emerald-900/20 border-emerald-500/50'}`}>
                                     <div className="flex items-center justify-center gap-3 mb-2">
-                                        {hasAccel && <AlertTriangle className="w-6 h-6 text-rose-400" />}
-                                        <h4 className={`text-2xl font-display font-bold ${hasAccel ? 'text-rose-400' : 'text-emerald-400'}`}>
-                                            {hasAccel ? 'Acceleration Detected!' : 'No Acceleration Detected'}
+                                        {hasLargeDifference && <AlertTriangle className="w-6 h-6 text-rose-400" />}
+                                        <h4 className={`text-2xl font-display font-bold ${hasLargeDifference ? 'text-rose-400' : 'text-emerald-400'}`}>
+                                            {hasLargeDifference ? 'Large Return Difference' : 'Small Return Difference'}
                                         </h4>
                                     </div>
                                     <p className="text-slate-300">
                                         Cursor difference: <strong className="text-white">{difference}px</strong>
                                     </p>
-                                    {hasAccel ? (
+                                    {hasLargeDifference ? (
                                         <p className="text-sm text-rose-300/80 mt-2">
-                                            Your cursor did not return to the exact starting point despite your physical mouse doing so. Enhance Pointer Precision is likely ON in Windows.
+                                            The cursor returned far from the starting screen position. Acceleration is one possible cause, but browser pointer behavior, hand path and display scaling can also affect this result.
                                         </p>
                                     ) : (
                                         <p className="text-sm text-emerald-300/80 mt-2">
-                                            Your cursor returned close to the original position. You have raw input!
+                                            The cursor returned close to the starting screen position. This does not prove that operating-system mouse acceleration is disabled.
                                         </p>
                                     )}
                                 </div>
