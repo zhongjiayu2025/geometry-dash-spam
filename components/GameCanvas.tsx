@@ -218,6 +218,7 @@ const GameCanvas: React.FC<GameCanvasProps> = memo(({ difficulty, status, onStat
     beatScale: 1.0, // For audio-visual sync
     lastBeatTime: 0, // Track when the kick hit
     frameCount: 0,
+    trailAccumulator: 0,
     clickIntervals: [] as number[],
     clickTimes: [] as number[],
     clickCount: 0,
@@ -638,6 +639,7 @@ const GameCanvas: React.FC<GameCanvasProps> = memo(({ difficulty, status, onStat
       beatScale: 1.0,
       lastBeatTime: 0,
       frameCount: 0,
+      trailAccumulator: 0,
       clickIntervals: [],
       clickTimes: [],
       clickCount: 0,
@@ -672,9 +674,10 @@ const GameCanvas: React.FC<GameCanvasProps> = memo(({ difficulty, status, onStat
         }
 
         const rawDeltaMs = now - gameState.current.lastFrameTime;
-        const frameFactor = Math.min(2, Math.max(0.25, rawDeltaMs / (1000 / 60)));
+        const frameDeltaMs = Math.min(1000 / 30, Math.max(0, rawDeltaMs));
+        const frameFactor = frameDeltaMs / (1000 / 60);
         gameState.current.lastFrameTime = now;
-        gameState.current.runTime = now - gameState.current.startTime;
+        gameState.current.runTime += frameDeltaMs;
 
         if (now - lastHudUpdateRef.current >= 50) {
             setDisplayTime(gameState.current.runTime / 1000);
@@ -737,19 +740,21 @@ const GameCanvas: React.FC<GameCanvasProps> = memo(({ difficulty, status, onStat
              }
         }
 
-        if (gameState.current.frameCount % 2 === 0) { 
-             const w = isMini ? 4 : 8;
+        gameState.current.trailAccumulator += frameFactor;
+        if (gameState.current.trailAccumulator >= 2) {
+            const w = isMini ? 4 : 8;
             gameState.current.trail.push({ x: gameState.current.playerX, y: gameState.current.playerY, w });
             if (gameState.current.trail.length > 30) gameState.current.trail.shift();
+            gameState.current.trailAccumulator %= 2;
         }
+
         for (let i = 0; i < gameState.current.trail.length; i++) {
              gameState.current.trail[i].x -= moveSpeed;
-             gameState.current.trail[i].w *= 0.94; 
+             gameState.current.trail[i].w *= Math.pow(0.94, frameFactor);
         }
 
         gameState.current.particles = gameState.current.particles.filter(p => p.life > 0);
         gameState.current.particles.forEach(p => {
-            const frameFactor = Math.min(2, Math.max(0.25, (performance.now() - gameState.current.lastFrameTime + (1000 / 60)) / (1000 / 60)));
             p.x += p.vx * frameFactor;
             p.y += p.vy * frameFactor;
             p.vy += 0.5 * frameFactor;
@@ -760,8 +765,8 @@ const GameCanvas: React.FC<GameCanvasProps> = memo(({ difficulty, status, onStat
 
         gameState.current.shockwaves = gameState.current.shockwaves.filter(s => s.opacity > 0);
         gameState.current.shockwaves.forEach(s => {
-            s.radius += 8;
-            s.opacity -= 0.05;
+            s.radius += 8 * frameFactor;
+            s.opacity -= 0.05 * frameFactor;
         });
 
         gameState.current.frameCount++;
