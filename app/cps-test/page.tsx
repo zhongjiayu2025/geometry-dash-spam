@@ -2,6 +2,7 @@ import CpsTest from "../../components/CpsTest";
 import Breadcrumbs from "../../components/Breadcrumbs";
 import { Metadata } from "next";
 import Link from "next/link";
+import CpsGuide from "../../components/CpsGuide";
 
 export const metadata: Metadata = {
   title: "Geometry Dash CPS Test (GD CPS Test) | Spam Click Test",
@@ -92,6 +93,9 @@ export default function CpsTestPage() {
         </p>
       </header>
       <CpsTest />
+      <div className="mx-auto max-w-5xl">
+        <CpsGuide />
+      </div>
 
       <section className="mx-auto mt-14 grid max-w-5xl gap-4 md:grid-cols-2">
         <div className="rounded-2xl border border-blue-500/20 bg-blue-950/15 p-6">
