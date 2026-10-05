@@ -24,14 +24,35 @@ export const metadata: Metadata = {
 };
 
 const baseDifficulties = [
-  { name: "Auto", stars: "1★", symbol: "A", tone: "text-cyan-300 border-cyan-500/30 bg-cyan-500/10", note: "Rated automated level." },
-  { name: "Easy", stars: "2★", symbol: "E", tone: "text-green-300 border-green-500/30 bg-green-500/10", note: "Lowest standard user-level difficulty." },
-  { name: "Normal", stars: "3★", symbol: "N", tone: "text-blue-300 border-blue-500/30 bg-blue-500/10", note: "Standard early progression difficulty." },
-  { name: "Hard", stars: "4–5★", symbol: "H", tone: "text-yellow-300 border-yellow-500/30 bg-yellow-500/10", note: "A step above Normal." },
-  { name: "Harder", stars: "6–7★", symbol: "H+", tone: "text-orange-300 border-orange-500/30 bg-orange-500/10", note: "Higher-rated non-Demon difficulty." },
-  { name: "Insane", stars: "8–9★", symbol: "I", tone: "text-pink-300 border-pink-500/30 bg-pink-500/10", note: "Highest standard non-Demon rating." },
-  { name: "Demon", stars: "10★", symbol: "D", tone: "text-red-300 border-red-500/30 bg-red-500/10", note: "Demon levels use five community-voted sub-difficulties." },
+  { name: "Auto", stars: "1★", face: 0, tone: "text-cyan-300 border-cyan-500/30 bg-cyan-500/10", note: "Rated automated level." },
+  { name: "Easy", stars: "2★", face: 1, tone: "text-green-300 border-green-500/30 bg-green-500/10", note: "Lowest standard user-level difficulty." },
+  { name: "Normal", stars: "3★", face: 2, tone: "text-blue-300 border-blue-500/30 bg-blue-500/10", note: "Standard early progression difficulty." },
+  { name: "Hard", stars: "4–5★", face: 3, tone: "text-yellow-300 border-yellow-500/30 bg-yellow-500/10", note: "A step above Normal." },
+  { name: "Harder", stars: "6–7★", face: 4, tone: "text-orange-300 border-orange-500/30 bg-orange-500/10", note: "Higher-rated non-Demon difficulty." },
+  { name: "Insane", stars: "8–9★", face: 5, tone: "text-pink-300 border-pink-500/30 bg-pink-500/10", note: "Highest standard non-Demon rating." },
+  { name: "Demon", stars: "10★", face: 6, tone: "text-red-300 border-red-500/30 bg-red-500/10", note: "Demon levels use five community-voted sub-difficulties." },
 ];
+
+const faceMouths = [
+  "M18 38 Q32 51 46 38",
+  "M18 39 Q32 49 46 39",
+  "M20 41 H44",
+  "M18 43 Q32 39 46 43",
+  "M18 44 Q32 36 46 44",
+  "M17 46 Q32 32 47 46",
+  "M15 48 Q32 28 49 48",
+];
+
+function DifficultyReferenceFace({ name, level }: { name: string; level: number }) {
+  return (
+    <svg viewBox="0 0 64 64" role="img" aria-label={`${name} original reference face`} className="h-12 w-12">
+      <circle cx="32" cy="32" r="27" fill="none" stroke="currentColor" strokeWidth="3" />
+      <circle cx="23" cy="27" r="3" fill="currentColor" />
+      <circle cx="41" cy="27" r="3" fill="currentColor" />
+      <path d={faceMouths[level]} fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round" />
+    </svg>
+  );
+}
 
 const difficultyFaqs = [
   {
@@ -104,7 +125,7 @@ export default function DifficultyFacesPage() {
           <div className="mb-2 text-xs font-bold uppercase tracking-[0.18em] text-blue-300">Quick answer</div>
           <p className="leading-7 text-slate-300">
             The rated user-level scale is <strong className="text-white">Auto → Easy → Normal → Hard → Harder → Insane → Demon</strong>.
-            Demon then splits into Easy, Medium, Hard, Insane and Extreme Demon. The cards below use original letter markers rather than copied game artwork.
+            Demon then splits into Easy, Medium, Hard, Insane and Extreme Demon. The cards below use original reference faces rather than copied game artwork.
           </p>
         </section>
 
@@ -113,8 +134,8 @@ export default function DifficultyFacesPage() {
           <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
             {baseDifficulties.map((item) => (
               <div key={item.name} className="rounded-2xl border border-white/10 bg-slate-900/30 p-5">
-                <div className={"mb-4 grid h-16 w-16 place-items-center rounded-full border-2 font-display text-xl font-black " + item.tone}>
-                  {item.symbol}
+                <div className={"mb-4 grid h-16 w-16 place-items-center rounded-full border-2 " + item.tone}>
+                  <DifficultyReferenceFace name={item.name} level={item.face} />
                 </div>
                 <div className="mb-2 flex items-center justify-between gap-3">
                   <h3 className="text-xl font-bold text-white">{item.name}</h3>
@@ -125,7 +146,7 @@ export default function DifficultyFacesPage() {
             ))}
           </div>
           <p className="mt-4 text-xs leading-5 text-slate-600">
-            The letter badges above are original reference markers for this guide, not copies of the official game artwork.
+            The face illustrations above are original visual references for this guide, not copies of the official Geometry Dash sprites.
           </p>
         </section>
 
