@@ -10,8 +10,26 @@ export const metadata: Metadata = {
 };
 
 export default function GeometryDashClickerPage() {
+  const schema = {
+    "@context": "https://schema.org",
+    "@type": "WebApplication",
+    name: "Geometry Dash Clicker",
+    url: "https://geometrydashspam.cc/geometry-dash-clicker",
+    applicationCategory: "GameApplication",
+    operatingSystem: "Any",
+    isAccessibleForFree: true,
+    offers: {
+      "@type": "Offer",
+      price: "0",
+      priceCurrency: "USD",
+    },
+    description:
+      "A lightweight browser clicker game with local progress, upgrades, achievements and prestige.",
+  };
+
   return (
     <>
+      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(schema) }} />
       <header className="mx-auto mb-8 max-w-4xl text-center">
         <p className="mb-2 text-xs font-bold uppercase tracking-[0.2em] text-blue-400">Browser clicker</p>
         <h1 className="mb-4 text-3xl font-display font-bold text-white md:text-5xl">Geometry Dash Clicker</h1>
