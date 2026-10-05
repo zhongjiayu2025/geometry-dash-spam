@@ -78,8 +78,28 @@ export default function DemonListTable() {
         </div>
       </div>
 
-      <div className="overflow-x-auto rounded-xl border border-white/10">
-        <table className="w-full min-w-[620px] text-left text-sm">
+      <div className="space-y-2 md:hidden" aria-label="Filtered Demon List">
+        {filtered.map((item) => (
+          <div key={item.rank} className="flex items-start gap-3 rounded-xl border border-white/10 bg-slate-950/25 p-4">
+            <div className="w-11 shrink-0 font-mono text-sm font-bold text-blue-400">#{item.rank}</div>
+            <div className="min-w-0 flex-1">
+              <div className="break-words font-semibold text-white">{item.level}</div>
+              <div className="mt-1 text-xs text-slate-500">by {item.publisher}</div>
+            </div>
+            <div className="shrink-0 rounded-full border border-purple-500/20 bg-purple-500/10 px-2 py-1 text-[10px] font-semibold text-purple-300">
+              Extreme
+            </div>
+          </div>
+        ))}
+        {!filtered.length && (
+          <div className="rounded-xl border border-white/10 bg-slate-950/25 p-6 text-center text-sm text-slate-500">
+            No matching demon found in this top-50 snapshot.
+          </div>
+        )}
+      </div>
+
+      <div className="hidden overflow-x-auto rounded-xl border border-white/10 md:block">
+        <table className="w-full text-left text-sm">
           <thead className="bg-slate-900/80 text-xs uppercase tracking-wider text-slate-500">
             <tr>
               <th className="px-4 py-3">Rank</th>
@@ -97,6 +117,13 @@ export default function DemonListTable() {
                 <td className="px-4 py-4 text-purple-300">{item.difficulty}</td>
               </tr>
             ))}
+            {!filtered.length && (
+              <tr>
+                <td colSpan={4} className="px-4 py-8 text-center text-sm text-slate-500">
+                  No matching demon found in this top-50 snapshot.
+                </td>
+              </tr>
+            )}
           </tbody>
         </table>
       </div>
