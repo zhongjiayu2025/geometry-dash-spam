@@ -7,6 +7,17 @@ export const metadata: Metadata = {
   description:
     "Play a lightweight Geometry Dash Clicker in your browser. Click the cube, earn orbs, buy upgrades and save progress locally.",
   alternates: { canonical: "/geometry-dash-clicker" },
+  openGraph: {
+    title: "Geometry Dash Clicker – Free Orb Clicker Game",
+    description: "Play a lightweight Geometry Dash Clicker in your browser. Click the cube, earn orbs, buy upgrades and save progress locally.",
+    url: "https://geometrydashspam.cc/geometry-dash-clicker",
+    type: "website",
+  },
+  twitter: {
+    card: "summary",
+    title: "Geometry Dash Clicker – Free Orb Clicker Game",
+    description: "Play a lightweight Geometry Dash Clicker in your browser. Click the cube, earn orbs, buy upgrades and save progress locally.",
+  },
 };
 
 export default function GeometryDashClickerPage() {
