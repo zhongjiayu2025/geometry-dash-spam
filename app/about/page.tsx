@@ -6,6 +6,17 @@ export const metadata: Metadata = {
   description:
     "Learn what GeometryDashSpam.cc is, how its browser training tools work and how practice metrics and sourced ranking data are handled.",
   alternates: { canonical: "/about" },
+  openGraph: {
+    title: "About Geometry Dash Spam",
+    description: "Learn what GeometryDashSpam.cc is, how its browser training tools work and how practice metrics and sourced ranking data are handled.",
+    url: "https://geometrydashspam.cc/about",
+    type: "website",
+  },
+  twitter: {
+    card: "summary",
+    title: "About Geometry Dash Spam",
+    description: "Learn what GeometryDashSpam.cc is, how its browser training tools work and how practice metrics and sourced ranking data are handled.",
+  },
 };
 
 export default function Page() {
