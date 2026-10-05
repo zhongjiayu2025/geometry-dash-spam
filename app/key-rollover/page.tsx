@@ -6,6 +6,17 @@ export const metadata: Metadata = {
   description:
     "Check how many simultaneous key presses your browser receives and inspect keyboard rollover behavior.",
   alternates: { canonical: "/key-rollover" },
+  openGraph: {
+    title: "Key Rollover Test | Keyboard Multi-Key Input Check",
+    description: "Check how many simultaneous key presses your browser receives and inspect keyboard rollover behavior.",
+    url: "https://geometrydashspam.cc/key-rollover",
+    type: "website",
+  },
+  twitter: {
+    card: "summary",
+    title: "Key Rollover Test | Keyboard Multi-Key Input Check",
+    description: "Check how many simultaneous key presses your browser receives and inspect keyboard rollover behavior.",
+  },
 };
 
 export default function KeyRolloverPage() {
