@@ -1170,7 +1170,16 @@ const GameCanvas: React.FC<GameCanvasProps> = memo(({ difficulty, status, onStat
       return () => cancelAnimationFrame(frame);
   }, [resetGame, gameLoop]);
 
-  const runStats = getRunStats();
+  const runStats =
+    status === GameStatus.Lost || status === GameStatus.Won
+      ? getRunStats()
+      : {
+          clickCount: 0,
+          averageCps: 0,
+          peakCps: 0,
+          averageInterval: 0,
+          intervalStdDev: 0,
+        };
 
   return (
     <div 
