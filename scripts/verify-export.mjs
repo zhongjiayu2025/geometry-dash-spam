@@ -103,8 +103,12 @@ function exportedPath(route) {
   return candidates(route).find((path) => existsSync(path));
 }
 
+function documentHead(html) {
+  return html.match(/<head\b[^>]*>([\s\S]*?)<\/head>/i)?.[1] ?? "";
+}
+
 function metaContent(html, attribute, value) {
-  const head = html.match(/<head\b[^>]*>([\s\S]*?)<\/head>/i)?.[1] ?? "";
+  const head = documentHead(html);
 
   for (const match of head.matchAll(/<meta\b[^>]*>/gi)) {
     const tag = match[0];
@@ -113,6 +117,22 @@ function metaContent(html, attribute, value) {
   }
 
   return null;
+}
+
+function canonicalHref(html) {
+  const head = documentHead(html);
+
+  for (const match of head.matchAll(/<link\b[^>]*>/gi)) {
+    const tag = match[0];
+    if (!/\brel="canonical"/i.test(tag)) continue;
+    return tag.match(/\bhref="([^"]*)"/i)?.[1] ?? null;
+  }
+
+  return null;
+}
+
+function documentTitle(html) {
+  return documentHead(html).match(/<title>([^<]+)<\/title>/i)?.[1]?.trim() ?? null;
 }
 
 const missing = requiredRoutes.filter((route) => !exportedPath(route));
@@ -200,6 +220,7 @@ collectHtmlFiles(outDir);
 const sitemapPath = join(outDir, "sitemap.xml");
 const sitemapRouteErrors = [];
 const sitemapPolicyErrors = [];
+const sitemapMetadataErrors = [];
 
 if (existsSync(sitemapPath)) {
   const sitemapXml = readFileSync(sitemapPath, "utf8");
@@ -210,6 +231,31 @@ if (existsSync(sitemapPath)) {
   for (const route of sitemapRoutes) {
     if (!internalTargetExists(route)) {
       sitemapRouteErrors.push(route);
+      continue;
+    }
+
+    const path = exportedPath(route);
+    if (!path) continue;
+
+    const html = readFileSync(path, "utf8");
+    const expectedCanonical =
+      route === "/" ? "https://geometrydashspam.cc" : `https://geometrydashspam.cc${route}`;
+    const title = documentTitle(html);
+    const description = metaContent(html, "name", "description");
+    const canonical = canonicalHref(html);
+
+    if (!title) {
+      sitemapMetadataErrors.push(`${route}: missing <title>`);
+    }
+
+    if (!description) {
+      sitemapMetadataErrors.push(`${route}: missing meta description`);
+    }
+
+    if (canonical !== expectedCanonical) {
+      sitemapMetadataErrors.push(
+        `${route}: canonical is "${canonical ?? "missing"}", expected "${expectedCanonical}"`
+      );
     }
   }
 
@@ -253,7 +299,8 @@ if (
   metadataErrors.length ||
   internalLinkErrors.length ||
   sitemapRouteErrors.length ||
-  sitemapPolicyErrors.length
+  sitemapPolicyErrors.length ||
+  sitemapMetadataErrors.length
 ) {
   console.error("Static export verification failed.");
 
@@ -292,9 +339,14 @@ if (
     for (const error of sitemapPolicyErrors) console.error(`- ${error}`);
   }
 
+  if (sitemapMetadataErrors.length) {
+    console.error("Sitemap metadata errors:");
+    for (const error of sitemapMetadataErrors) console.error(`- ${error}`);
+  }
+
   process.exit(1);
 }
 
 console.log(
-  `Static export verified: ${requiredRoutes.length} core routes, metadata checks, ${htmlFiles.length} HTML files with internal-link checks, sitemap URL integrity, sitemap.xml and robots.txt.`
+  `Static export verified: ${requiredRoutes.length} core routes, metadata checks, ${htmlFiles.length} HTML files with internal-link checks, sitemap URL/canonical/title/description integrity, sitemap.xml and robots.txt.`
 );
