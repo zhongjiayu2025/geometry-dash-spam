@@ -4,7 +4,7 @@
 import React, { useRef, useEffect, useCallback, useState, memo } from 'react';
 import { DifficultyConfig, GameStatus } from '../types';
 import { WIN_TIME_MS, WAVE_SPEED_Y, GRAVITY } from '../constants';
-import { Trophy, AlertTriangle, Crown, Volume2, VolumeX, Maximize, Minimize, Activity, ZapOff, Share2, Check, RotateCcw, Menu, Zap, X, Copy, Twitter, Facebook } from 'lucide-react';
+import { Trophy, AlertTriangle, Crown, Volume2, VolumeX, Maximize, Minimize, Activity, ZapOff, Share2, Check, RotateCcw, Menu, Zap, X, Copy } from 'lucide-react';
 
 interface GameCanvasProps {
   difficulty: DifficultyConfig;
@@ -1295,7 +1295,7 @@ const GameCanvas: React.FC<GameCanvasProps> = memo(({ difficulty, status, onStat
                         rel="noopener noreferrer"
                         className="flex-1 py-2 bg-[#1DA1F2] hover:bg-[#1a91da] text-white rounded flex items-center justify-center transition-colors"
                     >
-                        <Twitter className="w-5 h-5" />
+                        <span className="text-sm font-bold">X</span>
                     </a>
                     <a 
                         href={`https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent('https://geometrydashspam.cc')}&quote=${encodeURIComponent(shareText)}`}
@@ -1303,7 +1303,7 @@ const GameCanvas: React.FC<GameCanvasProps> = memo(({ difficulty, status, onStat
                         rel="noopener noreferrer"
                         className="flex-1 py-2 bg-[#4267B2] hover:bg-[#365899] text-white rounded flex items-center justify-center transition-colors"
                     >
-                        <Facebook className="w-5 h-5" />
+                        <span className="text-sm font-bold">f</span>
                     </a>
                 </div>
             </div>
