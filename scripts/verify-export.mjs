@@ -243,6 +243,7 @@ if (existsSync(sitemapPath)) {
     const title = documentTitle(html);
     const description = metaContent(html, "name", "description");
     const canonical = canonicalHref(html);
+    const robots = metaContent(html, "name", "robots");
 
     if (!title) {
       sitemapMetadataErrors.push(`${route}: missing <title>`);
@@ -255,6 +256,12 @@ if (existsSync(sitemapPath)) {
     if (canonical !== expectedCanonical) {
       sitemapMetadataErrors.push(
         `${route}: canonical is "${canonical ?? "missing"}", expected "${expectedCanonical}"`
+      );
+    }
+
+    if (robots?.toLowerCase().includes("noindex")) {
+      sitemapMetadataErrors.push(
+        `${route}: sitemap URL is marked noindex`
       );
     }
   }
@@ -348,5 +355,5 @@ if (
 }
 
 console.log(
-  `Static export verified: ${requiredRoutes.length} core routes, metadata checks, ${htmlFiles.length} HTML files with internal-link checks, sitemap URL/canonical/title/description integrity, sitemap.xml and robots.txt.`
+  `Static export verified: ${requiredRoutes.length} core routes, metadata checks, ${htmlFiles.length} HTML files with internal-link checks, sitemap URL/canonical/title/description/indexability integrity, sitemap.xml and robots.txt.`
 );
