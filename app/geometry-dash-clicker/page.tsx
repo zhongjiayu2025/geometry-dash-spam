@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import Link from "next/link";
+import Breadcrumbs from "../../components/Breadcrumbs";
 import GeometryDashClicker from "../../components/GeometryDashClicker";
 
 export const metadata: Metadata = {
@@ -65,6 +66,7 @@ export default function GeometryDashClickerPage() {
 
   return (
     <>
+      <Breadcrumbs items={[{ label: "Geometry Dash Clicker", href: "/geometry-dash-clicker" }]} />
       <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(schema) }} />
       <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(faqSchema) }} />
       <header className="mx-auto mb-8 max-w-4xl text-center">
