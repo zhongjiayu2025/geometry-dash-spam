@@ -6,6 +6,17 @@ export const metadata: Metadata = {
   description:
     "Visualize which simultaneous key presses your browser receives and inspect possible rollover or ghosting limitations.",
   alternates: { canonical: "/keyboard-ghosting" },
+  openGraph: {
+    title: "Keyboard Ghosting Test | Multi-Key Input Visualizer",
+    description: "Visualize which simultaneous key presses your browser receives and inspect possible rollover or ghosting limitations.",
+    url: "https://geometrydashspam.cc/keyboard-ghosting",
+    type: "website",
+  },
+  twitter: {
+    card: "summary",
+    title: "Keyboard Ghosting Test | Multi-Key Input Visualizer",
+    description: "Visualize which simultaneous key presses your browser receives and inspect possible rollover or ghosting limitations.",
+  },
 };
 
 export default function KeyboardGhostingPage() {
