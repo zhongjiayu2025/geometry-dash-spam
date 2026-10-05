@@ -16,8 +16,9 @@ const coreItems = [
 ];
 
 const moreItems = [
-  ["/geometry-dash-clicker", "Geometry Dash Clicker"],
   ["/spam-challenge-list", "Spam Challenge List"],
+  ["/demon-list/spam-demons", "Spam Demon References"],
+  ["/demon-list/wave-demons", "Wave Demons"],
   ["/hardest-level", "Hardest Level"],
   ["/easiest-demons", "Easiest Demons"],
   ["/geometry-dash-difficulty-faces", "Difficulty Faces"],
@@ -25,20 +26,16 @@ const moreItems = [
   ["/how-to-get-diamonds-geometry-dash", "Get Diamonds"],
   ["/how-to-get-gold-keys-geometry-dash", "Get Gold Keys"],
   ["/geometry-dash-stuttering-high-end-pc", "PC Stutter Guide"],
+  ["/geometry-dash-clicker", "Geometry Dash Clicker"],
   ["/jitter-click", "Jitter Click"],
   ["/butterfly-click", "Butterfly Click"],
   ["/drag-click", "Drag Click"],
-  ["/right-click", "Right Click CPS"],
-  ["/double-click", "Double Click Test"],
-  ["/spacebar-counter", "Spacebar Counter"],
-  ["/polling-rate", "Mouse Polling Rate"],
-  ["/keyboard-latency", "Keyboard Timing"],
-  ["/keyboard-ghosting", "Keyboard Ghosting"],
-  ["/key-rollover", "Key Rollover"],
 ] as const;
 
 const mobileMoreItems = [
   ["/spam-challenge-list", "Spam Challenge List"],
+  ["/demon-list/spam-demons", "Spam Demon References"],
+  ["/demon-list/wave-demons", "Wave Demons"],
   ["/hardest-level", "Hardest Level"],
   ["/easiest-demons", "Easiest Demons"],
   ["/geometry-dash-difficulty-faces", "Difficulty Faces"],
@@ -49,8 +46,7 @@ const mobileMoreItems = [
   ["/geometry-dash-clicker", "Geometry Dash Clicker"],
   ["/jitter-click", "Jitter Click"],
   ["/butterfly-click", "Butterfly Click"],
-  ["/spacebar-counter", "Spacebar Counter"],
-  ["/polling-rate", "Mouse Polling Rate"],
+  ["/drag-click", "Drag Click"],
 ] as const;
 
 export default function Header() {
@@ -83,7 +79,7 @@ export default function Header() {
           <div className="relative" onMouseEnter={() => setMoreOpen(true)} onMouseLeave={() => setMoreOpen(false)}>
             <button onClick={() => setMoreOpen((v) => !v)} className="flex items-center gap-1.5 px-3 py-2 rounded-lg text-sm text-slate-400 hover:text-white hover:bg-white/5" aria-haspopup="true" aria-expanded={moreOpen}>
               <Keyboard className="w-4 h-4" />
-              More GD Tools
+              More GD
               <ChevronDown className="w-3 h-3" />
             </button>
             {moreOpen && (
@@ -113,7 +109,7 @@ export default function Header() {
               </Link>
             ))}
             <div className="mt-3 pt-3 border-t border-white/10">
-              <p className="px-4 mb-2 text-xs uppercase tracking-widest text-slate-500">More GD Tools</p>
+              <p className="px-4 mb-2 text-xs uppercase tracking-widest text-slate-500">More GD</p>
               {mobileMoreItems.map(([href, label]) => (
                 <Link key={href} href={href} onClick={() => setMobileOpen(false)} className="block px-4 py-2.5 rounded-lg text-slate-400 hover:text-white hover:bg-white/5">{label}</Link>
               ))}
