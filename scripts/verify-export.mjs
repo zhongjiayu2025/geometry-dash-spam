@@ -797,6 +797,41 @@ if (htmlSitemapPath) {
   htmlSitemapErrors.push("/sitemap: HTML sitemap page was not exported");
 }
 
+const supportGuideRoutes = [
+  "/drag-click",
+  "/right-click",
+  "/double-click",
+  "/spacebar-counter",
+  "/polling-rate",
+  "/keyboard-latency",
+  "/keyboard-ghosting",
+  "/key-rollover",
+];
+
+const supportGuideErrors = [];
+for (const route of supportGuideRoutes) {
+  const path = exportedPath(route);
+  if (!path) {
+    supportGuideErrors.push(`${route}: expected indexable support page was not exported`);
+    continue;
+  }
+
+  const html = readFileSync(path, "utf8");
+  if (!html.includes("data-support-guide=")) {
+    supportGuideErrors.push(
+      `${route}: indexable support page is missing the explanatory result guide`
+    );
+  }
+
+  for (const coreRoute of ["/geometry-dash-wave", "/cps-test"]) {
+    if (!html.includes(`href="${coreRoute}"`)) {
+      supportGuideErrors.push(
+        `${route}: explanatory guide must link back to core route ${coreRoute}`
+      );
+    }
+  }
+}
+
 const contentErrors = [];
 
 const codesExportPath = exportedPath("/geometry-dash-codes");
@@ -858,6 +893,7 @@ if (
   noindexErrors.length ||
   authorityLeakErrors.length ||
   htmlSitemapErrors.length ||
+  supportGuideErrors.length ||
   contentErrors.length
 ) {
   console.error("Static export verification failed.");
@@ -904,6 +940,11 @@ if (
     for (const error of htmlSitemapErrors) console.error(`- ${error}`);
   }
 
+  if (supportGuideErrors.length) {
+    console.error("Indexable support-page guide errors:");
+    for (const error of supportGuideErrors) console.error(`- ${error}`);
+  }
+
   if (contentErrors.length) {
     console.error("Data-to-page content errors:");
     for (const error of contentErrors) console.error(`- ${error}`);
@@ -946,5 +987,5 @@ if (
 }
 
 console.log(
-  `Static export verified: ${requiredRoutes.length} core routes, metadata checks, ads/robots/manifest checks, permanent legacy redirects, search-snippet length checks, H1/title/description uniqueness checks, sitemap freshness checks, noindex utility policy, core-page authority leakage checks, HTML sitemap priority-link checks, Wraith data-to-page checks, ${htmlFiles.length} HTML files with internal-link checks, sitemap URL/canonical/title/description/OpenGraph/indexability integrity, sitemap.xml and robots.txt.`
+  `Static export verified: ${requiredRoutes.length} core routes, metadata checks, ads/robots/manifest checks, permanent legacy redirects, search-snippet length checks, H1/title/description uniqueness checks, sitemap freshness checks, noindex utility policy, core-page authority leakage checks, HTML sitemap priority-link checks, indexable support-page guide checks, Wraith data-to-page checks, ${htmlFiles.length} HTML files with internal-link checks, sitemap URL/canonical/title/description/OpenGraph/indexability integrity, sitemap.xml and robots.txt.`
 );
