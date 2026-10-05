@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import Link from "next/link";
+import Breadcrumbs from "../../components/Breadcrumbs";
 import { DEMONS, DEMON_SOURCE_URL, DEMON_VERIFIED_AT } from "../../data/demons";
 
 const currentHardest = DEMONS[0];
@@ -41,6 +42,7 @@ export default function HardestLevelPage() {
 
   return (
     <>
+      <Breadcrumbs items={[{ label: "Hardest Level", href: "/hardest-level" }]} />
       <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(schema) }} />
       <article className="mx-auto max-w-4xl">
       <header className="mb-8">
