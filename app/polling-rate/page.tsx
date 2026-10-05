@@ -6,6 +6,17 @@ export const metadata: Metadata = {
   description:
     "Estimate mouse pointer report frequency from browser events. Results can vary with hardware, operating system and browser scheduling.",
   alternates: { canonical: "/polling-rate" },
+  openGraph: {
+    title: "Mouse Polling Rate Test | Browser Hz Estimate",
+    description: "Estimate mouse pointer report frequency from browser events. Results can vary with hardware, operating system and browser scheduling.",
+    url: "https://geometrydashspam.cc/polling-rate",
+    type: "website",
+  },
+  twitter: {
+    card: "summary",
+    title: "Mouse Polling Rate Test | Browser Hz Estimate",
+    description: "Estimate mouse pointer report frequency from browser events. Results can vary with hardware, operating system and browser scheduling.",
+  },
 };
 
 export default function PollingRatePage() {
