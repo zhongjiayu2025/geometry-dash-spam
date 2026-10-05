@@ -7,6 +7,17 @@ export const metadata: Metadata = {
   description:
     "Practice Geometry Dash Wave control online with normal, mini and endless training modes. Improve wave spam consistency and precision in your browser.",
   alternates: { canonical: "/geometry-dash-wave" },
+  openGraph: {
+    title: "Geometry Dash Wave – Online Wave Trainer & Simulator",
+    description: "Practice Geometry Dash Wave control online with normal, mini and endless training modes. Improve wave spam consistency and precision in your browser.",
+    url: "https://geometrydashspam.cc/geometry-dash-wave",
+    type: "website",
+  },
+  twitter: {
+    card: "summary",
+    title: "Geometry Dash Wave – Online Wave Trainer & Simulator",
+    description: "Practice Geometry Dash Wave control online with normal, mini and endless training modes. Improve wave spam consistency and precision in your browser.",
+  },
 };
 
 export default function GeometryDashWavePage() {
