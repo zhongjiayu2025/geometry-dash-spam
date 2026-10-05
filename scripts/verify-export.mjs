@@ -77,7 +77,7 @@ const metadataExpectations = {
   },
   "/geometry-dash-clicker": {
     title: "Geometry Dash Clicker",
-    description: "Play a lightweight Geometry Dash Clicker",
+    description: "Play a free Geometry Dash Clicker",
     canonical: "https://geometrydashspam.cc/geometry-dash-clicker",
   },
   "/geometry-dash-codes": {
