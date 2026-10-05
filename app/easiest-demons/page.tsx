@@ -38,8 +38,20 @@ export default function EasiestDemonsPage() {
         </p>
       </header>
 
-      <div className="overflow-x-auto rounded-xl border border-white/10">
-        <table className="w-full min-w-[680px] text-left text-sm">
+      <div className="space-y-3 md:hidden">
+        {recommendations.map((item) => (
+          <div key={item.level} className="rounded-xl border border-white/10 bg-slate-950/25 p-4">
+            <h2 className="font-semibold text-white">{item.level}</h2>
+            <div className="mt-3 grid gap-2 text-sm">
+              <div><span className="text-slate-500">Practice focus:</span> <span className="text-slate-300">{item.focus}</span></div>
+              <div><span className="text-slate-500">Best for:</span> <span className="text-slate-300">{item.bestFor}</span></div>
+            </div>
+          </div>
+        ))}
+      </div>
+
+      <div className="hidden overflow-x-auto rounded-xl border border-white/10 md:block">
+        <table className="w-full text-left text-sm">
           <thead className="bg-slate-900/80 text-xs uppercase tracking-wider text-slate-500">
             <tr><th className="px-4 py-3">Level</th><th className="px-4 py-3">Practice focus</th><th className="px-4 py-3">Best for</th></tr>
           </thead>
