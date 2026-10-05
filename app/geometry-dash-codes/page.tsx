@@ -15,6 +15,17 @@ export const metadata: Metadata = {
   description:
     "Geometry Dash codes for The Vault, Vault of Secrets, Chamber of Time and Wraith. Search, copy and check unlock notes with source links.",
   alternates: { canonical: "/geometry-dash-codes" },
+  openGraph: {
+    title: "Geometry Dash Codes – Vault, Secrets, Chamber & Wraith",
+    description: "Geometry Dash codes for The Vault, Vault of Secrets, Chamber of Time and Wraith. Search, copy and check unlock notes with source links.",
+    url: "https://geometrydashspam.cc/geometry-dash-codes",
+    type: "website",
+  },
+  twitter: {
+    card: "summary",
+    title: "Geometry Dash Codes – Vault, Secrets, Chamber & Wraith",
+    description: "Geometry Dash codes for The Vault, Vault of Secrets, Chamber of Time and Wraith. Search, copy and check unlock notes with source links.",
+  },
 };
 
 export default function GeometryDashCodesPage() {
