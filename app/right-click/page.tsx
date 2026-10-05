@@ -1,4 +1,5 @@
 import RightClickTest from "../../components/RightClickTest";
+import InputToolGuide from "../../components/InputToolGuide";
 import { Metadata } from "next";
 
 export const metadata: Metadata = {
@@ -20,5 +21,10 @@ export const metadata: Metadata = {
 };
 
 export default function RightClickPage() {
-  return <RightClickTest />;
+  return (
+    <>
+      <RightClickTest />
+      <InputToolGuide tool="right-click" />
+    </>
+  );
 }
