@@ -13,6 +13,11 @@ export const metadata: Metadata = {
     description: "Measure Geometry Dash click speed from 1 to 60 seconds.",
     url: "https://geometrydashspam.cc/cps-test",
   },
+  twitter: {
+    card: "summary",
+    title: "Geometry Dash CPS Test – GD Click Speed Test",
+    description: "Measure Geometry Dash click speed from 1 to 60 seconds.",
+  },
 };
 
 export default function CpsTestPage() {
