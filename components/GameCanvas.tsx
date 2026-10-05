@@ -1304,7 +1304,7 @@ const GameCanvas: React.FC<GameCanvasProps> = memo(({ difficulty, status, onStat
       {/* --- START SCREEN --- */}
       {status === GameStatus.Idle && (
         <div className="absolute inset-0 flex flex-col items-center justify-center bg-black/70 backdrop-blur-[2px] z-10 animate-in fade-in duration-300 pointer-events-none">
-          <div className="text-center space-y-4 sm:space-y-6 p-4 sm:p-8 border border-white/10 bg-black/55 rounded-2xl shadow-2xl backdrop-blur-md w-[calc(100%-1.5rem)] max-w-md mx-3 sm:mx-4 pointer-events-auto">
+          <div className="text-center space-y-4 sm:space-y-6 p-4 sm:p-8 border border-white/10 bg-black/55 rounded-2xl shadow-2xl backdrop-blur-md w-[calc(100%_-_1.5rem)] max-w-md mx-3 sm:mx-4 pointer-events-auto">
               <h2 className="text-3xl sm:text-5xl font-display font-black text-white mb-1 sm:mb-2 tracking-tight" style={{ textShadow: `0 0 20px ${difficulty.color}` }}>
                 {difficulty.label.toUpperCase()}
               </h2>
@@ -1352,7 +1352,7 @@ const GameCanvas: React.FC<GameCanvasProps> = memo(({ difficulty, status, onStat
       {/* --- GAME OVER SCREEN --- */}
       {status === GameStatus.Lost && (
          <div className="absolute inset-0 flex flex-col items-center justify-center bg-red-900/40 backdrop-blur-sm z-20 animate-in zoom-in duration-100 pointer-events-none">
-             <div className="pointer-events-auto flex max-h-[calc(100%-1rem)] w-[calc(100%-1rem)] max-w-md flex-col items-center overflow-y-auto bg-black/55 p-4 sm:p-8 rounded-2xl border border-white/10 backdrop-blur-md shadow-2xl" onClick={(e) => e.stopPropagation()}>
+             <div className="pointer-events-auto flex max-h-[calc(100%_-_1rem)] w-[calc(100%_-_1rem)] max-w-md flex-col items-center overflow-y-auto bg-black/55 p-4 sm:p-8 rounded-2xl border border-white/10 backdrop-blur-md shadow-2xl" onClick={(e) => e.stopPropagation()}>
                 {isNewBest && (
                     <div className="mb-4 flex items-center gap-2 px-4 py-1 bg-yellow-500 text-black font-black uppercase tracking-widest rounded-full animate-bounce shadow-lg shadow-yellow-500/50">
                         <Crown className="w-4 h-4" /> New Best Score!
@@ -1427,7 +1427,7 @@ const GameCanvas: React.FC<GameCanvasProps> = memo(({ difficulty, status, onStat
       {/* --- WIN SCREEN --- */}
       {status === GameStatus.Won && (
          <div className="absolute inset-0 flex flex-col items-center justify-center bg-green-900/40 backdrop-blur-sm z-20 animate-in zoom-in duration-500 pointer-events-auto" onClick={(e) => e.stopPropagation()}>
-             <div className="max-h-[calc(100%-1rem)] w-[calc(100%-1rem)] max-w-md overflow-y-auto bg-black/55 p-4 sm:p-8 rounded-2xl border border-white/10 backdrop-blur-md flex flex-col items-center shadow-2xl">
+             <div className="max-h-[calc(100%_-_1rem)] w-[calc(100%_-_1rem)] max-w-md overflow-y-auto bg-black/55 p-4 sm:p-8 rounded-2xl border border-white/10 backdrop-blur-md flex flex-col items-center shadow-2xl">
                 {isNewBest && (
                     <div className="mb-4 flex items-center gap-2 px-4 py-1 bg-yellow-500 text-black font-black uppercase tracking-widest rounded-full animate-bounce shadow-lg shadow-yellow-500/50">
                         <Crown className="w-4 h-4" /> New Best Score!
