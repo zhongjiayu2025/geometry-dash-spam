@@ -87,6 +87,8 @@ export default function HomeGuide() {
         <h2 className="text-2xl md:text-3xl font-display font-bold text-white mb-3">Popular Geometry Dash reference guides</h2>
         <p className="text-sm text-slate-500 mb-5 max-w-3xl">
           Use these supporting guides when your search is about game progression or reference information rather than spam training.
+          If you are specifically looking for a <Link href="/demon-list/spam-demons" className="text-blue-400 hover:underline">Geometry Dash spam demonlist</Link>,
+          use the rapid-input reference page instead of treating the full Demon List as a spam ranking.
         </p>
         <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
           <Link href="/geometry-dash-codes" className="rounded-xl border border-white/10 bg-slate-900/30 p-4 hover:border-blue-500/40">
