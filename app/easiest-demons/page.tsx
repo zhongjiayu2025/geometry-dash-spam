@@ -2,6 +2,8 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import Breadcrumbs from "../../components/Breadcrumbs";
 
+const CHECKED_AT = "2026-10-05";
+
 export const metadata: Metadata = {
   title: "Easiest Demons in Geometry Dash | 5 Beginner Picks",
   description:
@@ -23,7 +25,7 @@ export const metadata: Metadata = {
 const easiestFaqs = [
   {
     q: "What are some of the easiest demons in Geometry Dash?",
-    a: "Common beginner picks include The Nightmare, The Lightning Road, Platinum Adventure, Demon Mixed and Speed Racer. This is a practice-oriented shortlist, not an official easiest-to-hardest ranking.",
+    a: "Common beginner picks include The Nightmare, The Lightning Road, Platinum Adventure, Demon Park and Speed Racer. This is a source-checked practice shortlist, not an official easiest-to-hardest ranking.",
   },
   {
     q: "Is there an official easiest Demon in Geometry Dash?",
@@ -36,11 +38,36 @@ const easiestFaqs = [
 ];
 
 const recommendations = [
-  { level: "The Nightmare", focus: "Basic timing and confidence", bestFor: "First demon attempts" },
-  { level: "The Lightning Road", focus: "Simple timing and memorization", bestFor: "Early demon practice" },
-  { level: "Platinum Adventure", focus: "Mixed beginner mechanics", bestFor: "General progression" },
-  { level: "Demon Mixed", focus: "Short mixed-skill sections", bestFor: "Learning demon pacing" },
-  { level: "Speed Racer", focus: "Timing at a faster pace", bestFor: "Moving beyond very easy demons" },
+  {
+    level: "The Nightmare",
+    focus: "Basic timing and confidence",
+    bestFor: "First demon attempts",
+    source: "https://geometrydash.wiki.gg/wiki/The_Nightmare",
+  },
+  {
+    level: "The Lightning Road",
+    focus: "Simple timing and memorization",
+    bestFor: "Early demon practice",
+    source: "https://geometrydash.wiki.gg/wiki/THE_LIGHTNING_ROAD",
+  },
+  {
+    level: "Platinum Adventure",
+    focus: "Mixed beginner mechanics",
+    bestFor: "General progression",
+    source: "https://geometrydash.wiki.gg/wiki/Platinum_Adventure",
+  },
+  {
+    level: "Demon Park",
+    focus: "Early Demon fundamentals",
+    bestFor: "Classic Demon progression",
+    source: "https://geometrydash.wiki.gg/wiki/Demon_park",
+  },
+  {
+    level: "Speed Racer",
+    focus: "Timing at a faster pace",
+    bestFor: "Moving beyond very easy demons",
+    source: "https://geometrydash.wiki.gg/wiki/Speed_Racer",
+  },
 ];
 
 export default function EasiestDemonsPage() {
@@ -60,10 +87,11 @@ export default function EasiestDemonsPage() {
       <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(faqSchema) }} />
     <article className="mx-auto max-w-5xl">
       <header className="mx-auto mb-8 max-w-4xl">
-        <p className="mb-2 text-xs font-bold uppercase tracking-[0.2em] text-blue-400">Beginner progression</p>
+        <p className="mb-2 text-xs font-bold uppercase tracking-[0.2em] text-blue-400">Beginner progression · sources checked {CHECKED_AT}</p>
         <h1 className="mb-4 text-3xl font-display font-bold text-white md:text-5xl">Easiest Demons in Geometry Dash</h1>
         <p className="leading-7 text-slate-400">
           There is no official universal “easiest demon” ranking because player skillsets differ. These are common beginner practice picks, not a claimed authoritative order.
+          The linked Geometry Dash Wiki pages describe several of these levels as unusually approachable or among the easiest Demons.
         </p>
       </header>
 
@@ -74,6 +102,9 @@ export default function EasiestDemonsPage() {
             <div className="mt-3 grid gap-2 text-sm">
               <div><span className="text-slate-500">Practice focus:</span> <span className="text-slate-300">{item.focus}</span></div>
               <div><span className="text-slate-500">Best for:</span> <span className="text-slate-300">{item.bestFor}</span></div>
+              <a href={item.source} target="_blank" rel="noopener noreferrer" className="mt-1 text-xs font-semibold text-blue-400 hover:underline">
+                Geometry Dash Wiki source →
+              </a>
             </div>
           </div>
         ))}
@@ -82,7 +113,7 @@ export default function EasiestDemonsPage() {
       <div className="hidden overflow-x-auto rounded-xl border border-white/10 md:block">
         <table className="w-full text-left text-sm">
           <thead className="bg-slate-900/80 text-xs uppercase tracking-wider text-slate-500">
-            <tr><th className="px-4 py-3">Level</th><th className="px-4 py-3">Practice focus</th><th className="px-4 py-3">Best for</th></tr>
+            <tr><th className="px-4 py-3">Level</th><th className="px-4 py-3">Practice focus</th><th className="px-4 py-3">Best for</th><th className="px-4 py-3">Source</th></tr>
           </thead>
           <tbody>
             {recommendations.map((item) => (
@@ -90,6 +121,9 @@ export default function EasiestDemonsPage() {
                 <td className="px-4 py-4 font-semibold text-white">{item.level}</td>
                 <td className="px-4 py-4 text-slate-400">{item.focus}</td>
                 <td className="px-4 py-4 text-slate-400">{item.bestFor}</td>
+                <td className="px-4 py-4">
+                  <a href={item.source} target="_blank" rel="noopener noreferrer" className="text-blue-400 hover:underline">Wiki</a>
+                </td>
               </tr>
             ))}
           </tbody>
