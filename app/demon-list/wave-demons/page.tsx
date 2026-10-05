@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import Link from "next/link";
+import Breadcrumbs from "../../../components/Breadcrumbs";
 import { DEMONS, DEMON_SOURCE_URL, DEMON_VERIFIED_AT } from "../../../data/demons";
 
 export const metadata: Metadata = {
@@ -37,6 +38,7 @@ export default function WaveDemonsPage() {
 
   return (
     <article className="mx-auto max-w-5xl">
+      <Breadcrumbs items={[{ label: "Demon List", href: "/demon-list" }, { label: "Wave Demons", href: "/demon-list/wave-demons" }]} />
       <header className="mb-8 max-w-4xl">
         <p className="mb-2 text-xs font-bold uppercase tracking-[0.2em] text-blue-400">
           Skill-focused guide · list checked {DEMON_VERIFIED_AT}
