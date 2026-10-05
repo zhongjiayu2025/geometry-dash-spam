@@ -52,6 +52,7 @@ const CpsTest: React.FC = () => {
   const clicksRef = useRef(0);
   const testStartRef = useRef(0);
   const clickTimesRef = useRef<number[]>([]);
+  const pendingTouchRef = useRef<{ pointerId: number; x: number; y: number } | null>(null);
 
   useEffect(() => {
     if (typeof window !== 'undefined') {
@@ -144,11 +145,35 @@ const CpsTest: React.FC = () => {
     playClickSound(audioCtxRef.current);
   };
 
-  const handlePointerDown = (e: React.PointerEvent) => {
+  const handlePointerDown = (e: React.PointerEvent<HTMLButtonElement>) => {
+    if (!active && e.pointerType === 'touch') {
+      pendingTouchRef.current = {
+        pointerId: e.pointerId,
+        x: e.clientX,
+        y: e.clientY,
+      };
+      return;
+    }
+
     e.preventDefault();
     playInputSound();
-
     registerInput();
+  };
+
+  const handlePointerUp = (e: React.PointerEvent<HTMLButtonElement>) => {
+    const pending = pendingTouchRef.current;
+    if (!pending || pending.pointerId !== e.pointerId) return;
+
+    pendingTouchRef.current = null;
+    const moved = Math.hypot(e.clientX - pending.x, e.clientY - pending.y);
+    if (moved > 12 || active || finished) return;
+
+    playInputSound();
+    registerInput();
+  };
+
+  const handlePointerCancel = () => {
+    pendingTouchRef.current = null;
   };
 
   const handleKeyDown = (e: React.KeyboardEvent<HTMLButtonElement>) => {
@@ -319,12 +344,14 @@ const CpsTest: React.FC = () => {
         <div className="relative h-[300px] sm:h-[360px] md:h-[400px] md:aspect-auto">
           <button
             onPointerDown={handlePointerDown}
+            onPointerUp={handlePointerUp}
+            onPointerCancel={handlePointerCancel}
             onKeyDown={handleKeyDown}
             disabled={finished}
             aria-label="Click or press Space or Enter to start or continue the CPS test"
             aria-keyshortcuts="Space Enter"
             className={`
-              w-full h-full rounded-2xl border-2 flex flex-col items-center justify-center transition-all duration-75 select-none relative overflow-hidden touch-none
+              w-full h-full rounded-2xl border-2 flex flex-col items-center justify-center transition-all duration-75 select-none relative overflow-hidden ${active ? 'touch-none' : 'touch-pan-y'}
               ${finished 
                 ? 'bg-slate-900 border-slate-700 cursor-default opacity-50' 
                 : 'bg-gradient-to-br from-blue-600 to-blue-800 border-blue-400 shadow-[0_0_40px_rgba(37,99,235,0.3)] active:scale-[0.98] active:bg-blue-700 cursor-pointer'
