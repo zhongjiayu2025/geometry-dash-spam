@@ -1,4 +1,5 @@
 import PollingRateTest from "../../components/PollingRateTest";
+import InputToolGuide from "../../components/InputToolGuide";
 import { Metadata } from "next";
 
 export const metadata: Metadata = {
@@ -32,6 +33,7 @@ export default function PollingRatePage() {
         </p>
       </div>
       <PollingRateTest />
+      <InputToolGuide tool="polling-rate" />
     </>
   );
 }
