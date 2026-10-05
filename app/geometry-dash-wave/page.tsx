@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import WaveSimulator from "../../components/WaveSimulator";
 import Breadcrumbs from "../../components/Breadcrumbs";
+import CoreTrainingLinks from "../../components/CoreTrainingLinks";
 
 export const metadata: Metadata = {
   title: "Geometry Dash Wave – Play Online Wave Spam Trainer",
@@ -64,10 +65,24 @@ export default function GeometryDashWavePage() {
     })),
   };
 
+  const howToSchema = {
+    "@context": "https://schema.org",
+    "@type": "HowTo",
+    name: "How to Practice Geometry Dash Wave Control",
+    description: "A step-by-step browser practice routine for normal, mini, spam and precision wave control.",
+    step: [
+      { "@type": "HowToStep", name: "Choose a wave preset", text: "Start with a preset that matches the skill you want to train." },
+      { "@type": "HowToStep", name: "Set difficulty and mode", text: "Adjust corridor difficulty, Mini Wave or Endless Mode before the run." },
+      { "@type": "HowToStep", name: "Start the trainer", text: "Hold to rise and release to fall while keeping the wave inside the corridor." },
+      { "@type": "HowToStep", name: "Review the run", text: "Compare survival time, CPS and timing consistency across repeated attempts." },
+    ],
+  };
+
   return (
     <>
       <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(schema) }} />
       <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(faqSchema) }} />
+      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(howToSchema) }} />
       <Breadcrumbs items={[{ label: "Geometry Dash Wave", href: "/geometry-dash-wave" }]} />
       <header className="mx-auto mb-8 max-w-4xl text-center">
         <p className="mb-2 text-xs font-bold uppercase tracking-[0.2em] text-blue-400">Wave practice</p>
@@ -89,6 +104,7 @@ export default function GeometryDashWavePage() {
       </section>
 
       <WaveSimulator variant="wave" />
+      <CoreTrainingLinks variant="wave" />
 
       <section className="mx-auto mt-14 max-w-5xl space-y-10">
         <div className="rounded-2xl border border-white/10 bg-slate-900/30 p-6 md:p-8">
