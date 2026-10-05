@@ -2,26 +2,29 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import { DEMONS, DEMON_SOURCE_URL, DEMON_VERIFIED_AT } from "../../data/demons";
 
+const currentHardest = DEMONS[0];
+const hardestTitle = `Hardest Geometry Dash Level: ${currentHardest.level} (#1 Demon)`;
+const hardestDescription = `As checked ${DEMON_VERIFIED_AT}, Pointercrate ranks ${currentHardest.level} by ${currentHardest.publisher} #1. See the current top five and live source.`;
+
 export const metadata: Metadata = {
-  title: "What Is the Hardest Level in Geometry Dash? Current #1 Demon",
-  description:
-    "See the current hardest Geometry Dash level according to Pointercrate, plus the verification date and top five Demon List positions.",
+  title: hardestTitle,
+  description: hardestDescription,
   alternates: { canonical: "/hardest-level" },
   openGraph: {
-    title: "What Is the Hardest Level in Geometry Dash? Current #1 Demon",
-    description: "See the current hardest Geometry Dash level according to Pointercrate, plus the verification date and top five Demon List positions.",
+    title: hardestTitle,
+    description: hardestDescription,
     url: "https://geometrydashspam.cc/hardest-level",
     type: "website",
   },
   twitter: {
     card: "summary",
-    title: "What Is the Hardest Level in Geometry Dash? Current #1 Demon",
-    description: "See the current hardest Geometry Dash level according to Pointercrate, plus the verification date and top five Demon List positions.",
+    title: hardestTitle,
+    description: hardestDescription,
   },
 };
 
 export default function HardestLevelPage() {
-  const numberOne = DEMONS[0];
+  const numberOne = currentHardest;
   const schema = {
     "@context": "https://schema.org",
     "@type": "WebPage",
@@ -45,7 +48,7 @@ export default function HardestLevelPage() {
           Checked {DEMON_VERIFIED_AT}
         </p>
         <h1 className="mb-5 text-3xl font-display font-bold text-white md:text-5xl">
-          What Is the Hardest Level in Geometry Dash?
+          Hardest Geometry Dash Level: {numberOne.level}
         </h1>
         <div className="rounded-2xl border border-purple-500/25 bg-purple-950/20 p-6 text-lg leading-8 text-slate-200">
           As of <strong>{DEMON_VERIFIED_AT}</strong>, Pointercrate ranks{" "}
