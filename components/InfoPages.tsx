@@ -263,8 +263,6 @@ export const SitemapPage = () => (
                       { view: '/keyboard-ghosting', label: 'Keyboard Ghosting Test', desc: 'Test N-key rollover and matrix issues.' },
                       { view: '/refresh-rate', label: 'Monitor Refresh Rate', desc: 'Check your screen Hz.' },
                       { view: '/system-info', label: 'System Information', desc: 'Check what your browser exposes.' },
-                      { view: '/dashboard', label: 'Personal Dashboard', desc: 'View your local test records.' },
-                      { view: '/leaderboard', label: 'Leaderboard', desc: 'View the leaderboard experience available on this site.' },
                   ].map((item: any) => (
                       <li key={item.view}>
                           <Link 
