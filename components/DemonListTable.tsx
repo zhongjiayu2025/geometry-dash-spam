@@ -38,6 +38,7 @@ export default function DemonListTable() {
               value={query}
               onChange={(event) => setQuery(event.target.value)}
               placeholder="Search level or publisher…"
+              aria-controls="demon-list-results"
               className="w-full rounded-lg border border-white/10 bg-black/30 px-4 py-3 text-sm text-white outline-none placeholder:text-slate-600 focus:border-blue-500/60"
             />
           </label>
@@ -65,6 +66,7 @@ export default function DemonListTable() {
               key={value}
               type="button"
               onClick={() => setRange(value as RangeFilter)}
+              aria-pressed={range === value}
               className={
                 "rounded-full border px-3 py-1.5 text-xs font-semibold transition-colors " +
                 (range === value
@@ -78,7 +80,11 @@ export default function DemonListTable() {
         </div>
       </div>
 
-      <div className="space-y-2 md:hidden" aria-label="Filtered Demon List">
+      <p className="text-xs text-slate-500" role="status" aria-live="polite">
+        Showing {filtered.length} of {DEMONS.length} ranked levels.
+      </p>
+
+      <div id="demon-list-results" className="space-y-2 md:hidden" aria-label="Filtered Demon List">
         {filtered.map((item) => (
           <div key={item.rank} className="flex items-start gap-3 rounded-xl border border-white/10 bg-slate-950/25 p-4">
             <div className="w-11 shrink-0 font-mono text-sm font-bold text-blue-400">#{item.rank}</div>
@@ -98,7 +104,7 @@ export default function DemonListTable() {
         )}
       </div>
 
-      <div className="hidden overflow-x-auto rounded-xl border border-white/10 md:block">
+      <div id="demon-list-results-desktop" className="hidden overflow-x-auto rounded-xl border border-white/10 md:block">
         <table className="w-full text-left text-sm">
           <thead className="bg-slate-900/80 text-xs uppercase tracking-wider text-slate-500">
             <tr>
