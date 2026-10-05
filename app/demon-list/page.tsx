@@ -122,6 +122,24 @@ export default function DemonListPage() {
           </a>
         </section>
 
+        <section className="mb-6 rounded-2xl border border-white/10 bg-black/20 p-5 md:p-6">
+          <div className="mb-3 text-xs font-bold uppercase tracking-[0.18em] text-slate-400">Choose the right list</div>
+          <div className="grid gap-3 md:grid-cols-2">
+            <Link href="/spam-challenge-list" className="rounded-xl border border-fuchsia-500/20 bg-fuchsia-950/10 p-4 hover:border-fuchsia-400/40">
+              <h2 className="mb-1 font-bold text-white">Looking for the Spam Challenge List?</h2>
+              <p className="text-sm leading-6 text-slate-400">
+                SCL ranks community spam challenges under its own rules; it is not the Pointercrate Demon List.
+              </p>
+            </Link>
+            <Link href="/demon-list/spam-demons" className="rounded-xl border border-blue-500/20 bg-blue-950/10 p-4 hover:border-blue-400/40">
+              <h2 className="mb-1 font-bold text-white">Looking for spam-heavy Demons?</h2>
+              <p className="text-sm leading-6 text-slate-400">
+                Use the practice reference page for rapid-input Demons while keeping their real Pointercrate ranks separate.
+              </p>
+            </Link>
+          </div>
+        </section>
+
         <DemonListTable />
         <section className="mt-10">
           <h2 className="mb-4 text-2xl font-bold text-white">Geometry Dash Demon List FAQ</h2>
