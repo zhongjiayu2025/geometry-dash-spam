@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import Link from "next/link";
+import Breadcrumbs from "../../components/Breadcrumbs";
 
 const SOURCE_URL = "https://geometrydash.wiki.gg/wiki/Collectibles";
 const CHECKED_AT = "2026-10-05";
@@ -102,6 +103,7 @@ export default function DiamondsPage() {
 
   return (
     <>
+      <Breadcrumbs items={[{ label: "How to Get Diamonds", href: "/how-to-get-diamonds-geometry-dash" }]} />
       <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(schema) }} />
       <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(faqSchema) }} />
 
