@@ -1028,8 +1028,19 @@ const GameCanvas: React.FC<GameCanvasProps> = memo(({ difficulty, status, onStat
 
   useEffect(() => {
       const handleKeyDown = (e: KeyboardEvent) => {
-          if (showShareModal) return; // Disable keyboard controls when modal is open
-          
+          if (showShareModal) return;
+
+          const target = e.target as HTMLElement | null;
+          if (
+              target?.closest('button, a, input, textarea, select') ||
+              target?.isContentEditable
+          ) {
+              return;
+          }
+
+          const gameFocused = document.activeElement === containerRef.current;
+          if (status !== GameStatus.Playing && !gameFocused) return;
+
           if (e.code === 'Space' || e.code === 'ArrowUp') {
               e.preventDefault();
               if (!e.repeat) handleStart();
@@ -1110,6 +1121,8 @@ const GameCanvas: React.FC<GameCanvasProps> = memo(({ difficulty, status, onStat
         ${isFullscreen ? 'fixed inset-0 z-50 h-screen max-w-none rounded-none' : 'max-w-5xl h-[330px] sm:h-auto sm:aspect-video md:h-[500px]'}
       `}
       ref={containerRef}
+      tabIndex={0}
+      aria-label="Geometry Dash wave practice area"
       style={{
         boxShadow: isFullscreen ? 'none' : `0 0 30px ${difficulty.color}15, 0 0 0 1px ${difficulty.color}30`
       }}
