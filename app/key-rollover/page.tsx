@@ -1,4 +1,5 @@
 import KeyRolloverTest from "../../components/KeyRolloverTest";
+import InputToolGuide from "../../components/InputToolGuide";
 import { Metadata } from "next";
 
 export const metadata: Metadata = {
@@ -32,6 +33,7 @@ export default function KeyRolloverPage() {
         </p>
       </div>
       <KeyRolloverTest />
+      <InputToolGuide tool="key-rollover" />
     </>
   );
 }
