@@ -1,10 +1,11 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import Breadcrumbs from "../../components/Breadcrumbs";
+import relatedSearchData from "../../data/relatedSearch.json";
 
-const CHECKED_AT = "2026-10-05";
-const REBRAND_SOURCE = "https://dashmetry.io/";
-const CURRENT_GAME_SOURCE = "https://1games.io/challenge-rush";
+const relatedPageData = relatedSearchData.dashmetry;
+const CHECKED_AT = relatedPageData.checkedAt;
+const [REBRAND_SOURCE, CURRENT_GAME_SOURCE] = relatedPageData.sources;
 
 export const metadata: Metadata = {
   title: "Dashmetry Is Now Challenge Rush | Current Game Guide",

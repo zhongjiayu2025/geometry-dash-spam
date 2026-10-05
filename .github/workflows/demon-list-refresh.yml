@@ -9,6 +9,8 @@ on:
       - "scripts/verify-vault-data.mjs"
       - "scripts/verify-related-games.mjs"
       - "data/vaultCodes.ts"
+      - "data/relatedSearch.json"
+      - "app/spam-challenge-list/page.tsx"
       - "app/dashmetry/page.tsx"
       - "app/geometry-dash-breeze/page.tsx"
       - ".github/workflows/demon-list-refresh.yml"

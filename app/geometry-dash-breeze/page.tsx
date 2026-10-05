@@ -1,10 +1,11 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import Breadcrumbs from "../../components/Breadcrumbs";
+import relatedSearchData from "../../data/relatedSearch.json";
 
-const CHECKED_AT = "2026-10-05";
-const REPO_SOURCE = "https://github.com/ItzZyann/Geometry-Dash-Breeze";
-const RELEASE_SOURCE = "https://github.com/ItzZyann/Geometry-Dash-Breeze/releases";
+const relatedPageData = relatedSearchData.breeze;
+const CHECKED_AT = relatedPageData.checkedAt;
+const [REPO_SOURCE, RELEASE_SOURCE] = relatedPageData.sources;
 const LATEST_VERSION = "v1.3.1";
 const LEVEL_COUNT = 10;
 const breezeTitle = `Geometry Dash Breeze | ${LATEST_VERSION}, ${LEVEL_COUNT} Levels & Download`;

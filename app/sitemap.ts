@@ -2,6 +2,7 @@ import { MetadataRoute } from "next";
 import { BLOG_POSTS } from "../data/blogContent";
 import { DEMON_VERIFIED_AT } from "../data/demons";
 import { VAULT_CODES_CHECKED_AT } from "../data/vaultCodes";
+import relatedSearchData from "../data/relatedSearch.json";
 
 export const dynamic = "force-static";
 
@@ -11,7 +12,6 @@ const DEMON_ROUTES = new Set([
   "/demon-list",
   "/demon-list/wave-demons",
   "/demon-list/spam-demons",
-  "/spam-challenge-list",
   "/hardest-level",
 ]);
 
@@ -19,6 +19,12 @@ const CODE_ROUTES = new Set([
   "/geometry-dash-codes",
   "/geometry-dash-vault-of-secrets-codes",
   "/how-to-get-gold-keys-geometry-dash",
+]);
+
+const RELATED_ROUTE_DATES = new Map<string, string>([
+  ["/spam-challenge-list", relatedSearchData.spamChallengeList.checkedAt],
+  ["/dashmetry", relatedSearchData.dashmetry.checkedAt],
+  ["/geometry-dash-breeze", relatedSearchData.breeze.checkedAt],
 ]);
 
 const CORE_ROUTES = [
@@ -67,7 +73,7 @@ export default function sitemap(): MetadataRoute.Sitemap {
       ? DEMON_VERIFIED_AT
       : CODE_ROUTES.has(route)
         ? VAULT_CODES_CHECKED_AT
-        : UPDATED,
+        : RELATED_ROUTE_DATES.get(route) ?? UPDATED,
   }));
 
   const blogEntries: MetadataRoute.Sitemap = BLOG_POSTS.map((post) => ({

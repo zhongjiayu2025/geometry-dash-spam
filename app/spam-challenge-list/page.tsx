@@ -1,10 +1,11 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import Breadcrumbs from "../../components/Breadcrumbs";
+import relatedSearchData from "../../data/relatedSearch.json";
 
-const CHECKED_AT = "2026-10-05";
-const LIST_SOURCE = "https://sites.google.com/view/gdspamchallengeslist/main-list";
-const LIST_HUB_SOURCE = "https://linktr.ee/GeometryDashLists";
+const relatedPageData = relatedSearchData.spamChallengeList;
+const CHECKED_AT = relatedPageData.checkedAt;
+const [LIST_SOURCE, LIST_HUB_SOURCE] = relatedPageData.sources;
 
 export const metadata: Metadata = {
   title: "Geometry Dash Spam Challenge List | Current SCL Guide",
