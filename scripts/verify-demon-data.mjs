@@ -75,8 +75,8 @@ if (verifiedAt && /^\d{4}-\d{2}-\d{2}$/.test(verifiedAt)) {
     if (ageDays < -1) {
       errors.push(`DEMON_VERIFIED_AT is in the future: ${verifiedAt}.`);
     } else if (ageDays > 14) {
-      console.warn(
-        `Warning: Demon List snapshot is ${ageDays} days old. The refresh workflow should be checked.`
+      errors.push(
+        `Demon List snapshot is ${ageDays} days old. Re-check Pointercrate before publishing.`
       );
     }
   }
