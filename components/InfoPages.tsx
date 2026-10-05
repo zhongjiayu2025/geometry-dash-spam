@@ -103,9 +103,21 @@ export const AboutPage = () => (
         </div>
       </div>
 
+      <SectionCard title="How tool measurements are calculated">
+        <p>
+          Average CPS is registered clicks divided by elapsed test time. Peak CPS uses the busiest rolling one-second window, while click consistency is derived from variation between registered input intervals.
+        </p>
+        <p>
+          Browser tools only observe events that reach the page. Display cadence, pointer-event rate, key timing and reaction results can be affected by hardware, the operating system and browser scheduling, so they are presented as browser-side diagnostics rather than hardware certification.
+        </p>
+      </SectionCard>
+
       <SectionCard title="How we handle claims" icon={<Shield className="w-5 h-5"/>}>
         <p>
-          Site-specific metrics are described as training diagnostics, not laboratory measurements. Time-sensitive Demon List claims include a checked date and link to the live source.
+          Site-specific metrics are described as training diagnostics, not laboratory measurements. Time-sensitive Demon List and code claims show a checked date and link to the source used for verification.
+        </p>
+        <p>
+          If a ranking, code or guide becomes outdated, the Contact page provides a correction route. We prefer replacing or qualifying an unsupported claim instead of preserving it for marketing.
         </p>
       </SectionCard>
 
