@@ -7,18 +7,18 @@ const CHECKED_AT = "2026-10-05";
 export const metadata: Metadata = {
   title: "Geometry Dash Difficulty Faces | All Ratings Explained",
   description:
-    "Geometry Dash difficulty faces explained from Auto to Demon, including star ranges and all five Demon sub-difficulties: Easy, Medium, Hard, Insane and Extreme."
+    "Geometry Dash difficulty faces explained from Auto to Demon, including star ranges and all five Demon sub-difficulties: Easy, Medium, Hard, Insane and Extreme.",
   alternates: { canonical: "/geometry-dash-difficulty-faces" },
   openGraph: {
     title: "Geometry Dash Difficulty Faces | All Ratings Explained",
-    description: "Geometry Dash difficulty faces explained: Auto, Easy, Normal, Hard, Harder, Insane and Demon, plus all five Demon sub-difficulties.",
+    description: "Geometry Dash difficulty faces explained from Auto to Demon, including star ranges and all five Demon sub-difficulties: Easy, Medium, Hard, Insane and Extreme.",
     url: "https://geometrydashspam.cc/geometry-dash-difficulty-faces",
     type: "website",
   },
   twitter: {
     card: "summary",
     title: "Geometry Dash Difficulty Faces | All Ratings Explained",
-    description: "Geometry Dash difficulty faces explained: Auto, Easy, Normal, Hard, Harder, Insane and Demon, plus all five Demon sub-difficulties.",
+    description: "Geometry Dash difficulty faces explained from Auto to Demon, including star ranges and all five Demon sub-difficulties: Easy, Medium, Hard, Insane and Extreme.",
   },
 };
 
