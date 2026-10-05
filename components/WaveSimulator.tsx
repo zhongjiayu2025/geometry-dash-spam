@@ -11,7 +11,21 @@ import { Infinity as InfinityIcon, Minimize2, Star, MousePointerClick, Activity,
 
 const GameCanvas = dynamic(() => import('./GameCanvas'), { ssr: false });
 
-const WaveSimulator: React.FC = () => {
+interface WaveSimulatorProps {
+  variant?: 'spam' | 'wave';
+}
+
+type WavePreset = 'normal' | 'mini' | 'spam' | 'precision' | 'endless';
+
+const WAVE_PRESETS: Array<{ id: WavePreset; label: string; description: string }> = [
+  { id: 'normal', label: 'Normal Wave', description: 'Balanced wave control practice.' },
+  { id: 'mini', label: 'Mini Wave', description: 'Faster vertical movement with tighter corrections.' },
+  { id: 'spam', label: 'Wave Spam', description: 'Rapid repeated inputs with a demanding pace.' },
+  { id: 'precision', label: 'Precision', description: 'Narrower high-difficulty control practice.' },
+  { id: 'endless', label: 'Endless', description: 'Survive as long as possible and chase a local best.' },
+];
+
+const WaveSimulator: React.FC<WaveSimulatorProps> = ({ variant = 'spam' }) => {
   // Initialize with saved difficulty if present
   const [difficulty, setDifficulty] = useState<Difficulty>(() => {
     if (typeof window !== 'undefined') {
@@ -40,6 +54,8 @@ const WaveSimulator: React.FC = () => {
   });
   
   const [gameStatus, setGameStatus] = useState<GameStatus>(GameStatus.Idle);
+  const [wavePreset, setWavePreset] = useState<WavePreset>('normal');
+  const isWavePage = variant === 'wave';
 
   const handleDifficultySelect = (newDiff: Difficulty) => {
     setDifficulty(newDiff);
@@ -61,6 +77,36 @@ const WaveSimulator: React.FC = () => {
     setGameStatus(GameStatus.Idle);
   };
 
+  const applyWavePreset = (preset: WavePreset) => {
+    if (gameStatus === GameStatus.Playing) return;
+
+    setWavePreset(preset);
+
+    if (preset === 'normal') {
+      setDifficulty(Difficulty.Hard);
+      setIsMini(false);
+      setIsEndless(false);
+    } else if (preset === 'mini') {
+      setDifficulty(Difficulty.Insane);
+      setIsMini(true);
+      setIsEndless(false);
+    } else if (preset === 'spam') {
+      setDifficulty(Difficulty.EasyDemon);
+      setIsMini(true);
+      setIsEndless(false);
+    } else if (preset === 'precision') {
+      setDifficulty(Difficulty.ExtremeDemon);
+      setIsMini(false);
+      setIsEndless(false);
+    } else {
+      setDifficulty(Difficulty.Hard);
+      setIsMini(false);
+      setIsEndless(true);
+    }
+
+    setGameStatus(GameStatus.Idle);
+  };
+
   const currentConfig = DIFFICULTY_CONFIGS[difficulty];
 
   // Generate today's date for dynamic content
@@ -70,8 +116,10 @@ const WaveSimulator: React.FC = () => {
   const howToSchema = {
     "@context": "https://schema.org",
     "@type": "HowTo",
-    "name": "How to Pass a Geometry Dash Spam Test",
-    "description": "A step-by-step guide to mastering the wave spam mechanic in Geometry Dash using our simulator.",
+    "name": isWavePage ? "How to Practice Geometry Dash Wave Control" : "How to Pass a Geometry Dash Spam Test",
+    "description": isWavePage
+      ? "A step-by-step guide to practicing Geometry Dash wave control with browser-based training presets."
+      : "A step-by-step guide to practicing the wave spam mechanic with our simulator.",
     "step": [
       {
         "@type": "HowToStep",
@@ -100,6 +148,37 @@ const WaveSimulator: React.FC = () => {
     <div className="flex flex-col items-center w-full animate-in fade-in duration-500">
       <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(howToSchema) }} />
       
+      {isWavePage && (
+        <section className="w-full max-w-5xl mb-6 rounded-2xl border border-white/10 bg-slate-900/35 p-4 md:p-5">
+          <div className="flex flex-col gap-2 md:flex-row md:items-end md:justify-between mb-4">
+            <div>
+              <p className="text-[11px] uppercase tracking-[0.2em] text-blue-400 font-bold">Wave training presets</p>
+              <h2 className="text-xl font-display font-bold text-white">Choose the skill you want to train</h2>
+            </div>
+            <p className="text-xs text-slate-500">Presets set difficulty, Mini Wave and Endless Mode for you.</p>
+          </div>
+          <div className="grid grid-cols-2 gap-2 md:grid-cols-5">
+            {WAVE_PRESETS.map((preset) => (
+              <button
+                key={preset.id}
+                type="button"
+                onClick={() => applyWavePreset(preset.id)}
+                disabled={gameStatus === GameStatus.Playing}
+                className={
+                  "rounded-xl border p-3 text-left transition-colors disabled:opacity-40 " +
+                  (wavePreset === preset.id
+                    ? "border-blue-400/60 bg-blue-500/15 text-white"
+                    : "border-white/10 bg-black/20 text-slate-400 hover:border-white/20 hover:text-white")
+                }
+              >
+                <span className="block text-sm font-bold">{preset.label}</span>
+                <span className="mt-1 block text-[11px] leading-4 text-slate-500">{preset.description}</span>
+              </button>
+            ))}
+          </div>
+        </section>
+      )}
+
       <DifficultySelector 
         currentDifficulty={difficulty} 
         onSelect={handleDifficultySelect} 
@@ -168,6 +247,7 @@ const WaveSimulator: React.FC = () => {
       />
       
       {/* DAILY CHALLENGE SECTION */}
+      {!isWavePage && (
       <div className="w-full max-w-5xl mt-6 mb-8">
           <div className="bg-gradient-to-r from-yellow-900/20 to-orange-900/20 border border-yellow-500/30 rounded-xl p-6 flex flex-col md:flex-row items-center justify-between gap-6 relative overflow-hidden">
               <div className="absolute top-0 right-0 w-32 h-32 bg-yellow-500/10 blur-[50px] rounded-full pointer-events-none"></div>
@@ -201,10 +281,11 @@ const WaveSimulator: React.FC = () => {
               </div>
           </div>
       </div>
+      )}
 
       {/* Quick Access Training Modules (Modified to use Link) */}
       <div className="w-full max-w-5xl mt-8 mb-8">
-        <h3 className="text-xl font-display font-bold text-white mb-4 px-2 border-l-4 border-blue-500">More Geometry Dash Spam Tests</h3>
+        <h3 className="text-xl font-display font-bold text-white mb-4 px-2 border-l-4 border-blue-500">{isWavePage ? 'Wave Practice Toolkit' : 'More Geometry Dash Spam Tests'}</h3>
         <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
             <Link href="/cps-test" className="bg-slate-900/60 border border-white/5 rounded-xl p-4 hover:border-blue-400/50 hover:bg-slate-900 transition-all cursor-pointer group block">
                 <MousePointerClick className="w-8 h-8 text-blue-500 mb-3 group-hover:scale-110 transition-transform"/>
