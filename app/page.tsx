@@ -61,28 +61,26 @@ export default function Home() {
         dangerouslySetInnerHTML={{ __html: JSON.stringify(softwareSchema) }}
       />
 
-      <header className="mb-8 md:mb-10 text-center">
-        <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-white/5 border border-white/10 text-xs font-mono text-slate-400 mb-4">
+      <header className="mb-5 md:mb-8 text-center">
+        <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-white/5 border border-white/10 text-[10px] md:text-xs font-mono text-slate-400 mb-3">
           <span className="w-1.5 h-1.5 rounded-full bg-green-500"></span>
           FREE BROWSER TRAINER
         </div>
-        <h1 className="text-3xl md:text-5xl font-display font-bold text-white mb-4 uppercase">
+        <h1 className="text-3xl md:text-5xl font-display font-bold text-white mb-3 uppercase">
           Geometry Dash Spam Test
         </h1>
         <p className="text-slate-400 max-w-3xl mx-auto text-sm md:text-base leading-relaxed">
-          Practice <strong className="text-slate-200">Geometry Dash spam</strong> with a playable wave trainer.
-          Test rapid inputs, improve click consistency, and build control before taking the same skills back into the game.
+          Practice <strong className="text-slate-200">Geometry Dash spam</strong> in a playable wave trainer.
+          Pick a drill, survive the corridor, then compare CPS and timing consistency.
         </p>
       </header>
 
-      <div className="mx-auto mb-6 grid w-full max-w-5xl gap-3 sm:grid-cols-2">
-        <div className="rounded-xl border border-blue-500/30 bg-blue-500/10 p-4">
-          <div className="text-xs font-bold uppercase tracking-[0.16em] text-blue-300">Wave spam test</div>
-          <p className="mt-1 text-sm text-slate-300">Use the trainer below when you want to practice rapid input and wave control together.</p>
+      <div className="mx-auto mb-4 flex w-full max-w-5xl flex-col gap-2 rounded-xl border border-white/10 bg-slate-900/35 px-4 py-3 text-sm sm:flex-row sm:items-center sm:justify-between">
+        <div className="text-slate-300">
+          <strong className="text-white">Wave spam:</strong> hold to rise, release to fall, and keep the rhythm through the corridor.
         </div>
-        <a href="/cps-test" className="rounded-xl border border-white/10 bg-slate-900/40 p-4 transition-colors hover:border-blue-500/40">
-          <div className="text-xs font-bold uppercase tracking-[0.16em] text-slate-300">Geometry Dash spam click test →</div>
-          <p className="mt-1 text-sm text-slate-400">Use the GD CPS test when you want pure click speed, peak CPS and timing consistency.</p>
+        <a href="/cps-test" className="shrink-0 font-semibold text-blue-400 hover:text-blue-300">
+          Need raw click speed? GD CPS Test →
         </a>
       </div>
 
