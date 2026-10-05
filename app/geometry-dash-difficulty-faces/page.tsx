@@ -106,7 +106,7 @@ export default function DifficultyFacesPage() {
           </div>
           <p className="mt-5 text-sm leading-6 text-slate-400">
             Demon sub-difficulties are an indication of difficulty rather than a different star reward.
-            The official wiki notes that Demon user levels award 10 stars regardless of sub-difficulty, and
+            The Geometry Dash Wiki notes that Demon user levels award 10 stars regardless of sub-difficulty, and
             the sub-rating is determined by community votes.
           </p>
         </section>
@@ -128,7 +128,7 @@ export default function DifficultyFacesPage() {
 
         <div className="flex flex-wrap gap-3">
           <a href={SOURCE_URL} target="_blank" rel="noopener noreferrer" className="rounded-lg bg-white px-4 py-2 text-sm font-bold text-black">
-            Official Wiki source
+            Geometry Dash Wiki source
           </a>
           <Link href="/easiest-demons" className="rounded-lg border border-white/10 px-4 py-2 text-sm font-bold text-white">
             Easiest Demons
