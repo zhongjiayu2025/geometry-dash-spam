@@ -36,7 +36,7 @@ const metadataExpectations = {
   },
   "/geometry-dash-wave": {
     title: "Geometry Dash Wave",
-    description: "Practice Geometry Dash Wave control online",
+    description: "Practice Geometry Dash wave and wave spam online",
     canonical: "https://geometrydashspam.cc/geometry-dash-wave",
   },
   "/cps-test": {
@@ -48,6 +48,16 @@ const metadataExpectations = {
     title: "Geometry Dash Demon List",
     description: "Browse a sourced Geometry Dash Demon List snapshot",
     canonical: "https://geometrydashspam.cc/demon-list",
+  },
+  "/demon-list/spam-demons": {
+    title: "Geometry Dash Spam Demon List",
+    description: "A Geometry Dash spam-focused practice list",
+    canonical: "https://geometrydashspam.cc/demon-list/spam-demons",
+  },
+  "/demon-list/wave-demons": {
+    title: "Geometry Dash Wave Demons",
+    description: "Explore wave-focused Geometry Dash demon practice references",
+    canonical: "https://geometrydashspam.cc/demon-list/wave-demons",
   },
   "/geometry-dash-clicker": {
     title: "Geometry Dash Clicker",
