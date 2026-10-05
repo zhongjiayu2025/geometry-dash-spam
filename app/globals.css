@@ -19,14 +19,33 @@ body {
   overflow-x: hidden;
 }
 
-/* Zero Click Delay & Selection Prevention for Interactive Buttons, Links, and Clickable Areas */
-button, 
-a, 
+/* Fast touch response without blocking normal text/link selection */
+button,
 [role="button"],
 .clickable {
   touch-action: manipulation;
   user-select: none;
   -webkit-user-select: none;
+}
+
+a {
+  touch-action: manipulation;
+}
+
+:focus-visible {
+  outline: 2px solid #60a5fa;
+  outline-offset: 3px;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    scroll-behavior: auto !important;
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
 }
 
 /* Animated Background Grid */
