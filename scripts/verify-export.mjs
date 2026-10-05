@@ -466,17 +466,6 @@ for (const route of coreAuthorityRoutes) {
   }
 }
 
-const contentErrors = [];");
-    const linkPattern = new RegExp(`href=["']${escaped}(?:[#?"'][^>]*)?`, "i");
-
-    if (linkPattern.test(html)) {
-      authorityLeakErrors.push(
-        `${route}: core page links to noindex utility ${noindexRoute}`
-      );
-    }
-  }
-}
-
 const contentErrors = [];
 
 const codesExportPath = exportedPath("/geometry-dash-codes");
