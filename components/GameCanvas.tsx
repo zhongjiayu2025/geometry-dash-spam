@@ -524,7 +524,7 @@ const GameCanvas: React.FC<GameCanvasProps> = memo(({ difficulty, status, onStat
 
   const calculateConsistency = () => {
     const intervals = gameState.current.clickIntervals;
-    if (intervals.length < 2) return '100%';
+    if (intervals.length < 2) return 'N/A';
     const mean = intervals.reduce((a, b) => a + b, 0) / intervals.length;
     const variance = intervals.reduce((a, b) => a + Math.pow(b - mean, 2), 0) / intervals.length;
     const stdDev = Math.sqrt(variance);
@@ -634,6 +634,7 @@ const GameCanvas: React.FC<GameCanvasProps> = memo(({ difficulty, status, onStat
       clickTimes: [],
       clickCount: 0,
       runTime: 0,
+      lastClickTime: 0,
       finishLineX: totalDistance + 600,
       baseColor: difficulty.color,
       rng: rngFunc 
