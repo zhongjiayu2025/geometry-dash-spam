@@ -6,6 +6,8 @@ import { DEMONS, DEMON_SOURCE_URL, DEMON_VERIFIED_AT } from "../../data/demons";
 const currentHardest = DEMONS[0];
 const hardestTitle = `Geometry Dash Hardest Level: ${currentHardest.level} | Current #1 Demon`;
 const hardestDescription = `As checked ${DEMON_VERIFIED_AT}, Pointercrate ranks ${currentHardest.level} by ${currentHardest.publisher} #1. See the current top five and live source.`;
+const isGriefPlacementDay =
+  currentHardest.level === "GRIEF" && DEMON_VERIFIED_AT === "2026-10-05";
 
 export const metadata: Metadata = {
   title: hardestTitle,
@@ -84,6 +86,17 @@ export default function HardestLevelPage() {
           checked <strong>{DEMON_VERIFIED_AT}</strong>. It was published by {numberOne.publisher}. Rankings can change, and this is not an official RobTop Games list.
         </div>
       </header>
+
+      {isGriefPlacementDay && (
+        <section className="mb-10 rounded-2xl border border-amber-500/20 bg-amber-950/10 p-5 md:p-6">
+          <div className="mb-2 text-xs font-bold uppercase tracking-[0.18em] text-amber-300">Latest ranking change</div>
+          <h2 className="mb-2 text-xl font-bold text-white">GRIEF moved to #1 on October 5, 2026</h2>
+          <p className="text-sm leading-6 text-slate-400">
+            GRIEF was verified and placed at the top of the Demon List on October 5, 2026, replacing Society.
+            The table below is sourced from the post-placement snapshot rather than the older cached order.
+          </p>
+        </section>
+      )}
 
       <section className="mb-10">
         <h2 className="mb-4 text-2xl font-bold text-white">Current top five</h2>
