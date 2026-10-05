@@ -7,6 +7,17 @@ export const metadata: Metadata = {
   description:
     "Explore wave-focused Geometry Dash demon practice references with current Pointercrate positions, source date and a dedicated wave trainer.",
   alternates: { canonical: "/demon-list/wave-demons" },
+  openGraph: {
+    title: "Geometry Dash Wave Demons – Wave Practice Guide",
+    description: "Explore wave-focused Geometry Dash demon practice references with current Pointercrate positions, source date and a dedicated wave trainer.",
+    url: "https://geometrydashspam.cc/demon-list/wave-demons",
+    type: "website",
+  },
+  twitter: {
+    card: "summary",
+    title: "Geometry Dash Wave Demons – Wave Practice Guide",
+    description: "Explore wave-focused Geometry Dash demon practice references with current Pointercrate positions, source date and a dedicated wave trainer.",
+  },
 };
 
 const WAVE_REFERENCES = [
