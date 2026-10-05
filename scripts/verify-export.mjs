@@ -11,6 +11,13 @@ const demonDate = demonSource.match(/DEMON_VERIFIED_AT = "([^"]+)"/)?.[1];
 const vaultDate = vaultSource.match(/VAULT_CODES_CHECKED_AT = "([^"]+)"/)?.[1];
 const currentDemon = demonSource.match(/\{ rank: 1, level: "((?:\\.|[^"])*)"/)?.[1];
 
+const demonEntries = [
+  ...demonSource.matchAll(/\{ rank: (\d+), level: "((?:\\.|[^"])*)"/g),
+].map((match) => ({
+  rank: Number(match[1]),
+  level: JSON.parse(`"${match[2]}"`),
+}));
+
 const wraithBlock = vaultSource.match(
   /export const WRAITH_CODES:[\s\S]*?= \[([\s\S]*?)\n\];/
 )?.[1];
@@ -905,6 +912,24 @@ for (const [route, expectedLinks] of intentClusterLinks) {
 
 const contentErrors = [];
 
+const demonExportPath = exportedPath("/demon-list");
+if (demonExportPath) {
+  const demonHtml = readFileSync(demonExportPath, "utf8");
+  if (demonEntries.length !== 50) {
+    contentErrors.push(
+      `/demon-list: expected 50 source Demon entries, found ${demonEntries.length}`
+    );
+  }
+
+  for (const demon of demonEntries) {
+    if (!demonHtml.includes(demon.level)) {
+      contentErrors.push(
+        `/demon-list: server-exported HTML is missing #${demon.rank} ${demon.level}`
+      );
+    }
+  }
+}
+
 const codesExportPath = exportedPath("/geometry-dash-codes");
 if (codesExportPath) {
   const codesHtml = readFileSync(codesExportPath, "utf8");
@@ -1064,5 +1089,5 @@ if (
 }
 
 console.log(
-  `Static export verified: ${requiredRoutes.length} core routes, metadata checks, ads/robots/manifest checks, permanent legacy redirects, search-snippet length checks, H1/title/description uniqueness checks, sitemap freshness checks, noindex utility policy, core-page authority leakage checks, HTML sitemap priority-link checks, indexable support-page guide checks, search-intent cluster checks, Wraith data-to-page checks, ${htmlFiles.length} HTML files with internal-link checks, sitemap URL/canonical/title/description/OpenGraph/indexability integrity, sitemap.xml and robots.txt.`
+  `Static export verified: ${requiredRoutes.length} core routes, metadata checks, ads/robots/manifest checks, permanent legacy redirects, search-snippet length checks, H1/title/description uniqueness checks, sitemap freshness checks, noindex utility policy, core-page authority leakage checks, HTML sitemap priority-link checks, indexable support-page guide checks, search-intent cluster checks, Demon data-to-page checks, Wraith data-to-page checks, ${htmlFiles.length} HTML files with internal-link checks, sitemap URL/canonical/title/description/OpenGraph/indexability integrity, sitemap.xml and robots.txt.`
 );
