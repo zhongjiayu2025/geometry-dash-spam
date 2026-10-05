@@ -106,17 +106,32 @@ const CpsTest: React.FC = () => {
       setClicks(0);
   };
 
+  const registerInput = () => {
+    if (finished) return;
+
+    if (!active) {
+      startTest();
+      return;
+    }
+
+    clicksRef.current += 1;
+    clickTimesRef.current.push(performance.now());
+    setClicks(clicksRef.current);
+  };
+
+  const playInputSound = () => {
+    if (soundEnabled && audioCtxRef.current) {
+      if (audioCtxRef.current.state === 'suspended') {
+        audioCtxRef.current.resume();
+      }
+      playClickSound(audioCtxRef.current);
+    }
+  };
+
   const handlePointerDown = (e: React.PointerEvent) => {
     e.preventDefault();
+    playInputSound();
     
-    if (soundEnabled && audioCtxRef.current) {
-        if (audioCtxRef.current.state === 'suspended') {
-            audioCtxRef.current.resume();
-        }
-        playClickSound(audioCtxRef.current);
-    }
-    
-    // Add Visual Ripple
     const rect = (e.currentTarget as HTMLButtonElement).getBoundingClientRect();
     const x = e.clientX - rect.left;
     const y = e.clientY - rect.top;
@@ -127,14 +142,14 @@ const CpsTest: React.FC = () => {
       setRipples(prev => prev.filter(r => r.id !== newRipple.id));
     }, 500);
 
-    if (finished) return;
-    if (!active) {
-      startTest();
-      return;
-    }
-    clicksRef.current += 1;
-    clickTimesRef.current.push(performance.now());
-    setClicks(clicksRef.current);
+    registerInput();
+  };
+
+  const handleKeyDown = (e: React.KeyboardEvent<HTMLButtonElement>) => {
+    if (e.repeat || (e.key !== ' ' && e.key !== 'Enter')) return;
+    e.preventDefault();
+    playInputSound();
+    registerInput();
   };
 
   const reset = (e?: React.MouseEvent) => {
@@ -296,7 +311,9 @@ const CpsTest: React.FC = () => {
         <div className="relative aspect-square md:aspect-auto md:h-[400px]">
           <button
             onPointerDown={handlePointerDown}
-            aria-label="Click here to start or continue the CPS test"
+            onKeyDown={handleKeyDown}
+            aria-label="Click or press Space or Enter to start or continue the CPS test"
+            aria-keyshortcuts="Space Enter"
             className={`
               w-full h-full rounded-2xl border-2 flex flex-col items-center justify-center transition-all duration-75 select-none relative overflow-hidden touch-none
               ${finished 
@@ -317,7 +334,7 @@ const CpsTest: React.FC = () => {
               <>
                 <MousePointer2 className="w-16 h-16 text-white mb-4 animate-bounce" />
                 <span className="text-3xl font-display font-bold text-white tracking-widest">CLICK TO START</span>
-                <span className="text-blue-200 mt-2 font-mono text-sm">{selectedDuration} SECOND TEST</span>
+                <span className="text-blue-200 mt-2 font-mono text-sm">OR PRESS SPACE · {selectedDuration} SECOND TEST</span>
               </>
             )}
             
