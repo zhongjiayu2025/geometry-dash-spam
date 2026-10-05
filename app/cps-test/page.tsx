@@ -1,4 +1,5 @@
 import CpsTest from "../../components/CpsTest";
+import Breadcrumbs from "../../components/Breadcrumbs";
 import { Metadata } from "next";
 
 export const metadata: Metadata = {
@@ -72,6 +73,7 @@ export default function CpsTestPage() {
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(faqSchema) }}
       />
+      <Breadcrumbs items={[{ label: "Geometry Dash CPS Test", href: "/cps-test" }]} />
       <header className="mb-8 md:mb-10 text-center">
         <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-white/5 border border-white/10 text-xs font-mono text-slate-400 mb-4">
           <span className="w-1.5 h-1.5 rounded-full bg-green-500"></span>
