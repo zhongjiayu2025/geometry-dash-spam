@@ -193,6 +193,7 @@ const GameCanvas: React.FC<GameCanvasProps> = memo(({ difficulty, status, onStat
   const audioCtxRef = useRef<AudioContext | null>(null);
   const masterGainRef = useRef<GainNode | null>(null);
   const delayNodeRef = useRef<DelayNode | null>(null); // For echo/space
+  const hiHatBufferRef = useRef<AudioBuffer | null>(null);
   
   const musicSchedulerRef = useRef<number | null>(null);
   const nextNoteTimeRef = useRef<number>(0);
@@ -242,6 +243,13 @@ const GameCanvas: React.FC<GameCanvasProps> = memo(({ difficulty, status, onStat
       if (AudioContextClass) {
           const ctx = new AudioContextClass();
           audioCtxRef.current = ctx;
+
+          const hiHatBuffer = ctx.createBuffer(1, Math.floor(ctx.sampleRate * 0.1), ctx.sampleRate);
+          const hiHatData = hiHatBuffer.getChannelData(0);
+          for (let i = 0; i < hiHatData.length; i++) {
+              hiHatData[i] = Math.random() * 2 - 1;
+          }
+          hiHatBufferRef.current = hiHatBuffer;
           
           // Master Gain
           masterGainRef.current = ctx.createGain();
@@ -331,14 +339,10 @@ const GameCanvas: React.FC<GameCanvasProps> = memo(({ difficulty, status, onStat
   }, []);
 
   const playHiHat = useCallback((time: number) => {
-      if (!audioCtxRef.current || !masterGainRef.current) return;
-      const bufferSize = audioCtxRef.current.sampleRate * 0.1;
-      const buffer = audioCtxRef.current.createBuffer(1, bufferSize, audioCtxRef.current.sampleRate);
-      const data = buffer.getChannelData(0);
-      for (let i = 0; i < bufferSize; i++) data[i] = Math.random() * 2 - 1;
+      if (!audioCtxRef.current || !masterGainRef.current || !hiHatBufferRef.current) return;
 
       const noise = audioCtxRef.current.createBufferSource();
-      noise.buffer = buffer;
+      noise.buffer = hiHatBufferRef.current;
       const gain = audioCtxRef.current.createGain();
       const filter = audioCtxRef.current.createBiquadFilter();
       filter.type = 'highpass';
