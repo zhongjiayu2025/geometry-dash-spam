@@ -67,55 +67,34 @@ const SectionCard: React.FC<{
 );
 
 export const AboutPage = () => (
-  <InfoPageLayout
-    title="About Geometry Dash Spam"
-    icon={<Info className="w-10 h-10" />}
-    lastUpdated="October 5, 2026"
-  >
+  <InfoPageLayout title="About" icon={<Info className="w-10 h-10"/>} lastUpdated="October 5, 2026">
     <div className="space-y-8">
       <div className="text-lg md:text-xl text-slate-200 leading-relaxed border-l-4 border-blue-500 pl-6 py-2">
-        <strong className="text-white">GeometryDashSpam.cc</strong> is a fan-made browser toolkit focused on Geometry Dash spam practice, wave control, CPS measurement and sourced Demon List reference pages.
+        <strong className="text-white">GeometryDashSpam.cc</strong> is a fan-made browser toolkit for practicing rapid input, wave control and click consistency.
       </div>
 
-      <SectionCard title="What the site is for" icon={<Globe className="w-6 h-6" />}>
+      <SectionCard title="What this site is for" icon={<Globe className="w-6 h-6"/>}>
         <p>
-          The site separates raw input speed from movement control. The CPS Test measures browser-recorded click timing, while the Spam Test and Wave Trainer turn repeated input into a playable control exercise.
+          The core tools isolate skills that are useful in Geometry Dash-style practice: repeated clicking, press-and-release timing, wave control and input consistency.
         </p>
         <p>
-          The simulator uses its own practice-oriented movement model. It is not presented as an exact recreation of the official Geometry Dash engine.
+          The browser wave simulator uses its own practice-oriented movement model. It is not presented as an exact copy of the official Geometry Dash physics engine.
         </p>
       </SectionCard>
 
       <div>
-        <h2 className="text-2xl font-display font-bold text-white mb-6">What we maintain</h2>
+        <h3 className="text-2xl font-display font-bold text-white mb-6">What We Offer</h3>
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
           {[
-            {
-              title: "Spam & Wave Training",
-              desc: "Difficulty presets, Mini Wave, Endless Mode and browser-side run metrics.",
-            },
-            {
-              title: "CPS Measurement",
-              desc: "1–60 second tests with average CPS, rolling one-second peak and timing consistency.",
-            },
-            {
-              title: "Demon References",
-              desc: "A dated Pointercrate Main List snapshot plus skill-focused wave and spam guides.",
-            },
-            {
-              title: "Local Progress",
-              desc: "Personal bests and clicker progress stored in your browser without an account.",
-            },
+            { title: 'Spam Test', desc: 'Practice rapid wave-style input and compare run metrics.', icon: <CheckCircle className="w-5 h-5 text-green-400"/> },
+            { title: 'Wave Trainer', desc: 'Normal, mini, precision and endless browser practice presets.', icon: <CheckCircle className="w-5 h-5 text-green-400"/> },
+            { title: 'CPS Test', desc: 'Measure average CPS, rolling peak CPS and click-timing consistency.', icon: <CheckCircle className="w-5 h-5 text-green-400"/> },
+            { title: 'Demon Guides', desc: 'Source-checked ranking snapshots and skill-focused practice references.', icon: <CheckCircle className="w-5 h-5 text-green-400"/> },
           ].map((item) => (
-            <div
-              key={item.title}
-              className="flex items-start gap-4 p-4 rounded-xl bg-slate-900/50 border border-white/5"
-            >
-              <CheckCircle className="w-5 h-5 text-green-400 mt-1 shrink-0" />
+            <div key={item.title} className="flex items-start gap-4 p-4 rounded-xl bg-gradient-to-br from-slate-800/50 to-slate-900/50 border border-white/5">
+              <div className="mt-1">{item.icon}</div>
               <div>
-                <h3 className="font-bold text-white text-sm uppercase tracking-wide">
-                  {item.title}
-                </h3>
+                <h4 className="font-bold text-white text-sm uppercase tracking-wide">{item.title}</h4>
                 <p className="text-sm text-slate-400 mt-1">{item.desc}</p>
               </div>
             </div>
@@ -123,107 +102,102 @@ export const AboutPage = () => (
         </div>
       </div>
 
-      <div className="p-4 bg-slate-900 rounded-lg border border-white/5 text-xs text-slate-500 text-center font-mono">
-        GeometryDashSpam.cc is an independent fan-made project and is not affiliated with RobTop Games.
+      <SectionCard title="How we handle claims" icon={<Shield className="w-5 h-5"/>}>
+        <p>
+          Site-specific metrics are described as training diagnostics, not laboratory measurements. Time-sensitive Demon List claims include a checked date and link to the live source.
+        </p>
+      </SectionCard>
+
+      <div className="mt-8 p-4 bg-slate-900 rounded-lg border border-white/5 text-xs text-slate-500 text-center font-mono">
+        GeometryDashSpam.cc is a fan-made project and is not affiliated with RobTop Games.
       </div>
     </div>
   </InfoPageLayout>
 );
 
 export const ContactPage = () => (
-  <InfoPageLayout
-    title="Contact"
-    icon={<Mail className="w-10 h-10" />}
-    lastUpdated="October 5, 2026"
-  >
+  <InfoPageLayout title="Contact" icon={<Mail className="w-10 h-10"/>} lastUpdated="October 5, 2026">
     <div className="space-y-8">
       <p className="text-lg text-slate-300">
-        Send bug reports, source corrections, privacy questions or feature suggestions by email.
+        Send bug reports, correction requests, source updates or feature suggestions by email.
       </p>
 
-      <div className="p-8 md:p-12 rounded-3xl bg-blue-950/25 border border-blue-500/30 flex flex-col items-center text-center space-y-6">
-        <div className="p-4 bg-blue-600 rounded-full">
+      <div className="p-8 md:p-12 rounded-3xl bg-gradient-to-br from-blue-900/40 to-indigo-900/20 border border-blue-500/30 flex flex-col items-center text-center space-y-6 shadow-2xl">
+        <div className="p-4 bg-blue-600 rounded-full shadow-lg shadow-blue-500/40">
           <Mail className="w-8 h-8 text-white" />
         </div>
         <div>
-          <h2 className="text-2xl font-bold text-white mb-2">Email</h2>
+          <h3 className="text-2xl font-bold text-white mb-2">Email</h3>
           <p className="text-blue-200/80 max-w-md mx-auto">
-            Include the page URL and enough detail to reproduce a bug when possible.
+            For site support, ranking corrections and tool feedback.
           </p>
         </div>
         <a
           href="mailto:info@geometrydashspam.cc"
-          className="px-6 py-3 bg-white hover:bg-slate-100 text-blue-900 font-bold rounded-xl transition-colors flex items-center gap-3"
+          className="px-8 py-4 bg-white hover:bg-slate-100 text-blue-900 font-bold text-lg rounded-xl transition-colors shadow-xl flex items-center gap-3"
         >
-          info@geometrydashspam.cc <ExternalLink className="w-4 h-4 opacity-50" />
+          info@geometrydashspam.cc <ExternalLink className="w-5 h-5 opacity-50"/>
         </a>
       </div>
 
-      <SectionCard title="Scope of support">
-        <p>
-          This contact address covers the tools and content on GeometryDashSpam.cc. For official Geometry Dash accounts, purchases or game-server issues, use RobTop Games&apos; official support channels.
-        </p>
-      </SectionCard>
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+        <SectionCard title="Useful details to include">
+          <p>For a bug report, include the page URL, browser/device, the action you took and what happened.</p>
+        </SectionCard>
+        <SectionCard title="Official game support">
+          <p>We can only help with this website. Account, purchase or server issues for the official Geometry Dash game should be directed to its official support channels.</p>
+        </SectionCard>
+      </div>
     </div>
   </InfoPageLayout>
 );
 
 export const PrivacyPage = () => (
-  <InfoPageLayout
-    title="Privacy Policy"
-    icon={<Shield className="w-10 h-10" />}
-    lastUpdated="October 5, 2026"
-  >
+  <InfoPageLayout title="Privacy Policy" icon={<Shield className="w-10 h-10"/>} lastUpdated="October 5, 2026">
     <div className="space-y-4">
       <p className="mb-8 text-slate-300">
-        This policy describes the data used by GeometryDashSpam.cc and the browser features used to save local progress.
+        This page explains the data used by <strong>GeometryDashSpam.cc</strong>. The interactive tools do not require an account.
       </p>
 
-      <SectionCard title="1. Accounts and personal data" icon={<Lock className="w-5 h-5" />}>
+      <SectionCard title="1. Local browser data" icon={<Server className="w-5 h-5"/>}>
         <p>
-          The site does not require an account for its training tools. Personal-best scores, trainer preferences and clicker progress are stored locally in your browser where those features are supported.
+          Supported tools store settings and personal-best values in your browser&apos;s local storage. That local data is used to restore your preferences and records on the same browser.
         </p>
         <p>
-          If you email us, the information in that message is necessarily provided to the email service used to receive and answer it.
-        </p>
-      </SectionCard>
-
-      <SectionCard title="2. Local storage" icon={<Cookie className="w-5 h-5" />}>
-        <p>Local storage is used for features such as:</p>
-        <ul className="list-disc pl-5 space-y-2 text-slate-400">
-          <li>Spam-test personal bests and trainer preferences.</li>
-          <li>CPS personal-best scores.</li>
-          <li>Geometry Dash Clicker progress and achievements.</li>
-        </ul>
-        <p className="text-sm text-slate-400">
-          You can remove this information through your browser&apos;s site-data controls. Clearing local site data resets the saved progress.
+          Examples include selected difficulty, sound settings, CPS best scores and clicker progress.
         </p>
       </SectionCard>
 
-      <SectionCard title="3. Advertising and third parties" icon={<Globe className="w-5 h-5" />}>
+      <SectionCard title="2. Advertising and third-party requests" icon={<Cookie className="w-5 h-5"/>}>
         <p>
-          The site loads Google AdSense advertising. Google and its advertising partners may use cookies or similar technologies in accordance with their own policies and the consent choices available in your region.
+          The site loads Google AdSense. Google and its advertising partners may use cookies or similar technologies for ad delivery, measurement, fraud prevention and related purposes according to their own policies and the consent requirements that apply to the visitor.
         </p>
         <p>
-          We do not describe advertising identifiers or third-party cookies as local-only data because they are controlled by the relevant third-party service.
+          The site should not be understood as claiming that all data remains only on-device: advertising requests can involve third-party network services.
         </p>
       </SectionCard>
 
-      <SectionCard title="4. Children">
+      <SectionCard title="3. Information you send us" icon={<Mail className="w-5 h-5"/>}>
         <p>
-          The site is a general gaming utility and does not provide account registration. If you believe personal information has been sent to us inappropriately, contact us so the issue can be reviewed.
+          If you email us, the message and contact information you provide are processed for the purpose of reading and responding to that request.
+        </p>
+      </SectionCard>
+
+      <SectionCard title="4. Children" icon={<Lock className="w-5 h-5"/>}>
+        <p>
+          The site does not require users to create profiles or submit age information. Do not send personal information through email unless it is necessary for a support request.
+        </p>
+      </SectionCard>
+
+      <SectionCard title="5. Your browser controls">
+        <p>
+          You can clear locally stored tool data through your browser settings. Advertising and cookie controls may also be available through your browser and any consent interface shown on the site.
         </p>
       </SectionCard>
 
       <div className="text-center pt-8 border-t border-white/10">
         <p className="text-slate-500 text-sm">
-          Privacy questions:{" "}
-          <a
-            href="mailto:info@geometrydashspam.cc"
-            className="text-blue-400 hover:text-white transition-colors"
-          >
-            info@geometrydashspam.cc
-          </a>
+          Privacy questions: <a href="mailto:info@geometrydashspam.cc" className="text-blue-400 hover:text-white transition-colors">info@geometrydashspam.cc</a>
         </p>
       </div>
     </div>
@@ -231,43 +205,42 @@ export const PrivacyPage = () => (
 );
 
 export const TermsPage = () => (
-  <InfoPageLayout
-    title="Terms of Use"
-    icon={<FileText className="w-10 h-10" />}
-    lastUpdated="October 5, 2026"
-  >
+  <InfoPageLayout title="Terms of Use" icon={<FileText className="w-10 h-10"/>} lastUpdated="October 5, 2026">
     <div className="space-y-6">
       <p className="text-slate-300 mb-6">
-        These terms govern use of the browser tools and content provided on GeometryDashSpam.cc.
+        These terms describe permitted use of <strong>GeometryDashSpam.cc</strong> and its browser-based tools.
       </p>
 
-      <SectionCard title="1. Permitted use">
+      <SectionCard title="1. Personal use">
         <p>
-          You may use the site for personal entertainment, practice and reference. Do not use automated traffic, abusive requests or other behavior intended to disrupt the service or falsify site-generated results.
+          You may use the site for personal entertainment, testing and practice. Do not use the service in a way that disrupts the site, attempts unauthorized access, or misrepresents site-generated results as independently verified records.
         </p>
       </SectionCard>
 
       <div className="bg-yellow-900/10 border border-yellow-500/20 rounded-xl p-6 md:p-8">
-        <h2 className="text-xl font-bold text-yellow-500 flex items-center gap-2 mb-4">
-          <AlertTriangle className="w-6 h-6" /> 2. Simulator disclaimer
-        </h2>
+        <h3 className="text-xl font-bold text-yellow-500 flex items-center gap-2 mb-4">
+          <AlertTriangle className="w-6 h-6" /> 2. Simulator and measurement disclaimer
+        </h3>
         <p className="text-slate-300 leading-relaxed">
-          The browser simulator is a practice tool with its own movement model. Results may differ from the official Geometry Dash game because of game physics, hardware, browser behavior and input devices.
+          The browser tools are provided for practice and informal measurement. The wave trainer uses its own movement model, and browser timing can be affected by device hardware, operating system, browser scheduling and display conditions. Results are not guaranteed to match the official Geometry Dash client or laboratory equipment.
         </p>
       </div>
 
-      <SectionCard title="3. Accuracy and availability">
+      <SectionCard title="3. External sources and links">
         <p>
-          We aim to keep tool behavior and sourced pages accurate, but rankings, external sources and browser behavior can change. Time-sensitive Demon List pages therefore show a verification date and link to the live source.
-        </p>
-        <p>
-          The site may be changed, interrupted or removed without guaranteeing uninterrupted availability.
+          Some guides link to third-party sources such as live ranking sites. Those services control their own content and availability. A dated snapshot on this site may become outdated after its verification date.
         </p>
       </SectionCard>
 
-      <SectionCard title="4. Third-party names and services">
+      <SectionCard title="4. Availability and changes">
         <p>
-          Geometry Dash and related names belong to their respective owners. References to third-party websites, products or services do not imply endorsement or affiliation unless explicitly stated.
+          Features, content and tools may be changed, corrected or removed. We do not guarantee uninterrupted availability of every page or third-party dependency.
+        </p>
+      </SectionCard>
+
+      <SectionCard title="5. Fan-made status">
+        <p>
+          GeometryDashSpam.cc is an independent fan-made project and is not affiliated with RobTop Games. References to Geometry Dash are used to describe the subject of the tools and guides.
         </p>
       </SectionCard>
     </div>
