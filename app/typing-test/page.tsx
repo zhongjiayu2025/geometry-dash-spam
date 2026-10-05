@@ -6,6 +6,17 @@ export const metadata: Metadata = {
   description:
     "Take a 60-second browser typing test and measure words per minute.",
   alternates: { canonical: "/typing-test" },
+  openGraph: {
+    title: "Typing Speed Test | 60-Second WPM Test",
+    description: "Take a 60-second browser typing test and measure words per minute.",
+    url: "https://geometrydashspam.cc/typing-test",
+    type: "website",
+  },
+  twitter: {
+    card: "summary",
+    title: "Typing Speed Test | 60-Second WPM Test",
+    description: "Take a 60-second browser typing test and measure words per minute.",
+  },
 };
 
 export default function TypingPage() {
