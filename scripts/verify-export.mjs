@@ -533,6 +533,8 @@ if (existsSync(sitemapPath)) {
     const ogUrl = metaContent(html, "property", "og:url");
     const ogTitle = metaContent(html, "property", "og:title");
     const ogDescription = metaContent(html, "property", "og:description");
+    const ogSiteName = metaContent(html, "property", "og:site_name");
+    const ogLocale = metaContent(html, "property", "og:locale");
     const ogImage = metaContent(html, "property", "og:image");
     const twitterImage = metaContent(html, "name", "twitter:image");
     const h1Count = (html.match(/<h1\b/gi) || []).length;
@@ -609,6 +611,18 @@ if (existsSync(sitemapPath)) {
 
     if (!ogDescription) {
       sitemapMetadataErrors.push(`${route}: missing og:description`);
+    }
+
+    if (ogSiteName !== "Geometry Dash Spam") {
+      sitemapMetadataErrors.push(
+        `${route}: og:site_name is "${ogSiteName ?? "missing"}", expected "Geometry Dash Spam"`
+      );
+    }
+
+    if (ogLocale !== "en_US") {
+      sitemapMetadataErrors.push(
+        `${route}: og:locale is "${ogLocale ?? "missing"}", expected "en_US"`
+      );
     }
 
     if (ogImage !== "https://geometrydashspam.cc/opengraph-image") {
