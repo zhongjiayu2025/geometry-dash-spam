@@ -227,15 +227,27 @@ const source = readFileSync(DATA_PATH, "utf8");
 const current = readCurrentState(source);
 const raw = await fetchRankedDemons();
 
+const today = new Date().toISOString().slice(0, 10);
+
 if (!raw) {
+  const ageDays = current.verifiedAt
+    ? daysBetween(current.verifiedAt, today)
+    : Number.POSITIVE_INFINITY;
+
   console.warn(
     `Pointercrate could not be reached. Keeping the last verified snapshot from ${current.verifiedAt ?? "an unknown date"}.`
   );
+
+  if (ageDays > 14) {
+    throw new Error(
+      `Demon List snapshot is ${ageDays} days old and the source is still unreachable.`
+    );
+  }
+
   process.exit(0);
 }
 
 const fetched = normalize(raw);
-const today = new Date().toISOString().slice(0, 10);
 
 const rankingChanged = !sameEntries(current.entries, fetched);
 const verificationExpired =
