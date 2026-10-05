@@ -921,7 +921,11 @@ const GameCanvas: React.FC<GameCanvasProps> = memo(({ difficulty, status, onStat
 
     ctx.restore(); 
 
-    requestRef.current = requestAnimationFrame(gameLoop);
+    if (status === GameStatus.Playing) {
+        requestRef.current = requestAnimationFrame(gameLoop);
+    } else {
+        requestRef.current = undefined;
+    }
   }, [status, difficulty, isEndless, isMini, spawnObstacle, saveHighScore, playSound, reduceMotion]);
 
   const handleDeath = () => {
@@ -1076,18 +1080,26 @@ const GameCanvas: React.FC<GameCanvasProps> = memo(({ difficulty, status, onStat
 
   useEffect(() => {
       if (status === GameStatus.Playing) {
-          if (!requestRef.current) requestRef.current = requestAnimationFrame(gameLoop);
+          if (!requestRef.current) {
+              requestRef.current = requestAnimationFrame(gameLoop);
+          }
       } else {
-          requestRef.current = requestAnimationFrame(gameLoop);
+          const frame = requestAnimationFrame(gameLoop);
+          return () => cancelAnimationFrame(frame);
       }
+
       return () => {
-          if (requestRef.current) cancelAnimationFrame(requestRef.current);
+          if (requestRef.current) {
+              cancelAnimationFrame(requestRef.current);
+              requestRef.current = undefined;
+          }
       };
   }, [gameLoop, status]);
 
   useEffect(() => {
       resetGame();
-      requestAnimationFrame(gameLoop);
+      const frame = requestAnimationFrame(gameLoop);
+      return () => cancelAnimationFrame(frame);
   }, [resetGame, gameLoop]);
 
   const runStats = getRunStats();
@@ -1137,6 +1149,7 @@ const GameCanvas: React.FC<GameCanvasProps> = memo(({ difficulty, status, onStat
           
           <div className="flex gap-2 pointer-events-auto">
               <button 
+                  aria-label={reduceMotion ? "Enable motion effects" : "Reduce motion effects"}
                   title={reduceMotion ? "Enable Motion/Pulse" : "Reduce Motion/Shake"}
                   onClick={toggleMotion} 
                   className={`p-2 rounded-full backdrop-blur-md transition-colors border border-transparent ${reduceMotion ? 'bg-blue-600 text-white border-blue-400' : 'bg-black/40 text-white/70 hover:bg-black/60 hover:text-white'}`}
@@ -1144,6 +1157,7 @@ const GameCanvas: React.FC<GameCanvasProps> = memo(({ difficulty, status, onStat
                   {reduceMotion ? <ZapOff className="w-5 h-5"/> : <Activity className="w-5 h-5"/>}
               </button>
               <button 
+                  aria-label={isFullscreen ? "Exit fullscreen" : "Enter fullscreen"}
                   title="Toggle Fullscreen"
                   onClick={(e) => { e.stopPropagation(); toggleFullscreen(); }} 
                   className="p-2 bg-black/40 hover:bg-black/60 rounded-full text-white/70 hover:text-white backdrop-blur-md transition-colors"
@@ -1340,6 +1354,7 @@ const GameCanvas: React.FC<GameCanvasProps> = memo(({ difficulty, status, onStat
         <div className="absolute inset-0 z-50 flex items-center justify-center bg-black/80 backdrop-blur-sm animate-in fade-in duration-200" onClick={() => setShowShareModal(false)}>
             <div className="share-modal-content w-[90%] max-w-sm bg-[#0f172a] border border-white/10 rounded-2xl p-6 shadow-2xl relative" onClick={(e) => e.stopPropagation()}>
                 <button 
+                    aria-label="Close share dialog"
                     onClick={() => setShowShareModal(false)}
                     className="absolute top-4 right-4 text-slate-400 hover:text-white"
                 >
