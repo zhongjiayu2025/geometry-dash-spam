@@ -1,14 +1,19 @@
 /** @type {import('next').NextConfig} */
 const nextConfig = {
-  output: 'export',
+  output: "export",
   reactStrictMode: true,
   images: {
-    domains: ['images.unsplash.com'],
+    remotePatterns: [
+      {
+        protocol: "https",
+        hostname: "images.unsplash.com",
+      },
+    ],
     unoptimized: true,
   },
   experimental: {
-    optimizePackageImports: ['lucide-react']
-  }
+    optimizePackageImports: ["lucide-react"],
+  },
 };
 
 export default nextConfig;
