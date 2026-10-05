@@ -1071,12 +1071,21 @@ const GameCanvas: React.FC<GameCanvasProps> = memo(({ difficulty, status, onStat
   }, []);
 
   useEffect(() => {
-      if (status === GameStatus.Playing) {
-          startMusic();
-      } else {
+      const syncMusic = () => {
+          if (status === GameStatus.Playing && !document.hidden) {
+              startMusic();
+          } else {
+              stopMusic();
+          }
+      };
+
+      syncMusic();
+      document.addEventListener('visibilitychange', syncMusic);
+
+      return () => {
+          document.removeEventListener('visibilitychange', syncMusic);
           stopMusic();
-      }
-      return () => stopMusic();
+      };
   }, [status, startMusic, stopMusic]);
 
   useEffect(() => {
