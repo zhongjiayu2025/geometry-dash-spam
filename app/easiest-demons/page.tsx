@@ -2,22 +2,37 @@ import type { Metadata } from "next";
 import Link from "next/link";
 
 export const metadata: Metadata = {
-  title: "Easiest Demons in Geometry Dash – Beginner Practice Guide",
+  title: "Easiest Demons in Geometry Dash | 5 Beginner Picks",
   description:
-    "A beginner-focused Geometry Dash Easy Demon guide with common starter picks, skill focus and a practical progression path.",
+    "Looking for the easiest demons in Geometry Dash? Compare five common beginner picks, their practice focus and a practical progression path."
   alternates: { canonical: "/easiest-demons" },
   openGraph: {
-    title: "Easiest Demons in Geometry Dash – Beginner Practice Guide",
+    title: "Easiest Demons in Geometry Dash | 5 Beginner Picks",
     description: "A beginner-focused Geometry Dash Easy Demon guide with common starter picks, skill focus and a practical progression path.",
     url: "https://geometrydashspam.cc/easiest-demons",
     type: "website",
   },
   twitter: {
     card: "summary",
-    title: "Easiest Demons in Geometry Dash – Beginner Practice Guide",
+    title: "Easiest Demons in Geometry Dash | 5 Beginner Picks",
     description: "A beginner-focused Geometry Dash Easy Demon guide with common starter picks, skill focus and a practical progression path.",
   },
 };
+
+const easiestFaqs = [
+  {
+    q: "What are some of the easiest demons in Geometry Dash?",
+    a: "Common beginner picks include The Nightmare, The Lightning Road, Platinum Adventure, Demon Mixed and Speed Racer. This is a practice-oriented shortlist, not an official easiest-to-hardest ranking.",
+  },
+  {
+    q: "Is there an official easiest Demon in Geometry Dash?",
+    a: "No. Demon sub-difficulty and player experience do not create one universal easiest level. Different mechanics can make a level feel easier or harder to different players.",
+  },
+  {
+    q: "What should I practice before my first Demon?",
+    a: "Build repeatable timing first, then isolate the mechanic that causes most failures. Use wave practice or a CPS test only when that specific skill is relevant to the level.",
+  },
+];
 
 const recommendations = [
   { level: "The Nightmare", focus: "Basic timing and confidence", bestFor: "First demon attempts" },
@@ -28,7 +43,19 @@ const recommendations = [
 ];
 
 export default function EasiestDemonsPage() {
+  const faqSchema = {
+    "@context": "https://schema.org",
+    "@type": "FAQPage",
+    mainEntity: easiestFaqs.map((item) => ({
+      "@type": "Question",
+      name: item.q,
+      acceptedAnswer: { "@type": "Answer", text: item.a },
+    })),
+  };
+
   return (
+    <>
+      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(faqSchema) }} />
     <article className="mx-auto max-w-5xl">
       <header className="mx-auto mb-8 max-w-4xl">
         <p className="mb-2 text-xs font-bold uppercase tracking-[0.2em] text-blue-400">Beginner progression</p>
@@ -78,6 +105,19 @@ export default function EasiestDemonsPage() {
         <Link href="/cps-test" className="rounded-lg border border-white/10 px-4 py-2 text-sm font-bold text-white">CPS Test</Link>
         <Link href="/demon-list" className="rounded-lg border border-white/10 px-4 py-2 text-sm font-bold text-white">Demon List</Link>
       </div>
+
+      <section className="mt-10">
+        <h2 className="mb-4 text-2xl font-bold text-white">Easiest Demons FAQ</h2>
+        <div className="grid gap-4 md:grid-cols-3">
+          {easiestFaqs.map((item) => (
+            <div key={item.q} className="rounded-xl border border-white/10 bg-slate-900/30 p-5">
+              <h3 className="mb-2 font-bold text-white">{item.q}</h3>
+              <p className="text-sm leading-6 text-slate-400">{item.a}</p>
+            </div>
+          ))}
+        </div>
+      </section>
     </article>
+    </>
   );
 }
