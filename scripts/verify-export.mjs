@@ -1,4 +1,4 @@
-import { existsSync, readFileSync } from "node:fs";
+import { existsSync, readFileSync, readdirSync } from "node:fs";
 import { join } from "node:path";
 
 const outDir = join(process.cwd(), "out");
@@ -139,7 +139,61 @@ for (const [route, expected] of Object.entries(metadataExpectations)) {
   }
 }
 
-if (missing.length || unexpected.length || metadataFiles.length || metadataErrors.length) {
+const htmlFiles = [];
+
+function collectHtmlFiles(directory) {
+  for (const entry of readdirSync(directory, { withFileTypes: true })) {
+    const path = join(directory, entry.name);
+    if (entry.isDirectory()) {
+      collectHtmlFiles(path);
+    } else if (entry.isFile() && entry.name.endsWith(".html")) {
+      htmlFiles.push(path);
+    }
+  }
+}
+
+function internalTargetExists(href) {
+  const pathOnly = href.split("?")[0].split("#")[0];
+  if (!pathOnly || pathOnly === "/") return existsSync(join(outDir, "index.html"));
+  if (pathOnly.startsWith("/_next/")) return true;
+
+  const normalized = pathOnly.length > 1 ? pathOnly.replace(/\/$/, "") : pathOnly;
+
+  if (/\.[a-z0-9]+$/i.test(normalized)) {
+    return existsSync(join(outDir, normalized.replace(/^\//, "")));
+  }
+
+  return candidates(normalized).some((path) => existsSync(path));
+}
+
+collectHtmlFiles(outDir);
+
+const internalLinkErrors = [];
+const seenBrokenLinks = new Set();
+
+for (const file of htmlFiles) {
+  const html = readFileSync(file, "utf8");
+  const matches = html.matchAll(/href="(\/[^"#]*)"/g);
+
+  for (const match of matches) {
+    const href = match[1];
+    if (!internalTargetExists(href)) {
+      const key = `${file.replace(outDir, "")} -> ${href}`;
+      if (!seenBrokenLinks.has(key)) {
+        seenBrokenLinks.add(key);
+        internalLinkErrors.push(key);
+      }
+    }
+  }
+}
+
+if (
+  missing.length ||
+  unexpected.length ||
+  metadataFiles.length ||
+  metadataErrors.length ||
+  internalLinkErrors.length
+) {
   console.error("Static export verification failed.");
 
   if (missing.length) {
@@ -159,9 +213,17 @@ if (missing.length || unexpected.length || metadataFiles.length || metadataError
     for (const error of metadataErrors) console.error(`- ${error}`);
   }
 
+  if (internalLinkErrors.length) {
+    console.error("Broken internal links:");
+    for (const error of internalLinkErrors.slice(0, 40)) console.error(`- ${error}`);
+    if (internalLinkErrors.length > 40) {
+      console.error(`...and ${internalLinkErrors.length - 40} more`);
+    }
+  }
+
   process.exit(1);
 }
 
 console.log(
-  `Static export verified: ${requiredRoutes.length} core routes, metadata checks, sitemap.xml and robots.txt.`
+  `Static export verified: ${requiredRoutes.length} core routes, metadata checks, ${htmlFiles.length} HTML files with internal-link checks, sitemap.xml and robots.txt.`
 );
