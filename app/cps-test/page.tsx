@@ -15,7 +15,7 @@ export const metadata: Metadata = {
   },
   twitter: {
     card: "summary",
-    title: "Geometry Dash CPS Test – GD Click Speed Test",
+    title: "Geometry Dash CPS Test | GD Spam Click Test",
     description: "Run a Geometry Dash click test or spam click test from 1 to 60 seconds and compare CPS, peak CPS and consistency.",
   },
 };
