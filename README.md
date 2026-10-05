@@ -6,7 +6,7 @@ Source code for **geometrydashspam.cc**, a browser-based Geometry Dash training 
 
 - `/` — Geometry Dash Spam Test
 - `/geometry-dash-wave` — Wave trainer
-- `/cps-test` — Geometry Dash CPS test
+- `/cps-test` — Geometry Dash / GD CPS test with 1–60 second modes and local run history
 - `/demon-list` — Sourced Demon List snapshot
 - `/hardest-level` — Current hardest-level answer page
 - `/easiest-demons` — Beginner demon route
@@ -22,22 +22,26 @@ Secondary mouse, keyboard, reaction and memory tools remain available under **Mo
 - Tailwind CSS
 - Static export (`output: "export"`)
 
-The project is intentionally designed to run without a paid database or application server. Local personal-best data is stored in the browser where appropriate.
+The project is intentionally designed to run without a paid database or application server. CPS history, wave-run history and personal-best data are stored locally in the browser where appropriate.
 
 ## Development
 
-Requirements: Node.js 20+ recommended.
+Requirements: Node.js 22+ recommended.
 
 ```bash
 npm install
 npm run dev
 ```
 
-Production build:
+Production checks:
 
 ```bash
+npm run check
 npm run build
+npm run verify
 ```
+
+The verification step checks core static routes, internal links, sitemap targets, canonical URLs and required metadata before deployment.
 
 ## SEO and content policy
 
