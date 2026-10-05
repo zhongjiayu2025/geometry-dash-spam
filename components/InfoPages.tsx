@@ -14,6 +14,7 @@ import {
   Mail,
   Map,
   Shield,
+  Server,
 } from "lucide-react";
 import { BLOG_POSTS } from "../data/blogContent";
 import Link from "next/link";
