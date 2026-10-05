@@ -1039,6 +1039,8 @@ const GameCanvas: React.FC<GameCanvasProps> = memo(({ difficulty, status, onStat
       
       const container = containerRef.current;
       const handlePointerDown = (e: PointerEvent) => {
+          if (status !== GameStatus.Playing) return;
+
           const target = e.target as HTMLElement;
           if (target.closest('button') || target.closest('a') || target.closest('.share-modal-content')) {
               return;
@@ -1047,6 +1049,7 @@ const GameCanvas: React.FC<GameCanvasProps> = memo(({ difficulty, status, onStat
           handleStart(e);
       };
       const handlePointerUp = (e: PointerEvent) => {
+          if (status !== GameStatus.Playing) return;
           e.preventDefault();
           handleEnd();
       };
@@ -1066,7 +1069,7 @@ const GameCanvas: React.FC<GameCanvasProps> = memo(({ difficulty, status, onStat
               container.removeEventListener('pointercancel', handlePointerUp);
           }
       };
-  }, [handleStart, handleEnd, showShareModal]);
+  }, [handleStart, handleEnd, showShareModal, status]);
 
   useEffect(() => {
       if (status === GameStatus.Playing) {
@@ -1088,7 +1091,7 @@ const GameCanvas: React.FC<GameCanvasProps> = memo(({ difficulty, status, onStat
 
   return (
     <div 
-      className={`relative w-full transition-all duration-500 mx-auto select-none touch-none group bg-slate-950 rounded-lg overflow-hidden
+      className={`relative w-full transition-all duration-500 mx-auto select-none ${status === GameStatus.Playing ? 'touch-none' : 'touch-pan-y'} group bg-slate-950 rounded-lg overflow-hidden
         ${isFullscreen ? 'fixed inset-0 z-50 h-screen max-w-none rounded-none' : 'max-w-5xl h-[330px] sm:h-auto sm:aspect-video md:h-[500px]'}
       `}
       ref={containerRef}
