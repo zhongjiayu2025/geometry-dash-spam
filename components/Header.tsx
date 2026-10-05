@@ -16,7 +16,6 @@ const coreItems = [
 ];
 
 const moreItems = [
-  ["/dashboard", "My Local Stats"],
   ["/geometry-dash-clicker", "Geometry Dash Clicker"],
   ["/spam-challenge-list", "Spam Challenge List"],
   ["/hardest-level", "Hardest Level"],

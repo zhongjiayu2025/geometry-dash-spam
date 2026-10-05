@@ -79,6 +79,8 @@ const noindexUtilityRoutes = [
   "/bpm-tapper",
 ];
 
+const noindexRoutes = ["/dashboard", "/leaderboard", ...noindexUtilityRoutes];
+
 const metadataExpectations = {
   "/": {
     title: "Geometry Dash Spam Test",
@@ -551,7 +553,7 @@ if (existsSync(sitemapPath)) {
     }
   }
 
-  for (const noindexRoute of ["/dashboard", "/leaderboard", ...noindexUtilityRoutes]) {
+  for (const noindexRoute of noindexRoutes) {
     if (sitemapRoutes.includes(noindexRoute)) {
       sitemapPolicyErrors.push(`${noindexRoute} should not be present in sitemap.xml`);
     }
@@ -567,7 +569,7 @@ if (existsSync(sitemapPath)) {
 
 const noindexErrors = [];
 
-for (const route of noindexUtilityRoutes) {
+for (const route of noindexRoutes) {
   const path = exportedPath(route);
   if (!path) {
     noindexErrors.push(`${route}: expected utility route was not exported`);
@@ -604,7 +606,7 @@ for (const route of coreAuthorityRoutes) {
     (match) => match[1]
   );
 
-  for (const noindexRoute of noindexUtilityRoutes) {
+  for (const noindexRoute of noindexRoutes) {
     const leaks = hrefs.some(
       (href) =>
         href === noindexRoute ||
