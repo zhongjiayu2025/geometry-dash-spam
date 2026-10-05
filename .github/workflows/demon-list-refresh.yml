@@ -1,0 +1,42 @@
+name: Refresh Demon List
+
+on:
+  schedule:
+    - cron: "17 4 * * *"
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+concurrency:
+  group: demon-list-refresh
+  cancel-in-progress: false
+
+jobs:
+  refresh:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22
+
+      - name: Refresh Pointercrate snapshot
+        run: node scripts/update-demon-list.mjs
+
+      - name: Commit changes
+        shell: bash
+        run: |
+          if git diff --quiet -- data/demons.ts; then
+            echo "No Demon List changes to commit."
+            exit 0
+          fi
+
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add data/demons.ts
+          git commit -m "data: refresh Pointercrate demon list"
+          git push
