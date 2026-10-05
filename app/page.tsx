@@ -26,14 +26,12 @@ export const metadata: Metadata = {
     title: "Geometry Dash Spam Test – Wave Spam Trainer Online",
     description:
       "Play a Geometry Dash spam test online, practice wave spam and train repeatable input control in a free browser-based simulator.",
-    images: [{ url: "/logo.svg", alt: "Geometry Dash Spam Test" }],
   },
   twitter: {
     card: "summary",
     title: "Geometry Dash Spam Test – Wave Spam Trainer Online",
     description:
       "Play a Geometry Dash spam test online, practice wave spam and train repeatable input control in a free browser-based simulator.",
-    images: ["/logo.svg"],
   },
 };
 
