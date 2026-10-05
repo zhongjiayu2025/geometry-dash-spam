@@ -115,6 +115,31 @@ const metadataExpectations = {
     description: "easiest demons in Geometry Dash",
     canonical: "https://geometrydashspam.cc/easiest-demons",
   },
+  "/about": {
+    title: "About Geometry Dash Spam",
+    description: "Learn what GeometryDashSpam.cc is",
+    canonical: "https://geometrydashspam.cc/about",
+  },
+  "/contact": {
+    title: "Contact Geometry Dash Spam",
+    description: "Contact GeometryDashSpam.cc",
+    canonical: "https://geometrydashspam.cc/contact",
+  },
+  "/privacy": {
+    title: "Privacy Policy",
+    description: "Read how GeometryDashSpam.cc uses local browser storage",
+    canonical: "https://geometrydashspam.cc/privacy",
+  },
+  "/terms": {
+    title: "Terms of Use",
+    description: "Terms for using GeometryDashSpam.cc",
+    canonical: "https://geometrydashspam.cc/terms",
+  },
+  "/sitemap": {
+    title: "Sitemap",
+    description: "Browse Geometry Dash spam, wave, CPS, codes",
+    canonical: "https://geometrydashspam.cc/sitemap",
+  },
 };
 
 function candidates(route) {
