@@ -38,6 +38,8 @@ const JitterClickTest: React.FC = () => {
   
   const timerRef = useRef<number | null>(null);
   const audioCtxRef = useRef<AudioContext | null>(null);
+  const clicksRef = useRef(0);
+  const startTimeRef = useRef(0);
 
   useEffect(() => {
     if (typeof window !== 'undefined') {
@@ -53,8 +55,11 @@ const JitterClickTest: React.FC = () => {
   }, []);
 
   const startTest = () => {
+    const now = performance.now();
     setActive(true);
     setFinished(false);
+    clicksRef.current = 1;
+    startTimeRef.current = now;
     setClicks(1);
     setTimeLeft(10.00);
   };
@@ -71,13 +76,16 @@ const JitterClickTest: React.FC = () => {
       startTest();
       return;
     }
-    setClicks(c => c + 1);
+    clicksRef.current += 1;
+    setClicks(clicksRef.current);
   };
 
   const reset = (e?: React.MouseEvent) => {
     e?.stopPropagation();
     setActive(false);
     setFinished(false);
+    clicksRef.current = 0;
+    startTimeRef.current = 0;
     setClicks(0);
     setTimeLeft(10.00);
     if (timerRef.current) clearInterval(timerRef.current);
@@ -85,34 +93,35 @@ const JitterClickTest: React.FC = () => {
 
   useEffect(() => {
     if (active && !finished) {
-      const startTime = Date.now();
       timerRef.current = window.setInterval(() => {
-        const elapsed = (Date.now() - startTime) / 1000;
+        const elapsed = (performance.now() - startTimeRef.current) / 1000;
         const remaining = Math.max(0, 10 - elapsed);
         setTimeLeft(remaining);
-        
+
         if (remaining <= 0) {
           setFinished(true);
           setActive(false);
           if (timerRef.current) clearInterval(timerRef.current);
-          
+
+          const finalClicks = clicksRef.current;
+          setClicks(finalClicks);
           setBestCps(prev => {
-              const finalCps = clicks / 10;
-              if (prev === null || finalCps > prev) {
-                  localStorage.setItem('jitterClickBest', finalCps.toString());
-                  return finalCps;
-              }
-              return prev;
+            const finalCps = finalClicks / 10;
+            if (prev === null || finalCps > prev) {
+              localStorage.setItem('jitterClickBest', finalCps.toString());
+              return finalCps;
+            }
+            return prev;
           });
         }
-      }, 10);
+      }, 33);
     }
     return () => {
       if (timerRef.current) clearInterval(timerRef.current);
     };
-  }, [active, finished, clicks]);
+  }, [active, finished]);
 
-  const cps = finished ? (clicks / 10).toFixed(2) : (active ? (clicks / (10 - timeLeft)).toFixed(1) : "0.00");
+  const cps = finished ? (clicks / 10).toFixed(2) : (active ? (clicks / Math.max(0.05, 10 - timeLeft)).toFixed(1) : "0.00");
 
   const shareScore = async (e: React.MouseEvent) => {
     e.stopPropagation();
@@ -142,7 +151,7 @@ const JitterClickTest: React.FC = () => {
             Jitter Click Test
          </h1>
          <p className="text-slate-400 max-w-2xl mx-auto">
-            Test your arm vibration speed. Master the art of Jitter Clicking for Geometry Dash and PVP games.
+            Test your arm vibration speed. Practice jitter clicking and compare a repeatable 10-second CPS result.
          </p>
       </div>
 
@@ -251,12 +260,12 @@ const JitterClickTest: React.FC = () => {
             <div className="grid grid-cols-1 md:grid-cols-2 gap-8 text-slate-300 leading-relaxed">
                 <div>
                     <p className="mb-4">
-                        <strong>Jitter clicking</strong> is a technique used by competitive Geometry Dash and Minecraft players to achieve high clicks per second (CPS) by vibrating the muscles in their forearm rather than using the finger muscles alone. Mastering this can boost your speed from 6 CPS to over 14 CPS.
+                        <strong>Jitter clicking</strong> is a technique used by competitive Geometry Dash and Minecraft players to achieve high clicks per second (CPS) by vibrating the muscles in their forearm rather than using the finger muscles alone. The technique can change click speed and control, but results vary by player and setup.
                     </p>
                     <h4 className="text-white font-bold mb-2 mt-6">Step-by-Step Technique:</h4>
                     <ol className="space-y-2 list-decimal pl-5">
                         <li><strong>Grip:</strong> Use a "Claw Grip" or "Fingertip Grip". Your hand should not rest heavily on the mouse.</li>
-                        <li><strong>Tension:</strong> Stiffen your forearm muscles (specifically the brachioradialis) until your hand begins to spasm or vibrate uncontrollably.</li>
+                        <li><strong>Tension:</strong> Use only light, controlled tension. Do not force involuntary shaking or continue if the motion feels painful.</li>
                         <li><strong>Transfer:</strong> Direct this vibration into your index finger tip.</li>
                         <li><strong>Aiming:</strong> This is the hard part. Use your wrist or thumb to stabilize the mouse while your finger vibrates.</li>
                     </ol>
@@ -267,16 +276,16 @@ const JitterClickTest: React.FC = () => {
                             <AlertTriangle className="w-5 h-5" /> Safety Warning
                         </h3>
                         <p className="text-sm">
-                            Jitter clicking places significant stress on your forearm and wrist tendons. Do not practice for more than 10-15 minutes at a time. If you feel pain, stop immediately to prevent RSI (Repetitive Strain Injury) or Carpal Tunnel Syndrome.
+                            Jitter clicking places significant stress on your forearm and wrist tendons. Repeated high-effort clicking can cause discomfort. Keep practice brief, take breaks, and stop if you feel pain or numbness.
                         </p>
                     </div>
                     
                     <div className="bg-slate-800/50 p-6 rounded-xl border border-white/5">
                         <h4 className="text-white font-bold mb-2">Pros vs Cons</h4>
                         <ul className="text-sm space-y-2">
-                            <li className="flex justify-between"><span className="text-green-400">High CPS (12-15)</span> <span className="text-red-400">Hard to Aim</span></li>
+                            <li className="flex justify-between"><span className="text-green-400">Can raise click rate</span> <span className="text-red-400">Hard to Aim</span></li>
                             <li className="flex justify-between"><span className="text-green-400">No Special Mouse Needed</span> <span className="text-red-400">High Fatigue</span></li>
-                            <li className="flex justify-between"><span className="text-green-400">Allowed on Most Servers</span> <span className="text-red-400">Risk of RSI</span></li>
+                            <li className="flex justify-between"><span className="text-green-400">No special hardware required</span> <span className="text-red-400">Can be tiring</span></li>
                         </ul>
                     </div>
                 </div>
