@@ -22,6 +22,7 @@ export async function generateMetadata({ params }: { params: Promise<{ slug: str
         openGraph: {
             title: post.title,
             description: post.excerpt,
+            url: `https://geometrydashspam.cc/blog/${post.slug}`,
             type: 'article',
             publishedTime: new Date(post.date).toISOString(),
             modifiedTime: new Date(post.updated ?? post.date).toISOString(),
