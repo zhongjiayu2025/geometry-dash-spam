@@ -169,6 +169,7 @@ const WaveSimulator: React.FC<WaveSimulatorProps> = ({ variant = 'spam' }) => {
                 key={preset.id}
                 type="button"
                 onClick={() => applyWavePreset(preset.id)}
+                aria-pressed={wavePreset === preset.id}
                 disabled={gameStatus === GameStatus.Playing}
                 className={
                   "min-w-[156px] shrink-0 rounded-xl border p-3 text-left transition-colors disabled:opacity-40 md:min-w-0 " +
@@ -195,6 +196,7 @@ const WaveSimulator: React.FC<WaveSimulatorProps> = ({ variant = 'spam' }) => {
         {/* Endless Toggle */}
         <button
             onClick={toggleEndless}
+            aria-pressed={isEndless}
             disabled={gameStatus === GameStatus.Playing}
             className={`
                 group flex items-center gap-2 px-4 py-2 rounded-full border transition-all duration-300
@@ -220,6 +222,7 @@ const WaveSimulator: React.FC<WaveSimulatorProps> = ({ variant = 'spam' }) => {
         {/* Mini Wave Toggle */}
         <button
             onClick={toggleMini}
+            aria-pressed={isMini}
             disabled={gameStatus === GameStatus.Playing}
             className={`
                 group flex items-center gap-2 px-4 py-2 rounded-full border transition-all duration-300
