@@ -6,6 +6,17 @@ export const metadata: Metadata = {
   description:
     "Measure browser-observed key press and release timing. This is not a laboratory keyboard latency measurement.",
   alternates: { canonical: "/keyboard-latency" },
+  openGraph: {
+    title: "Keyboard Key Timing Test | Key Press Duration Utility",
+    description: "Measure browser-observed key press and release timing. This is not a laboratory keyboard latency measurement.",
+    url: "https://geometrydashspam.cc/keyboard-latency",
+    type: "website",
+  },
+  twitter: {
+    card: "summary",
+    title: "Keyboard Key Timing Test | Key Press Duration Utility",
+    description: "Measure browser-observed key press and release timing. This is not a laboratory keyboard latency measurement.",
+  },
 };
 
 export default function KeyboardLatencyPage() {
