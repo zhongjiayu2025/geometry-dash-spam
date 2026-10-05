@@ -4,7 +4,11 @@ import { join } from "node:path";
 const outDir = join(process.cwd(), "out");
 const demonSource = readFileSync(join(process.cwd(), "data", "demons.ts"), "utf8");
 const vaultSource = readFileSync(join(process.cwd(), "data", "vaultCodes.ts"), "utf8");
+const relatedSearchData = JSON.parse(
+  readFileSync(join(process.cwd(), "data", "relatedSearch.json"), "utf8")
+);
 const demonDate = demonSource.match(/DEMON_VERIFIED_AT = "([^"]+)"/)?.[1];
+const vaultDate = vaultSource.match(/VAULT_CODES_CHECKED_AT = "([^"]+)"/)?.[1];
 const currentDemon = demonSource.match(/\{ rank: 1, level: "((?:\\.|[^"])*)"/)?.[1];
 
 const wraithBlock = vaultSource.match(
@@ -23,8 +27,8 @@ const goldKeyWraithCodes = wraithEntries
   .filter((item) => item.reward.includes("Gold Key"))
   .map((item) => item.code);
 
-if (!demonDate || !currentDemon) {
-  throw new Error("Could not read the current #1 Demon List entry for export verification.");
+if (!demonDate || !currentDemon || !vaultDate) {
+  throw new Error("Could not read dated Demon List or Vault data for export verification.");
 }
 
 const currentDemonName = JSON.parse(`"${currentDemon}"`);
@@ -339,9 +343,43 @@ const snippetQualityErrors = [];
 
 if (existsSync(sitemapPath)) {
   const sitemapXml = readFileSync(sitemapPath, "utf8");
-  const sitemapRoutes = [
-    ...sitemapXml.matchAll(/<loc>https:\/\/geometrydashspam\.cc([^<]*)<\/loc>/g),
-  ].map((match) => match[1] || "/");
+  const sitemapRecords = [
+    ...sitemapXml.matchAll(/<url>([\s\S]*?)<\/url>/g),
+  ].map((match) => {
+    const block = match[1];
+    const loc = block.match(/<loc>https:\/\/geometrydashspam\.cc([^<]*)<\/loc>/)?.[1] || "/";
+    const lastModified = block.match(/<lastmod>([^<]+)<\/lastmod>/)?.[1] ?? null;
+    return { route: loc, lastModified };
+  });
+
+  const sitemapRoutes = sitemapRecords.map((record) => record.route);
+
+  const expectedFreshness = new Map([
+    ["/demon-list", demonDate],
+    ["/demon-list/wave-demons", demonDate],
+    ["/demon-list/spam-demons", demonDate],
+    ["/hardest-level", demonDate],
+    ["/geometry-dash-codes", vaultDate],
+    ["/geometry-dash-vault-of-secrets-codes", vaultDate],
+    ["/how-to-get-gold-keys-geometry-dash", vaultDate],
+    ["/spam-challenge-list", relatedSearchData.spamChallengeList.checkedAt],
+    ["/dashmetry", relatedSearchData.dashmetry.checkedAt],
+    ["/geometry-dash-breeze", relatedSearchData.breeze.checkedAt],
+  ]);
+
+  for (const [route, expectedDate] of expectedFreshness) {
+    const record = sitemapRecords.find((item) => item.route === route);
+    if (!record) {
+      sitemapPolicyErrors.push(`${route}: freshness-tracked route missing from sitemap.xml`);
+      continue;
+    }
+
+    if (!record.lastModified?.startsWith(expectedDate)) {
+      sitemapPolicyErrors.push(
+        `${route}: sitemap lastmod is "${record.lastModified ?? "missing"}", expected date ${expectedDate}`
+      );
+    }
+  }
 
   for (const route of sitemapRoutes) {
     if (!internalTargetExists(route)) {
@@ -640,5 +678,5 @@ if (
 }
 
 console.log(
-  `Static export verified: ${requiredRoutes.length} core routes, metadata checks, search-snippet length checks, noindex utility policy, core-page authority leakage checks, HTML sitemap priority-link checks, Wraith data-to-page checks, ${htmlFiles.length} HTML files with internal-link checks, sitemap URL/canonical/title/description/OpenGraph/indexability integrity, sitemap.xml and robots.txt.`
+  `Static export verified: ${requiredRoutes.length} core routes, metadata checks, search-snippet length checks, sitemap freshness checks, noindex utility policy, core-page authority leakage checks, HTML sitemap priority-link checks, Wraith data-to-page checks, ${htmlFiles.length} HTML files with internal-link checks, sitemap URL/canonical/title/description/OpenGraph/indexability integrity, sitemap.xml and robots.txt.`
 );
