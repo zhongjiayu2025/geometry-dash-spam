@@ -86,6 +86,8 @@ const GameCanvas: React.FC<GameCanvasProps> = memo(({ difficulty, status, onStat
 
   const [highScore, setHighScore] = useState<number>(0);
   const [isNewBest, setIsNewBest] = useState<boolean>(false);
+  const [displayTime, setDisplayTime] = useState<number>(0);
+  const lastHudUpdateRef = useRef<number>(0);
   
   // Share Modal State
   const [showShareModal, setShowShareModal] = useState<boolean>(false);
@@ -179,6 +181,7 @@ const GameCanvas: React.FC<GameCanvasProps> = memo(({ difficulty, status, onStat
     lastBeatTime: 0, // Track when the kick hit
     frameCount: 0,
     clickIntervals: [] as number[],
+    clickTimes: [] as number[],
     clickCount: 0,
     runTime: 0,
     finishLineX: 0,
@@ -503,8 +506,14 @@ const GameCanvas: React.FC<GameCanvasProps> = memo(({ difficulty, status, onStat
     const intervals = gameState.current.clickIntervals;
     const clickCount = gameState.current.clickCount;
     const averageCps = clickCount / seconds;
-    const fastestInterval = intervals.length ? Math.min(...intervals) : 0;
-    const peakCps = fastestInterval > 0 ? 1000 / fastestInterval : averageCps;
+    const clickTimes = gameState.current.clickTimes;
+    let peakCps = 0;
+    let left = 0;
+    for (let right = 0; right < clickTimes.length; right++) {
+      while (clickTimes[right] - clickTimes[left] > 1000) left++;
+      peakCps = Math.max(peakCps, right - left + 1);
+    }
+    if (clickTimes.length < 2) peakCps = averageCps;
     const meanInterval = intervals.length
       ? intervals.reduce((a, b) => a + b, 0) / intervals.length
       : 0;
@@ -570,6 +579,7 @@ const GameCanvas: React.FC<GameCanvasProps> = memo(({ difficulty, status, onStat
       lastBeatTime: 0,
       frameCount: 0,
       clickIntervals: [],
+      clickTimes: [],
       clickCount: 0,
       runTime: 0,
       finishLineX: totalDistance + 600,
@@ -579,6 +589,8 @@ const GameCanvas: React.FC<GameCanvasProps> = memo(({ difficulty, status, onStat
     initStars(width, height);
     setConsistency('100%');
     setIsNewBest(false);
+    setDisplayTime(0);
+    lastHudUpdateRef.current = 0;
   }, [difficulty.color, difficulty.speed, difficulty.id, isEndless, isMini]);
 
   // --- GAME LOOP ---
@@ -591,8 +603,13 @@ const GameCanvas: React.FC<GameCanvasProps> = memo(({ difficulty, status, onStat
     gameState.current.beatScale = 1.0 + (gameState.current.beatScale - 1.0) * 0.9;
 
     if (status === GameStatus.Playing) {
-        if (gameState.current.startTime === 0) gameState.current.startTime = Date.now();
-        gameState.current.runTime = Date.now() - gameState.current.startTime;
+        const now = performance.now();
+        if (gameState.current.startTime === 0) gameState.current.startTime = now;
+        gameState.current.runTime = now - gameState.current.startTime;
+        if (now - lastHudUpdateRef.current >= 50) {
+            setDisplayTime(gameState.current.runTime / 1000);
+            lastHudUpdateRef.current = now;
+        }
 
         const speedY = isMini ? WAVE_SPEED_Y * 1.5 : WAVE_SPEED_Y;
         gameState.current.velocityY = gameState.current.isHolding ? -speedY : speedY;
@@ -919,12 +936,14 @@ const GameCanvas: React.FC<GameCanvasProps> = memo(({ difficulty, status, onStat
      
      gameState.current.isHolding = true;
      
-     const now = Date.now();
+     const now = performance.now();
      if (gameState.current.lastClickTime > 0) {
          gameState.current.clickIntervals.push(now - gameState.current.lastClickTime);
-         if (gameState.current.clickIntervals.length > 50) gameState.current.clickIntervals.shift();
+         if (gameState.current.clickIntervals.length > 200) gameState.current.clickIntervals.shift();
      }
      gameState.current.lastClickTime = now;
+     gameState.current.clickTimes.push(now);
+     if (gameState.current.clickTimes.length > 500) gameState.current.clickTimes.shift();
      gameState.current.clickCount += 1;
 
      playSound('click');
@@ -1031,8 +1050,8 @@ const GameCanvas: React.FC<GameCanvasProps> = memo(({ difficulty, status, onStat
       <div className="absolute top-4 left-4 right-4 flex justify-between items-start pointer-events-none">
           <div className="flex flex-col gap-1">
               <div className="text-4xl font-display font-black text-white italic drop-shadow-lg tabular-nums">
-                  {status === GameStatus.Playing 
-                    ? ((Date.now() - gameState.current.startTime) / 1000).toFixed(2)
+                  {status === GameStatus.Playing
+                    ? displayTime.toFixed(2)
                     : (gameState.current.runTime / 1000).toFixed(2)
                   }s
               </div>
