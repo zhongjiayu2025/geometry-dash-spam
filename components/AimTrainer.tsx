@@ -43,8 +43,9 @@ export default function AimTrainer() {
     
     const clickTimes = useRef<number[]>([]);
     const lastClickTime = useRef<number>(0);
-    const timerRef = useRef<NodeJS.Timeout | null>(null);
+    const timerRef = useRef<number | null>(null);
     const audioCtxRef = useRef<AudioContext | null>(null);
+    const startTimeRef = useRef(0);
 
     useEffect(() => {
         if (typeof window !== 'undefined') {
@@ -76,18 +77,20 @@ export default function AimTrainer() {
         setMisses(0);
         setTimeLeft(30);
         clickTimes.current = [];
-        lastClickTime.current = Date.now();
+        const now = performance.now();
+        lastClickTime.current = now;
+        startTimeRef.current = now;
         generateTarget();
 
-        timerRef.current = setInterval(() => {
-            setTimeLeft((prev) => {
-                if (prev <= 1) {
-                    endGame();
-                    return 0;
-                }
-                return prev - 1;
-            });
-        }, 1000);
+        timerRef.current = window.setInterval(() => {
+            const elapsed = performance.now() - startTimeRef.current;
+            const remaining = Math.max(0, (30000 - elapsed) / 1000);
+            setTimeLeft(remaining);
+
+            if (elapsed >= 30000) {
+                endGame();
+            }
+        }, 33);
     };
 
     const endGame = () => {
@@ -107,7 +110,7 @@ export default function AimTrainer() {
         });
     };
 
-    const handleTargetClick = (e: React.MouseEvent) => {
+    const handleTargetClick = (e: React.PointerEvent<HTMLButtonElement>) => {
         e.stopPropagation();
         if (!isActive || isFinished) return;
         
@@ -116,7 +119,7 @@ export default function AimTrainer() {
             playSound(audioCtxRef.current, 'hit');
         }
         
-        const now = Date.now();
+        const now = performance.now();
         const reactionTime = now - lastClickTime.current;
         clickTimes.current.push(reactionTime);
         lastClickTime.current = now;
@@ -125,7 +128,7 @@ export default function AimTrainer() {
         generateTarget();
     };
 
-    const handleBackgroundClick = (e: React.MouseEvent) => {
+    const handleBackgroundClick = (e: React.PointerEvent<HTMLDivElement>) => {
         if (!isActive || isFinished) return;
         
         if (soundEnabled && audioCtxRef.current) {
@@ -237,17 +240,19 @@ export default function AimTrainer() {
                     ) : isActive ? (
                         <div 
                             className="w-full h-80 bg-slate-900/40 border border-white/5 rounded-3xl relative overflow-hidden cursor-crosshair"
-                            onClick={handleBackgroundClick}
+                            onPointerDown={handleBackgroundClick}
                         >
-                            <div 
+                            <button
+                                type="button"
+                                aria-label="Aim target"
                                 className="absolute w-12 h-12 bg-cyan-500 rounded-full shadow-[0_0_15px_rgba(6,182,212,0.6)] cursor-pointer flex items-center justify-center -translate-x-1/2 -translate-y-1/2"
                                 style={{ left: `${targetPos.x}%`, top: `${targetPos.y}%` }}
-                                onMouseDown={handleTargetClick}
+                                onPointerDown={handleTargetClick}
                             >
                                 <div className="w-8 h-8 rounded-full border-2 border-white/30 flex items-center justify-center">
                                     <div className="w-2 h-2 rounded-full bg-white/80"></div>
                                 </div>
-                            </div>
+                            </button>
                         </div>
                     ) : (
                         <div className="w-full animate-in zoom-in-95 duration-500">
@@ -268,7 +273,7 @@ export default function AimTrainer() {
                                         <div className="text-3xl font-bold text-white">{accuracy}%</div>
                                     </div>
                                     <div className="bg-slate-900/50 p-4 rounded-xl border border-white/5">
-                                        <div className="text-sm text-slate-400 uppercase tracking-wider mb-1">Avg Time</div>
+                                        <div className="text-sm text-slate-400 uppercase tracking-wider mb-1">Avg Target Interval</div>
                                         <div className="text-3xl font-bold text-yellow-400">{averageTime}ms</div>
                                     </div>
                                 </div>
