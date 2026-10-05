@@ -84,13 +84,13 @@ export default function KeyboardLatencyTest() {
                     <div className="flex-1 flex flex-col items-center">
                         <div className="w-full mb-8 grid grid-cols-2 gap-4 bg-slate-900/50 p-6 rounded-2xl border border-white/5 text-center">
                             <div>
-                                <div className="text-sm text-slate-400 font-bold uppercase tracking-wider mb-2">Shortest Tap</div>
+                                <div className="text-sm text-slate-400 font-bold uppercase tracking-wider mb-2">Shortest Hold</div>
                                 <div className="text-4xl md:text-5xl font-display font-bold text-yellow-400 drop-shadow-[0_0_15px_rgba(250,204,21,0.3)]">
                                     {shortestPress !== null ? `${shortestPress}ms` : '--'}
                                 </div>
                             </div>
                             <div className="border-l border-white/10">
-                                <div className="text-sm text-slate-400 font-bold uppercase tracking-wider mb-2">Average Tap</div>
+                                <div className="text-sm text-slate-400 font-bold uppercase tracking-wider mb-2">Average Hold</div>
                                 <div className="text-4xl md:text-5xl font-display font-bold text-white">
                                     {averagePress !== null ? `${averagePress}ms` : '--'}
                                 </div>
@@ -101,7 +101,7 @@ export default function KeyboardLatencyTest() {
                             <Keyboard className={`w-20 h-20 transition-colors ${activeKey ? 'text-yellow-400' : 'text-slate-600'}`} />
                             <div className="text-center">
                                 <h3 className={`text-2xl font-display font-bold transition-colors ${activeKey ? 'text-white' : 'text-slate-400'}`}>
-                                    {activeKey ? `Key: ${activeKey.toUpperCase()}` : 'Tap Any Key Fast'}
+                                    {activeKey ? `Key: ${activeKey.toUpperCase()}` : 'Tap and Release Any Key'}
                                 </h3>
                                 {!activeKey && (
                                     <p className="max-w-xs mx-auto text-sm text-slate-500 mt-2">
