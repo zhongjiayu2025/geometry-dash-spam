@@ -253,7 +253,7 @@ const unexpected = removedGhostRoutes.filter((route) =>
   candidates(route).some((path) => existsSync(path))
 );
 
-const metadataFiles = ["sitemap.xml", "robots.txt", "manifest.webmanifest", "ads.txt", "_redirects"].filter(
+const metadataFiles = ["sitemap.xml", "robots.txt", "manifest.webmanifest", "ads.txt", "llms.txt", "_redirects"].filter(
   (file) => !existsSync(join(outDir, file))
 );
 
@@ -342,6 +342,37 @@ if (existsSync(manifestPath)) {
     infrastructureErrors.push(
       `manifest start_url is "${manifest.start_url ?? "missing"}", expected "/"`
     );
+  }
+}
+
+const llmsPath = join(outDir, "llms.txt");
+if (existsSync(llmsPath)) {
+  const llmsTxt = readFileSync(llmsPath, "utf8");
+  const requiredLlmsLinks = [
+    "https://geometrydashspam.cc/",
+    "https://geometrydashspam.cc/geometry-dash-wave",
+    "https://geometrydashspam.cc/cps-test",
+    "https://geometrydashspam.cc/demon-list",
+    "https://geometrydashspam.cc/spam-challenge-list",
+    "https://geometrydashspam.cc/geometry-dash-codes",
+    "https://geometrydashspam.cc/about",
+    "https://geometrydashspam.cc/contact",
+  ];
+
+  if (!llmsTxt.startsWith("# Geometry Dash Spam")) {
+    infrastructureErrors.push("llms.txt must start with the site H1");
+  }
+
+  for (const url of requiredLlmsLinks) {
+    if (!llmsTxt.includes(url)) {
+      infrastructureErrors.push(`llms.txt missing core URL: ${url}`);
+    }
+  }
+
+  for (const route of noindexRoutes) {
+    if (llmsTxt.includes(`https://geometrydashspam.cc${route}`)) {
+      infrastructureErrors.push(`llms.txt should not promote noindex route: ${route}`);
+    }
   }
 }
 

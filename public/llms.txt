@@ -1,0 +1,38 @@
+# Geometry Dash Spam
+
+> GeometryDashSpam.cc is a fan-made browser toolkit for Geometry Dash spam practice, wave control, CPS measurement, source-checked Demon List references, codes, and related guides. It is not affiliated with RobTop Games.
+
+Browser measurements on this site are training diagnostics, not laboratory hardware measurements. The wave trainer uses its own practice-oriented movement model and is not presented as an exact reproduction of official Geometry Dash physics. Time-sensitive rankings, codes, and related-game claims show a checked date and link to the source used for verification.
+
+## Core tools
+
+- [Geometry Dash Spam Test](https://geometrydashspam.cc/): Playable wave-spam practice with repeatable input-control metrics.
+- [Geometry Dash Wave Trainer](https://geometrydashspam.cc/geometry-dash-wave): Normal, mini, precision, spam, and endless wave practice presets.
+- [Geometry Dash CPS Test](https://geometrydashspam.cc/cps-test): 1, 3, 5, 10, 30, and 60 second click-speed tests with browser-side timing diagnostics.
+
+## Source-checked Geometry Dash references
+
+- [Geometry Dash Demon List](https://geometrydashspam.cc/demon-list): Dated Pointercrate top-50 snapshot with a live-source link.
+- [Spam Challenge List guide](https://geometrydashspam.cc/spam-challenge-list): Entry point to the maintained community Spam Challenge List and an explanation of how it differs from the Demon List.
+- [Spam Demon references](https://geometrydashspam.cc/demon-list/spam-demons): Spam-heavy Demon practice references kept separate from SCL rankings.
+- [Wave Demon references](https://geometrydashspam.cc/demon-list/wave-demons): Wave-focused Demon practice references.
+- [Hardest Geometry Dash level](https://geometrydashspam.cc/hardest-level): Current #1 answer tied to the dated Demon List source.
+- [Geometry Dash codes](https://geometrydashspam.cc/geometry-dash-codes): Vault, Vault of Secrets, Chamber of Time, and Wraith code reference with source-checked freshness.
+- [Vault of Secrets codes](https://geometrydashspam.cc/geometry-dash-vault-of-secrets-codes): Dedicated Vault of Secrets code and unlock guide.
+- [How to get Diamonds](https://geometrydashspam.cc/how-to-get-diamonds-geometry-dash): Progression guide for Diamond sources.
+- [How to get Gold Keys](https://geometrydashspam.cc/how-to-get-gold-keys-geometry-dash): Source-checked Gold Key methods and current Wraith-code references.
+- [Geometry Dash difficulty faces](https://geometrydashspam.cc/geometry-dash-difficulty-faces): Difficulty ratings and Demon sub-difficulties.
+
+## Related games
+
+- [Geometry Dash Breeze](https://geometrydashspam.cc/geometry-dash-breeze): Fan-made spinoff guide with maintained repository and release sources.
+- [Dashmetry / Challenge Rush](https://geometrydashspam.cc/dashmetry): Current rebrand and playable-game source for the legacy Dashmetry query.
+
+## Guides and site policy
+
+- [Geometry Dash Spam guides](https://geometrydashspam.cc/blog): Practical spam, wave, CPS, input-method, and Demon-practice articles.
+- [About and measurement methodology](https://geometrydashspam.cc/about): How browser metrics are calculated and how claims are handled.
+- [Contact and corrections](https://geometrydashspam.cc/contact): Bug reports, ranking corrections, source updates, and feature suggestions.
+- [Privacy policy](https://geometrydashspam.cc/privacy): Local browser data and advertising disclosure.
+- [Human-readable sitemap](https://geometrydashspam.cc/sitemap): Curated directory of indexable tools and guides.
+- [XML sitemap](https://geometrydashspam.cc/sitemap.xml): Search-engine sitemap for indexable pages.

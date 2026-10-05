@@ -395,6 +395,13 @@ const CpsTest: React.FC = () => {
                )}
 
                {finished && (
+                 <p className="mb-5 max-w-md text-xs leading-5 text-slate-500 relative z-10">
+                   Consistency is a site-defined browser diagnostic based on variation between registered click intervals.
+                   It is not an official Geometry Dash metric or a laboratory hardware measurement.
+                 </p>
+               )}
+
+               {finished && (
                  <div className="animate-in fade-in duration-300 relative z-10 flex flex-wrap justify-center gap-2 sm:gap-3">
                    <button 
                     onClick={reset}
