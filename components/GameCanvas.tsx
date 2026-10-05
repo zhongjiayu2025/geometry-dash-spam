@@ -2,6 +2,7 @@
 "use client";
 
 import React, { useRef, useEffect, useCallback, useState, memo } from 'react';
+import Link from 'next/link';
 import { DifficultyConfig, GameStatus } from '../types';
 import { WIN_TIME_MS, WAVE_SPEED_Y, GRAVITY } from '../constants';
 import { Trophy, AlertTriangle, Crown, Volume2, VolumeX, Maximize, Minimize, Activity, ZapOff, Share2, Check, RotateCcw, Menu, Zap, X, Copy } from 'lucide-react';
@@ -1291,6 +1292,12 @@ const GameCanvas: React.FC<GameCanvasProps> = memo(({ difficulty, status, onStat
                     >
                         <RotateCcw className="w-4 h-4" /> RETRY
                     </button>
+                    <Link
+                        href="/cps-test"
+                        className="px-4 py-2.5 sm:px-5 sm:py-3 bg-slate-800 hover:bg-slate-700 text-white font-bold rounded transition-colors border border-white/10"
+                    >
+                        CHECK CPS
+                    </Link>
                     <button 
                         onClick={handleShareClick}
                         className="px-4 py-2.5 sm:px-6 sm:py-3 bg-blue-600 hover:bg-blue-500 text-white font-bold rounded transition-colors flex items-center gap-2 shadow-lg"
@@ -1351,6 +1358,12 @@ const GameCanvas: React.FC<GameCanvasProps> = memo(({ difficulty, status, onStat
                     >
                         <RotateCcw className="w-4 h-4" /> REPLAY
                     </button>
+                    <Link
+                        href="/cps-test"
+                        className="px-4 py-2.5 sm:px-5 sm:py-3 bg-slate-800 hover:bg-slate-700 text-white font-bold rounded transition-colors border border-white/10"
+                    >
+                        CHECK CPS
+                    </Link>
                     <button 
                         onClick={handleShareClick}
                         className="px-4 py-2.5 sm:px-6 sm:py-3 bg-blue-600 hover:bg-blue-500 text-white font-bold rounded transition-colors flex items-center gap-2 shadow-lg"
