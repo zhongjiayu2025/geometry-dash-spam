@@ -7,8 +7,19 @@ import Link from 'next/link';
 import { Trophy, MousePointer2, Target, Keyboard, Timer, Activity, RotateCcw, ArrowRight, BrainCircuit } from 'lucide-react';
 
 
+interface WaveRun {
+    time: number;
+    averageCps: number;
+    peakCps: number;
+    timingSd: number;
+    clicks: number;
+    result: "won" | "lost";
+    timestamp: number;
+}
+
 interface UserStats {
     cpsTests: Record<string, number>;
+    waveRuns: WaveRun[];
     jitterCps: number | null;
     butterflyCps: number | null;
     rightClickCps: number | null;
@@ -25,6 +36,7 @@ interface UserStats {
 export default function PersonalStats() {
     const [stats, setStats] = useState<UserStats>({
         cpsTests: {},
+        waveRuns: [],
         jitterCps: null,
         butterflyCps: null,
         rightClickCps: null,
@@ -57,8 +69,19 @@ export default function PersonalStats() {
                 }
             };
 
+            const waveRuns: WaveRun[] = [];
+            for (let index = 0; index < localStorage.length; index += 1) {
+                const key = localStorage.key(index);
+                if (!key?.startsWith('gd_spam_runs_')) continue;
+
+                const stored = loadObj(key);
+                if (Array.isArray(stored)) waveRuns.push(...stored);
+            }
+            waveRuns.sort((a, b) => (b.timestamp || 0) - (a.timestamp || 0));
+
             setStats({
                 cpsTests: loadObj('cpsBestScores'),
+                waveRuns,
                 jitterCps: loadStat('jitterClickBest'),
                 butterflyCps: loadStat('butterflyClickBest'),
                 rightClickCps: loadStat('rightClickBest'),
@@ -77,6 +100,7 @@ export default function PersonalStats() {
     const clearStats = () => {
         if (confirm("Are you sure you want to clear all your local stats? This cannot be undone.")) {
             localStorage.removeItem('cpsBestScores');
+            localStorage.removeItem('cpsRunHistory');
             localStorage.removeItem('jitterClickBest');
             localStorage.removeItem('butterflyClickBest');
             localStorage.removeItem('rightClickBest');
@@ -88,9 +112,19 @@ export default function PersonalStats() {
             localStorage.removeItem('typingTestBestWpm');
             localStorage.removeItem('chimpBestScore');
             localStorage.removeItem('visualMemoryBest');
+
+            const dynamicKeys: string[] = [];
+            for (let index = 0; index < localStorage.length; index += 1) {
+                const key = localStorage.key(index);
+                if (key?.startsWith('gd_spam_runs_') || key?.startsWith('gd_spam_best_')) {
+                    dynamicKeys.push(key);
+                }
+            }
+            dynamicKeys.forEach((key) => localStorage.removeItem(key));
             
             setStats({
                 cpsTests: {},
+                waveRuns: [],
                 jitterCps: null,
                 butterflyCps: null,
                 rightClickCps: null,
@@ -107,6 +141,17 @@ export default function PersonalStats() {
     };
 
     if (!mounted) return null;
+
+    const recentWaveRuns = stats.waveRuns.slice(0, 10);
+    const waveBest = stats.waveRuns.length
+        ? Math.max(...stats.waveRuns.map((run) => run.time))
+        : null;
+    const waveAverageTime = recentWaveRuns.length
+        ? recentWaveRuns.reduce((sum, run) => sum + run.time, 0) / recentWaveRuns.length
+        : null;
+    const waveAverageCps = recentWaveRuns.length
+        ? recentWaveRuns.reduce((sum, run) => sum + run.averageCps, 0) / recentWaveRuns.length
+        : null;
 
     const StatCard = ({ title, value, unit, icon: Icon, href, emptyText }: any) => {
         const hasValue = value !== null && value !== undefined && !isNaN(value);
@@ -163,6 +208,45 @@ export default function PersonalStats() {
 
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mb-16">
                 
+                <div className="lg:col-span-3 rounded-3xl border border-blue-500/20 bg-blue-950/15 p-8">
+                    <div className="mb-6 flex flex-col gap-2 sm:flex-row sm:items-end sm:justify-between">
+                        <div>
+                            <div className="text-xs font-bold uppercase tracking-[0.16em] text-blue-400">Wave training history</div>
+                            <h3 className="mt-1 text-xl font-bold text-white">Geometry Dash Spam Runs</h3>
+                        </div>
+                        <Link href="/" className="text-sm font-bold text-blue-400 hover:text-blue-300">
+                            Open Spam Test <ArrowRight className="ml-1 inline h-4 w-4" />
+                        </Link>
+                    </div>
+
+                    {stats.waveRuns.length ? (
+                        <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
+                            <div className="rounded-xl border border-white/5 bg-black/30 p-4">
+                                <div className="text-xs uppercase tracking-wider text-slate-500">Saved Runs</div>
+                                <div className="mt-1 text-3xl font-display font-bold text-white">{stats.waveRuns.length}</div>
+                            </div>
+                            <div className="rounded-xl border border-white/5 bg-black/30 p-4">
+                                <div className="text-xs uppercase tracking-wider text-slate-500">Best Survival</div>
+                                <div className="mt-1 text-3xl font-display font-bold text-white">{waveBest?.toFixed(2)}s</div>
+                            </div>
+                            <div className="rounded-xl border border-white/5 bg-black/30 p-4">
+                                <div className="text-xs uppercase tracking-wider text-slate-500">Recent Avg Survival</div>
+                                <div className="mt-1 text-3xl font-display font-bold text-white">{waveAverageTime?.toFixed(2)}s</div>
+                                <div className="mt-1 text-xs text-slate-500">last {recentWaveRuns.length} saved runs</div>
+                            </div>
+                            <div className="rounded-xl border border-white/5 bg-black/30 p-4">
+                                <div className="text-xs uppercase tracking-wider text-slate-500">Recent Avg CPS</div>
+                                <div className="mt-1 text-3xl font-display font-bold text-white">{waveAverageCps?.toFixed(2)}</div>
+                                <div className="mt-1 text-xs text-slate-500">browser-local only</div>
+                            </div>
+                        </div>
+                    ) : (
+                        <p className="text-sm leading-6 text-slate-400">
+                            No saved spam runs yet. Complete or crash a run to start a browser-only training history.
+                        </p>
+                    )}
+                </div>
+
                 {/* Regular CPS Stats */}
                 <div className="lg:col-span-3 bg-gradient-to-r from-blue-900/20 to-purple-900/20 border border-white/10 rounded-3xl p-8 mb-2">
                     <h3 className="text-lg font-bold text-white mb-6 flex items-center gap-2">
