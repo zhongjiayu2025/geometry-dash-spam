@@ -962,26 +962,32 @@ const GameCanvas: React.FC<GameCanvasProps> = memo(({ difficulty, status, onStat
       window.addEventListener('keyup', handleKeyUp);
       
       const container = containerRef.current;
+      const handlePointerDown = (e: PointerEvent) => {
+          const target = e.target as HTMLElement;
+          if (target.closest('button') || target.closest('a') || target.closest('.share-modal-content')) {
+              return;
+          }
+          e.preventDefault();
+          handleStart(e);
+      };
+      const handlePointerUp = (e: PointerEvent) => {
+          e.preventDefault();
+          handleEnd();
+      };
+
       if (container) {
-          container.addEventListener('mousedown', handleStart as any);
-          container.addEventListener('mouseup', handleEnd);
-          container.addEventListener('touchstart', (e) => { 
-              const target = e.target as HTMLElement;
-              if (target.closest('button') || target.closest('a') || target.closest('.share-modal-content')) {
-                  return;
-              }
-              e.preventDefault(); 
-              handleStart(e); 
-          }, { passive: false });
-          container.addEventListener('touchend', (e) => { e.preventDefault(); handleEnd(); });
+          container.addEventListener('pointerdown', handlePointerDown, { passive: false });
+          container.addEventListener('pointerup', handlePointerUp, { passive: false });
+          container.addEventListener('pointercancel', handlePointerUp, { passive: false });
       }
 
       return () => {
           window.removeEventListener('keydown', handleKeyDown);
           window.removeEventListener('keyup', handleKeyUp);
           if (container) {
-              container.removeEventListener('mousedown', handleStart as any);
-              container.removeEventListener('mouseup', handleEnd);
+              container.removeEventListener('pointerdown', handlePointerDown);
+              container.removeEventListener('pointerup', handlePointerUp);
+              container.removeEventListener('pointercancel', handlePointerUp);
           }
       };
   }, [handleStart, handleEnd, showShareModal]);
@@ -1007,7 +1013,7 @@ const GameCanvas: React.FC<GameCanvasProps> = memo(({ difficulty, status, onStat
   return (
     <div 
       className={`relative w-full transition-all duration-500 mx-auto select-none touch-none group bg-slate-950 rounded-lg overflow-hidden
-        ${isFullscreen ? 'fixed inset-0 z-50 h-screen max-w-none rounded-none' : 'max-w-5xl aspect-video md:h-[500px]'}
+        ${isFullscreen ? 'fixed inset-0 z-50 h-screen max-w-none rounded-none' : 'max-w-5xl h-[360px] sm:h-auto sm:aspect-video md:h-[500px]'}
       `}
       ref={containerRef}
       style={{
