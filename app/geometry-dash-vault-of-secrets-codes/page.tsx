@@ -71,7 +71,7 @@ export default function VaultOfSecretsCodesPage() {
 
       <div className="mt-8 flex flex-wrap items-center gap-3">
         <a href={VAULT_SOURCES.secrets} target="_blank" rel="noopener noreferrer" className="rounded-lg bg-white px-4 py-2 text-sm font-bold text-black">
-          Official Wiki source
+          Geometry Dash Wiki source
         </a>
         <Link href="/geometry-dash-codes" className="rounded-lg border border-white/10 px-4 py-2 text-sm font-bold text-white">
           All Geometry Dash codes
