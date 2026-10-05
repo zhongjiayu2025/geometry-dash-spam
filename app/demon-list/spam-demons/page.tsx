@@ -77,8 +77,9 @@ export default function SpamDemonsPage() {
       <section className="mb-8 rounded-2xl border border-blue-500/20 bg-blue-950/15 p-6">
         <div className="mb-2 text-xs font-bold uppercase tracking-[0.18em] text-blue-300">Quick answer</div>
         <p className="leading-7 text-slate-300">
-          There is <strong className="text-white">no official spam-only Demonlist</strong>. Pointercrate ranks demons overall.
-          The entries below are a separate practice-oriented selection, while the rank badge always shows the dated Pointercrate Main List position.
+          There is <strong className="text-white">no spam-only category inside Pointercrate&apos;s Demon List</strong>. Pointercrate ranks demons overall.
+          The separate <Link href="/spam-challenge-list" className="text-blue-400 hover:underline">Spam Challenge List</Link> ranks spam challenges under its own community list.
+          The entries below are only a practice-oriented Demon selection, while each rank badge shows the dated Pointercrate Main List position.
         </p>
       </section>
 
@@ -135,6 +136,7 @@ export default function SpamDemonsPage() {
       <div className="mt-8 flex flex-wrap gap-3">
         <Link href="/" className="rounded-lg bg-blue-600 px-4 py-2 text-sm font-bold text-white">Spam Test</Link>
         <Link href="/cps-test" className="rounded-lg border border-white/10 px-4 py-2 text-sm font-bold text-white">CPS Test</Link>
+        <Link href="/spam-challenge-list" className="rounded-lg border border-fuchsia-500/20 px-4 py-2 text-sm font-bold text-fuchsia-300">Spam Challenge List</Link>
         <Link href="/demon-list" className="rounded-lg border border-white/10 px-4 py-2 text-sm font-bold text-white">Full Demon List</Link>
       </div>
     </article>

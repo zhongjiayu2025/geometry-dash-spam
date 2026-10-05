@@ -35,6 +35,7 @@ const requiredRoutes = [
   "/cps-test",
   "/demon-list",
   "/demon-list/spam-demons",
+  "/spam-challenge-list",
   "/demon-list/wave-demons",
   "/hardest-level",
   "/easiest-demons",
@@ -92,6 +93,11 @@ const metadataExpectations = {
     title: "Geometry Dash Demon List",
     description: "Current Geometry Dash Demon List / Demonlist top 50",
     canonical: "https://geometrydashspam.cc/demon-list",
+  },
+  "/spam-challenge-list": {
+    title: "Geometry Dash Spam Challenge List",
+    description: "current Geometry Dash Spam Challenge List",
+    canonical: "https://geometrydashspam.cc/spam-challenge-list",
   },
   "/demon-list/spam-demons": {
     title: "Geometry Dash Spam Demon List",

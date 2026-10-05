@@ -23,7 +23,8 @@ export default function Footer() {
               <Link href="/geometry-dash-wave" className="text-slate-400 hover:text-white">Wave Trainer</Link>
               <Link href="/cps-test" className="text-slate-400 hover:text-white">CPS Test</Link>
               <Link href="/demon-list" className="text-slate-400 hover:text-white">Demon List</Link>
-              <Link href="/demon-list/spam-demons" className="text-slate-400 hover:text-white">Spam Demonlist</Link>
+              <Link href="/spam-challenge-list" className="text-slate-400 hover:text-white">Spam Challenge List</Link>
+              <Link href="/demon-list/spam-demons" className="text-slate-400 hover:text-white">Spam Demon References</Link>
               <Link href="/demon-list/wave-demons" className="text-slate-400 hover:text-white">Wave Demons</Link>
               <Link href="/geometry-dash-codes" className="text-slate-400 hover:text-white">Geometry Dash Codes</Link>
             </div>

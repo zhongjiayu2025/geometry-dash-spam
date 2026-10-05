@@ -18,6 +18,7 @@ const coreItems = [
 const moreItems = [
   ["/dashboard", "My Local Stats"],
   ["/geometry-dash-clicker", "Geometry Dash Clicker"],
+  ["/spam-challenge-list", "Spam Challenge List"],
   ["/hardest-level", "Hardest Level"],
   ["/easiest-demons", "Easiest Demons"],
   ["/geometry-dash-difficulty-faces", "Difficulty Faces"],
@@ -38,6 +39,7 @@ const moreItems = [
 ] as const;
 
 const mobileMoreItems = [
+  ["/spam-challenge-list", "Spam Challenge List"],
   ["/hardest-level", "Hardest Level"],
   ["/easiest-demons", "Easiest Demons"],
   ["/geometry-dash-difficulty-faces", "Difficulty Faces"],

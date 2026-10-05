@@ -2,6 +2,14 @@ import { readFileSync } from "node:fs";
 
 const pages = [
   {
+    label: "Spam Challenge List",
+    file: new URL("../app/spam-challenge-list/page.tsx", import.meta.url),
+    requiredSources: [
+      "https://sites.google.com/view/gdspamchallengeslist/main-list",
+      "https://linktr.ee/GeometryDashLists",
+    ],
+  },
+  {
     label: "Dashmetry / Challenge Rush",
     file: new URL("../app/dashmetry/page.tsx", import.meta.url),
     requiredSources: [

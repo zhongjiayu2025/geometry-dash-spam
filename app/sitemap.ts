@@ -11,6 +11,7 @@ const DEMON_ROUTES = new Set([
   "/demon-list",
   "/demon-list/wave-demons",
   "/demon-list/spam-demons",
+  "/spam-challenge-list",
   "/hardest-level",
 ]);
 

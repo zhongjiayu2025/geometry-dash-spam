@@ -87,10 +87,14 @@ export default function HomeGuide() {
         <h2 className="text-2xl md:text-3xl font-display font-bold text-white mb-3">Popular Geometry Dash reference guides</h2>
         <p className="text-sm text-slate-500 mb-5 max-w-3xl">
           Use these supporting guides when your search is about game progression or reference information rather than spam training.
-          If you are specifically looking for a <Link href="/demon-list/spam-demons" className="text-blue-400 hover:underline">Geometry Dash spam demonlist</Link>,
-          use the rapid-input reference page instead of treating the full Demon List as a spam ranking.
+          If you are looking for ranked spam challenges, use the <Link href="/spam-challenge-list" className="text-fuchsia-400 hover:underline">Geometry Dash Spam Challenge List</Link>.
+          If you want spam-heavy rated Demons instead, use the <Link href="/demon-list/spam-demons" className="text-blue-400 hover:underline">spam Demon reference guide</Link>.
         </p>
         <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
+          <Link href="/spam-challenge-list" className="rounded-xl border border-fuchsia-500/20 bg-fuchsia-950/10 p-4 hover:border-fuchsia-400/40">
+            <h3 className="font-bold text-white mb-1">Spam Challenge List</h3>
+            <p className="text-xs leading-5 text-slate-500">Current SCL entry point and clear separation from the Demon List.</p>
+          </Link>
           <Link href="/geometry-dash-codes" className="rounded-xl border border-white/10 bg-slate-900/30 p-4 hover:border-blue-500/40">
             <h3 className="font-bold text-white mb-1">Geometry Dash Codes</h3>
             <p className="text-xs leading-5 text-slate-500">Vault, Secrets, Chamber and Wraith code reference.</p>
