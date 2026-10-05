@@ -32,7 +32,7 @@ export const metadata: Metadata = {
     card: "summary",
     title: "Geometry Dash Spam Test – Wave Spam Trainer Online",
     description:
-      "Play a Geometry Dash spam test and spam click test online, practice wave spam, and compare CPS, peak CPS and click consistency.",
+      "Play a Geometry Dash spam test online, practice wave spam and train repeatable input control in a free browser-based simulator.",
     images: ["/logo.svg"],
   },
 };
