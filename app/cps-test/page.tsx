@@ -20,6 +20,21 @@ export const metadata: Metadata = {
   },
 };
 
+const cpsFaqs = [
+  {
+    q: "What is a Geometry Dash CPS test?",
+    a: "A Geometry Dash CPS test measures how many clicks or taps you register per second. This page also shows peak one-second CPS and click-timing consistency.",
+  },
+  {
+    q: "Which CPS test duration should I use?",
+    a: "Use 1–5 second modes for short bursts, 10 seconds for a quick baseline, and 30–60 seconds when you want to compare whether your pace stays repeatable.",
+  },
+  {
+    q: "Is higher CPS always better in Geometry Dash?",
+    a: "No. Some sections reward faster repeated input, but wave control also depends on spacing and timing. A higher click count is only useful if you can still control the movement.",
+  },
+];
+
 export default function CpsTestPage() {
   const webAppSchema = {
     "@context": "https://schema.org",
@@ -37,11 +52,25 @@ export default function CpsTestPage() {
     },
   };
 
+  const faqSchema = {
+    "@context": "https://schema.org",
+    "@type": "FAQPage",
+    mainEntity: cpsFaqs.map((item) => ({
+      "@type": "Question",
+      name: item.q,
+      acceptedAnswer: { "@type": "Answer", text: item.a },
+    })),
+  };
+
   return (
     <>
       <script
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(webAppSchema) }}
+      />
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(faqSchema) }}
       />
       <header className="mb-8 md:mb-10 text-center">
         <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-white/5 border border-white/10 text-xs font-mono text-slate-400 mb-4">
@@ -56,6 +85,18 @@ export default function CpsTestPage() {
         </p>
       </header>
       <CpsTest />
+
+      <section className="mx-auto mt-14 max-w-5xl">
+        <h2 className="mb-5 text-2xl font-display font-bold text-white">Geometry Dash CPS Test FAQ</h2>
+        <div className="grid gap-4 md:grid-cols-3">
+          {cpsFaqs.map((item) => (
+            <div key={item.q} className="rounded-xl border border-white/10 bg-slate-900/30 p-5">
+              <h3 className="mb-2 font-bold text-white">{item.q}</h3>
+              <p className="text-sm leading-6 text-slate-400">{item.a}</p>
+            </div>
+          ))}
+        </div>
+      </section>
     </>
   );
 }
