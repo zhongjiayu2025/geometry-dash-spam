@@ -6,14 +6,22 @@ const faqs = [
   {
     q: "What is Geometry Dash spam?",
     a: "Geometry Dash spam is rapid repeated clicking, tapping or key pressing used to control a game mode through tight sections. Good spam depends on both input speed and consistent timing.",
+    href: null,
   },
   {
     q: "Is higher CPS always better for wave spam?",
     a: "No. High CPS can help in some sections, but uncontrolled inputs make the wave less stable. Use the CPS test for speed and the spam trainer for control.",
+    href: null,
   },
   {
     q: "Does the trainer work on mobile?",
     a: "Yes. The trainer accepts pointer and touch input in modern mobile browsers. Device and browser behavior can still affect how the test feels compared with the game.",
+    href: null,
+  },
+  {
+    q: "Where is the current Geometry Dash Spam Challenge List?",
+    a: "Use the maintained Spam Challenge List entry linked from our SCL guide. The SCL is a separate community challenge ranking from Pointercrate's Demon List, so current placements and rules should be checked at the live list source.",
+    href: "/spam-challenge-list",
   },
 ];
 
@@ -146,6 +154,11 @@ export default function HomeGuide() {
             <div key={item.q} className="rounded-xl border border-white/10 bg-slate-900/30 p-5">
               <h3 className="font-bold text-white mb-2">{item.q}</h3>
               <p className="text-sm text-slate-400">{item.a}</p>
+              {item.href && (
+                <Link href={item.href} className="mt-3 inline-block text-sm font-semibold text-fuchsia-400 hover:text-fuchsia-300">
+                  Open current SCL guide →
+                </Link>
+              )}
             </div>
           ))}
         </div>

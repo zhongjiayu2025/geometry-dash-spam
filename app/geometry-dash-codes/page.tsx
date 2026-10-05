@@ -11,21 +11,24 @@ import {
   WRAITH_CODES,
 } from "../../data/vaultCodes";
 
+const codesTitle = "Geometry Dash Codes – Working Vault & Wraith Codes";
+const codesDescription =
+  `Working Geometry Dash codes for The Vault, Vault of Secrets, Chamber of Time and Wraith, checked ${VAULT_CODES_CHECKED_AT}. Search, copy and see unlock notes.`;
+
 export const metadata: Metadata = {
-  title: "Geometry Dash Codes – Vault, Secrets, Chamber & Wraith",
-  description:
-    "Geometry Dash codes for The Vault, Vault of Secrets, Chamber of Time and Wraith. Search, copy and check unlock notes with source links.",
+  title: codesTitle,
+  description: codesDescription,
   alternates: { canonical: "/geometry-dash-codes" },
   openGraph: {
-    title: "Geometry Dash Codes – Vault, Secrets, Chamber & Wraith",
-    description: "Geometry Dash codes for The Vault, Vault of Secrets, Chamber of Time and Wraith. Search, copy and check unlock notes with source links.",
+    title: codesTitle,
+    description: codesDescription,
     url: "https://geometrydashspam.cc/geometry-dash-codes",
     type: "website",
   },
   twitter: {
     card: "summary",
-    title: "Geometry Dash Codes – Vault, Secrets, Chamber & Wraith",
-    description: "Geometry Dash codes for The Vault, Vault of Secrets, Chamber of Time and Wraith. Search, copy and check unlock notes with source links.",
+    title: codesTitle,
+    description: codesDescription,
   },
 };
 
