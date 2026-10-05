@@ -52,6 +52,9 @@ const CpsTest: React.FC = () => {
   
   const timerRef = useRef<number | null>(null);
   const audioCtxRef = useRef<AudioContext | null>(null);
+  const clicksRef = useRef(0);
+  const testStartRef = useRef(0);
+  const clickTimesRef = useRef<number[]>([]);
 
   useEffect(() => {
     if (typeof window !== 'undefined') {
@@ -69,8 +72,12 @@ const CpsTest: React.FC = () => {
   }, []);
 
   const startTest = () => {
+    const now = performance.now();
     setActive(true);
     setFinished(false);
+    clicksRef.current = 1;
+    clickTimesRef.current = [now];
+    testStartRef.current = now;
     setClicks(1);
     setTimeLeft(selectedDuration);
   };
@@ -109,13 +116,18 @@ const CpsTest: React.FC = () => {
       startTest();
       return;
     }
-    setClicks(c => c + 1);
+    clicksRef.current += 1;
+    clickTimesRef.current.push(performance.now());
+    setClicks(clicksRef.current);
   };
 
   const reset = (e?: React.MouseEvent) => {
     e?.stopPropagation();
     setActive(false);
     setFinished(false);
+    clicksRef.current = 0;
+    clickTimesRef.current = [];
+    testStartRef.current = 0;
     setClicks(0);
     setTimeLeft(selectedDuration);
     setCopied(false);
@@ -142,36 +154,64 @@ const CpsTest: React.FC = () => {
 
   useEffect(() => {
     if (active && !finished) {
-      const startTime = Date.now();
       timerRef.current = window.setInterval(() => {
-        const elapsed = (Date.now() - startTime) / 1000;
+        const elapsed = (performance.now() - testStartRef.current) / 1000;
         const remaining = Math.max(0, selectedDuration - elapsed);
         setTimeLeft(remaining);
-        
+
         if (remaining <= 0) {
           setFinished(true);
           setActive(false);
           if (timerRef.current) clearInterval(timerRef.current);
-          
+
+          const finalClicks = clicksRef.current;
+          setClicks(finalClicks);
           setBestScores(prev => {
-            const finalCps = clicks / selectedDuration;
+            const finalCps = finalClicks / selectedDuration;
             const newBests = { ...prev };
             if (!newBests[selectedDuration] || finalCps > newBests[selectedDuration]) {
-                newBests[selectedDuration] = finalCps;
-                localStorage.setItem('cpsBestScores', JSON.stringify(newBests));
+              newBests[selectedDuration] = finalCps;
+              localStorage.setItem('cpsBestScores', JSON.stringify(newBests));
             }
             return newBests;
           });
         }
       }, 33);
     }
+
     return () => {
       if (timerRef.current) clearInterval(timerRef.current);
     };
-  }, [active, finished, selectedDuration, clicks]);
+  }, [active, finished, selectedDuration]);
 
-  const cps = finished ? (clicks / selectedDuration).toFixed(2) : (active ? (clicks / (selectedDuration - timeLeft)).toFixed(1) : "0.00");
+  const cps = finished
+    ? (clicks / selectedDuration).toFixed(2)
+    : active
+    ? (clicks / Math.max(0.05, selectedDuration - timeLeft)).toFixed(1)
+    : "0.00";
   const cpsNum = parseFloat(cps);
+
+  const getTimingStats = () => {
+    const times = clickTimesRef.current;
+    if (times.length < 2) {
+      return { averageInterval: 0, peakCps: 0, consistency: 100 };
+    }
+
+    const intervals = times.slice(1).map((time, index) => time - times[index]);
+    const mean = intervals.reduce((sum, value) => sum + value, 0) / intervals.length;
+    const variance = intervals.reduce((sum, value) => sum + Math.pow(value - mean, 2), 0) / intervals.length;
+    const stdDev = Math.sqrt(variance);
+    const fastest = Math.min(...intervals);
+    const coefficient = mean > 0 ? stdDev / mean : 0;
+
+    return {
+      averageInterval: mean,
+      peakCps: fastest > 0 ? 1000 / fastest : 0,
+      consistency: Math.max(0, Math.min(100, 100 - coefficient * 100)),
+    };
+  };
+
+  const timingStats = getTimingStats();
 
   const getRank = (score: number) => {
     if (score < 5) return { label: "Stereo Madness", color: "text-slate-400" };
@@ -313,11 +353,28 @@ const CpsTest: React.FC = () => {
                )}
                
                {finished && rank && (
-                 <div className="animate-in zoom-in duration-300 mb-8 relative z-10">
+                 <div className="animate-in zoom-in duration-300 mb-5 relative z-10">
                     <div className="text-xs text-slate-500 uppercase tracking-widest mb-1">Rank Achieved</div>
                     <div className={`text-3xl font-display font-black ${rank.color} drop-shadow-md flex items-center justify-center gap-2`}>
                         <Trophy className="w-6 h-6" /> {rank.label}
                     </div>
+                 </div>
+               )}
+
+               {finished && (
+                 <div className="grid grid-cols-3 gap-2 w-full mb-6 relative z-10">
+                   <div className="bg-black/25 rounded-lg p-3">
+                     <div className="text-[10px] uppercase tracking-wider text-slate-500">Peak CPS</div>
+                     <div className="font-mono font-bold text-white">{timingStats.peakCps.toFixed(2)}</div>
+                   </div>
+                   <div className="bg-black/25 rounded-lg p-3">
+                     <div className="text-[10px] uppercase tracking-wider text-slate-500">Consistency</div>
+                     <div className="font-mono font-bold text-white">{timingStats.consistency.toFixed(0)}%</div>
+                   </div>
+                   <div className="bg-black/25 rounded-lg p-3">
+                     <div className="text-[10px] uppercase tracking-wider text-slate-500">Avg Interval</div>
+                     <div className="font-mono font-bold text-white">{timingStats.averageInterval.toFixed(0)}ms</div>
+                   </div>
                  </div>
                )}
 
