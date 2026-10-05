@@ -7,14 +7,7 @@ import Link from 'next/link';
 import dynamic from "next/dynamic";
 
 const RelatedTools = dynamic(() => import('./RelatedTools'), { ssr: true });
-const Breadcrumbs = dynamic(() => import('./Breadcrumbs'), { ssr: true });
 
-
-interface ClickEffect {
-  id: number;
-  x: number;
-  y: number;
-}
 
 interface CpsRun {
   duration: number;
@@ -51,7 +44,6 @@ const CpsTest: React.FC = () => {
   const [selectedDuration, setSelectedDuration] = useState(10); 
   const [timeLeft, setTimeLeft] = useState(10.00);
   
-  const [ripples, setRipples] = useState<ClickEffect[]>([]);
   const [copied, setCopied] = useState(false);
   
   const [soundEnabled, setSoundEnabled] = useState(true);
@@ -66,10 +58,6 @@ const CpsTest: React.FC = () => {
 
   useEffect(() => {
     if (typeof window !== 'undefined') {
-      const AudioContextClass = window.AudioContext || (window as any).webkitAudioContext;
-      if (AudioContextClass) {
-          audioCtxRef.current = new AudioContextClass();
-      }
       const saved = localStorage.getItem('cpsBestScores');
       if (saved) {
         try {
@@ -85,6 +73,13 @@ const CpsTest: React.FC = () => {
         } catch(e) {}
       }
     }
+
+    return () => {
+      if (audioCtxRef.current) {
+        void audioCtxRef.current.close();
+        audioCtxRef.current = null;
+      }
+    };
   }, []);
 
   const startTest = () => {
@@ -120,27 +115,26 @@ const CpsTest: React.FC = () => {
   };
 
   const playInputSound = () => {
-    if (soundEnabled && audioCtxRef.current) {
-      if (audioCtxRef.current.state === 'suspended') {
-        audioCtxRef.current.resume();
+    if (!soundEnabled || typeof window === 'undefined') return;
+
+    if (!audioCtxRef.current) {
+      const AudioContextClass =
+        window.AudioContext || (window as typeof window & { webkitAudioContext?: typeof AudioContext }).webkitAudioContext;
+      if (AudioContextClass) {
+        audioCtxRef.current = new AudioContextClass();
       }
-      playClickSound(audioCtxRef.current);
     }
+
+    if (audioCtxRef.current?.state === 'suspended') {
+      void audioCtxRef.current.resume();
+    }
+
+    playClickSound(audioCtxRef.current);
   };
 
   const handlePointerDown = (e: React.PointerEvent) => {
     e.preventDefault();
     playInputSound();
-    
-    const rect = (e.currentTarget as HTMLButtonElement).getBoundingClientRect();
-    const x = e.clientX - rect.left;
-    const y = e.clientY - rect.top;
-    const newRipple = { id: Date.now(), x, y };
-    setRipples(prev => [...prev, newRipple]);
-    
-    setTimeout(() => {
-      setRipples(prev => prev.filter(r => r.id !== newRipple.id));
-    }, 500);
 
     registerInput();
   };
@@ -233,7 +227,6 @@ const CpsTest: React.FC = () => {
     : active
     ? (clicks / Math.max(0.05, selectedDuration - timeLeft)).toFixed(1)
     : "0.00";
-  const cpsNum = parseFloat(cps);
 
   const getTimingStats = () => {
     const times = clickTimesRef.current;
@@ -267,16 +260,6 @@ const CpsTest: React.FC = () => {
 
   const timingStats = getTimingStats();
 
-  const getRank = (score: number) => {
-    if (score < 5) return { label: "Baseline", color: "text-slate-300" };
-    if (score < 7) return { label: "Steady", color: "text-green-400" };
-    if (score < 9) return { label: "Fast", color: "text-blue-400" };
-    if (score < 12) return { label: "Very Fast", color: "text-cyan-300" };
-    if (score < 15) return { label: "Rapid", color: "text-purple-400" };
-    return { label: "Extreme Burst", color: "text-pink-400" };
-  };
-
-  const rank = finished ? getRank(cpsNum) : null;
   const currentBest = bestScores[selectedDuration];
   const recentRuns = runHistory
     .filter((run) => run.duration === selectedDuration)
@@ -287,8 +270,6 @@ const CpsTest: React.FC = () => {
 
   return (
     <div className="w-full max-w-5xl mx-auto animate-in slide-in-from-bottom-4 duration-500">
-      <Breadcrumbs items={[{ label: 'CPS Test', href: '/cps-test', active: true }]} />
-
       {/* Time Selector - Critical for SEO (1s CPS Test, 5s CPS Test keywords) */}
       <div className="flex flex-nowrap justify-start sm:justify-center gap-2 mb-5 sm:mb-8 overflow-x-auto overscroll-x-contain pb-1">
           {[1, 3, 5, 10, 30, 60].map(sec => (
@@ -326,13 +307,6 @@ const CpsTest: React.FC = () => {
               }
             `}
           >
-            {ripples.map(r => (
-               <span 
-                 key={r.id}
-                 className="absolute rounded-full bg-white/30 animate-ping pointer-events-none"
-                 style={{ left: r.x, top: r.y, width: '20px', height: '20px', transform: 'translate(-50%, -50%)' }}
-               />
-            ))}
 
             {!active && !finished && (
               <>
