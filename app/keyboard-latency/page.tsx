@@ -1,4 +1,5 @@
 import KeyboardLatencyTest from "../../components/KeyboardLatencyTest";
+import InputToolGuide from "../../components/InputToolGuide";
 import { Metadata } from "next";
 
 export const metadata: Metadata = {
@@ -32,6 +33,7 @@ export default function KeyboardLatencyPage() {
         </p>
       </div>
       <KeyboardLatencyTest />
+      <InputToolGuide tool="keyboard-timing" />
     </>
   );
 }
