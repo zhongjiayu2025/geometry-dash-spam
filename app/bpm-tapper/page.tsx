@@ -6,6 +6,17 @@ export const metadata: Metadata = {
   description:
     "Tap along with a song to estimate its beats per minute and practice steady rhythm.",
   alternates: { canonical: "/bpm-tapper" },
+  openGraph: {
+    title: "BPM Tapper | Rhythm & Beat Finder",
+    description: "Tap along with a song to estimate its beats per minute and practice steady rhythm.",
+    url: "https://geometrydashspam.cc/bpm-tapper",
+    type: "website",
+  },
+  twitter: {
+    card: "summary",
+    title: "BPM Tapper | Rhythm & Beat Finder",
+    description: "Tap along with a song to estimate its beats per minute and practice steady rhythm.",
+  },
 };
 
 export default function BpmTapperPage() {
