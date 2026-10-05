@@ -1,19 +1,20 @@
-import { MetadataRoute } from 'next';
+import { MetadataRoute } from "next";
 
 export default function manifest(): MetadataRoute.Manifest {
   return {
-    name: 'Geometry Dash Spam Test',
-    short_name: 'GD Spam',
-    description: 'Ultimate Wave Simulator and CPS Test for Geometry Dash players.',
-    start_url: '/',
-    display: 'standalone',
-    background_color: '#020617',
-    theme_color: '#020617',
+    name: "Geometry Dash Spam",
+    short_name: "GD Spam",
+    description:
+      "Geometry Dash spam, wave and CPS training tools for browser-based practice.",
+    start_url: "/",
+    display: "standalone",
+    background_color: "#020617",
+    theme_color: "#020617",
     icons: [
       {
-        src: '/logo.svg',
-        sizes: 'any',
-        type: 'image/svg+xml',
+        src: "/logo.svg",
+        sizes: "any",
+        type: "image/svg+xml",
       },
     ],
   };
