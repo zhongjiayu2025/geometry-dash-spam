@@ -36,6 +36,18 @@ const moreItems = [
   ["/system-info", "System Info"],
 ] as const;
 
+const mobileMoreItems = [
+  ["/dashboard", "My Local Stats"],
+  ["/geometry-dash-clicker", "Geometry Dash Clicker"],
+  ["/jitter-click", "Jitter Click"],
+  ["/butterfly-click", "Butterfly Click"],
+  ["/drag-click", "Drag Click"],
+  ["/polling-rate", "Mouse Polling Rate"],
+  ["/reaction-test", "Reaction Time"],
+  ["/refresh-rate", "Refresh Rate"],
+  ["/system-info", "System Info"],
+] as const;
+
 export default function Header() {
   const pathname = usePathname();
   const [mobileOpen, setMobileOpen] = useState(false);
@@ -71,7 +83,7 @@ export default function Header() {
             </button>
             {moreOpen && (
               <div className="absolute right-0 top-full pt-2 w-56">
-                <div className="grid bg-[#0b1021] border border-white/10 rounded-xl p-2 shadow-2xl">
+                <div className="grid max-h-[70vh] overflow-y-auto bg-[#0b1021] border border-white/10 rounded-xl p-2 shadow-2xl">
                   {moreItems.map(([href, label]) => (
                     <Link key={href} href={href} className="px-3 py-2 rounded-lg text-sm text-slate-300 hover:text-white hover:bg-white/5">{label}</Link>
                   ))}
@@ -97,9 +109,12 @@ export default function Header() {
             ))}
             <div className="mt-3 pt-3 border-t border-white/10">
               <p className="px-4 mb-2 text-xs uppercase tracking-widest text-slate-500">More Tools</p>
-              {moreItems.map(([href, label]) => (
+              {mobileMoreItems.map(([href, label]) => (
                 <Link key={href} href={href} onClick={() => setMobileOpen(false)} className="block px-4 py-2.5 rounded-lg text-slate-400 hover:text-white hover:bg-white/5">{label}</Link>
               ))}
+              <Link href="/sitemap" onClick={() => setMobileOpen(false)} className="mt-1 block px-4 py-2.5 rounded-lg font-semibold text-blue-400 hover:text-blue-300 hover:bg-white/5">
+                All tools & guides →
+              </Link>
             </div>
             <div className="mt-3 pt-3 border-t border-white/10 grid grid-cols-3 gap-2">
               <Link href="/about" onClick={() => setMobileOpen(false)} className="text-center p-2 text-sm text-slate-500 hover:text-white">About</Link>
