@@ -58,7 +58,7 @@ const SectionCard: React.FC<{ title: string; icon?: React.ReactNode; children: R
 );
 
 export const AboutPage = () => (
-  <InfoPageLayout title="About Us" icon={<Info className="w-10 h-10"/>} lastUpdated="January 10, 2026">
+  <InfoPageLayout title="About Us" icon={<Info className="w-10 h-10"/>} lastUpdated="October 5, 2026">
     <div className="space-y-8">
       {/* Introduction */}
       <div className="text-lg md:text-xl text-slate-200 leading-relaxed font-light border-l-4 border-blue-500 pl-6 py-2">
@@ -207,7 +207,7 @@ export const TermsPage = () => (
            <AlertTriangle className="w-6 h-6" /> 2. Disclaimer & Warranty
         </h3>
         <p className="text-slate-300 leading-relaxed">
-           The materials on GeometryDashSpam.cc are provided "as is". While we strive for 1:1 physics accuracy with the official game, we make no warranties regarding the absolute precision of the simulation. We are not liable if your practice here does not perfectly translate to the Geometry Dash game client due to hardware differences.
+           The materials on GeometryDashSpam.cc are provided "as is". The simulator uses its own practice-oriented movement model and is not presented as a byte-for-byte recreation of the official game physics. We are not liable if your practice here does not perfectly translate to the Geometry Dash game client due to hardware differences.
         </p>
       </div>
 
@@ -235,8 +235,13 @@ export const SitemapPage = () => (
               <h3 className="text-2xl font-display font-bold text-white mb-6 border-b border-white/10 pb-2">Tools & Simulators</h3>
               <ul className="space-y-4">
                   {[
-                      { view: '/', label: 'Geometry Dash Wave Simulator', desc: 'The core spam test tool.' },
-                      { view: '/cps-test', label: '10 Second CPS Test', desc: 'Measure clicks per second.' },
+                      { view: '/', label: 'Geometry Dash Spam Test', desc: 'Core wave-spam training tool.' },
+                      { view: '/geometry-dash-wave', label: 'Geometry Dash Wave Trainer', desc: 'Dedicated normal, mini and endless wave practice.' },
+                      { view: '/demon-list', label: 'Geometry Dash Demon List', desc: 'Sourced snapshot of the current hardest demons.' },
+                      { view: '/hardest-level', label: 'Hardest Geometry Dash Level', desc: 'Current #1 answer with verification date and source.' },
+                      { view: '/easiest-demons', label: 'Easiest Demons', desc: 'Beginner-focused demon progression guide.' },
+                      { view: '/geometry-dash-clicker', label: 'Geometry Dash Clicker', desc: 'Lightweight local-save clicker game.' },
+                      { view: '/cps-test', label: 'Geometry Dash CPS Test', desc: 'Measure clicks per second from 1 to 60 seconds.' },
                       { view: '/jitter-click', label: 'Jitter Click Test', desc: 'Practice arm vibration.' },
                       { view: '/butterfly-click', label: 'Butterfly Click Test', desc: 'Double clicking technique.' },
                       { view: '/right-click', label: 'Right Click Test', desc: 'RMB Speed test.' },
@@ -259,7 +264,7 @@ export const SitemapPage = () => (
                       { view: '/refresh-rate', label: 'Monitor Refresh Rate', desc: 'Check your screen Hz.' },
                       { view: '/system-info', label: 'System Information', desc: 'Check what your browser exposes.' },
                       { view: '/dashboard', label: 'Personal Dashboard', desc: 'View your local test records.' },
-                      { view: '/leaderboard', label: 'Global Leaderboards', desc: 'Top players worldwide.' },
+                      { view: '/leaderboard', label: 'Leaderboard', desc: 'View the leaderboard experience available on this site.' },
                   ].map((item: any) => (
                       <li key={item.view}>
                           <Link 
