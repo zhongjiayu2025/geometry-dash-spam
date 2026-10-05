@@ -8,6 +8,8 @@ const requiredRoutes = [
   "/geometry-dash-wave",
   "/cps-test",
   "/demon-list",
+  "/demon-list/spam-demons",
+  "/demon-list/wave-demons",
   "/hardest-level",
   "/easiest-demons",
   "/geometry-dash-clicker",
