@@ -21,7 +21,7 @@ const BlogList: React.FC = () => {
                  alt={post.title}
                  fill
                  sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
-                 priority={index < 3} // Eager load top row for LCP
+                 priority={index === 0}
                  className="object-cover transition-transform duration-700 group-hover:scale-110"
                />
                <div className="absolute inset-0 bg-gradient-to-t from-slate-900 to-transparent opacity-60"></div>
@@ -39,7 +39,7 @@ const BlogList: React.FC = () => {
             {/* Content */}
             <div className="p-6">
               <div className="flex items-center gap-4 text-xs text-slate-400 mb-3 font-mono">
-                <span className="flex items-center gap-1"><Calendar className="w-3 h-3" /> {post.date}</span>
+                <span className="flex items-center gap-1"><Calendar className="w-3 h-3" /> {post.updated ? `Updated ${post.updated}` : post.date}</span>
                 <span className="flex items-center gap-1"><Clock className="w-3 h-3" /> {post.readTime}</span>
               </div>
               
