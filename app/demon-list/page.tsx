@@ -33,6 +33,8 @@ export const metadata: Metadata = {
     title: demonListTitle,
     description: demonListDescription,
     url: "https://geometrydashspam.cc/demon-list",
+    isPartOf: { "@id": "https://geometrydashspam.cc/#website" },
+    publisher: { "@id": "https://geometrydashspam.cc/#organization" },
     type: "website",
   },
   twitter: {
