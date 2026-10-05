@@ -15,6 +15,8 @@ export default function sitemap(): MetadataRoute.Sitemap {
     "/hardest-level",
     "/easiest-demons",
     "/geometry-dash-clicker",
+    "/geometry-dash-codes",
+    "/geometry-dash-vault-of-secrets-codes",
     "/jitter-click",
     "/butterfly-click",
     "/drag-click",
@@ -65,7 +67,7 @@ export default function sitemap(): MetadataRoute.Sitemap {
       priority:
         route === ""
           ? 1
-          : ["/geometry-dash-wave", "/cps-test", "/demon-list"].includes(route)
+          : ["/geometry-dash-wave", "/cps-test", "/demon-list", "/geometry-dash-codes"].includes(route)
           ? 0.9
           : 0.6,
     })),
