@@ -6,6 +6,17 @@ export const metadata: Metadata = {
   description:
     "Terms for using GeometryDashSpam.cc browser tools, practice measurements, sourced guides and external links.",
   alternates: { canonical: "/terms" },
+  openGraph: {
+    title: "Terms of Use",
+    description: "Terms for using GeometryDashSpam.cc browser tools, practice measurements, sourced guides and external links.",
+    url: "https://geometrydashspam.cc/terms",
+    type: "website",
+  },
+  twitter: {
+    card: "summary",
+    title: "Terms of Use",
+    description: "Terms for using GeometryDashSpam.cc browser tools, practice measurements, sourced guides and external links.",
+  },
 };
 
 export default function Page() {
