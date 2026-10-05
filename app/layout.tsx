@@ -86,6 +86,8 @@ export default function RootLayout({
         <link rel="preconnect" href="https://googleads.g.doubleclick.net" />
         <link rel="dns-prefetch" href="https://googleads.g.doubleclick.net" />
         <link rel="describedby" href="/llms.txt" type="text/markdown" />
+        <meta property="og:site_name" content="Geometry Dash Spam" />
+        <meta property="og:locale" content="en_US" />
         <meta property="og:image" content="https://geometrydashspam.cc/opengraph-image" />
         <meta property="og:image:width" content="1200" />
         <meta property="og:image:height" content="630" />
