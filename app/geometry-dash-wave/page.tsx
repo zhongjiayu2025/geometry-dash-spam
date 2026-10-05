@@ -12,6 +12,8 @@ export const metadata: Metadata = {
     title: "Geometry Dash Wave – Play Online Wave Spam Trainer",
     description: "Practice Geometry Dash wave and wave spam online with normal, mini, precision and endless training modes. Compare CPS, timing and control in your browser.",
     url: "https://geometrydashspam.cc/geometry-dash-wave",
+    isPartOf: { "@id": "https://geometrydashspam.cc/#website" },
+    publisher: { "@id": "https://geometrydashspam.cc/#organization" },
     type: "website",
   },
   twitter: {
