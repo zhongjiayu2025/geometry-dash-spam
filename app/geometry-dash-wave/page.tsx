@@ -20,6 +20,21 @@ export const metadata: Metadata = {
   },
 };
 
+const waveFaqs = [
+  {
+    q: "What is Geometry Dash wave spam?",
+    a: "Wave spam is rapid repeated press-and-release input used to keep the wave moving through tight corridors. The challenge is not only speed, but keeping the spacing between inputs controlled.",
+  },
+  {
+    q: "Does higher CPS make wave spam easier?",
+    a: "Not automatically. More inputs can help in some sections, but uneven timing can make the wave path less stable. Compare CPS and timing consistency together.",
+  },
+  {
+    q: "Is this browser trainer identical to Geometry Dash physics?",
+    a: "No. It is a practice-oriented browser movement model for training input rhythm and control, not an exact reproduction of the official game engine.",
+  },
+];
+
 export default function GeometryDashWavePage() {
   const schema = {
     "@context": "https://schema.org",
@@ -32,9 +47,20 @@ export default function GeometryDashWavePage() {
     offers: { "@type": "Offer", price: "0", priceCurrency: "USD" },
   };
 
+  const faqSchema = {
+    "@context": "https://schema.org",
+    "@type": "FAQPage",
+    mainEntity: waveFaqs.map((item) => ({
+      "@type": "Question",
+      name: item.q,
+      acceptedAnswer: { "@type": "Answer", text: item.a },
+    })),
+  };
+
   return (
     <>
       <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(schema) }} />
+      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(faqSchema) }} />
       <header className="mx-auto mb-8 max-w-4xl text-center">
         <p className="mb-2 text-xs font-bold uppercase tracking-[0.2em] text-blue-400">Wave practice</p>
         <h1 className="mb-4 text-3xl font-display font-bold text-white md:text-5xl">Geometry Dash Wave Trainer</h1>
@@ -99,6 +125,18 @@ export default function GeometryDashWavePage() {
             <li><strong className="text-white">3. Move to Mini or Wave Spam.</strong> Increase input density only after basic control is stable.</li>
             <li><strong className="text-white">4. Use Precision last.</strong> Treat the hardest preset as a consistency check rather than a required benchmark.</li>
           </ol>
+        </section>
+
+        <section>
+          <h2 className="mb-5 text-2xl font-bold text-white">Geometry Dash Wave FAQ</h2>
+          <div className="grid gap-4 md:grid-cols-3">
+            {waveFaqs.map((item) => (
+              <div key={item.q} className="rounded-xl border border-white/10 bg-slate-900/30 p-5">
+                <h3 className="mb-2 font-bold text-white">{item.q}</h3>
+                <p className="text-sm leading-6 text-slate-400">{item.a}</p>
+              </div>
+            ))}
+          </div>
         </section>
 
         <div className="flex flex-wrap gap-3">
