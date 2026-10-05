@@ -7,9 +7,9 @@ const HomeGuide = dynamic(() => import("../components/HomeGuide"), {
 });
 
 export const metadata: Metadata = {
-  title: "Geometry Dash Spam Test – Play Wave Spam Online",
+  title: "Geometry Dash Spam Test – Wave & Click Test Online",
   description:
-    "Play a free Geometry Dash spam test online with no download. Practice wave spam, track CPS and click consistency, and train normal or mini wave control.",
+    "Play a free Geometry Dash spam test online. Practice wave spam, test rapid clicks, and compare CPS, peak CPS and timing consistency — no download.",
   keywords: [
     "geometry dash spam",
     "geometry dash spam test",
@@ -23,10 +23,17 @@ export const metadata: Metadata = {
   openGraph: {
     type: "website",
     url: "https://geometrydashspam.cc",
-    title: "Geometry Dash Spam Test – Play Wave Spam Online",
+    title: "Geometry Dash Spam Test – Wave & Click Test Online",
     description:
-      "Play Geometry Dash wave spam online and measure click consistency in your browser.",
+      "Play a Geometry Dash spam test online, practice wave spam and compare CPS, peak CPS and click consistency.",
     images: [{ url: "/logo.svg", alt: "Geometry Dash Spam Test" }],
+  },
+  twitter: {
+    card: "summary",
+    title: "Geometry Dash Spam Test – Wave & Click Test Online",
+    description:
+      "Play a Geometry Dash spam test online, practice wave spam and compare CPS, peak CPS and click consistency.",
+    images: ["/logo.svg"],
   },
 };
 
