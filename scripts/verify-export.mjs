@@ -103,6 +103,15 @@ function exportedPath(route) {
   return candidates(route).find((path) => existsSync(path));
 }
 
+function metaContent(html, attribute, value) {
+  for (const match of html.matchAll(/<meta\b[^>]*>/gi)) {
+    const tag = match[0];
+    if (!tag.includes(`${attribute}="${value}"`)) continue;
+    return tag.match(/\bcontent="([^"]*)"/i)?.[1] ?? null;
+  }
+  return null;
+}
+
 const missing = requiredRoutes.filter((route) => !exportedPath(route));
 
 const unexpected = removedGhostRoutes.filter((route) =>
@@ -133,25 +142,26 @@ for (const [route, expected] of Object.entries(metadataExpectations)) {
     metadataErrors.push(`${route}: canonical is not "${expected.canonical}"`);
   }
 
-  if (
-    route !== "/" &&
-    !html.includes(`property="og:url" content="${expected.canonical}"`)
-  ) {
-    metadataErrors.push(`${route}: og:url is not page-specific`);
-  }
+  if (route !== "/") {
+    const ogUrl = metaContent(html, "property", "og:url");
+    const ogTitle = metaContent(html, "property", "og:title");
+    const ogDescription = metaContent(html, "property", "og:description");
 
-  if (
-    route !== "/" &&
-    !html.includes(`property="og:title" content="${expected.title}`)
-  ) {
-    metadataErrors.push(`${route}: og:title does not start with the page title`);
-  }
+    if (ogUrl !== expected.canonical) {
+      metadataErrors.push(
+        `${route}: og:url is "${ogUrl ?? "missing"}", expected "${expected.canonical}"`
+      );
+    }
 
-  if (
-    route !== "/" &&
-    !html.includes('property="og:description"') 
-  ) {
-    metadataErrors.push(`${route}: missing page-specific og:description`);
+    if (!ogTitle?.startsWith(expected.title)) {
+      metadataErrors.push(
+        `${route}: og:title is "${ogTitle ?? "missing"}", expected prefix "${expected.title}"`
+      );
+    }
+
+    if (!ogDescription) {
+      metadataErrors.push(`${route}: missing page-specific og:description`);
+    }
   }
 }
 
