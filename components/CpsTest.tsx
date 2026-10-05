@@ -238,7 +238,11 @@ const CpsTest: React.FC = () => {
   const getTimingStats = () => {
     const times = clickTimesRef.current;
     if (times.length < 2) {
-      return { averageInterval: 0, peakCps: 0, consistency: 100 };
+      return {
+        averageInterval: null as number | null,
+        peakCps: times.length,
+        consistency: null as number | null,
+      };
     }
 
     const intervals = times.slice(1).map((time, index) => time - times[index]);
@@ -412,11 +416,15 @@ const CpsTest: React.FC = () => {
                    </div>
                    <div className="bg-black/25 rounded-lg p-3">
                      <div className="text-[10px] uppercase tracking-wider text-slate-500">Consistency</div>
-                     <div className="font-mono font-bold text-white">{timingStats.consistency.toFixed(0)}%</div>
+                     <div className="font-mono font-bold text-white">
+                       {timingStats.consistency === null ? 'N/A' : `${timingStats.consistency.toFixed(0)}%`}
+                     </div>
                    </div>
                    <div className="bg-black/25 rounded-lg p-3">
                      <div className="text-[10px] uppercase tracking-wider text-slate-500">Avg Interval</div>
-                     <div className="font-mono font-bold text-white">{timingStats.averageInterval.toFixed(0)}ms</div>
+                     <div className="font-mono font-bold text-white">
+                       {timingStats.averageInterval === null ? 'N/A' : `${timingStats.averageInterval.toFixed(0)}ms`}
+                     </div>
                    </div>
                  </div>
                )}
