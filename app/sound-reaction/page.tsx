@@ -6,6 +6,17 @@ export const metadata: Metadata = {
   description:
     "Measure browser-based response time to an audio cue. Device, audio output and browser timing can affect results.",
   alternates: { canonical: "/sound-reaction" },
+  openGraph: {
+    title: "Sound Reaction Time Test | Audio Response Test",
+    description: "Measure browser-based response time to an audio cue. Device, audio output and browser timing can affect results.",
+    url: "https://geometrydashspam.cc/sound-reaction",
+    type: "website",
+  },
+  twitter: {
+    card: "summary",
+    title: "Sound Reaction Time Test | Audio Response Test",
+    description: "Measure browser-based response time to an audio cue. Device, audio output and browser timing can affect results.",
+  },
 };
 
 export default function SoundReactionPage() {
