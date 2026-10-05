@@ -335,6 +335,7 @@ const sitemapPath = join(outDir, "sitemap.xml");
 const sitemapRouteErrors = [];
 const sitemapPolicyErrors = [];
 const sitemapMetadataErrors = [];
+const snippetQualityErrors = [];
 
 if (existsSync(sitemapPath)) {
   const sitemapXml = readFileSync(sitemapPath, "utf8");
@@ -368,6 +369,18 @@ if (existsSync(sitemapPath)) {
 
     if (!description) {
       sitemapMetadataErrors.push(`${route}: missing meta description`);
+    }
+
+    if (title && (title.length < 15 || title.length > 80)) {
+      snippetQualityErrors.push(
+        `${route}: title length ${title.length} is outside the 15–80 character quality range`
+      );
+    }
+
+    if (description && (description.length < 50 || description.length > 190)) {
+      snippetQualityErrors.push(
+        `${route}: description length ${description.length} is outside the 50–190 character quality range`
+      );
     }
 
     if (canonical !== expectedCanonical) {
@@ -550,6 +563,7 @@ if (
   sitemapRouteErrors.length ||
   sitemapPolicyErrors.length ||
   sitemapMetadataErrors.length ||
+  snippetQualityErrors.length ||
   noindexErrors.length ||
   authorityLeakErrors.length ||
   htmlSitemapErrors.length ||
@@ -572,6 +586,11 @@ if (
   if (metadataErrors.length) {
     console.error("Metadata errors:");
     for (const error of metadataErrors) console.error(`- ${error}`);
+  }
+
+  if (snippetQualityErrors.length) {
+    console.error("Search snippet quality errors:");
+    for (const error of snippetQualityErrors) console.error(`- ${error}`);
   }
 
   if (noindexErrors.length) {
@@ -621,5 +640,5 @@ if (
 }
 
 console.log(
-  `Static export verified: ${requiredRoutes.length} core routes, metadata checks, noindex utility policy, core-page authority leakage checks, HTML sitemap priority-link checks, Wraith data-to-page checks, ${htmlFiles.length} HTML files with internal-link checks, sitemap URL/canonical/title/description/OpenGraph/indexability integrity, sitemap.xml and robots.txt.`
+  `Static export verified: ${requiredRoutes.length} core routes, metadata checks, search-snippet length checks, noindex utility policy, core-page authority leakage checks, HTML sitemap priority-link checks, Wraith data-to-page checks, ${htmlFiles.length} HTML files with internal-link checks, sitemap URL/canonical/title/description/OpenGraph/indexability integrity, sitemap.xml and robots.txt.`
 );
