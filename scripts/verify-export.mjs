@@ -533,6 +533,8 @@ if (existsSync(sitemapPath)) {
     const ogUrl = metaContent(html, "property", "og:url");
     const ogTitle = metaContent(html, "property", "og:title");
     const ogDescription = metaContent(html, "property", "og:description");
+    const ogImage = metaContent(html, "property", "og:image");
+    const twitterImage = metaContent(html, "name", "twitter:image");
     const h1Count = (html.match(/<h1\b/gi) || []).length;
 
     if (h1Count !== 1) {
@@ -607,6 +609,18 @@ if (existsSync(sitemapPath)) {
 
     if (!ogDescription) {
       sitemapMetadataErrors.push(`${route}: missing og:description`);
+    }
+
+    if (ogImage !== "https://geometrydashspam.cc/opengraph-image") {
+      sitemapMetadataErrors.push(
+        `${route}: og:image is "${ogImage ?? "missing"}", expected shared social preview image`
+      );
+    }
+
+    if (twitterImage !== "https://geometrydashspam.cc/twitter-image") {
+      sitemapMetadataErrors.push(
+        `${route}: twitter:image is "${twitterImage ?? "missing"}", expected shared social preview image`
+      );
     }
   }
 
