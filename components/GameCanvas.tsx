@@ -52,6 +52,16 @@ interface Shockwave {
   opacity: number;
 }
 
+interface WaveRun {
+  time: number;
+  averageCps: number;
+  peakCps: number;
+  timingSd: number;
+  clicks: number;
+  result: "won" | "lost";
+  timestamp: number;
+}
+
 // Level Generation Patterns
 type PatternType = 'random' | 'corridor' | 'stairs_up' | 'stairs_down' | 'zigzag' | 'sawtooth';
 
@@ -87,7 +97,9 @@ const GameCanvas: React.FC<GameCanvasProps> = memo(({ difficulty, status, onStat
   const [highScore, setHighScore] = useState<number>(0);
   const [isNewBest, setIsNewBest] = useState<boolean>(false);
   const [displayTime, setDisplayTime] = useState<number>(0);
+  const [recentRuns, setRecentRuns] = useState<WaveRun[]>([]);
   const lastHudUpdateRef = useRef<number>(0);
+  const runRecordedRef = useRef(false);
   
   // Share Modal State
   const [showShareModal, setShowShareModal] = useState<boolean>(false);
@@ -98,6 +110,7 @@ const GameCanvas: React.FC<GameCanvasProps> = memo(({ difficulty, status, onStat
     setIsMuted(localStorage.getItem('gd_spam_muted') === 'true');
     setReduceMotion(localStorage.getItem('gd_spam_reduce_motion') === 'true');
     loadHighScore();
+    loadRunHistory();
   }, [difficulty.id, isEndless, isMini]);
 
   // Handle Fullscreen Change Events
@@ -132,6 +145,24 @@ const GameCanvas: React.FC<GameCanvasProps> = memo(({ difficulty, status, onStat
       const saved = localStorage.getItem(key);
       setHighScore(saved ? parseFloat(saved) : 0);
       setIsNewBest(false);
+  };
+
+  const getRunHistoryKey = () =>
+      `gd_spam_runs_${difficulty.id}_${isEndless ? 'endless' : 'timed'}_${isMini ? 'mini' : 'normal'}`;
+
+  const loadRunHistory = () => {
+      const saved = localStorage.getItem(getRunHistoryKey());
+      if (!saved) {
+          setRecentRuns([]);
+          return;
+      }
+
+      try {
+          const parsed = JSON.parse(saved);
+          setRecentRuns(Array.isArray(parsed) ? parsed.slice(0, 10) : []);
+      } catch {
+          setRecentRuns([]);
+      }
   };
 
   const saveHighScore = (time: number) => {
@@ -497,7 +528,8 @@ const GameCanvas: React.FC<GameCanvasProps> = memo(({ difficulty, status, onStat
     const mean = intervals.reduce((a, b) => a + b, 0) / intervals.length;
     const variance = intervals.reduce((a, b) => a + Math.pow(b - mean, 2), 0) / intervals.length;
     const stdDev = Math.sqrt(variance);
-    const score = Math.max(0, 100 - (stdDev * 2));
+    const coefficient = mean > 0 ? stdDev / mean : 0;
+    const score = Math.max(0, Math.min(100, 100 - coefficient * 100));
     return score.toFixed(1) + '%';
   };
 
@@ -528,6 +560,26 @@ const GameCanvas: React.FC<GameCanvasProps> = memo(({ difficulty, status, onStat
       averageInterval: meanInterval,
       intervalStdDev: Math.sqrt(variance),
     };
+  };
+
+  const recordRun = (result: "won" | "lost") => {
+    if (runRecordedRef.current) return;
+
+    const stats = getRunStats();
+    const run: WaveRun = {
+      time: Number((gameState.current.runTime / 1000).toFixed(2)),
+      averageCps: Number(stats.averageCps.toFixed(2)),
+      peakCps: Number(stats.peakCps.toFixed(2)),
+      timingSd: Number(stats.intervalStdDev.toFixed(0)),
+      clicks: stats.clickCount,
+      result,
+      timestamp: Date.now(),
+    };
+
+    const next = [run, ...recentRuns].slice(0, 10);
+    localStorage.setItem(getRunHistoryKey(), JSON.stringify(next));
+    setRecentRuns(next);
+    runRecordedRef.current = true;
   };
 
   const initStars = (width: number, height: number) => {
@@ -590,6 +642,7 @@ const GameCanvas: React.FC<GameCanvasProps> = memo(({ difficulty, status, onStat
     setConsistency('100%');
     setIsNewBest(false);
     setDisplayTime(0);
+    runRecordedRef.current = false;
     lastHudUpdateRef.current = 0;
   }, [difficulty.color, difficulty.speed, difficulty.id, isEndless, isMini]);
 
@@ -658,6 +711,8 @@ const GameCanvas: React.FC<GameCanvasProps> = memo(({ difficulty, status, onStat
         if (!isEndless) {
              const finishScreenX = gameState.current.finishLineX - gameState.current.distanceTraveled;
              if (finishScreenX <= gameState.current.playerX) {
+                 setConsistency(calculateConsistency());
+                 recordRun("won");
                  onStatusChange(GameStatus.Won);
                  playSound('win');
                  const didBreakRecord = saveHighScore(gameState.current.runTime / 1000);
@@ -872,6 +927,7 @@ const GameCanvas: React.FC<GameCanvasProps> = memo(({ difficulty, status, onStat
       createExplosion(gameState.current.playerX, gameState.current.playerY, '#fff');
       playSound('crash');
       setConsistency(calculateConsistency());
+      recordRun("lost");
       
       const currentTime = gameState.current.runTime / 1000;
       const didBreakRecord = saveHighScore(currentTime);
@@ -1129,6 +1185,13 @@ const GameCanvas: React.FC<GameCanvasProps> = memo(({ difficulty, status, onStat
               <div className="text-xs text-slate-400 animate-pulse flex flex-col gap-1">
                  <span>Click or Press Space to Play</span>
                  {highScore > 0 && <span className="text-yellow-500 font-bold">Personal Best: {highScore.toFixed(2)}s</span>}
+                 {recentRuns.length > 0 && (
+                   <span className="text-slate-500">
+                     Recent {Math.min(3, recentRuns.length)} avg:{" "}
+                     {(recentRuns.slice(0, 3).reduce((sum, run) => sum + run.time, 0) / Math.min(3, recentRuns.length)).toFixed(2)}s ·{" "}
+                     {(recentRuns.slice(0, 3).reduce((sum, run) => sum + run.averageCps, 0) / Math.min(3, recentRuns.length)).toFixed(2)} CPS
+                   </span>
+                 )}
               </div>
           </div>
         </div>
