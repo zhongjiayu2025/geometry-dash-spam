@@ -7,6 +7,17 @@ export const metadata: Metadata = {
   description:
     "See the current hardest Geometry Dash level according to Pointercrate, plus the verification date and top five Demon List positions.",
   alternates: { canonical: "/hardest-level" },
+  openGraph: {
+    title: "What Is the Hardest Level in Geometry Dash? Current #1 Demon",
+    description: "See the current hardest Geometry Dash level according to Pointercrate, plus the verification date and top five Demon List positions.",
+    url: "https://geometrydashspam.cc/hardest-level",
+    type: "website",
+  },
+  twitter: {
+    card: "summary",
+    title: "What Is the Hardest Level in Geometry Dash? Current #1 Demon",
+    description: "See the current hardest Geometry Dash level according to Pointercrate, plus the verification date and top five Demon List positions.",
+  },
 };
 
 export default function HardestLevelPage() {
