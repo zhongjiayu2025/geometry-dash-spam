@@ -113,6 +113,17 @@ export default function GeometryDashCodesPage() {
           <VaultCodeTable codes={WRAITH_CODES} label="Wraith codes" />
         </section>
 
+        <section className="mb-10 grid gap-4 md:grid-cols-2">
+          <Link href="/how-to-get-diamonds-geometry-dash" className="rounded-xl border border-white/10 bg-slate-900/30 p-6 hover:border-blue-500/40">
+            <h2 className="mb-2 text-xl font-bold text-white">How to get Diamonds</h2>
+            <p className="text-sm leading-6 text-slate-400">Daily chests, quests, rotating levels, Gauntlets, Paths and Treasure Room sources.</p>
+          </Link>
+          <Link href="/how-to-get-gold-keys-geometry-dash" className="rounded-xl border border-white/10 bg-slate-900/30 p-6 hover:border-yellow-500/40">
+            <h2 className="mb-2 text-xl font-bold text-white">How to get Gold Keys</h2>
+            <p className="text-sm leading-6 text-slate-400">See the Event Level and Secret Room methods, plus where Gold Keys are spent.</p>
+          </Link>
+        </section>
+
         <section className="rounded-2xl border border-white/10 bg-slate-900/30 p-6 md:p-8">
           <h2 className="mb-3 text-2xl font-bold text-white">Why a code may not work</h2>
           <p className="leading-7 text-slate-400">
