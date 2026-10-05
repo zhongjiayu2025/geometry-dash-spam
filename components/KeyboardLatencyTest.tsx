@@ -105,7 +105,7 @@ export default function KeyboardLatencyTest() {
                                 </h3>
                                 {!activeKey && (
                                     <p className="max-w-xs mx-auto text-sm text-slate-500 mt-2">
-                                        Tap a key as fast as you physically can. A mechanical keyboard with high scan rate can register &lt;15ms taps.
+                                        Tap and release a key repeatedly, then compare your own hold-duration results on the same device and browser.
                                     </p>
                                 )}
                             </div>
@@ -128,12 +128,12 @@ export default function KeyboardLatencyTest() {
                                 <div className="text-center mt-10 text-sm text-slate-600">Start tapping...</div>
                             ) : (
                                 recentPresses.map((dur, i) => (
-                                    <div 
-                                        key={i} 
-                                        className={`flex justify-between items-center px-4 py-2 rounded-lg text-sm font-mono animate-in fade-in slide-in-from-left-2 duration-300 ${dur < 20 ? 'bg-yellow-500/20 text-yellow-300 border border-yellow-500/30' : 'text-slate-300 hover:bg-white/5'}`}
+                                    <div
+                                        key={i}
+                                        className="flex justify-between items-center px-4 py-2 rounded-lg text-sm font-mono animate-in fade-in slide-in-from-left-2 duration-300 text-slate-300 hover:bg-white/5"
                                     >
                                         <span>Tap</span>
-                                        <span className={dur < 20 ? 'font-bold' : ''}>{dur} ms</span>
+                                        <span>{dur} ms</span>
                                     </div>
                                 ))
                             )}
