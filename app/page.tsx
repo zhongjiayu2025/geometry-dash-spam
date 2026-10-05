@@ -7,9 +7,9 @@ const HomeGuide = dynamic(() => import("../components/HomeGuide"), {
 });
 
 export const metadata: Metadata = {
-  title: "Geometry Dash Spam Test – Wave & Click Test Online",
+  title: "Geometry Dash Spam Test – Wave & Spam Click Test",
   description:
-    "Play a free Geometry Dash spam test online. Practice wave spam, test rapid clicks, and compare CPS, peak CPS and timing consistency — no download.",
+    "Play a free Geometry Dash spam test and spam click test online. Practice wave spam, compare CPS and click consistency, and train in your browser — no download.",
   keywords: [
     "geometry dash spam",
     "geometry dash spam test",
@@ -23,14 +23,14 @@ export const metadata: Metadata = {
   openGraph: {
     type: "website",
     url: "https://geometrydashspam.cc",
-    title: "Geometry Dash Spam Test – Wave & Click Test Online",
+    title: "Geometry Dash Spam Test – Wave & Spam Click Test",
     description:
-      "Play a Geometry Dash spam test online, practice wave spam and compare CPS, peak CPS and click consistency.",
+      "Play a Geometry Dash spam test and spam click test online, practice wave spam, and compare CPS, peak CPS and click consistency.",
     images: [{ url: "/logo.svg", alt: "Geometry Dash Spam Test" }],
   },
   twitter: {
     card: "summary",
-    title: "Geometry Dash Spam Test – Wave & Click Test Online",
+    title: "Geometry Dash Spam Test – Wave & Spam Click Test",
     description:
       "Play a Geometry Dash spam test online, practice wave spam and compare CPS, peak CPS and click consistency.",
     images: ["/logo.svg"],
@@ -74,6 +74,17 @@ export default function Home() {
           Test rapid inputs, improve click consistency, and build control before taking the same skills back into the game.
         </p>
       </header>
+
+      <div className="mx-auto mb-6 grid w-full max-w-5xl gap-3 sm:grid-cols-2">
+        <div className="rounded-xl border border-blue-500/30 bg-blue-500/10 p-4">
+          <div className="text-xs font-bold uppercase tracking-[0.16em] text-blue-300">Wave spam test</div>
+          <p className="mt-1 text-sm text-slate-300">Use the trainer below when you want to practice rapid input and wave control together.</p>
+        </div>
+        <a href="/cps-test" className="rounded-xl border border-white/10 bg-slate-900/40 p-4 transition-colors hover:border-blue-500/40">
+          <div className="text-xs font-bold uppercase tracking-[0.16em] text-slate-300">Raw spam click test →</div>
+          <p className="mt-1 text-sm text-slate-400">Use the GD CPS test when you want pure click speed, peak CPS and timing consistency.</p>
+        </a>
+      </div>
 
       <WaveSimulator />
       <HomeGuide />
