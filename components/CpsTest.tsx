@@ -214,7 +214,7 @@ const CpsTest: React.FC = () => {
             return newBests;
           });
         }
-      }, 33);
+      }, 100);
     }
 
     return () => {
@@ -276,6 +276,7 @@ const CpsTest: React.FC = () => {
               <button
                 key={sec}
                 onClick={() => handleDurationChange(sec)}
+                aria-pressed={selectedDuration === sec}
                 disabled={active}
                 className={`
                     flex shrink-0 items-center gap-2 px-4 py-2 rounded-full font-mono text-sm font-bold border transition-all
@@ -297,6 +298,7 @@ const CpsTest: React.FC = () => {
           <button
             onPointerDown={handlePointerDown}
             onKeyDown={handleKeyDown}
+            disabled={finished}
             aria-label="Click or press Space or Enter to start or continue the CPS test"
             aria-keyshortcuts="Space Enter"
             className={`
@@ -345,6 +347,8 @@ const CpsTest: React.FC = () => {
               <div className="flex items-center gap-4">
                  <button 
                   onClick={() => setSoundEnabled(!soundEnabled)}
+                  aria-label={soundEnabled ? "Mute click sound" : "Enable click sound"}
+                  aria-pressed={soundEnabled}
                   className={`p-3 rounded-xl border transition-colors ${soundEnabled ? 'bg-blue-600/20 border-blue-500/50 text-blue-400 hover:bg-blue-600/30' : 'bg-slate-800 border-white/10 text-slate-500 hover:text-slate-300'}`}
                   title={soundEnabled ? "Mute Click Sound" : "Enable Click Sound"}
                  >
@@ -409,6 +413,12 @@ const CpsTest: React.FC = () => {
                    >
                      <RotateCcw className="w-5 h-5" /> TRY AGAIN
                    </button>
+                   <Link
+                    href="/geometry-dash-wave"
+                    className="px-4 py-2.5 sm:px-5 sm:py-3 bg-slate-800 text-white font-bold rounded-lg flex items-center gap-2 hover:bg-slate-700 transition-colors border border-white/10"
+                   >
+                     Train Wave Control <ArrowRight className="w-4 h-4" />
+                   </Link>
                    <button 
                     onClick={shareScore}
                     aria-label="Share Score"
