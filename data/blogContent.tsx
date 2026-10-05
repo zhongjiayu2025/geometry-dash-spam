@@ -1,6 +1,5 @@
-
-import React from 'react';
-import Link from 'next/link';
+import React from "react";
+import Link from "next/link";
 
 export interface BlogPost {
   id: string;
@@ -12,357 +11,451 @@ export interface BlogPost {
   coverImage: string;
   content: React.ReactNode;
   tags: string[];
-  toc?: { id: string; title: string }[]; // NEW: For Table of Contents
+  toc?: { id: string; title: string }[];
 }
+
+const ToolLink = ({ href, children }: { href: string; children: React.ReactNode }) => (
+  <Link href={href} className="text-blue-400 hover:underline font-semibold">
+    {children}
+  </Link>
+);
 
 export const BLOG_POSTS: BlogPost[] = [
   {
-    id: '1',
-    slug: 'what-is-spam-geometry-dash-guide',
-    title: 'What is Spam in Geometry Dash? Complete Guide 2026',
-    excerpt: 'The ultimate guide to understanding, mastering, and surviving spam gameplay mechanics in Geometry Dash. From Wave spam to UFO consistency.',
-    date: 'January 10, 2026',
-    readTime: '15 min read',
-    coverImage: 'https://images.unsplash.com/photo-1550745165-9bc0b252726f?q=80&w=2070&auto=format&fit=crop', // Neon Cyberpunk generic
-    tags: ['Guide', 'Mechanics', 'Wave'],
+    id: "1",
+    slug: "what-is-spam-geometry-dash-guide",
+    title: "What Is Spam in Geometry Dash? Wave, CPS and Control Explained",
+    excerpt:
+      "A practical explanation of Geometry Dash spam, why wave spam is difficult, and how CPS and timing consistency fit together.",
+    date: "October 5, 2026",
+    readTime: "7 min read",
+    coverImage:
+      "https://images.unsplash.com/photo-1550745165-9bc0b252726f?q=80&w=2070&auto=format&fit=crop",
+    tags: ["Guide", "Spam", "Wave"],
     toc: [
-        { id: 'intro', title: '1. Introduction to Geometry Dash Spam' },
-        { id: 'history', title: '2. History of Spam in GD' },
-        { id: 'types', title: '3. Types of Spam' },
-        { id: 'challenge', title: '4. Why is Spam so Challenging?' },
-        { id: 'levels', title: '5. Famous Spam Levels (2026 Edition)' },
-        { id: 'practice', title: '6. How to Practice' },
-        { id: 'mistakes', title: '7. Common Mistakes' },
-        { id: 'faq', title: '8. FAQ' }
+      { id: "definition", title: "What Geometry Dash spam means" },
+      { id: "wave", title: "Why wave spam feels different" },
+      { id: "cps", title: "CPS vs consistency" },
+      { id: "practice", title: "A safer practice loop" },
+      { id: "mistakes", title: "Common mistakes" },
     ],
     content: (
       <>
-        <p className="lead text-xl text-slate-300 mb-6">
-          Geometry Dash has evolved significantly since its release. By 2026, one mechanic stands out as the ultimate test of a player's physical limits: <strong>Spam</strong>. Whether you are tackling an Extreme Demon or just trying to survive a community challenge, understanding <em>Geometry Dash spam</em> is crucial for success.
+        <h2 id="definition" className="text-3xl font-display font-bold text-white mt-12 mb-6 scroll-mt-24">
+          What Geometry Dash spam means
+        </h2>
+        <p className="mb-4 text-slate-300">
+          In Geometry Dash, <strong>spam</strong> is rapid repeated input used to get through a section that needs frequent direction changes or jumps. The important part is not simply clicking as fast as possible. A useful spam input pattern is fast enough for the section and repeatable enough to keep control.
+        </p>
+        <p className="mb-4 text-slate-300">
+          That is why this site separates two measurements: raw speed in the <ToolLink href="/cps-test">Geometry Dash CPS Test</ToolLink> and movement control in the <ToolLink href="/">Geometry Dash Spam Test</ToolLink>.
         </p>
 
-        <h2 id="intro" className="text-3xl font-display font-bold text-white mt-12 mb-6 scroll-mt-24">1. Introduction to Geometry Dash Spam</h2>
+        <h2 id="wave" className="text-3xl font-display font-bold text-white mt-12 mb-6 scroll-mt-24">
+          Why wave spam feels different
+        </h2>
         <p className="mb-4 text-slate-300">
-          In the context of Geometry Dash, "spam" refers to the act of clicking, tapping, or pressing a key rapidly and consistently to navigate through a level. Unlike timing-based jumps where precision is about <em>when</em> you click, spam sections require raw speed (CPS - Clicks Per Second) combined with consistency.
+          Wave sections translate press-and-release timing into alternating diagonal movement. If the intervals between inputs vary too much, the path becomes harder to keep centered even when the average CPS is high.
         </p>
         <p className="mb-4 text-slate-300">
-          The most notorious form is <strong>Wave Spam</strong>, where the player must rapid-fire click to keep the wave moving in a tight corridor, often looking like a straight line. This is exactly what our <Link href="/" className="text-blue-400 hover:underline font-bold">Geometry Dash Spam Simulator</Link> is designed to train.
+          Use the <ToolLink href="/geometry-dash-wave">Wave Trainer</ToolLink> when you want to isolate that movement skill. Its presets are practice modes, not a claim that the browser simulator reproduces the official game engine exactly.
         </p>
 
-        <h2 id="history" className="text-3xl font-display font-bold text-white mt-12 mb-6 scroll-mt-24">2. History of Spam in GD</h2>
+        <h2 id="cps" className="text-3xl font-display font-bold text-white mt-12 mb-6 scroll-mt-24">
+          CPS vs consistency
+        </h2>
         <p className="mb-4 text-slate-300">
-          Spam wasn't always a core mechanic. In the early updates (1.0 - 1.5), levels were mostly about memory and platforming.
+          CPS tells you how many inputs you produce per second. Consistency describes how evenly those inputs arrive. Two players can record the same average CPS while producing very different timing patterns.
         </p>
         <ul className="list-disc pl-6 mb-6 space-y-2 text-slate-300">
-          <li><strong>The Silent Era:</strong> Levels like "Silent Clubstep" introduced impossible spam sections that required frame-perfect clicking.</li>
-          <li><strong>The 2.1 Revolution:</strong> With increased frame rates and higher refresh rate monitors becoming standard (144Hz, 240Hz, 360Hz), creators began building levels that required sustained CPS of 10+.</li>
-          <li><strong>2026 Standards:</strong> Today, "Spam Challenges" are a genre of their own. Players compete not just to finish levels, but to see who can maintain the tightest wave control for the longest duration.</li>
+          <li><strong>Average CPS:</strong> total clicks divided by elapsed time.</li>
+          <li><strong>Peak CPS:</strong> a short burst estimate based on the fastest interval.</li>
+          <li><strong>Average interval:</strong> average milliseconds between inputs.</li>
+          <li><strong>Consistency:</strong> a site-specific score based on variation between input intervals.</li>
         </ul>
 
-        <h2 id="types" className="text-3xl font-display font-bold text-white mt-12 mb-6 scroll-mt-24">3. Types of Spam</h2>
-        
-        <h3 className="text-2xl font-bold text-blue-400 mt-8 mb-4">The Wave Spam</h3>
-        <p className="mb-4 text-slate-300">
-          The most common and skill-dependent type. You must click rapidly to maintain a straight trajectory.
-          <br />
-          <em>Difficulty:</em> High. Requires consistency.
-          <br />
-          <em>Training:</em> Use our <Link href="/" className="text-blue-400 hover:underline">Wave Simulator</Link> set to "Extreme Demon" to practice 35px gaps.
-        </p>
-
-        <h3 className="text-2xl font-bold text-green-400 mt-8 mb-4">The UFO Spam</h3>
-        <p className="mb-4 text-slate-300">
-          UFO spam is rhythm-based. Clicking too fast will send you into the ceiling. It's about "controlled spam."
-          <br />
-          <em>Reference:</em> See the <a href="https://geometry-dash.fandom.com/wiki/UFO" target="_blank" rel="noopener noreferrer" className="text-blue-400 hover:underline">Geometry Dash Wiki: UFO</a> for physics details.
-        </p>
-
-        <h2 id="challenge" className="text-3xl font-display font-bold text-white mt-12 mb-6 scroll-mt-24">4. Why is Spam so Challenging?</h2>
-        <p className="mb-4 text-slate-300">
-          It taxes your physical endurance. Most players can click 10 CPS for 1 second. But can you do it for 15 seconds straight without your finger locking up?
-        </p>
-        <div className="bg-slate-900/50 border-l-4 border-red-500 p-6 my-8">
-            <h4 className="text-white font-bold mb-2">The Fatigue Factor</h4>
-            <p className="text-slate-400">
-                Lactic acid builds up in your forearm muscles during sustained spamming. This causes "locking," where you physically cannot press the button anymore.
-            </p>
-        </div>
-
-        <h2 id="levels" className="text-3xl font-display font-bold text-white mt-12 mb-6 scroll-mt-24">5. Famous Spam Levels (2026 Edition)</h2>
-        <p className="mb-4 text-slate-300">
-            If you want to test your mettle, try these levels:
-        </p>
-        <ol className="list-decimal pl-6 mb-6 space-y-4 text-slate-300">
-            <li><strong>VSC:</strong> The legendary wave challenge.</li>
-            <li><strong>Slaughterhouse:</strong> Contains river sections that require immense consistency.</li>
-            <li><strong>Sakupen Circles:</strong> The definition of tight wave spam.</li>
+        <h2 id="practice" className="text-3xl font-display font-bold text-white mt-12 mb-6 scroll-mt-24">
+          A practical training loop
+        </h2>
+        <ol className="list-decimal pl-6 mb-6 space-y-3 text-slate-300">
+          <li>Record a comfortable CPS baseline instead of immediately chasing a one-second maximum.</li>
+          <li>Practice an easy wave corridor and focus on smooth, repeatable movement.</li>
+          <li>Increase difficulty only after several similar runs, not after one lucky attempt.</li>
+          <li>Stop the session if your hand, wrist or forearm becomes painful or numb.</li>
         </ol>
 
-        <h2 id="practice" className="text-3xl font-display font-bold text-white mt-12 mb-6 scroll-mt-24">6. How to Practice</h2>
-        <p className="mb-4 text-slate-300">
-            Don't just jump into demons. Practice scientifically.
+        <h2 id="mistakes" className="text-3xl font-display font-bold text-white mt-12 mb-6 scroll-mt-24">
+          Common mistakes
+        </h2>
+        <p className="text-slate-300">
+          The most common problems are tensing the whole arm, using a clicking technique that you cannot sustain, changing settings every attempt, and treating a peak CPS number as the only measure of progress. Use one setup long enough to compare like-for-like runs.
         </p>
-        <ul className="list-disc pl-6 mb-6 space-y-2 text-slate-300">
-            <li><strong>Step 1:</strong> Measure your baseline using a <Link href="/cps-test" className="text-blue-400 hover:underline">CPS Test</Link>.</li>
-            <li><strong>Step 2:</strong> Isolate the muscle. Try to click using only your finger, then try using your wrist (jitter clicking). You can practice this on our <Link href="/jitter-click" className="text-blue-400 hover:underline">Jitter Click Tester</Link>.</li>
-            <li><strong>Step 3:</strong> Use simulators. Our <Link href="/" className="text-blue-400 hover:underline">Geometry Dash Spam tool</Link> allows you to adjust speed and gap size without reloading the game.</li>
-        </ul>
-
-        <h2 id="mistakes" className="text-3xl font-display font-bold text-white mt-12 mb-6 scroll-mt-24">7. Common Mistakes</h2>
-        <p className="mb-4 text-slate-300">
-            <strong>Tensing up:</strong> Tensing your whole arm reduces speed. Relax your shoulder.
-            <br/>
-            <strong>Using a bad mouse:</strong> Office mice often have high latency. Check our hardware guide.
-        </p>
-
-        <h2 id="faq" className="text-3xl font-display font-bold text-white mt-12 mb-6 scroll-mt-24">8. FAQ</h2>
-        <p className="mb-4 text-slate-300 font-bold">Q: Is jitter clicking allowed in GD?</p>
-        <p className="mb-4 text-slate-300">A: Yes, as long as it is done physically by your hand and not a macro.</p>
-        
-        <p className="mb-4 text-slate-300 font-bold">Q: What is a good CPS for spam?</p>
-        <p className="mb-4 text-slate-300">A: 6-8 CPS is good for Insane levels. 10-12 CPS is required for Extreme Demons.</p>
       </>
-    )
+    ),
   },
   {
-    id: '2',
-    slug: 'how-to-improve-cps-geometry-dash',
-    title: 'How to Increase Your CPS in Geometry Dash (Proven Methods)',
-    excerpt: 'Stuck at 6 CPS? Learn the techniques pro players use to reach 12+ CPS consistently without injuring their hands.',
-    date: 'January 10, 2026',
-    readTime: '12 min read',
-    coverImage: 'https://images.unsplash.com/photo-1614726365345-0377fa1f513a?q=80&w=2070&auto=format&fit=crop', // Gaming mouse/hand
-    tags: ['Training', 'CPS', 'Hardware'],
+    id: "2",
+    slug: "how-to-improve-cps-geometry-dash",
+    title: "How to Improve CPS for Geometry Dash Without Losing Control",
+    excerpt:
+      "A practical CPS training routine built around repeatable tests, click timing and short practice blocks rather than unsupported target numbers.",
+    date: "October 5, 2026",
+    readTime: "7 min read",
+    coverImage:
+      "https://images.unsplash.com/photo-1614726365345-0377fa1f513a?q=80&w=2070&auto=format&fit=crop",
+    tags: ["Training", "CPS", "Technique"],
     toc: [
-      { id: 'understanding', title: '1. Understanding CPS in GD' },
-      { id: 'techniques', title: '2. Finger Positioning Techniques' },
-      { id: 'input', title: '3. Mouse vs Touchscreen vs Spacebar' },
-      { id: 'schedule', title: '4. Training Schedule' },
-      { id: 'tools', title: '5. Recommended Practice Tools' }
+      { id: "baseline", title: "Measure a baseline" },
+      { id: "methods", title: "Compare clicking methods" },
+      { id: "duration", title: "Train short and long tests" },
+      { id: "transfer", title: "Transfer speed into wave control" },
     ],
     content: (
       <>
-        <h2 id="understanding" className="text-3xl font-display font-bold text-white mt-12 mb-6 scroll-mt-24">1. Understanding CPS in GD</h2>
+        <h2 id="baseline" className="text-3xl font-display font-bold text-white mt-12 mb-6 scroll-mt-24">
+          Measure a baseline first
+        </h2>
         <p className="mb-4 text-slate-300">
-          CPS (Clicks Per Second) is the raw engine of your gameplay. In <Link href="/" className="text-blue-400 hover:underline">Geometry Dash Spam</Link> scenarios, higher CPS allows for tighter wave movements. Before you start training, you need to know your current max speed.
+          Start with the same device, button and test duration for several runs. A ten-second test is useful because it is long enough to expose inconsistent pacing while still being quick to repeat. Save your best score, but also compare the timing metrics.
         </p>
-        <div className="my-8 p-6 bg-blue-900/20 border border-blue-500/20 rounded-xl">
-             <h4 className="font-bold text-white mb-2">Measure Your Baseline</h4>
-             <p className="text-slate-400 mb-4 text-sm">You can't improve what you don't measure. Take a quick test now.</p>
-             <Link href="/cps-test" className="inline-block px-4 py-2 bg-blue-600 text-white rounded font-bold hover:bg-blue-500 transition-colors">Launch 10s CPS Test</Link>
+        <p className="mb-4 text-slate-300">
+          Open the <ToolLink href="/cps-test">Geometry Dash CPS Test</ToolLink> and run three attempts with the same duration before changing technique.
+        </p>
+
+        <h2 id="methods" className="text-3xl font-display font-bold text-white mt-12 mb-6 scroll-mt-24">
+          Compare clicking methods
+        </h2>
+        <p className="mb-4 text-slate-300">
+          Normal clicking, jitter clicking, butterfly clicking and keyboard input feel different and can produce different speed-control tradeoffs. The useful method is the one you can repeat reliably for the section you are practicing.
+        </p>
+        <div className="grid md:grid-cols-2 gap-4 my-6">
+          <div className="rounded-xl border border-white/10 bg-slate-900/30 p-5">
+            <h3 className="font-bold text-white mb-2">Jitter clicking</h3>
+            <p className="text-sm text-slate-400">Compare your results in the <ToolLink href="/jitter-click">Jitter Click Test</ToolLink> and note whether speed comes at the cost of control.</p>
+          </div>
+          <div className="rounded-xl border border-white/10 bg-slate-900/30 p-5">
+            <h3 className="font-bold text-white mb-2">Butterfly clicking</h3>
+            <p className="text-sm text-slate-400">Use the <ToolLink href="/butterfly-click">Butterfly Click Test</ToolLink> to compare a two-finger rhythm with your normal method.</p>
+          </div>
         </div>
 
-        <h2 id="techniques" className="text-3xl font-display font-bold text-white mt-12 mb-6 scroll-mt-24">2. Finger Positioning Techniques</h2>
-        <h3 className="text-xl font-bold text-white mt-4">Normal Clicking</h3>
-        <p className="text-slate-300 mb-4">Standard grip. Good for accuracy, bad for speed.</p>
-        
-        <h3 className="text-xl font-bold text-white mt-4">Jitter Clicking</h3>
-        <p className="text-slate-300 mb-4">Vibrating your forearm muscles to generate clicks. High speed (10-14 CPS) but lower accuracy aiming. <Link href="/jitter-click" className="text-blue-400 hover:underline">Practice Jitter Clicking Here</Link>.</p>
-        
-        <h3 className="text-xl font-bold text-white mt-4">Butterfly Clicking</h3>
-        <p className="text-slate-300 mb-4">Using two fingers on one button. Requires a mouse that can double-click or has wide buttons. <Link href="/butterfly-click" className="text-blue-400 hover:underline">Practice Butterfly Clicking Here</Link>.</p>
-
-        <h2 id="input" className="text-3xl font-display font-bold text-white mt-12 mb-6 scroll-mt-24">3. Mouse vs Touchscreen vs Spacebar</h2>
-        <p className="mb-4 text-slate-300">
-            A useful way to compare input methods is to test them consistently with our <Link href="/spacebar-counter" className="text-blue-400 hover:underline">Spacebar Counter</Link>.
-        </p>
+        <h2 id="duration" className="text-3xl font-display font-bold text-white mt-12 mb-6 scroll-mt-24">
+          Use different test lengths for different questions
+        </h2>
         <ul className="list-disc pl-6 mb-6 space-y-2 text-slate-300">
-            <li><strong>Mouse:</strong> Best for micro-adjustments.</li>
-            <li><strong>Spacebar:</strong> Best for raw endurance and heavy spam.</li>
-            <li><strong>Touchscreen:</strong> Highest latency, generally hardest for extreme spam.</li>
+          <li><strong>1–3 seconds:</strong> useful for a short burst, but very sensitive to the first click.</li>
+          <li><strong>5–10 seconds:</strong> useful for comparing general speed and control.</li>
+          <li><strong>30–60 seconds:</strong> useful for seeing whether your pace remains stable over time.</li>
         </ul>
 
-        <h2 id="schedule" className="text-3xl font-display font-bold text-white mt-12 mb-6 scroll-mt-24">4. Training Schedule</h2>
+        <h2 id="transfer" className="text-3xl font-display font-bold text-white mt-12 mb-6 scroll-mt-24">
+          Transfer speed into wave control
+        </h2>
         <p className="mb-4 text-slate-300">
-            Do not overtrain. RSI (Repetitive Strain Injury) is real.
-            <br/>
-            <strong>Warmup:</strong> 5 mins of easy wave on our <Link href="/" className="text-blue-400 hover:underline">Simulator</Link>.
-            <br/>
-            <strong>Intensity:</strong> 10 mins of <Link href="/cps-test" className="text-blue-400 hover:underline">CPS Testing</Link> to fail.
-            <br/>
-            <strong>Rest:</strong> 15 mins break.
+          A higher CPS score only matters if it helps the gameplay you are trying to perform. Finish each speed session with several controlled runs in the <ToolLink href="/geometry-dash-wave">Wave Trainer</ToolLink>. If the wave becomes less stable as CPS rises, the next training goal is consistency rather than more speed.
         </p>
-
-        <h2 id="tools" className="text-3xl font-display font-bold text-white mt-12 mb-6 scroll-mt-24">5. Recommended Practice Tools</h2>
-        <p className="mb-4 text-slate-300">
-            Use the specialized tools on this website. The <Link href="/" className="text-blue-400 hover:underline">Wave Simulator</Link> is specifically tuned to mimic 2.2 physics.
+        <p className="text-slate-400 text-sm">
+          Avoid training through pain or numbness. This site is a game-practice tool, not medical guidance.
         </p>
       </>
-    )
+    ),
   },
   {
-    id: '3',
-    slug: 'best-mouse-for-spam-geometry-dash',
-    title: 'Best Gaming Mouse for Geometry Dash Spam (2026 Tested)',
-    excerpt: 'Hardware matters. We tested the top mice from Logitech, Razer, and Finalmouse to see which switches handle spam best.',
-    date: 'January 10, 2026',
-    readTime: '10 min read',
-    coverImage: 'https://images.unsplash.com/photo-1527814050087-3793815479db?q=80&w=2028&auto=format&fit=crop',
-    tags: ['Reviews', 'Hardware'],
+    id: "3",
+    slug: "best-mouse-for-spam-geometry-dash",
+    title: "How to Choose a Mouse for Geometry Dash Spam",
+    excerpt:
+      "What actually matters when comparing mice for Geometry Dash: click feel, debounce behavior, polling, shape and repeatable comfort.",
+    date: "October 5, 2026",
+    readTime: "6 min read",
+    coverImage:
+      "https://images.unsplash.com/photo-1527814050087-3793815479db?q=80&w=2028&auto=format&fit=crop",
+    tags: ["Hardware", "Guide"],
     content: (
       <>
-        <h2 className="text-3xl font-display font-bold text-white mt-12 mb-6">1. Why Mouse Choice Matters</h2>
+        <h2 className="text-3xl font-display font-bold text-white mt-12 mb-6">Do not shop by one latency number</h2>
         <p className="mb-4 text-slate-300">
-            In <Link href="/" className="text-blue-400 hover:underline">Geometry Dash</Link>, input latency is the enemy. Different mice can have meaningfully different click latency, debounce behavior and polling characteristics. Use measured hardware data rather than assuming a fixed latency from the product category.
+          Mouse click latency, debounce behavior and polling are measurable, but a product category such as “gaming mouse” does not guarantee one fixed latency. Compare independent measurements for the exact model and firmware you plan to use.
         </p>
 
-        <h2 className="text-3xl font-display font-bold text-white mt-12 mb-6">2. Key Features for Spam</h2>
+        <h2 className="text-3xl font-display font-bold text-white mt-12 mb-6">What matters for repeated inputs</h2>
         <ul className="list-disc pl-6 mb-6 space-y-2 text-slate-300">
-            <li><strong>Lightweight:</strong> Less mass to move means faster corrections.</li>
-            <li><strong>Light Clicks:</strong> Switches that require less force (grams) allow for longer spam sessions without fatigue.</li>
-            <li><strong>Polling Rate:</strong> Higher polling rates can reduce report intervals, but the practical benefit depends on the mouse, system and display.</li>
+          <li><strong>Click force and feel:</strong> a switch that feels comfortable may be easier to repeat consistently.</li>
+          <li><strong>Button shape:</strong> wide, stable buttons can make your preferred grip easier to reproduce.</li>
+          <li><strong>Debounce behavior:</strong> affects how repeated clicks are registered and filtered.</li>
+          <li><strong>Polling rate:</strong> changes how frequently the device can report updates, but it is only one part of end-to-end latency.</li>
+          <li><strong>Fit:</strong> hand size and grip style matter more than a generic “best mouse” label.</li>
         </ul>
 
-        <h2 className="text-3xl font-display font-bold text-white mt-12 mb-6">3. Top 3 Mice for GD Spam</h2>
-        
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-4 my-8">
-            <div className="bg-slate-800 p-4 rounded-lg border border-slate-700">
-                <h4 className="font-bold text-white mb-2">Razer Viper V3 Pro</h4>
-                <p className="text-sm text-slate-400">Optical switches prevent double clicking. Extremely fast response.</p>
-            </div>
-            <div className="bg-slate-800 p-4 rounded-lg border border-slate-700">
-                <h4 className="font-bold text-white mb-2">Logitech G Pro X Superlight 2</h4>
-                <p className="text-sm text-slate-400">The industry standard. Reliable, light, consistent clicks.</p>
-            </div>
-             <div className="bg-slate-800 p-4 rounded-lg border border-slate-700">
-                <h4 className="font-bold text-white mb-2">G-Wolves HTS+ 4K</h4>
-                <p className="text-sm text-slate-400">For fingertip grippers who need maximum spam speed.</p>
-            </div>
-        </div>
+        <h2 className="text-3xl font-display font-bold text-white mt-12 mb-6">How to compare two mice yourself</h2>
+        <ol className="list-decimal pl-6 mb-6 space-y-2 text-slate-300">
+          <li>Use the same <ToolLink href="/cps-test">CPS Test</ToolLink> duration on both mice.</li>
+          <li>Record several runs instead of choosing the highest single score.</li>
+          <li>Compare comfort and consistency as well as CPS.</li>
+          <li>Use the <ToolLink href="/polling-rate">Polling Rate Test</ToolLink> as a browser-side diagnostic, not as a complete latency benchmark.</li>
+        </ol>
+      </>
+    ),
+  },
+  {
+    id: "4",
+    slug: "wave-vs-ufo-spam",
+    title: "Wave vs UFO vs Ship Spam: How the Input Skills Differ",
+    excerpt:
+      "Wave, UFO and ship sections can all involve rapid inputs, but the control problem is different in each mode.",
+    date: "October 5, 2026",
+    readTime: "5 min read",
+    coverImage:
+      "https://images.unsplash.com/photo-1518770660439-4636190af475?q=80&w=2070&auto=format&fit=crop",
+    tags: ["Mechanics", "Wave"],
+    content: (
+      <>
+        <h2 className="text-2xl font-bold text-white mt-8 mb-4">Wave: interval control</h2>
+        <p className="text-slate-300 mb-4">
+          Wave input directly changes diagonal direction, so the spacing between press and release events strongly affects the path. The <ToolLink href="/geometry-dash-wave">Wave Trainer</ToolLink> is designed around this type of repeated correction.
+        </p>
+
+        <h2 className="text-2xl font-bold text-white mt-8 mb-4">UFO: repeated impulses</h2>
+        <p className="text-slate-300 mb-4">
+          UFO movement reacts to individual taps rather than sustained diagonal movement. Rapid input can still appear, but rhythm and spacing determine whether the UFO climbs too aggressively or stays in the intended lane.
+        </p>
+
+        <h2 className="text-2xl font-bold text-white mt-8 mb-4">Ship: hold-and-release balance</h2>
+        <p className="text-slate-300 mb-4">
+          Ship control is more about balancing hold duration and release timing. Fast corrections may look like spam, but the useful skill is controlled micro-adjustment rather than maximum CPS.
+        </p>
 
         <p className="text-slate-300">
-            Always test your new hardware with a <Link href="/reaction-test" className="text-blue-400 hover:underline">Reaction Time Test</Link> to verify the latency improvements.
+          If your goal is specifically rapid-input wave control, start with the <ToolLink href="/">Spam Test</ToolLink> and then move to the dedicated wave presets.
         </p>
       </>
-    )
+    ),
   },
   {
-    id: '4',
-    slug: 'wave-vs-ufo-spam',
-    title: 'Wave vs UFO vs Ship Spam: Which is Hardest?',
-    excerpt: 'Comparing the three main gamemodes that utilize spam mechanics. Why Wave spam is king, but UFO spam is the silent killer.',
-    date: 'January 10, 2026',
-    readTime: '8 min read',
-    coverImage: 'https://images.unsplash.com/photo-1518770660439-4636190af475?q=80&w=2070&auto=format&fit=crop',
-    tags: ['Analysis', 'Game Modes'],
+    id: "5",
+    slug: "top-spam-levels-2026",
+    title: "Notable Wave and Spam Levels in Geometry Dash",
+    excerpt:
+      "A non-ranking list of well-known levels associated with difficult wave control and rapid-input sections, with links back to the current Demon List.",
+    date: "October 5, 2026",
+    readTime: "6 min read",
+    coverImage:
+      "https://images.unsplash.com/photo-1535905557558-afc4877a26fc?q=80&w=2574&auto=format&fit=crop",
+    tags: ["Levels", "Wave"],
     content: (
-       <>
-         <p className="text-slate-300 mb-4">Every gamemode in <Link href="/" className="text-blue-400 hover:underline">Geometry Dash</Link> handles spam differently.</p>
-         <h2 className="text-2xl font-bold text-white mt-8 mb-4">1. The Wave</h2>
-         <p className="text-slate-300 mb-4">Linear movement. 1 click = 1 direction change. Purest form of spam.</p>
-         <h2 className="text-2xl font-bold text-white mt-8 mb-4">2. The UFO</h2>
-         <p className="text-slate-300 mb-4">Flappy bird mechanics. Spamming creates a ceiling cling. Timing is still relevant.</p>
-         <h2 className="text-2xl font-bold text-white mt-8 mb-4">3. The Ship</h2>
-         <p className="text-slate-300 mb-4">"Straight flying" is a form of controlled spam. It requires rhythm rather than raw speed.</p>
-       </>
-    )
+      <>
+        <p className="text-slate-300 mb-6">
+          This article is <strong>not</strong> an official “spam ranking.” The current Pointercrate order is maintained separately on our <ToolLink href="/demon-list">Geometry Dash Demon List</ToolLink>. The examples below are useful because players commonly associate them with demanding wave or rapid-input gameplay.
+        </p>
+
+        {[
+          ["Tidal Wave", "A high-difficulty level with wave-heavy sections and a long history of discussion around control consistency."],
+          ["Sakupen Circles", "A well-known circles-style Extreme Demon associated with very tight wave gameplay."],
+          ["Slaughterhouse", "Contains demanding transitions and wave sections where precise repeated inputs are important."],
+          ["Silent Clubstep", "A historically significant extreme challenge whose difficulty goes far beyond a simple CPS number."],
+          ["Ashley Wave Trials", "A wave-focused level that makes the mechanic itself central to the challenge."],
+        ].map(([level, description]) => (
+          <section key={level} className="mb-6 rounded-xl border border-white/10 bg-slate-900/25 p-5">
+            <h2 className="text-xl font-bold text-white mb-2">{level}</h2>
+            <p className="text-slate-400">{description}</p>
+          </section>
+        ))}
+
+        <p className="text-slate-300">
+          Before using a level&apos;s Demon List position as a fact, check the dated <ToolLink href="/demon-list">Top 50 snapshot</ToolLink> or the live source linked from that page.
+        </p>
+      </>
+    ),
   },
   {
-    id: '5',
-    slug: 'top-spam-levels-2026',
-    title: 'Notable Wave and Spam Levels in Geometry Dash',
-    excerpt: 'A focused look at well-known levels associated with demanding wave control and rapid-input sections.',
-    date: 'January 10, 2026',
-    readTime: '14 min read',
-    coverImage: 'https://images.unsplash.com/photo-1535905557558-afc4877a26fc?q=80&w=2574&auto=format&fit=crop',
-    tags: ['List', 'Levels'],
+    id: "6",
+    slug: "30-day-spam-challenge",
+    title: "30-Day Geometry Dash Spam Practice Plan",
+    excerpt:
+      "A conservative month-long practice structure for improving consistency, wave control and test repeatability without promising a fixed CPS gain.",
+    date: "October 5, 2026",
+    readTime: "6 min read",
+    coverImage:
+      "https://images.unsplash.com/photo-1517836357463-d25dfeac3438?q=80&w=2070&auto=format&fit=crop",
+    tags: ["Training", "Practice Plan"],
     content: (
-        <>
-            <p className="text-slate-300 mb-4">These examples are useful practice references for players interested in demanding wave control. They are not presented as an official spam ranking.</p>
-            <h2 className="text-2xl font-bold text-white mt-8 mb-4">1. Tidal Wave</h2>
-            <p className="text-slate-300 mb-4">A well-known Extreme Demon with demanding wave sections. Check the current Demon List before treating any placement as current.</p>
-            <h2 className="text-2xl font-bold text-white mt-8 mb-4">2. Sakupen Circles</h2>
-            <p className="text-slate-300 mb-4">Known for tight wave gameplay where controlled inputs matter more than a single peak CPS number.</p>
-            <p className="text-slate-300 mt-8">Test your skills on our <Link href="/" className="text-blue-400 hover:underline">Wave Simulator</Link> before attempting these.</p>
-        </>
-    )
+      <>
+        <p className="text-slate-300 mb-6">
+          This plan does not promise that you will reach a particular CPS number. The goal is to create a repeatable practice routine and compare your own results over time.
+        </p>
+
+        <h2 className="text-2xl font-bold text-white mt-8 mb-4">Days 1–7: baseline and control</h2>
+        <p className="text-slate-300 mb-4">
+          Record three 10-second CPS runs and several Easy/Hard spam runs. Keep the same input device and note which pace feels controllable.
+        </p>
+
+        <h2 className="text-2xl font-bold text-white mt-8 mb-4">Days 8–14: short speed blocks</h2>
+        <p className="text-slate-300 mb-4">
+          Add a small number of 1–5 second CPS attempts, then return to the <ToolLink href="/geometry-dash-wave">Wave Trainer</ToolLink> and see whether the extra speed transfers into smoother movement.
+        </p>
+
+        <h2 className="text-2xl font-bold text-white mt-8 mb-4">Days 15–21: consistency</h2>
+        <p className="text-slate-300 mb-4">
+          Use longer 30-second tests sparingly and compare average interval and consistency. On the wave trainer, choose a difficulty you can survive repeatedly rather than the hardest available mode.
+        </p>
+
+        <h2 className="text-2xl font-bold text-white mt-8 mb-4">Days 22–30: progression check</h2>
+        <p className="text-slate-300 mb-4">
+          Repeat the original baseline setup. Compare several attempts, not only the best result. If control improved without a large CPS increase, that is still useful progress for spam gameplay.
+        </p>
+
+        <p className="text-sm text-slate-400">
+          Rest between repeated high-effort attempts and stop if a session causes pain or numbness.
+        </p>
+      </>
+    ),
   },
   {
-    id: '6',
-    slug: '30-day-spam-challenge',
-    title: '30-Day Spam Training Challenge (Beginner to Pro)',
-    excerpt: 'A day-by-day training routine to take you from 5 CPS to 10+ CPS. Includes rest days and specific simulator drills.',
-    date: 'January 10, 2026',
-    readTime: '9 min read',
-    coverImage: 'https://images.unsplash.com/photo-1517836357463-d25dfeac3438?q=80&w=2070&auto=format&fit=crop',
-    tags: ['Training', 'Challenge'],
+    id: "7",
+    slug: "science-of-clicking",
+    title: "Why Click Timing Consistency Matters in Geometry Dash",
+    excerpt:
+      "A measurement-focused explanation of click intervals, variance and why stable timing can matter more than a one-run CPS peak.",
+    date: "October 5, 2026",
+    readTime: "5 min read",
+    coverImage:
+      "https://images.unsplash.com/photo-1532094349884-543bc11b234d?q=80&w=2070&auto=format&fit=crop",
+    tags: ["Measurement", "CPS"],
     content: (
-        <>
-            <h2 className="text-2xl font-bold text-white mt-8 mb-4">Week 1: Foundations</h2>
-            <p className="text-slate-300 mb-4">Focus on accuracy over speed. Use the "Easy" mode on the <Link href="/" className="text-blue-400 hover:underline">Simulator</Link>.</p>
-            <h2 className="text-2xl font-bold text-white mt-8 mb-4">Week 2: Speed Bursts</h2>
-            <p className="text-slate-300 mb-4">Practice 1-second bursts of maximum speed using the 1s mode on the <Link href="/cps-test" className="text-blue-400 hover:underline">CPS Test</Link>.</p>
-        </>
-    )
+      <>
+        <h2 className="text-2xl font-bold text-white mt-8 mb-4">CPS is an average</h2>
+        <p className="text-slate-300 mb-4">
+          A 10 CPS result means ten registered inputs per second on average. It does not tell you whether those clicks arrived evenly. A run with alternating very short and very long intervals can produce the same CPS as a run with stable spacing.
+        </p>
+
+        <h2 className="text-2xl font-bold text-white mt-8 mb-4">Look at intervals</h2>
+        <p className="text-slate-300 mb-4">
+          The updated <ToolLink href="/cps-test">CPS Test</ToolLink> records average interval, a short-burst peak estimate and a consistency score. Those numbers are browser-side training diagnostics rather than laboratory measurements.
+        </p>
+
+        <h2 className="text-2xl font-bold text-white mt-8 mb-4">Why this matters for wave control</h2>
+        <p className="text-slate-300 mb-4">
+          Repeated wave corrections depend on when inputs arrive. If your interval pattern changes dramatically from click to click, the same average CPS can still produce a less predictable trajectory.
+        </p>
+
+        <p className="text-slate-300">
+          Use the <ToolLink href="/">Spam Test</ToolLink> after a CPS run to see whether the timing pattern transfers into a controllable path.
+        </p>
+      </>
+    ),
   },
   {
-    id: '7',
-    slug: 'science-of-clicking',
-    title: 'The Science Behind Fast Clicking in Geometry Dash',
-    excerpt: 'We explore the biomechanics of the human hand, fast twitch muscle fibers, and how to optimize your biology for gaming.',
-    date: 'January 10, 2026',
-    readTime: '11 min read',
-    coverImage: 'https://images.unsplash.com/photo-1532094349884-543bc11b234d?q=80&w=2070&auto=format&fit=crop',
-    tags: ['Science', 'Education'],
+    id: "8",
+    slug: "mobile-vs-pc-spam",
+    title: "Mobile vs PC for Geometry Dash Spam: What Actually Changes",
+    excerpt:
+      "A practical comparison of touch, mouse and keyboard input without assuming one platform is always faster.",
+    date: "October 5, 2026",
+    readTime: "5 min read",
+    coverImage:
+      "https://images.unsplash.com/photo-1512941937669-90a1b58e7e9c?q=80&w=2070&auto=format&fit=crop",
+    tags: ["Mobile", "Input"],
     content: (
-        <>
-            <h2 className="text-2xl font-bold text-white mt-8 mb-4">Fast Twitch Fibers</h2>
-            <p className="text-slate-300 mb-4">Fast clicking involves coordination, technique and fatigue tolerance. This site does not attempt to infer muscle-fiber composition.</p>
-            <h2 className="text-2xl font-bold text-white mt-8 mb-4">The Role of Neuroplasticity</h2>
-            <p className="text-slate-300 mb-4">How your brain rewires itself to handle high-speed inputs in <Link href="/" className="text-blue-400 hover:underline">Geometry Dash</Link>.</p>
-        </>
-    )
+      <>
+        <h2 className="text-2xl font-bold text-white mt-8 mb-4">The input path is different</h2>
+        <p className="text-slate-300 mb-4">
+          Touchscreens, mice and keyboards use different hardware and software paths. Total latency depends on the complete device, operating system, browser or game client, display and input hardware; it cannot be reduced to one universal “mobile” or “PC” number.
+        </p>
+
+        <h2 className="text-2xl font-bold text-white mt-8 mb-4">Refresh rate is not the same as input latency</h2>
+        <p className="text-slate-300 mb-4">
+          A higher refresh rate reduces the time between display refreshes, but that frame interval is only one part of end-to-end input response. Use the <ToolLink href="/refresh-rate">Refresh Rate Test</ToolLink> to identify the browser-observed display rate, not to claim full-system latency.
+        </p>
+
+        <h2 className="text-2xl font-bold text-white mt-8 mb-4">Compare your own setups</h2>
+        <p className="text-slate-300 mb-4">
+          Run the same CPS duration on each device, then compare repeatability and comfort. For the spam simulator, use the same difficulty and wave mode so the comparison is meaningful.
+        </p>
+      </>
+    ),
   },
   {
-    id: '8',
-    slug: 'mobile-vs-pc-spam',
-    title: 'Mobile vs PC for Geometry Dash Spam: Practical Differences',
-    excerpt: 'A practical comparison of touch, mouse and keyboard input for Geometry Dash spam practice.',
-    date: 'January 10, 2026',
-    readTime: '7 min read',
-    coverImage: 'https://images.unsplash.com/photo-1512941937669-90a1b58e7e9c?q=80&w=2070&auto=format&fit=crop',
-    tags: ['Mobile', 'Platform'],
+    id: "9",
+    slug: "common-spam-mistakes",
+    title: "10 Common Geometry Dash Spam Mistakes and How to Fix Them",
+    excerpt:
+      "Ten practical reasons spam practice becomes inconsistent, from chasing peak CPS to changing settings too often.",
+    date: "October 5, 2026",
+    readTime: "6 min read",
+    coverImage:
+      "https://images.unsplash.com/photo-1455849318743-b2233052fcff?q=80&w=2069&auto=format&fit=crop",
+    tags: ["Tips", "Training"],
     content: (
-        <>
-            <h2 className="text-2xl font-bold text-white mt-8 mb-4">60Hz vs 120Hz Screens</h2>
-            <p className="text-slate-300 mb-4">Most modern phones have 120Hz, making them competitive.</p>
-            <h2 className="text-2xl font-bold text-white mt-8 mb-4">Touch vs Click</h2>
-            <p className="text-slate-300 mb-4">Touch screens have inherent latency. See our <Link href="/reaction-test" className="text-blue-400 hover:underline">Reaction Test</Link> data.</p>
-        </>
-    )
+      <>
+        <ol className="space-y-6 text-slate-300">
+          {[
+            ["Chasing only peak CPS", "Track repeatable speed and timing consistency, not just the single highest burst."],
+            ["Changing settings every attempt", "Keep the same difficulty and input method long enough to compare results."],
+            ["Starting too difficult", "A wider corridor makes timing errors easier to see and correct."],
+            ["Tensing the whole arm", "Use a comfortable posture and avoid forcing a technique that feels painful."],
+            ["Ignoring click intervals", "Two runs with the same CPS can have very different timing stability."],
+            ["Training only 1-second tests", "Short bursts are useful, but longer tests reveal whether a pace is sustainable."],
+            ["Treating browser scores as game-engine measurements", "Browser tools are diagnostics; actual game behavior also depends on the game client and hardware."],
+            ["Skipping movement practice", "Raw CPS should be followed by wave-control practice so speed transfers into a useful skill."],
+            ["Comparing different devices without controlling variables", "Use the same duration, difficulty and technique when testing setups."],
+            ["Continuing through pain", "End the session if repeated clicking causes pain, numbness or persistent discomfort."],
+          ].map(([title, body], index) => (
+            <li key={title}>
+              <h2 className="text-xl font-bold text-white mb-2">{index + 1}. {title}</h2>
+              <p className="text-slate-400">{body}</p>
+            </li>
+          ))}
+        </ol>
+
+        <div className="mt-8 rounded-xl border border-blue-500/20 bg-blue-950/20 p-5">
+          <p className="text-slate-300">
+            A simple workflow is <ToolLink href="/cps-test">CPS Test</ToolLink> → <ToolLink href="/">Spam Test</ToolLink> → <ToolLink href="/geometry-dash-wave">Wave Trainer</ToolLink>.
+          </p>
+        </div>
+      </>
+    ),
   },
   {
-    id: '9',
-    slug: 'common-spam-mistakes',
-    title: '10 Common Spam Mistakes and How to Fix Them',
-    excerpt: 'Are you inconsistent? Do you cramp up? You are probably making these 10 fundamental errors in your technique.',
-    date: 'January 10, 2026',
-    readTime: '8 min read',
-    coverImage: 'https://images.unsplash.com/photo-1455849318743-b2233052fcff?q=80&w=2069&auto=format&fit=crop',
-    tags: ['Tips', 'Strategy'],
+    id: "10",
+    slug: "interview-top-players",
+    title: "How to Evaluate Geometry Dash Spam Advice Online",
+    excerpt:
+      "A checklist for separating useful training advice from unsupported player claims, fake interviews and made-up performance numbers.",
+    date: "October 5, 2026",
+    readTime: "5 min read",
+    coverImage:
+      "https://images.unsplash.com/photo-1542751371-adc38448a05e?q=80&w=2070&auto=format&fit=crop",
+    tags: ["Community", "Evidence"],
     content: (
-        <>
-             <h2 className="text-2xl font-bold text-white mt-8 mb-4">1. Holding Breath</h2>
-             <p className="text-slate-300 mb-4">Oxygen is fuel. Breathe while you spam.</p>
-             <h2 className="text-2xl font-bold text-white mt-8 mb-4">2. Poor Posture</h2>
-             <p className="text-slate-300 mb-4">Sit straight to allow blood flow to arms. If you feel pain, check our guide on <Link href="/jitter-click" className="text-blue-400 hover:underline">Jitter Clicking Safety</Link>.</p>
-        </>
-    )
+      <>
+        <p className="text-slate-300 mb-6">
+          Advice is more useful when you can understand the setup, reproduce the test and verify any factual claims. A famous player name or a confident number is not evidence by itself.
+        </p>
+
+        <h2 className="text-2xl font-bold text-white mt-8 mb-4">1. Check whether the quote is real</h2>
+        <p className="text-slate-300 mb-4">
+          A genuine interview should identify where and when the statement was made. If a quote cannot be traced to a public source or an actual conversation, do not present it as a player interview.
+        </p>
+
+        <h2 className="text-2xl font-bold text-white mt-8 mb-4">2. Check the settings behind a score</h2>
+        <p className="text-slate-300 mb-4">
+          CPS depends on duration, device, technique and how the test counts clicks. Compare numbers only when the conditions are similar.
+        </p>
+
+        <h2 className="text-2xl font-bold text-white mt-8 mb-4">3. Separate practice models from official physics</h2>
+        <p className="text-slate-300 mb-4">
+          Browser simulators can isolate useful skills, but they should not claim exact Geometry Dash physics unless that claim has been independently demonstrated.
+        </p>
+
+        <h2 className="text-2xl font-bold text-white mt-8 mb-4">4. Prefer reproducible advice</h2>
+        <p className="text-slate-300 mb-4">
+          “Use the same 10-second test three times and compare interval consistency” is reproducible. “All top players need a specific CPS” is not useful without evidence and context.
+        </p>
+
+        <p className="text-slate-300">
+          You can reproduce basic speed and timing experiments with the <ToolLink href="/cps-test">CPS Test</ToolLink> and then test movement control in the <ToolLink href="/">Spam Simulator</ToolLink>.
+        </p>
+      </>
+    ),
   },
-  {
-    id: '10',
-    slug: 'interview-top-players',
-    title: 'How to Evaluate Geometry Dash Spam Advice Online',
-    excerpt: 'A checklist for separating useful Geometry Dash training advice from unsupported claims.',
-    date: 'January 10, 2026',
-    readTime: '20 min read',
-    coverImage: 'https://images.unsplash.com/photo-1542751371-adc38448a05e?q=80&w=2070&auto=format&fit=crop',
-    tags: ['Interview', 'Community'],
-    content: (
-        <>
-            <h2 className="text-2xl font-bold text-white mt-8 mb-4">Check the Evidence Behind Training Claims</h2>
-            <p className="text-slate-300 mb-4">"I just practice on the <Link href="/" className="text-blue-400 hover:underline">Spam Simulator</Link> every day."</p>
-        </>
-    )
-  }
 ];
