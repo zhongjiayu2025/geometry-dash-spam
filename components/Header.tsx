@@ -70,20 +70,20 @@ export default function Header() {
 
         <nav className="hidden lg:flex items-center gap-1">
           {coreItems.map(({ href, label, icon: Icon }) => (
-            <Link key={href} href={href} className={`flex items-center gap-1.5 px-3 py-2 rounded-lg text-sm transition-colors ${isActive(href) ? "bg-white/10 text-white" : "text-slate-400 hover:text-white hover:bg-white/5"}`}>
+            <Link key={href} href={href} aria-current={isActive(href) ? "page" : undefined} className={`flex items-center gap-1.5 px-3 py-2 rounded-lg text-sm transition-colors ${isActive(href) ? "bg-white/10 text-white" : "text-slate-400 hover:text-white hover:bg-white/5"}`}>
               <Icon className="w-4 h-4" />
               {label}
             </Link>
           ))}
 
           <div className="relative" onMouseEnter={() => setMoreOpen(true)} onMouseLeave={() => setMoreOpen(false)}>
-            <button onClick={() => setMoreOpen((v) => !v)} className="flex items-center gap-1.5 px-3 py-2 rounded-lg text-sm text-slate-400 hover:text-white hover:bg-white/5" aria-haspopup="true" aria-expanded={moreOpen}>
+            <button onClick={() => setMoreOpen((v) => !v)} className="flex items-center gap-1.5 px-3 py-2 rounded-lg text-sm text-slate-400 hover:text-white hover:bg-white/5" aria-haspopup="true" aria-expanded={moreOpen} aria-controls="more-gd-menu">
               <Keyboard className="w-4 h-4" />
               More GD
               <ChevronDown className="w-3 h-3" />
             </button>
             {moreOpen && (
-              <div className="absolute right-0 top-full pt-2 w-56">
+              <div id="more-gd-menu" className="absolute right-0 top-full pt-2 w-56">
                 <div className="grid max-h-[70vh] overflow-y-auto bg-[#0b1021] border border-white/10 rounded-xl p-2 shadow-2xl">
                   {moreItems.map(([href, label]) => (
                     <Link key={href} href={href} className="px-3 py-2 rounded-lg text-sm text-slate-300 hover:text-white hover:bg-white/5">{label}</Link>
@@ -94,16 +94,16 @@ export default function Header() {
           </div>
         </nav>
 
-        <button className="lg:hidden p-2 text-slate-300" onClick={() => setMobileOpen((v) => !v)} aria-label={mobileOpen ? "Close menu" : "Open menu"}>
+        <button className="lg:hidden p-2 text-slate-300" onClick={() => setMobileOpen((v) => !v)} aria-label={mobileOpen ? "Close menu" : "Open menu"} aria-expanded={mobileOpen} aria-controls="mobile-navigation">
           {mobileOpen ? <X /> : <Menu />}
         </button>
       </div>
 
       {mobileOpen && (
-        <div className="lg:hidden absolute top-full inset-x-0 max-h-[82vh] overflow-y-auto border-b border-white/10 bg-[#0b1021] p-4 shadow-2xl">
+        <div id="mobile-navigation" className="lg:hidden absolute top-full inset-x-0 max-h-[82vh] overflow-y-auto border-b border-white/10 bg-[#0b1021] p-4 shadow-2xl">
           <div className="grid gap-1">
             {coreItems.map(({ href, label, icon: Icon }) => (
-              <Link key={href} href={href} onClick={() => setMobileOpen(false)} className={`flex items-center gap-3 px-4 py-3 rounded-lg ${isActive(href) ? "bg-white/10 text-white" : "text-slate-300 hover:bg-white/5"}`}>
+              <Link key={href} href={href} aria-current={isActive(href) ? "page" : undefined} onClick={() => setMobileOpen(false)} className={`flex items-center gap-3 px-4 py-3 rounded-lg ${isActive(href) ? "bg-white/10 text-white" : "text-slate-300 hover:bg-white/5"}`}>
                 <Icon className="w-4 h-4" />
                 {label}
               </Link>
