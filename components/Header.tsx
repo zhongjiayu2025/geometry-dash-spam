@@ -29,19 +29,7 @@ const moreItems = [
   ["/geometry-dash-clicker", "Geometry Dash Clicker"],
 ] as const;
 
-const mobileMoreItems = [
-  ["/spam-challenge-list", "Spam Challenge List"],
-  ["/demon-list/spam-demons", "Spam Demon References"],
-  ["/demon-list/wave-demons", "Wave Demons"],
-  ["/hardest-level", "Hardest Level"],
-  ["/easiest-demons", "Easiest Demons"],
-  ["/geometry-dash-difficulty-faces", "Difficulty Faces"],
-  ["/geometry-dash-vault-of-secrets-codes", "Vault of Secrets Codes"],
-  ["/how-to-get-diamonds-geometry-dash", "Get Diamonds"],
-  ["/how-to-get-gold-keys-geometry-dash", "Get Gold Keys"],
-  ["/geometry-dash-stuttering-high-end-pc", "PC Stutter Guide"],
-  ["/geometry-dash-clicker", "Geometry Dash Clicker"],
-] as const;
+
 
 export default function Header() {
   const pathname = usePathname();
@@ -80,7 +68,7 @@ export default function Header() {
               <div id="more-gd-menu" className="absolute right-0 top-full pt-2 w-56">
                 <div className="grid max-h-[70vh] overflow-y-auto bg-[#0b1021] border border-white/10 rounded-xl p-2 shadow-2xl">
                   {moreItems.map(([href, label]) => (
-                    <Link key={href} href={href} className="px-3 py-2 rounded-lg text-sm text-slate-300 hover:text-white hover:bg-white/5">{label}</Link>
+                    <Link key={href} href={href} aria-current={isActive(href) ? "page" : undefined} className="px-3 py-2 rounded-lg text-sm text-slate-300 hover:text-white hover:bg-white/5">{label}</Link>
                   ))}
                 </div>
               </div>
@@ -104,8 +92,8 @@ export default function Header() {
             ))}
             <div className="mt-3 pt-3 border-t border-white/10">
               <p className="px-4 mb-2 text-xs uppercase tracking-widest text-slate-500">More GD</p>
-              {mobileMoreItems.map(([href, label]) => (
-                <Link key={href} href={href} onClick={() => setMobileOpen(false)} className="block px-4 py-2.5 rounded-lg text-slate-400 hover:text-white hover:bg-white/5">{label}</Link>
+              {moreItems.map(([href, label]) => (
+                <Link key={href} href={href} aria-current={isActive(href) ? "page" : undefined} onClick={() => setMobileOpen(false)} className="block px-4 py-2.5 rounded-lg text-slate-400 hover:text-white hover:bg-white/5">{label}</Link>
               ))}
               <Link href="/sitemap" onClick={() => setMobileOpen(false)} className="mt-1 block px-4 py-2.5 rounded-lg font-semibold text-blue-400 hover:text-blue-300 hover:bg-white/5">
                 All tools & guides →
