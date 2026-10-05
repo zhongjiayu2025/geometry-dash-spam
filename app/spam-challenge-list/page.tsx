@@ -106,20 +106,20 @@ export default function SpamChallengeListPage() {
               Community challenges where spam or rapid repeated input is the defining skill. Use the live SCL for current placements.
             </p>
           </div>
-          <div className="rounded-xl border border-white/10 bg-slate-900/30 p-5">
+          <Link href="/demon-list" className="rounded-xl border border-white/10 bg-slate-900/30 p-5 hover:border-purple-500/40">
             <div className="mb-2 text-xs font-bold uppercase tracking-wider text-purple-300">Pointercrate</div>
-            <h2 className="mb-2 text-xl font-bold text-white">Demon List</h2>
+            <h2 className="mb-2 text-xl font-bold text-white">Demon List →</h2>
             <p className="text-sm leading-6 text-slate-400">
               A community ranking of extremely difficult Demon levels overall. It does not rank levels by spam intensity.
             </p>
-          </div>
-          <div className="rounded-xl border border-white/10 bg-slate-900/30 p-5">
+          </Link>
+          <Link href="/demon-list/spam-demons" className="rounded-xl border border-white/10 bg-slate-900/30 p-5 hover:border-blue-500/40">
             <div className="mb-2 text-xs font-bold uppercase tracking-wider text-blue-300">Practice</div>
-            <h2 className="mb-2 text-xl font-bold text-white">Spam Demon References</h2>
+            <h2 className="mb-2 text-xl font-bold text-white">Spam Demon References →</h2>
             <p className="text-sm leading-6 text-slate-400">
               Our separate practice page highlights spam-heavy Demons while preserving their real Pointercrate positions.
             </p>
-          </div>
+          </Link>
         </section>
 
         <section className="mb-10 rounded-2xl border border-white/10 bg-black/20 p-6 md:p-8">
@@ -172,6 +172,9 @@ export default function SpamChallengeListPage() {
           </Link>
           <Link href="/cps-test" className="rounded-lg border border-white/10 px-4 py-2 text-sm font-bold text-white">
             CPS Test
+          </Link>
+          <Link href="/demon-list" className="rounded-lg border border-purple-500/20 px-4 py-2 text-sm font-bold text-purple-200">
+            Full Demon List
           </Link>
           <Link href="/demon-list/spam-demons" className="rounded-lg border border-white/10 px-4 py-2 text-sm font-bold text-white">
             Spam Demons
