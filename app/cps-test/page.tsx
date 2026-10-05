@@ -2,7 +2,7 @@ import CpsTest from "../../components/CpsTest";
 import { Metadata } from "next";
 
 export const metadata: Metadata = {
-  title: "Geometry Dash CPS Test | GD Spam Click Test (1–60s)",
+  title: "Geometry Dash CPS Test | GD Spam Click Test",
   description:
     "Take a Geometry Dash CPS test and spam click test in 1, 3, 5, 10, 30 or 60 seconds. Measure click speed, peak CPS, consistency and local personal bests.",
   alternates: {
