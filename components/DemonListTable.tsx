@@ -84,54 +84,54 @@ export default function DemonListTable() {
         Showing {filtered.length} of {DEMONS.length} ranked levels.
       </p>
 
-      <div id="demon-list-results" className="space-y-2 md:hidden" aria-label="Filtered Demon List">
-        {filtered.map((item) => (
-          <div key={item.rank} className="flex items-start gap-3 rounded-xl border border-white/10 bg-slate-950/25 p-4">
-            <div className="w-11 shrink-0 font-mono text-sm font-bold text-blue-400">#{item.rank}</div>
-            <div className="min-w-0 flex-1">
-              <div className="break-words font-semibold text-white">{item.level}</div>
-              <div className="mt-1 text-xs text-slate-500">by {item.publisher}</div>
-            </div>
-            <div className="shrink-0 rounded-full border border-purple-500/20 bg-purple-500/10 px-2 py-1 text-[10px] font-semibold text-purple-300">
-              Extreme
-            </div>
-          </div>
-        ))}
-        {!filtered.length && (
-          <div className="rounded-xl border border-white/10 bg-slate-950/25 p-6 text-center text-sm text-slate-500">
-            No matching demon found in this top-50 snapshot.
-          </div>
-        )}
-      </div>
+      <div
+        id="demon-list-results"
+        role="table"
+        aria-label="Filtered Demon List"
+        aria-rowcount={filtered.length}
+        className="overflow-hidden rounded-xl border border-white/10"
+      >
+        <div
+          role="row"
+          className="hidden grid-cols-[72px_minmax(0,2fr)_minmax(0,1.2fr)_110px] bg-slate-900/80 text-xs font-semibold uppercase tracking-wider text-slate-500 md:grid"
+        >
+          <div role="columnheader" className="px-4 py-3">Rank</div>
+          <div role="columnheader" className="px-4 py-3">Level</div>
+          <div role="columnheader" className="px-4 py-3">Published by</div>
+          <div role="columnheader" className="px-4 py-3">Difficulty</div>
+        </div>
 
-      <div id="demon-list-results-desktop" className="hidden overflow-x-auto rounded-xl border border-white/10 md:block">
-        <table className="w-full text-left text-sm">
-          <thead className="bg-slate-900/80 text-xs uppercase tracking-wider text-slate-500">
-            <tr>
-              <th className="px-4 py-3">Rank</th>
-              <th className="px-4 py-3">Level</th>
-              <th className="px-4 py-3">Published by</th>
-              <th className="px-4 py-3">Difficulty</th>
-            </tr>
-          </thead>
-          <tbody>
-            {filtered.map((item) => (
-              <tr key={item.rank} className="border-t border-white/5 bg-slate-950/25">
-                <td className="px-4 py-4 font-mono font-bold text-blue-400">#{item.rank}</td>
-                <td className="px-4 py-4 font-semibold text-white">{item.level}</td>
-                <td className="px-4 py-4 text-slate-400">{item.publisher}</td>
-                <td className="px-4 py-4 text-purple-300">{item.difficulty}</td>
-              </tr>
-            ))}
-            {!filtered.length && (
-              <tr>
-                <td colSpan={4} className="px-4 py-8 text-center text-sm text-slate-500">
-                  No matching demon found in this top-50 snapshot.
-                </td>
-              </tr>
-            )}
-          </tbody>
-        </table>
+        <div role="rowgroup" className="divide-y divide-white/5">
+          {filtered.map((item) => (
+            <div
+              key={item.rank}
+              role="row"
+              className="grid grid-cols-[52px_minmax(0,1fr)_auto] items-start gap-3 bg-slate-950/25 p-4 md:grid-cols-[72px_minmax(0,2fr)_minmax(0,1.2fr)_110px] md:items-center md:gap-0 md:p-0"
+            >
+              <div role="cell" className="font-mono text-sm font-bold text-blue-400 md:px-4 md:py-4">
+                #{item.rank}
+              </div>
+              <div role="cell" className="min-w-0 md:px-4 md:py-4">
+                <div className="break-words font-semibold text-white">{item.level}</div>
+                <div className="mt-1 text-xs text-slate-500 md:hidden">by {item.publisher}</div>
+              </div>
+              <div role="cell" className="hidden text-slate-400 md:block md:px-4 md:py-4">
+                {item.publisher}
+              </div>
+              <div role="cell" className="justify-self-end rounded-full border border-purple-500/20 bg-purple-500/10 px-2 py-1 text-[10px] font-semibold text-purple-300 md:justify-self-stretch md:rounded-none md:border-0 md:bg-transparent md:px-4 md:py-4 md:text-sm">
+                {item.difficulty}
+              </div>
+            </div>
+          ))}
+
+          {!filtered.length && (
+            <div role="row">
+              <div role="cell" className="bg-slate-950/25 px-4 py-8 text-center text-sm text-slate-500">
+                No matching demon found in this top-50 snapshot.
+              </div>
+            </div>
+          )}
+        </div>
       </div>
 
       <p className="text-xs leading-5 text-slate-500">
