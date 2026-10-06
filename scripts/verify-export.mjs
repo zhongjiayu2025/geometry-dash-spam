@@ -1408,10 +1408,21 @@ if (
 
 if (
   !persistentBestSource.includes('mode: "max" | "min" = "max"') ||
-  !persistentBestSource.includes('mode === "min" ? value < previous : value > previous')
+  !persistentBestSource.includes('mode === "min" ? value < baseline : value > baseline')
 ) {
   infrastructureErrors.push(
     "Shared persistent best-score hook must support lower-is-better reaction metrics without regressing max-score tools"
+  );
+}
+
+if (
+  (persistentBestSource.match(/readStorage\(storageKey\)/g) ?? []).length < 2 ||
+  !persistentBestSource.includes("Math.min(baseline, stored)") ||
+  !persistentBestSource.includes("Math.max(baseline, stored)") ||
+  !persistentBestSource.includes("if (!improves) return baseline;")
+) {
+  infrastructureErrors.push(
+    "Persistent best-score commits must re-read storage and preserve any better score written by another tab"
   );
 }
 

@@ -33,9 +33,28 @@ export function usePersistentBestNumber(
   const commitBest = useCallback((value: number) => {
     setBest((previous) => {
       if (!Number.isFinite(value) || value < 0) return previous;
-      if (previous !== null) {
-        const improves = mode === "min" ? value < previous : value > previous;
-        if (!improves) return previous;
+
+      const storedRaw = readStorage(storageKey);
+      const storedNumber = storedRaw === null ? null : Number(storedRaw);
+      const stored =
+        storedNumber !== null && Number.isFinite(storedNumber) && storedNumber >= 0
+          ? storedNumber
+          : null;
+
+      let baseline = previous;
+      if (stored !== null) {
+        if (baseline === null) {
+          baseline = stored;
+        } else {
+          baseline = mode === "min"
+            ? Math.min(baseline, stored)
+            : Math.max(baseline, stored);
+        }
+      }
+
+      if (baseline !== null) {
+        const improves = mode === "min" ? value < baseline : value > baseline;
+        if (!improves) return baseline;
       }
 
       writeStorage(storageKey, String(value));
