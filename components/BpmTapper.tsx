@@ -87,6 +87,11 @@ export default function BpmTapper() {
               event.preventDefault();
               recordTap();
             }}
+            onKeyDown={(event) => {
+              if (event.repeat || (event.key !== " " && event.key !== "Enter")) return;
+              event.preventDefault();
+              recordTap();
+            }}
             className="touch-none w-full h-64 md:h-80 rounded-3xl border-2 flex flex-col items-center justify-center gap-4 transition-all duration-75 group select-none bg-rose-900/10 border-rose-500/20 hover:bg-rose-800/20 hover:border-rose-500/30 active:scale-[0.99]"
           >
             <Timer className="w-16 h-16 md:w-20 md:h-20 text-rose-500/50 group-hover:text-rose-400 transition-colors" />

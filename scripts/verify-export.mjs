@@ -1296,10 +1296,11 @@ if (
   !bpmClientSource.includes("useManagedTimeout") ||
   !bpmClientSource.includes("isInteractiveKeyboardTarget(event.target)") ||
   !bpmClientSource.includes("event.repeat") ||
+  !bpmClientSource.includes('event.key !== " " && event.key !== "Enter"') ||
   bpmClientSource.includes("resetTimeoutRef")
 ) {
   infrastructureErrors.push(
-    "BpmTapper must ignore key repeat/interactive controls and use the shared managed inactivity timeout"
+    "BpmTapper must suppress repeat, preserve focused-button Space/Enter input, ignore other interactive controls, and use the shared managed timeout"
   );
 }
 
