@@ -589,6 +589,18 @@ if (
   );
 }
 
+if (
+  spacebarClientSource.includes("isPressed") ||
+  spacebarClientSource.includes("setIsPressed") ||
+  spacebarClientSource.includes("countRef.current += 1;\n    setCount(countRef.current);") ||
+  !spacebarClientSource.includes("visualKeyRef") ||
+  !spacebarClientSource.includes("const renderedCount = active ? countRef.current : count;")
+) {
+  infrastructureErrors.push(
+    "SpacebarCounter hot paths must stay ref-based for both count and key visual feedback"
+  );
+}
+
 const dragClientSource = supportClientSources.find(([file]) => file === "DragClickTest.tsx")?.[1] ?? "";
 if (
   !dragClientSource.includes("endTimerRef") ||
