@@ -1610,11 +1610,13 @@ if (
   !clickerSource.includes("setInterval(flushSave, 5000)") ||
   !clickerSource.includes('addEventListener("pagehide", flushSave)') ||
   !clickerSource.includes("stateRef.current = next") ||
+  !clickerSource.includes("if (!dirtyRef.current) return;") ||
+  !clickerSource.includes("dirtyRef.current = true") ||
   !clickerSource.includes("elapsedSeconds") ||
   !clickerSource.includes("prev.autoPower * elapsedSeconds")
 ) {
   infrastructureErrors.push(
-    "Geometry Dash Clicker must use low-frequency persistence and elapsed-time normalized auto gain"
+    "Geometry Dash Clicker must use dirty low-frequency persistence and elapsed-time normalized auto gain"
   );
 }
 
