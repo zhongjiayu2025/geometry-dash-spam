@@ -1,48 +1,15 @@
 "use client";
 
-import React, { useEffect, useRef, useState } from "react";
+import React, { useCallback, useEffect, useRef, useState } from "react";
 import dynamic from "next/dynamic";
 import { Keyboard } from "lucide-react";
 import { usePersistentBestNumber } from "../lib/usePersistentBestNumber";
 
 const TypingResult = dynamic(() => import("./TypingResult"), { ssr: false });
 
-const WORDS = [
-  "the", "be", "of", "and", "a", "to", "in", "he", "have", "it", "that", "for", "they", "I", "with", "as", "not", "on", "she", "at",
-  "by", "this", "we", "you", "do", "but", "from", "or", "which", "one", "would", "all", "will", "there", "say", "who", "make", "when",
-  "can", "more", "if", "no", "man", "out", "other", "so", "what", "time", "up", "go", "about", "than", "into", "could", "state", "only",
-  "new", "year", "some", "take", "come", "these", "know", "see", "use", "get", "like", "then", "first", "any", "work", "now", "may",
-  "such", "give", "over", "think", "most", "even", "find", "day", "also", "after", "way", "many", "must", "look", "before", "great",
-  "back", "through", "long", "where", "much", "should", "well", "people", "down", "own", "just", "because", "good", "each", "those", "feel",
-  "seem", "how", "high", "too", "place", "little", "world", "very", "still", "nation", "hand", "old", "life", "tell", "write", "become",
-  "here", "show", "house", "both", "between", "need", "mean", "call", "develop", "under", "last", "right", "move", "thing", "general",
-  "school", "never", "same", "another", "begin", "while", "number", "part", "turn", "real", "leave", "might", "want", "point", "form",
-  "off", "child", "few", "small", "since", "against", "ask", "late", "home", "interest", "large", "person", "end", "open", "public",
-  "follow", "during", "present", "without", "again", "hold", "govern", "around", "possible", "head", "consider", "word", "program",
-  "problem", "however", "lead", "system", "set", "order", "eye", "plan", "run", "keep", "face", "fact", "group", "play", "stand", "increase",
-  "early", "course", "change", "help", "line",
-];
+type TypingRuntime = typeof import("../lib/typingRuntime");
 
 const TEST_MS = 60000;
-
-function generateText(wordCount: number) {
-  return Array.from({ length: wordCount }, () => WORDS[Math.floor(Math.random() * WORDS.length)]).join(" ");
-}
-
-function scoreTyping(input: string, target: string, elapsedMs: number) {
-  const typedChars = input.length;
-  let correctChars = 0;
-
-  for (let index = 0; index < typedChars; index++) {
-    if (input[index] === target[index]) correctChars += 1;
-  }
-
-  const minutes = Math.max(1 / 60, elapsedMs / 60000);
-  const wpm = Math.round(correctChars / 5 / minutes);
-  const accuracy = typedChars > 0 ? Math.round((correctChars / typedChars) * 100) : 0;
-
-  return { wpm, accuracy, correctChars, typedChars };
-}
 
 export default function TypingTest() {
   const [targetText, setTargetText] = useState("");
@@ -59,17 +26,34 @@ export default function TypingTest() {
   const startTimeRef = useRef(0);
   const userInputRef = useRef("");
   const targetTextRef = useRef("");
+  const runtimeRef = useRef<TypingRuntime | null>(null);
+  const runtimeLoadRef = useRef<Promise<TypingRuntime | null> | null>(null);
+
+  const ensureRuntime = useCallback(async () => {
+    if (runtimeRef.current) return runtimeRef.current;
+    if (!runtimeLoadRef.current) {
+      runtimeLoadRef.current = import("../lib/typingRuntime").catch(() => null);
+    }
+    const runtime = await runtimeLoadRef.current;
+    if (runtime) runtimeRef.current = runtime;
+    return runtime;
+  }, []);
 
   useEffect(() => {
-    const initialText = generateText(200);
-    targetTextRef.current = initialText;
-    setTargetText(initialText);
+    let cancelled = false;
+    void ensureRuntime().then((runtime) => {
+      if (!runtime || cancelled) return;
+      const initialText = runtime.generateTypingText(200);
+      targetTextRef.current = initialText;
+      setTargetText(initialText);
+    });
 
     return () => {
+      cancelled = true;
       if (timerRef.current) clearInterval(timerRef.current);
       if (endTimerRef.current) clearTimeout(endTimerRef.current);
     };
-  }, []);
+  }, [ensureRuntime]);
 
   const finishTest = (elapsedMs = TEST_MS) => {
     if (timerRef.current) {
@@ -81,7 +65,10 @@ export default function TypingTest() {
       endTimerRef.current = null;
     }
 
-    const result = scoreTyping(
+    const runtime = runtimeRef.current;
+    if (!runtime) return;
+
+    const result = runtime.scoreTyping(
       userInputRef.current,
       targetTextRef.current,
       Math.min(TEST_MS, Math.max(1000, elapsedMs))
@@ -121,7 +108,9 @@ export default function TypingTest() {
     setUserInput(value);
 
     if (value.length > targetTextRef.current.length - 100) {
-      const extended = targetTextRef.current + " " + generateText(50);
+      const runtime = runtimeRef.current;
+      if (!runtime) return;
+      const extended = targetTextRef.current + " " + runtime.generateTypingText(50);
       targetTextRef.current = extended;
       setTargetText(extended);
     }
@@ -135,7 +124,9 @@ export default function TypingTest() {
     startTimeRef.current = 0;
     userInputRef.current = "";
 
-    const nextText = generateText(200);
+    const runtime = runtimeRef.current;
+    if (!runtime) return;
+    const nextText = runtime.generateTypingText(200);
     targetTextRef.current = nextText;
 
     setStatus("idle");
@@ -221,6 +212,7 @@ export default function TypingTest() {
                 autoCorrect="off"
                 spellCheck={false}
                 autoFocus
+                disabled={!targetText}
               />
             </div>
           )}
