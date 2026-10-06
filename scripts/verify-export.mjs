@@ -3258,10 +3258,11 @@ for (const route of supportGuideRoutes) {
 
 const intentClusterErrors = [];
 const intentClusterLinks = new Map([
-  ["/demon-list", ["/spam-challenge-list", "/demon-list/spam-demons"]],
+  ["/demon-list", ["/spam-challenge-list", "/demon-list/spam-demons", "/blog/top-spam-levels-2026"]],
   ["/spam-challenge-list", ["/demon-list", "/demon-list/spam-demons", "/blog/top-spam-levels-2026"]],
-  ["/demon-list/spam-demons", ["/demon-list", "/spam-challenge-list", "/blog/top-spam-levels-2026"]],
-  ["/blog/top-spam-levels-2026", ["/spam-challenge-list", "/demon-list/spam-demons"]],
+  ["/demon-list/spam-demons", ["/demon-list", "/spam-challenge-list", "/demon-list/wave-demons", "/blog/top-spam-levels-2026"]],
+  ["/demon-list/wave-demons", ["/demon-list/spam-demons", "/spam-challenge-list", "/blog/top-spam-levels-2026"]],
+  ["/blog/top-spam-levels-2026", ["/spam-challenge-list", "/demon-list/spam-demons", "/demon-list/wave-demons"]],
   ["/cps-test", ["/blog/how-to-improve-cps-geometry-dash", "/jitter-click", "/butterfly-click", "/spacebar-counter", "/reaction-test", "/aim-trainer"]],
   ["/blog/how-to-improve-cps-geometry-dash", ["/cps-test", "/jitter-click", "/butterfly-click", "/spacebar-counter", "/geometry-dash-wave"]],
   ["/jitter-click", ["/cps-test", "/blog/how-to-improve-cps-geometry-dash"]],
@@ -3284,6 +3285,21 @@ for (const [route, expectedLinks] of intentClusterLinks) {
 }
 
 const contentErrors = [];
+
+const topSpamGuidePath = exportedPath("/blog/top-spam-levels-2026");
+if (topSpamGuidePath) {
+  const topSpamHtml = readFileSync(topSpamGuidePath, "utf8");
+  for (const snippet of [
+    '"@type":"FAQPage"',
+    "What is the hardest Geometry Dash spam level?",
+    "Is the Spam Challenge List the same as a spam demonlist?",
+    "Where should I check current Geometry Dash spam rankings?",
+  ]) {
+    if (!topSpamHtml.includes(snippet)) {
+      contentErrors.push(`/blog/top-spam-levels-2026: FAQPage is missing "${snippet}"`);
+    }
+  }
+}
 
 const webApplicationRoutes = [
   "/",
