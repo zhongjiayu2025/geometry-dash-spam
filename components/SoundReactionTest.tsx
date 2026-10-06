@@ -1,14 +1,16 @@
 "use client";
 
 import React, { useCallback, useState, useRef, useEffect } from 'react';
+import dynamic from 'next/dynamic';
 import { Volume2, Ear } from 'lucide-react';
 import type { ClickSoundEngine } from '../lib/clickSound';
+
+const SoundReactionResult = dynamic(() => import('./SoundReactionResult'), { ssr: false });
 
 export default function SoundReactionTest() {
     const [gameState, setGameState] = useState<'idle' | 'waiting' | 'ready' | 'result'>('idle');
     const [reactionTime, setReactionTime] = useState<number | null>(null);
     const [bestTime, setBestTime] = useState<number | null>(null);
-    const [earlyClick, setEarlyClick] = useState(false);
 
     const startTimeRef = useRef<number>(0);
     const timeoutRef = useRef<number | null>(null);
@@ -71,7 +73,6 @@ export default function SoundReactionTest() {
         void ensureAudio();
         
         setGameState('waiting');
-        setEarlyClick(false);
         setReactionTime(null);
 
         // Random delay between 2 and 5 seconds
@@ -99,7 +100,7 @@ export default function SoundReactionTest() {
         } else if (gameState === 'waiting') {
             // Clicked too early
             if (timeoutRef.current) clearTimeout(timeoutRef.current);
-            setEarlyClick(true);
+            setReactionTime(null);
             setGameState('result');
         } else if (gameState === 'ready') {
             // Valid reaction
@@ -156,8 +157,8 @@ export default function SoundReactionTest() {
                             ${gameState === 'idle' ? 'bg-violet-900/10 border-violet-500/20 hover:bg-violet-800/20 hover:border-violet-500/30' : ''}
                             ${gameState === 'waiting' ? 'bg-amber-900/40 border-amber-500/40' : ''}
                             ${gameState === 'ready' ? 'bg-green-600/40 border-green-400/50' : ''}
-                            ${gameState === 'result' && !earlyClick ? 'bg-violet-900/20 border-violet-500/40' : ''}
-                            ${gameState === 'result' && earlyClick ? 'bg-rose-900/20 border-rose-500/40' : ''}
+                            ${gameState === 'result' && reactionTime !== null ? 'bg-violet-900/20 border-violet-500/40' : ''}
+                            ${gameState === 'result' && reactionTime === null ? 'bg-rose-900/20 border-rose-500/40' : ''}
                         `}
                     >
                         {gameState === 'idle' && (
@@ -184,21 +185,7 @@ export default function SoundReactionTest() {
                         )}
 
                         {gameState === 'result' && (
-                            <div className="text-center animate-in zoom-in-95 duration-300">
-                                {earlyClick ? (
-                                    <>
-                                        <h3 className="text-3xl font-display font-bold text-rose-400 mb-2">Too Early!</h3>
-                                        <p className="text-slate-400">You must wait for the sound.</p>
-                                    </>
-                                ) : (
-                                    <>
-                                        <div className="text-6xl font-display font-bold text-white drop-shadow-[0_0_15px_rgba(139,92,246,0.5)] mb-2">
-                                            {reactionTime} <span className="text-2xl text-violet-400">ms</span>
-                                        </div>
-                                        <p className="text-slate-400 mt-2">Click to try again</p>
-                                    </>
-                                )}
-                            </div>
+                            <SoundReactionResult reactionTime={reactionTime} />
                         )}
                     </div>
                 </div>
