@@ -2,8 +2,10 @@ import { readFileSync } from "node:fs";
 
 const DATA_PATH = new URL("../data/demons.ts", import.meta.url);
 const UPDATE_PATH = new URL("./update-demon-list.mjs", import.meta.url);
+const WORKFLOW_PATH = new URL("../.github/workflows/demon-list-refresh.yml", import.meta.url);
 const source = readFileSync(DATA_PATH, "utf8");
 const updaterSource = readFileSync(UPDATE_PATH, "utf8");
+const workflowSource = readFileSync(WORKFLOW_PATH, "utf8");
 
 const dateMatch = source.match(/DEMON_VERIFIED_AT = "([^"]+)"/);
 const verifiedAt = dateMatch?.[1] ?? null;
@@ -32,6 +34,19 @@ if (
 ) {
   errors.push(
     "Demon List updater must retain the validated Pointercrate page fallback when the API is unavailable."
+  );
+}
+
+if (
+  !workflowSource.includes('- "data/demons.ts"') ||
+  !workflowSource.includes('- "app/demon-list/**"') ||
+  !workflowSource.includes('- "app/hardest-level/page.tsx"') ||
+  !workflowSource.includes("fetch-depth: 0") ||
+  !workflowSource.includes("git pull --rebase origin main") ||
+  !workflowSource.includes("git push origin HEAD:main")
+) {
+  errors.push(
+    "Demon List refresh workflow must validate direct data/page edits and rebase before automated pushes."
   );
 }
 

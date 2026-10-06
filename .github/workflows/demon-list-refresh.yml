@@ -6,6 +6,11 @@ on:
     paths:
       - "scripts/update-demon-list.mjs"
       - "scripts/verify-demon-data.mjs"
+      - "data/demons.ts"
+      - "app/demon-list/**"
+      - "app/hardest-level/page.tsx"
+      - "components/DemonListTable.tsx"
+      - "components/DemonListFilterControls.tsx"
       - "scripts/verify-vault-data.mjs"
       - "scripts/verify-related-games.mjs"
       - "data/vaultCodes.ts"
@@ -32,6 +37,8 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v7
+        with:
+          fetch-depth: 0
 
       - name: Setup Node
         uses: actions/setup-node@v7
@@ -62,4 +69,5 @@ jobs:
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
           git add data/demons.ts
           git commit -m "data: refresh Pointercrate demon list"
-          git push
+          git pull --rebase origin main
+          git push origin HEAD:main
