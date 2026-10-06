@@ -746,6 +746,27 @@ if (
 }
 
 if (
+  !pollingClientSource.includes("sampleElapsedSeconds") ||
+  !pollingClientSource.includes("totalElapsedSeconds") ||
+  !pollingClientSource.includes("eventCountRef.current / sampleElapsedSeconds") ||
+  !pollingClientSource.includes("totalEventsRef.current / totalElapsedSeconds")
+) {
+  infrastructureErrors.push(
+    "PollingRateTest must normalize current and average browser event rates by actual elapsed time"
+  );
+}
+
+const rightClickClientSource = supportClientSources.find(([file]) => file === "RightClickTest.tsx")?.[1] ?? "";
+if (
+  !rightClickClientSource.includes("touch-pan-y") ||
+  rightClickClientSource.includes("select-none touch-none")
+) {
+  infrastructureErrors.push(
+    "RightClickTest must not block vertical touch scrolling on mobile"
+  );
+}
+
+if (
   !pollingClientSource.includes('addEventListener("pointermove"') ||
   !pollingClientSource.includes("performance.now()") ||
   !pollingClientSource.includes("sampleElapsedSeconds") ||
