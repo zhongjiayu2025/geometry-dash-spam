@@ -6,7 +6,9 @@ import dynamic from 'next/dynamic';
 import { Difficulty, GameStatus } from '../types';
 import { DIFFICULTY_CONFIGS } from '../constants';
 import DifficultySelector from './DifficultySelector';
-import { Infinity as InfinityIcon, Minimize2, Star } from 'lucide-react';
+import { Infinity as InfinityIcon, Minimize2 } from 'lucide-react';
+
+const WavePracticeDrill = dynamic(() => import('./WavePracticeDrill'), { ssr: false });
 
 const GameCanvas = dynamic(() => import('./GameCanvas'), {
   ssr: false,
@@ -111,6 +113,18 @@ const WaveSimulator: React.FC<WaveSimulatorProps> = ({ variant = 'spam' }) => {
   };
 
   const currentConfig = DIFFICULTY_CONFIGS[difficulty];
+
+  const acceptPracticeDrill = () => {
+    setDifficulty(Difficulty.Insane);
+    setIsMini(true);
+    setIsEndless(false);
+    setWavePreset('mini');
+    setGameStatus(GameStatus.Idle);
+    localStorage.setItem('gd_spam_last_difficulty', Difficulty.Insane);
+    localStorage.setItem('gd_spam_mini_mode', 'true');
+    localStorage.setItem('gd_spam_endless_mode', 'false');
+    document.getElementById('spam-test-tool')?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+  };
 
   return (
     <div id="spam-test-tool" className="flex flex-col items-center w-full animate-in fade-in duration-500 scroll-mt-20">
@@ -217,47 +231,7 @@ const WaveSimulator: React.FC<WaveSimulatorProps> = ({ variant = 'spam' }) => {
         isMini={isMini}
       />
       
-      {/* DAILY CHALLENGE SECTION */}
-      {!isWavePage && (
-      <div className="w-full max-w-5xl mt-6 mb-8">
-          <div className="bg-gradient-to-r from-yellow-900/20 to-orange-900/20 border border-yellow-500/30 rounded-xl p-6 flex flex-col md:flex-row items-center justify-between gap-6 relative overflow-hidden">
-              <div className="absolute top-0 right-0 w-32 h-32 bg-yellow-500/10 blur-[50px] rounded-full pointer-events-none"></div>
-              
-              <div className="flex items-start gap-4 relative z-10">
-                  <div className="p-3 bg-yellow-500/20 rounded-lg text-yellow-400">
-                      <Star className="w-6 h-6" />
-                  </div>
-                  <div>
-                      <div className="text-yellow-400 font-bold uppercase tracking-widest text-xs mb-1">Practice Drill</div>
-                      <h3 className="text-xl font-display font-bold text-white mb-1">15-Second Mini Wave Drill</h3>
-                      <p className="text-slate-400 text-sm max-w-md">
-                          Practice goal: Survive <span className="text-white font-bold">15 seconds</span> on <span className="text-white font-bold">Insane</span> difficulty using <span className="text-white font-bold">Mini Wave</span>.
-                      </p>
-                  </div>
-              </div>
-
-              <div className="flex flex-col items-center relative z-10">
-                  <button 
-                    onClick={() => {
-                        setDifficulty(Difficulty.Insane);
-                        setIsMini(true);
-                        setIsEndless(false);
-                        setWavePreset('mini');
-                        setGameStatus(GameStatus.Idle);
-                        localStorage.setItem('gd_spam_last_difficulty', Difficulty.Insane);
-                        localStorage.setItem('gd_spam_mini_mode', 'true');
-                        localStorage.setItem('gd_spam_endless_mode', 'false');
-                        document.getElementById('spam-test-tool')?.scrollIntoView({ behavior: 'smooth', block: 'start' });
-                    }}
-                    className="px-6 py-2 bg-yellow-600 hover:bg-yellow-500 text-white font-bold rounded-lg shadow-lg shadow-yellow-900/20 transition-all flex items-center gap-2"
-                  >
-                      <Star className="w-4 h-4 fill-current" />
-                      ACCEPT CHALLENGE
-                  </button>
-              </div>
-          </div>
-      </div>
-      )}
+      {!isWavePage && <WavePracticeDrill onAccept={acceptPracticeDrill} />}
 
     </div>
   );
