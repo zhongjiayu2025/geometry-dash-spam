@@ -58,10 +58,14 @@ export default function SpamDemonsPage() {
     mainEntity: {
       "@type": "ItemList",
       numberOfItems: entries.length,
-      itemListElement: entries.map(({ demon }) => ({
+      itemListElement: entries.map(({ demon, note }, index) => ({
         "@type": "ListItem",
-        position: demon?.rank,
-        name: demon?.level,
+        position: index + 1,
+        item: {
+          "@type": "Thing",
+          name: demon?.level,
+          description: `${note} Pointercrate Main List rank: #${demon?.rank} as checked ${DEMON_VERIFIED_AT}.`,
+        },
       })),
     },
   };
@@ -165,6 +169,7 @@ export default function SpamDemonsPage() {
         <Link href="/" className="rounded-lg bg-blue-600 px-4 py-2 text-sm font-bold text-white">Spam Test</Link>
         <Link href="/cps-test" className="rounded-lg border border-white/10 px-4 py-2 text-sm font-bold text-white">CPS Test</Link>
         <Link href="/spam-challenge-list" className="rounded-lg border border-fuchsia-500/20 px-4 py-2 text-sm font-bold text-fuchsia-300">Spam Challenge List</Link>
+        <Link href="/demon-list/wave-demons" className="rounded-lg border border-blue-500/20 px-4 py-2 text-sm font-bold text-blue-200">Wave Demons</Link>
         <Link href="/demon-list" className="rounded-lg border border-white/10 px-4 py-2 text-sm font-bold text-white">Full Demon List</Link>
       </div>
     </article>
