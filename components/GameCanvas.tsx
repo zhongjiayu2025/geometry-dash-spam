@@ -1088,9 +1088,7 @@ const GameCanvas: React.FC<GameCanvasProps> = memo(({ difficulty, status, onStat
 
   useEffect(() => {
       resetGame();
-      const frame = requestAnimationFrame(gameLoop);
-      return () => cancelAnimationFrame(frame);
-  }, [resetGame, gameLoop]);
+  }, [resetGame]);
 
   const runStats =
     status === GameStatus.Lost || status === GameStatus.Won
