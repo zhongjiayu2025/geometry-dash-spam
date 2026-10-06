@@ -300,6 +300,36 @@ const GameCanvas: React.FC<GameCanvasProps> = memo(({ difficulty, status, onStat
 
   // --- GAMEPLAY & VISUALS ---
 
+  const recordRun = (result: "won" | "lost") => {
+    if (runRecordedRef.current) return;
+
+    const stats = runtimeRef.current?.getWaveRunStats(gameState.current) ?? {
+      clickCount: gameState.current.clickCount,
+      averageCps: 0,
+      peakCps: 0,
+      averageInterval: 0,
+      intervalStdDev: 0,
+    };
+
+    const run: WaveRun = {
+      time: Number((gameState.current.runTime / 1000).toFixed(2)),
+      averageCps: Number(stats.averageCps.toFixed(2)),
+      peakCps: Number(stats.peakCps.toFixed(2)),
+      timingSd: Number(stats.intervalStdDev.toFixed(0)),
+      clicks: stats.clickCount,
+      result,
+      timestamp: Date.now(),
+      mode: `${difficulty.label}${isMini ? " · Mini" : " · Normal"}${isEndless ? " · Endless" : " · 15s"}`,
+    };
+
+    setRecentRuns((previousRuns) => {
+      const next = [run, ...previousRuns].slice(0, 10);
+      localStorage.setItem(getRunHistoryKey(), JSON.stringify(next));
+      return next;
+    });
+    runRecordedRef.current = true;
+  };
+
   const initStars = (width: number, height: number) => {
       gameState.current.stars = [];
       const random = gameState.current.rng;
