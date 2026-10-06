@@ -2489,6 +2489,20 @@ if (
 }
 
 if (
+  !clickerSource.includes("const next = normalizeClickerState(updated)") ||
+  !clickerEconomySource.includes("if (number === Infinity) return MAX_VALUE") ||
+  !clickerEconomySource.includes("function safeCost(value: number)") ||
+  (clickerEconomySource.match(/>= MAX_VALUE\) return state/g) ?? []).length < 3 ||
+  !clickerEconomySource.includes("safeCost(25 * Math.pow") ||
+  !clickerEconomySource.includes("safeCost(80 * Math.pow") ||
+  !clickerEconomySource.includes("safeCost(10000 *")
+) {
+  infrastructureErrors.push(
+    "Geometry Dash Clicker must saturate runtime state and exponential economy values at safe-integer bounds"
+  );
+}
+
+if (
   !clickerSource.includes("useIntentionalPointerAction") ||
   !clickerSource.includes("deferTouch: true") ||
   !clickerSource.includes("touch-pan-y") ||

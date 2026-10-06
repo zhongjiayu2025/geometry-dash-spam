@@ -14,12 +14,20 @@ export const INITIAL_CLICKER_STATE: ClickerState = {
   totalClicks: 0,
 };
 
+const MAX_VALUE = Number.MAX_SAFE_INTEGER;
+
 function safeNumber(value: unknown, fallback: number) {
   if (typeof value !== "number" && typeof value !== "string") return fallback;
   if (typeof value === "string" && !value.trim()) return fallback;
   const number = Number(value);
-  if (!Number.isFinite(number) || number < 0) return fallback;
-  return Math.min(number, Number.MAX_SAFE_INTEGER);
+  if (Number.isNaN(number) || number < 0) return fallback;
+  if (number === Infinity) return MAX_VALUE;
+  if (!Number.isFinite(number)) return fallback;
+  return Math.min(number, MAX_VALUE);
+}
+
+function safeCost(value: number) {
+  return Number.isFinite(value) ? Math.min(MAX_VALUE, Math.floor(value)) : MAX_VALUE;
 }
 
 export function normalizeClickerState(value: unknown): ClickerState {
@@ -38,27 +46,30 @@ export function normalizeClickerState(value: unknown): ClickerState {
 }
 
 export const clickCostFor = (level: number) =>
-  Math.floor(25 * Math.pow(1.65, level - 1));
+  safeCost(25 * Math.pow(1.65, level - 1));
 
 export const autoCostFor = (level: number) =>
-  Math.floor(80 * Math.pow(1.75, level));
+  safeCost(80 * Math.pow(1.75, level));
 
 export const prestigeCostFor = (prestige: number) =>
-  10000 * (prestige + 1);
+  safeCost(10000 * (prestige + 1));
 
 export function buyClickUpgrade(state: ClickerState): ClickerState {
+  if (state.clickPower >= MAX_VALUE) return state;
   const cost = clickCostFor(state.clickPower);
   if (state.orbs < cost) return state;
   return { ...state, orbs: state.orbs - cost, clickPower: state.clickPower + 1 };
 }
 
 export function buyAutoUpgrade(state: ClickerState): ClickerState {
+  if (state.autoPower >= MAX_VALUE) return state;
   const cost = autoCostFor(state.autoPower);
   if (state.orbs < cost) return state;
   return { ...state, orbs: state.orbs - cost, autoPower: state.autoPower + 1 };
 }
 
 export function buyPrestigeUpgrade(state: ClickerState): ClickerState {
+  if (state.prestige >= MAX_VALUE) return state;
   const cost = prestigeCostFor(state.prestige);
   if (state.orbs < cost) return state;
   return {
