@@ -51,7 +51,7 @@ export default function AimTrainerResult({ score, misses, accuracy, averageTime,
           </button>
           <button
             type="button"
-            onClick={() => void shareScore()}
+            onClick={shareScore}
             className="flex items-center justify-center rounded-xl border border-white/10 bg-slate-800 px-5 py-4 text-white transition-colors hover:bg-slate-700"
             title={copied ? "Copied" : "Share your score"}
             aria-label={copied ? "Aim result copied" : "Share aim result"}

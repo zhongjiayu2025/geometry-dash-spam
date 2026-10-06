@@ -31,7 +31,7 @@ export default function ReactionResult({ result, bestScore }: ReactionResultProp
         </div>
         <button
           type="button"
-          onClick={() => void shareScore()}
+          onClick={shareScore}
           className="relative z-10 flex items-center justify-center rounded-full border border-white/10 bg-slate-800 p-3 text-white transition-colors hover:bg-slate-700"
           title={copied ? "Copied" : "Share your score"}
           aria-label={copied ? "Reaction result copied" : "Share reaction result"}

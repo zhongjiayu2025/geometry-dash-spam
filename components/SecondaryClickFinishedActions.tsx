@@ -53,7 +53,7 @@ export default function SecondaryClickFinishedActions({
       </button>
       <button
         type="button"
-        onClick={() => void shareScore()}
+        onClick={shareScore}
         className="flex items-center justify-center rounded-lg border border-white/10 bg-slate-800 p-3 text-white transition-colors hover:bg-slate-700"
         title="Share your score"
         aria-label={copied ? "Score copied" : "Share your score"}

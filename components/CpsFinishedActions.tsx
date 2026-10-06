@@ -96,7 +96,7 @@ export default function CpsFinishedActions({
         </Link>
         <button
           type="button"
-          onClick={() => void shareScore()}
+          onClick={shareScore}
           aria-label={copied ? "CPS result copied" : "Share CPS score"}
           className={`flex items-center gap-2 rounded-lg px-4 py-3 font-bold text-white shadow-lg transition-colors ${copied ? "bg-green-500" : "bg-blue-600 hover:bg-blue-500"}`}
         >

@@ -32,7 +32,7 @@ export default function SpacebarFinishedActions({
         </button>
         <button
           type="button"
-          onClick={() => void shareScore()}
+          onClick={shareScore}
           className="flex items-center justify-center rounded-lg border border-white/10 bg-slate-800 p-3 text-white transition-colors hover:bg-slate-700"
           aria-label={copied ? "Spacebar score copied" : "Share your spacebar score"}
         >

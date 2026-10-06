@@ -50,7 +50,7 @@ export default function TypingResult({ wpm, accuracy, bestWpm, onReset }: Typing
         </button>
         <button
           type="button"
-          onClick={() => void shareScore()}
+          onClick={shareScore}
           className="flex items-center justify-center rounded-xl border border-white/10 bg-slate-800 p-4 text-white transition-colors hover:bg-slate-700"
           title={copied ? "Copied" : "Share your score"}
           aria-label={copied ? "Typing result copied" : "Share typing result"}

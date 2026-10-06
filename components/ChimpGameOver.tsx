@@ -36,7 +36,7 @@ export default function ChimpGameOver({ level, bestScore, onRestart }: ChimpGame
         </button>
         <button
           type="button"
-          onClick={() => void shareScore()}
+          onClick={shareScore}
           className="flex items-center justify-center rounded-lg border border-indigo-500/30 bg-indigo-900/50 p-3 text-white transition-colors hover:bg-indigo-800"
           title={copied ? "Copied" : "Share your score"}
           aria-label={copied ? "Chimp result copied" : "Share chimp result"}
