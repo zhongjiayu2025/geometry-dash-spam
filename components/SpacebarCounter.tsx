@@ -1,6 +1,7 @@
 "use client";
 
 import React, { useCallback, useEffect, useRef, useState } from "react";
+import { isInteractiveKeyboardTarget } from "../lib/inputTarget";
 import { Check, Keyboard, RotateCcw, Share2, Trophy, Volume2, VolumeX, Zap } from "lucide-react";
 import type { ClickSoundEngine } from "../lib/clickSound";
 
@@ -137,6 +138,7 @@ const SpacebarCounter: React.FC = () => {
   }, []);
 
   const handleKeyDown = useCallback((event: KeyboardEvent) => {
+    if (isInteractiveKeyboardTarget(e.target)) return;
     if (event.code !== "Space") return;
 
     event.preventDefault();
@@ -170,6 +172,7 @@ const SpacebarCounter: React.FC = () => {
   }, [ensureAudio, finishTest, setVisualPressed, soundEnabled, startTest]);
 
   const handleKeyUp = useCallback((event: KeyboardEvent) => {
+    if (isInteractiveKeyboardTarget(e.target)) return;
     if (event.code === "Space") setVisualPressed(false);
   }, [setVisualPressed]);
 
