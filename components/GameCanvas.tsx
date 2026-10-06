@@ -2,11 +2,13 @@
 "use client";
 
 import React, { useRef, useEffect, useCallback, useState, memo } from 'react';
-import Link from 'next/link';
+import dynamic from 'next/dynamic';
 import { DifficultyConfig, GameStatus } from '../types';
 import { WIN_TIME_MS, WAVE_SPEED_Y } from '../constants';
-import { Trophy, AlertTriangle, Crown, Volume2, VolumeX, Maximize, Minimize, Activity, ZapOff, Share2, Check, RotateCcw, Menu, Zap, X, Copy } from 'lucide-react';
+import { Crown, Volume2, VolumeX, Maximize, Minimize, Activity, ZapOff } from 'lucide-react';
 import type { WaveAudioEngine, WaveSound } from '../lib/waveAudio';
+
+const WaveRunOverlays = dynamic(() => import('./WaveRunOverlays'), { ssr: false });
 
 interface GameCanvasProps {
   difficulty: DifficultyConfig;
@@ -1230,208 +1232,32 @@ const GameCanvas: React.FC<GameCanvasProps> = memo(({ difficulty, status, onStat
         </div>
       )}
 
-      {/* --- GAME OVER SCREEN --- */}
-      {status === GameStatus.Lost && (
-         <div className="absolute inset-0 flex flex-col items-center justify-center bg-red-900/40 backdrop-blur-sm z-20 animate-in zoom-in duration-100 pointer-events-none">
-             <div className="pointer-events-auto flex max-h-[calc(100%_-_1rem)] w-[calc(100%_-_1rem)] max-w-md flex-col items-center overflow-y-auto bg-black/55 p-4 sm:p-8 rounded-2xl border border-white/10 backdrop-blur-md shadow-2xl" onClick={(e) => e.stopPropagation()}>
-                {isNewBest && (
-                    <div className="mb-4 flex items-center gap-2 px-4 py-1 bg-yellow-500 text-black font-black uppercase tracking-widest rounded-full animate-bounce shadow-lg shadow-yellow-500/50">
-                        <Crown className="w-4 h-4" /> New Best Score!
-                    </div>
-                )}
-                
-                <AlertTriangle className="w-10 h-10 sm:w-16 sm:h-16 text-red-500 mb-1 sm:mb-2 drop-shadow-[0_0_20px_rgba(239,68,68,0.5)]" />
-                <h2 className="text-3xl sm:text-5xl font-display font-black text-white mb-2 tracking-tighter">CRASHED</h2>
-                
-                <div className="grid grid-cols-2 gap-2 sm:gap-3 w-full mb-4 sm:mb-6">
-                    <div className="bg-white/5 p-2 sm:p-3 rounded-lg text-center">
-                        <div className="text-xs text-slate-400 uppercase tracking-wider mb-1">Survival</div>
-                        <div className="text-xl font-mono font-bold text-white">{(gameState.current.runTime / 1000).toFixed(2)}s</div>
-                    </div>
-                    <div className="bg-white/5 p-2 sm:p-3 rounded-lg text-center">
-                        <div className="text-xs text-slate-400 uppercase tracking-wider mb-1">Local Best</div>
-                        <div className="text-xl font-mono font-bold text-yellow-400">{highScore.toFixed(2)}s</div>
-                    </div>
-                    <div className="bg-white/5 p-2 sm:p-3 rounded-lg text-center">
-                        <div className="text-xs text-slate-400 uppercase tracking-wider mb-1">Average CPS</div>
-                        <div className="text-xl font-mono font-bold text-blue-300">{runStats.averageCps.toFixed(2)}</div>
-                    </div>
-                    <div className="bg-white/5 p-2 sm:p-3 rounded-lg text-center">
-                        <div className="text-xs text-slate-400 uppercase tracking-wider mb-1">Clicks</div>
-                        <div className="text-xl font-mono font-bold text-white">{runStats.clickCount}</div>
-                    </div>
-                    <div className="bg-white/5 p-2 sm:p-3 rounded-lg text-center">
-                        <div className="text-xs text-slate-400 uppercase tracking-wider mb-1">Peak CPS</div>
-                        <div className="text-xl font-mono font-bold text-purple-300">{runStats.peakCps.toFixed(2)}</div>
-                    </div>
-                    <div className="bg-white/5 p-2 sm:p-3 rounded-lg text-center">
-                        <div className="text-xs text-slate-400 uppercase tracking-wider mb-1">Timing SD</div>
-                        <div className="text-xl font-mono font-bold text-white">{runStats.intervalStdDev.toFixed(0)}ms</div>
-                    </div>
-                </div>
-
-                <div className="flex flex-wrap justify-center gap-2 sm:gap-3">
-                     <button 
-                        onClick={() => {
-                            resetGame();
-                            onStatusChange(GameStatus.Playing);
-                            focusGame();
-                        }}
-                        className="px-4 py-2.5 sm:px-6 sm:py-3 bg-white text-black font-bold rounded hover:bg-slate-200 transition-colors flex items-center gap-2 shadow-lg"
-                    >
-                        <RotateCcw className="w-4 h-4" /> RETRY
-                    </button>
-                    <Link
-                        href="/cps-test"
-                        className="px-4 py-2.5 sm:px-5 sm:py-3 bg-slate-800 hover:bg-slate-700 text-white font-bold rounded transition-colors border border-white/10"
-                    >
-                        CHECK CPS
-                    </Link>
-                    <button 
-                        onClick={handleShareClick}
-                        className="px-4 py-2.5 sm:px-6 sm:py-3 bg-blue-600 hover:bg-blue-500 text-white font-bold rounded transition-colors flex items-center gap-2 shadow-lg"
-                    >
-                        <Share2 className="w-4 h-4" /> SHARE
-                    </button>
-                </div>
-                
-                <button 
-                    onClick={() => { resetGame(); onStatusChange(GameStatus.Idle); }}
-                    className="mt-4 text-xs text-slate-400 hover:text-white flex items-center gap-1"
-                >
-                    <Menu className="w-3 h-3" /> RETURN TO MENU
-                </button>
-             </div>
-         </div>
+      {(status === GameStatus.Lost || status === GameStatus.Won || showShareModal) && (
+        <WaveRunOverlays
+          status={status}
+          isNewBest={isNewBest}
+          runTimeSeconds={gameState.current.runTime / 1000}
+          highScore={highScore}
+          runStats={runStats}
+          consistency={consistency}
+          showShareModal={showShareModal}
+          shareText={shareText}
+          copied={copied}
+          onRetry={() => {
+            resetGame();
+            onStatusChange(GameStatus.Playing);
+            focusGame();
+          }}
+          onMenu={() => {
+            resetGame();
+            onStatusChange(GameStatus.Idle);
+          }}
+          onShare={handleShareClick}
+          onCloseShare={() => setShowShareModal(false)}
+          onCopyShare={copyToClipboard}
+        />
       )}
 
-      {/* --- WIN SCREEN --- */}
-      {status === GameStatus.Won && (
-         <div className="absolute inset-0 flex flex-col items-center justify-center bg-green-900/40 backdrop-blur-sm z-20 animate-in zoom-in duration-500 pointer-events-auto" onClick={(e) => e.stopPropagation()}>
-             <div className="max-h-[calc(100%_-_1rem)] w-[calc(100%_-_1rem)] max-w-md overflow-y-auto bg-black/55 p-4 sm:p-8 rounded-2xl border border-white/10 backdrop-blur-md flex flex-col items-center shadow-2xl">
-                {isNewBest && (
-                    <div className="mb-4 flex items-center gap-2 px-4 py-1 bg-yellow-500 text-black font-black uppercase tracking-widest rounded-full animate-bounce shadow-lg shadow-yellow-500/50">
-                        <Crown className="w-4 h-4" /> New Best Score!
-                    </div>
-                )}
-                
-                <Trophy className="w-12 h-12 sm:w-20 sm:h-20 text-yellow-400 mb-2 sm:mb-4 drop-shadow-[0_0_30px_rgba(250,204,21,0.6)] animate-bounce" />
-                <h2 className="text-3xl sm:text-5xl font-display font-black text-white mb-2 tracking-tighter">COMPLETE!</h2>
-                
-                <div className="flex items-center gap-2 mb-3 sm:mb-4">
-                    <Zap className="w-5 h-5 text-yellow-400" />
-                    <p className="text-green-100 font-mono text-lg">
-                        Consistency Score: <span className="text-white font-bold text-xl">{consistency}</span>
-                    </p>
-                </div>
-
-                <div className="grid grid-cols-3 gap-2 sm:gap-3 w-full mb-4 sm:mb-6">
-                    <div className="bg-white/5 p-2 sm:p-3 rounded-lg text-center">
-                        <div className="text-[10px] text-slate-400 uppercase tracking-wider mb-1">Average CPS</div>
-                        <div className="text-lg font-mono font-bold text-blue-300">{runStats.averageCps.toFixed(2)}</div>
-                    </div>
-                    <div className="bg-white/5 p-2 sm:p-3 rounded-lg text-center">
-                        <div className="text-[10px] text-slate-400 uppercase tracking-wider mb-1">Peak CPS</div>
-                        <div className="text-lg font-mono font-bold text-purple-300">{runStats.peakCps.toFixed(2)}</div>
-                    </div>
-                    <div className="bg-white/5 p-2 sm:p-3 rounded-lg text-center">
-                        <div className="text-[10px] text-slate-400 uppercase tracking-wider mb-1">Clicks</div>
-                        <div className="text-lg font-mono font-bold text-white">{runStats.clickCount}</div>
-                    </div>
-                </div>
-
-                <div className="flex flex-wrap justify-center gap-2 sm:gap-3 mb-3 sm:mb-4">
-                     <button 
-                        onClick={() => {
-                            resetGame();
-                            onStatusChange(GameStatus.Playing);
-                            focusGame();
-                        }}
-                        className="px-4 py-2.5 sm:px-6 sm:py-3 bg-white text-black font-bold rounded hover:bg-slate-200 transition-colors flex items-center gap-2 shadow-lg"
-                    >
-                        <RotateCcw className="w-4 h-4" /> REPLAY
-                    </button>
-                    <Link
-                        href="/cps-test"
-                        className="px-4 py-2.5 sm:px-5 sm:py-3 bg-slate-800 hover:bg-slate-700 text-white font-bold rounded transition-colors border border-white/10"
-                    >
-                        CHECK CPS
-                    </Link>
-                    <button 
-                        onClick={handleShareClick}
-                        className="px-4 py-2.5 sm:px-6 sm:py-3 bg-blue-600 hover:bg-blue-500 text-white font-bold rounded transition-colors flex items-center gap-2 shadow-lg"
-                    >
-                        <Share2 className="w-4 h-4" /> SHARE
-                    </button>
-                </div>
-
-                <button 
-                    onClick={() => { resetGame(); onStatusChange(GameStatus.Idle); }}
-                    className="text-xs text-slate-400 hover:text-white flex items-center gap-1"
-                >
-                    <Menu className="w-3 h-3" /> RETURN TO MENU
-                </button>
-             </div>
-         </div>
-      )}
-
-      {/* --- SHARE MODAL (CUSTOM OVERLAY) --- */}
-      {showShareModal && (
-        <div className="absolute inset-0 z-50 flex items-center justify-center bg-black/80 backdrop-blur-sm animate-in fade-in duration-200" onClick={() => setShowShareModal(false)}>
-            <div
-                role="dialog"
-                aria-modal="true"
-                aria-labelledby="wave-share-title"
-                className="share-modal-content w-[90%] max-w-sm bg-[#0f172a] border border-white/10 rounded-2xl p-6 shadow-2xl relative"
-                onClick={(e) => e.stopPropagation()}
-            >
-                <button 
-                    aria-label="Close share dialog"
-                    onClick={() => setShowShareModal(false)}
-                    className="absolute top-4 right-4 text-slate-400 hover:text-white"
-                >
-                    <X className="w-5 h-5" />
-                </button>
-
-                <h3 id="wave-share-title" className="text-xl font-display font-bold text-white mb-4 flex items-center gap-2">
-                    <Share2 className="w-5 h-5 text-blue-400" /> Share Result
-                </h3>
-
-                <div className="bg-black/50 p-4 rounded-lg border border-white/5 mb-4">
-                    <p className="text-slate-300 font-mono text-xs leading-relaxed break-words whitespace-pre-wrap select-all">
-                        {shareText}
-                    </p>
-                </div>
-
-                <button 
-                    onClick={copyToClipboard}
-                    className={`w-full py-3 mb-4 font-bold rounded flex items-center justify-center gap-2 transition-all ${copied ? 'bg-green-600 text-white' : 'bg-white text-black hover:bg-slate-200'}`}
-                >
-                    {copied ? <Check className="w-4 h-4" /> : <Copy className="w-4 h-4" />}
-                    {copied ? 'COPIED!' : 'COPY TEXT'}
-                </button>
-
-                <div className="flex gap-3">
-                    <a 
-                        href={`https://twitter.com/intent/tweet?text=${encodeURIComponent(shareText)}`}
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        className="flex-1 py-2 bg-[#1DA1F2] hover:bg-[#1a91da] text-white rounded flex items-center justify-center transition-colors"
-                    >
-                        <span className="text-sm font-bold">X</span>
-                    </a>
-                    <a 
-                        href={`https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent('https://geometrydashspam.cc')}&quote=${encodeURIComponent(shareText)}`}
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        className="flex-1 py-2 bg-[#4267B2] hover:bg-[#365899] text-white rounded flex items-center justify-center transition-colors"
-                    >
-                        <span className="text-sm font-bold">f</span>
-                    </a>
-                </div>
-            </div>
-        </div>
-      )}
     </div>
   );
 });
