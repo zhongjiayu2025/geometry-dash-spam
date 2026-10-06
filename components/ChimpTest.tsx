@@ -4,6 +4,7 @@ import React, { useState } from 'react';
 import dynamic from 'next/dynamic';
 import { BrainCircuit, Play, Trophy } from 'lucide-react';
 import { usePersistentBestNumber } from '../lib/usePersistentBestNumber';
+import { useManagedTimeout } from '../lib/useManagedTimeout';
 
 const ChimpGameOver = dynamic(() => import('./ChimpGameOver'), { ssr: false });
 
@@ -14,7 +15,7 @@ export default function ChimpTest() {
     const [numbers, setNumbers] = useState<{ id: number, val: number, x: number, y: number, hidden: boolean, clicked: boolean }[]>([]);
     const [nextExpected, setNextExpected] = useState(1);
     const [strikes, setStrikes] = useState(0);
-
+    const { schedule: scheduleTimeout, clear: clearTimeout } = useManagedTimeout();
 
     const generateLevel = (currentLevel: number) => {
         if (currentLevel > 40) {
@@ -54,6 +55,7 @@ export default function ChimpTest() {
     };
 
     const startGame = () => {
+        clearTimeout();
         setLevel(4);
         setStrikes(0);
         generateLevel(4);
@@ -82,7 +84,7 @@ export default function ChimpTest() {
                     return;
                 }
 
-                setTimeout(() => {
+                scheduleTimeout(() => {
                     const nextLevel = level + 1;
                     setLevel(nextLevel);
                     generateLevel(nextLevel);

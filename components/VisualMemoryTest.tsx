@@ -4,6 +4,7 @@ import React, { useState } from 'react';
 import dynamic from 'next/dynamic';
 import { Brain, Play, Trophy } from 'lucide-react';
 import { usePersistentBestNumber } from '../lib/usePersistentBestNumber';
+import { useManagedTimeout } from '../lib/useManagedTimeout';
 
 const VisualMemoryGameOver = dynamic(() => import('./VisualMemoryGameOver'), { ssr: false });
 
@@ -17,6 +18,7 @@ export default function VisualMemoryTest() {
     const [activeSquares, setActiveSquares] = useState<number[]>([]);
     const [clickedSquares, setClickedSquares] = useState<number[]>([]);
     const [missedSquares, setMissedSquares] = useState<number[]>([]); // To show red when wrong
+    const { schedule: scheduleTimeout, clear: clearTimeout } = useManagedTimeout();
     
     // Level formula: active squares = level + 2
     // Grid size increases gradually
@@ -48,12 +50,13 @@ export default function VisualMemoryTest() {
         setGameState('showing');
         
         // Hide after some time depending on grid size
-        setTimeout(() => {
+        scheduleTimeout(() => {
             setGameState('playing');
         }, Math.max(1000, 1500 - (currentLevel * 20))); // Gradually gets slightly faster, but minimum 1s
     };
 
     const startGame = () => {
+        clearTimeout();
         setLevel(1);
         setStrikes(0);
         startLevel(1);
@@ -71,9 +74,10 @@ export default function VisualMemoryTest() {
             if (newClicked.length === activeSquares.length) {
                 // Level complete
                 setGameState('finished'); // Temp intermediate state
-                setTimeout(() => {
-                    setLevel(prev => prev + 1);
-                    startLevel(level + 1);
+                scheduleTimeout(() => {
+                    const nextLevel = level + 1;
+                    setLevel(nextLevel);
+                    startLevel(nextLevel);
                 }, 800);
             }
         } else {
@@ -83,14 +87,11 @@ export default function VisualMemoryTest() {
             
             // Show all correct ones to user
             setGameState('failed');
-            setTimeout(() => {
+            scheduleTimeout(() => {
                 if (strikes + 1 >= 3) {
-                    // Game Over
                     setGameState('idle');
-                    // Store best score
                     commitBestScore(level);
                 } else {
-                    // Retry level
                     startLevel(level);
                 }
             }, 1500);
