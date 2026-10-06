@@ -1,7 +1,10 @@
 "use client";
 
 import React, { useState, useEffect } from 'react';
+import dynamic from 'next/dynamic';
 import Link from 'next/link';
+
+const DashboardWaveHistory = dynamic(() => import('./DashboardWaveHistory'), { ssr: false });
 import { Trophy, MousePointer2, Target, Keyboard, Timer, Activity, RotateCcw, ArrowRight, BrainCircuit } from 'lucide-react';
 
 
@@ -160,11 +163,6 @@ export default function PersonalStats() {
 
     if (!mounted) return null;
 
-    const recentWaveRuns = stats.waveRuns.slice(0, 10);
-    const latestWaveRun = recentWaveRuns[0] ?? null;
-    const completedWaveRuns = stats.waveRuns.filter((run) => run.result === 'won').length;
-    const recentModes = new Set(recentWaveRuns.map((run) => run.mode)).size;
-
     const StatCard = ({ title, value, unit, icon: Icon, href, emptyText }: any) => {
         const hasValue = value !== null && value !== undefined && !isNaN(value);
 
@@ -219,63 +217,7 @@ export default function PersonalStats() {
             </div>
 
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mb-16">
-                
-                <div className="lg:col-span-3 rounded-3xl border border-blue-500/20 bg-blue-950/15 p-8">
-                    <div className="mb-6 flex flex-col gap-2 sm:flex-row sm:items-end sm:justify-between">
-                        <div>
-                            <div className="text-xs font-bold uppercase tracking-[0.16em] text-blue-400">Wave training history</div>
-                            <h3 className="mt-1 text-xl font-bold text-white">Geometry Dash Spam Runs</h3>
-                        </div>
-                        <Link href="/" className="text-sm font-bold text-blue-400 hover:text-blue-300">
-                            Open Spam Test <ArrowRight className="ml-1 inline h-4 w-4" />
-                        </Link>
-                    </div>
-
-                    {stats.waveRuns.length ? (
-                        <>
-                            <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
-                                <div className="rounded-xl border border-white/5 bg-black/30 p-4">
-                                    <div className="text-xs uppercase tracking-wider text-slate-500">Saved Runs</div>
-                                    <div className="mt-1 text-3xl font-display font-bold text-white">{stats.waveRuns.length}</div>
-                                </div>
-                                <div className="rounded-xl border border-white/5 bg-black/30 p-4">
-                                    <div className="text-xs uppercase tracking-wider text-slate-500">Completed Runs</div>
-                                    <div className="mt-1 text-3xl font-display font-bold text-white">{completedWaveRuns}</div>
-                                </div>
-                                <div className="rounded-xl border border-white/5 bg-black/30 p-4">
-                                    <div className="text-xs uppercase tracking-wider text-slate-500">Latest Survival</div>
-                                    <div className="mt-1 text-3xl font-display font-bold text-white">{latestWaveRun?.time.toFixed(2)}s</div>
-                                    <div className="mt-1 text-xs text-slate-500">{latestWaveRun?.mode}</div>
-                                </div>
-                                <div className="rounded-xl border border-white/5 bg-black/30 p-4">
-                                    <div className="text-xs uppercase tracking-wider text-slate-500">Latest CPS</div>
-                                    <div className="mt-1 text-3xl font-display font-bold text-white">{latestWaveRun?.averageCps.toFixed(2)}</div>
-                                    <div className="mt-1 text-xs text-slate-500">{recentModes} mode{recentModes === 1 ? '' : 's'} in recent history</div>
-                                </div>
-                            </div>
-
-                            <div className="mt-5 grid gap-2">
-                                {recentWaveRuns.slice(0, 5).map((run, index) => (
-                                    <div key={`${run.timestamp}-${index}`} className="flex flex-col gap-2 rounded-xl border border-white/5 bg-black/20 p-3 sm:flex-row sm:items-center sm:justify-between">
-                                        <div>
-                                            <div className="text-sm font-semibold text-white">{run.mode}</div>
-                                            <div className="text-xs text-slate-500">{run.result === 'won' ? 'Completed' : 'Crashed'} · {run.clicks} inputs</div>
-                                        </div>
-                                        <div className="flex gap-4 text-xs font-mono text-slate-300">
-                                            <span>{run.time.toFixed(2)}s</span>
-                                            <span>{run.averageCps.toFixed(2)} CPS</span>
-                                            <span>{run.peakCps.toFixed(2)} peak</span>
-                                        </div>
-                                    </div>
-                                ))}
-                            </div>
-                        </>
-                    ) : (
-                        <p className="text-sm leading-6 text-slate-400">
-                            No saved spam runs yet. Complete or crash a run to start a browser-only training history.
-                        </p>
-                    )}
-                </div>
+                <DashboardWaveHistory runs={stats.waveRuns} />
 
                 {/* Regular CPS Stats */}
                 <div className="lg:col-span-3 bg-gradient-to-r from-blue-900/20 to-purple-900/20 border border-white/10 rounded-3xl p-8 mb-2">
