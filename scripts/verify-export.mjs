@@ -264,6 +264,24 @@ const metadataFiles = ["sitemap.xml", "robots.txt", "manifest.webmanifest", "ads
   (file) => !existsSync(join(outDir, file))
 );
 
+const deployStatusPath = join(outDir, "deploy-status.json");
+if (!existsSync(deployStatusPath)) {
+  infrastructureErrors.push("Static export missing deploy-status.json build marker");
+} else {
+  const deployStatus = JSON.parse(readFileSync(deployStatusPath, "utf8"));
+  const expectedCommit = process.env.CF_PAGES_COMMIT_SHA || process.env.GITHUB_SHA;
+  if (expectedCommit && deployStatus.commit !== expectedCommit) {
+    infrastructureErrors.push(
+      `deploy-status.json commit is "${deployStatus.commit}", expected "${expectedCommit}"`
+    );
+  }
+  if (deployStatus.demonVerifiedAt !== demonDate) {
+    infrastructureErrors.push(
+      `deploy-status.json Demon date is "${deployStatus.demonVerifiedAt}", expected "${demonDate}"`
+    );
+  }
+}
+
 const redirectErrors = [];
 const redirectsPath = join(outDir, "_redirects");
 const expectedRedirects = new Map([
@@ -339,6 +357,19 @@ if (existsSync(headersPath)) {
     !headersTxt.includes("Cache-Control: public, max-age=31536000, immutable")
   ) {
     infrastructureErrors.push("_headers must immutable-cache hashed Next static assets");
+  }
+}
+
+if (existsSync(headersPath)) {
+  const headersTxt = readFileSync(headersPath, "utf8");
+  if (
+    !headersTxt.includes("/deploy-status.json") ||
+    !headersTxt.includes("X-Robots-Tag: noindex, nofollow") ||
+    !headersTxt.includes("Cache-Control: no-store, max-age=0")
+  ) {
+    infrastructureErrors.push(
+      "_headers must keep deploy-status.json non-indexable and uncached"
+    );
   }
 }
 
