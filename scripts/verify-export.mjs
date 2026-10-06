@@ -530,7 +530,6 @@ const clickerSource = readFileSync(join(process.cwd(), "components", "GeometryDa
 const clickerAchievementsSource = readFileSync(join(process.cwd(), "components", "ClickerAchievements.tsx"), "utf8");
 const clickerEconomySource = readFileSync(join(process.cwd(), "lib", "clickerEconomy.ts"), "utf8");
 const homeSource = readFileSync(join(process.cwd(), "app", "page.tsx"), "utf8");
-const headerSource = readFileSync(join(process.cwd(), "components", "Header.tsx"), "utf8");
 const footerSource = readFileSync(join(process.cwd(), "components", "Footer.tsx"), "utf8");
 const personalStatsSource = readFileSync(join(process.cwd(), "components", "PersonalStats.tsx"), "utf8");
 const personalStatsContentSource = readFileSync(join(process.cwd(), "components", "PersonalStatsContent.tsx"), "utf8");
