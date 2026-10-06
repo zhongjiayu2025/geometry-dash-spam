@@ -18,7 +18,7 @@ export default function GeometryDashClicker() {
   const [state, setState] = useState<SaveState>(INITIAL);
   const [loaded, setLoaded] = useState(false);
   const stateRef = useRef(state);
-  const saveTimerRef = useRef<number | null>(null);
+  const autoTickRef = useRef(0);
   const pendingTouchRef = useRef<{ pointerId: number; x: number; y: number } | null>(null);
 
   useEffect(() => {
@@ -35,24 +35,7 @@ export default function GeometryDashClicker() {
 
   useEffect(() => {
     stateRef.current = state;
-    if (!loaded) return;
-
-    if (saveTimerRef.current) {
-      window.clearTimeout(saveTimerRef.current);
-    }
-
-    saveTimerRef.current = window.setTimeout(() => {
-      localStorage.setItem(STORAGE_KEY, JSON.stringify(stateRef.current));
-      saveTimerRef.current = null;
-    }, 500);
-
-    return () => {
-      if (saveTimerRef.current) {
-        window.clearTimeout(saveTimerRef.current);
-        saveTimerRef.current = null;
-      }
-    };
-  }, [state, loaded]);
+  }, [state]);
 
   useEffect(() => {
     if (!loaded) return;
@@ -60,6 +43,7 @@ export default function GeometryDashClicker() {
     const flushSave = () => {
       localStorage.setItem(STORAGE_KEY, JSON.stringify(stateRef.current));
     };
+    const saveInterval = window.setInterval(flushSave, 5000);
 
     window.addEventListener("pagehide", flushSave);
     const flushWhenHidden = () => {
@@ -69,6 +53,7 @@ export default function GeometryDashClicker() {
     document.addEventListener("visibilitychange", flushWhenHidden);
 
     return () => {
+      window.clearInterval(saveInterval);
       window.removeEventListener("pagehide", flushSave);
       document.removeEventListener("visibilitychange", flushWhenHidden);
       flushSave();
@@ -84,12 +69,25 @@ export default function GeometryDashClicker() {
   };
 
   useEffect(() => {
-    if (state.autoPower <= 0) return;
+    if (!loaded || state.autoPower <= 0) {
+      autoTickRef.current = 0;
+      return;
+    }
+
+    autoTickRef.current = performance.now();
     const timer = window.setInterval(() => {
-      updateState((prev) => ({ ...prev, orbs: prev.orbs + prev.autoPower }));
+      const now = performance.now();
+      const elapsedSeconds = Math.max(0, (now - autoTickRef.current) / 1000);
+      autoTickRef.current = now;
+
+      updateState((prev) => {
+        if (prev.autoPower <= 0 || elapsedSeconds <= 0) return prev;
+        return { ...prev, orbs: prev.orbs + prev.autoPower * elapsedSeconds };
+      });
     }, 1000);
+
     return () => window.clearInterval(timer);
-  }, [state.autoPower]);
+  }, [loaded, state.autoPower]);
 
   const clickCost = Math.floor(25 * Math.pow(1.65, state.clickPower - 1));
   const autoCost = Math.floor(80 * Math.pow(1.75, state.autoPower));
