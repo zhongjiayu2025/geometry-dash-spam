@@ -462,6 +462,21 @@ const dragClickStatsSource = readFileSync(join(process.cwd(), "lib", "dragClickS
 const doubleClickHistorySource = readFileSync(join(process.cwd(), "components", "DoubleClickHistory.tsx"), "utf8");
 const keyboardLatencyHistorySource = readFileSync(join(process.cwd(), "components", "KeyboardLatencyHistory.tsx"), "utf8");
 const spacebarFinishedSource = readFileSync(join(process.cwd(), "components", "SpacebarFinishedActions.tsx"), "utf8");
+const shareResultHookSource = readFileSync(join(process.cwd(), "lib", "useShareResult.ts"), "utf8");
+const sharedShareResultSources = [
+  "ReactionResult.tsx",
+  "AimTrainerResult.tsx",
+  "CpsFinishedActions.tsx",
+  "SecondaryClickFinishedActions.tsx",
+  "SpacebarFinishedActions.tsx",
+  "ChimpGameOver.tsx",
+  "VisualMemoryGameOver.tsx",
+  "TypingResult.tsx",
+  "DragClickResult.tsx",
+].map((file) => [
+  file,
+  readFileSync(join(process.cwd(), "components", file), "utf8"),
+]);
 const mouseAccelerationResultSource = readFileSync(join(process.cwd(), "components", "MouseAccelerationResult.tsx"), "utf8");
 const reactionResultSource = readFileSync(join(process.cwd(), "components", "ReactionResult.tsx"), "utf8");
 const soundReactionResultSource = readFileSync(join(process.cwd(), "components", "SoundReactionResult.tsx"), "utf8");
@@ -658,12 +673,13 @@ if (
 }
 
 if (
-  !secondaryClickFinishedSource.includes("navigator.share") ||
-  !secondaryClickFinishedSource.includes("navigator.clipboard") ||
-  !secondaryClickFinishedSource.includes("TRY AGAIN")
+  !secondaryClickFinishedSource.includes("useShareResult") ||
+  !secondaryClickFinishedSource.includes("TRY AGAIN") ||
+  secondaryClickFinishedSource.includes("navigator.share") ||
+  secondaryClickFinishedSource.includes("navigator.clipboard")
 ) {
   infrastructureErrors.push(
-    "SecondaryClickFinishedActions must own sharing and retry controls for secondary click tests"
+    "SecondaryClickFinishedActions must delegate sharing to useShareResult and retain retry controls"
   );
 }
 
@@ -691,6 +707,31 @@ if (
 ) {
   infrastructureErrors.push(
     "useLazyClickSound must own the shared dynamic clickSound lifecycle"
+  );
+}
+
+for (const [file, source] of sharedShareResultSources) {
+  if (
+    !source.includes("useShareResult") ||
+    source.includes("navigator.share") ||
+    source.includes("navigator.clipboard") ||
+    source.includes("window.setTimeout(() => setCopied")
+  ) {
+    infrastructureErrors.push(
+      `${file}: result sharing must stay delegated to the shared useShareResult hook`
+    );
+  }
+}
+
+if (
+  !shareResultHookSource.includes("navigator.share") ||
+  !shareResultHookSource.includes("navigator.clipboard.writeText") ||
+  !shareResultHookSource.includes('error.name === "AbortError"') ||
+  !shareResultHookSource.includes("useManagedTimeout") ||
+  !shareResultHookSource.includes("scheduleCopiedReset")
+) {
+  infrastructureErrors.push(
+    "useShareResult must own Web Share fallback, user-cancel handling, clipboard fallback and copied timeout cleanup"
   );
 }
 
@@ -742,10 +783,10 @@ if (
   spacebarClientSource.includes("navigator.share") ||
   spacebarClientSource.includes("<Share2") ||
   spacebarClientSource.includes("<RotateCcw") ||
-  !spacebarFinishedSource.includes("navigator.share")
+  !spacebarFinishedSource.includes("useShareResult")
 ) {
   infrastructureErrors.push(
-    "SpacebarCounter finished sharing and reset controls must stay in the lazy result chunk"
+    "SpacebarCounter finished sharing and reset controls must stay lazy and use the shared share hook"
   );
 }
 
@@ -816,10 +857,10 @@ if (
   dragClientSource.includes("navigator.share") ||
   dragClientSource.includes("<Share2") ||
   dragClientSource.includes("<RotateCcw") ||
-  !dragClickResultSource.includes("navigator.share")
+  !dragClickResultSource.includes("useShareResult")
 ) {
   infrastructureErrors.push(
-    "DragClickTest finished result and sharing must stay in the lazy result chunk"
+    "DragClickTest finished result must stay lazy and delegate sharing to useShareResult"
   );
 }
 
@@ -1880,10 +1921,10 @@ if (
   cpsClientSource.includes("const getTimingStats") ||
   cpsClientSource.includes("navigator.share") ||
   !cpsFinishedActionsSource.includes("function getTimingStats") ||
-  !cpsFinishedActionsSource.includes("navigator.share")
+  !cpsFinishedActionsSource.includes("useShareResult")
 ) {
   infrastructureErrors.push(
-    "CPS timing statistics and sharing must stay inside the lazy finished-actions chunk"
+    "CPS timing statistics must stay lazy while result sharing delegates to useShareResult"
   );
 }
 
