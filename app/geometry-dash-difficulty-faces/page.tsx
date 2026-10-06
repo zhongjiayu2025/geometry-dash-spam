@@ -17,7 +17,7 @@ export const metadata: Metadata = {
     type: "website",
   },
   twitter: {
-    card: "summary",
+    card: "summary_large_image",
     title: "Geometry Dash Difficulty Faces | All Ratings Explained",
     description: "Geometry Dash difficulty faces explained from Auto to Demon, including star ranges and all five Demon sub-difficulties: Easy, Medium, Hard, Insane and Extreme.",
   },
