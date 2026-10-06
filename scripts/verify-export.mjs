@@ -3323,6 +3323,116 @@ for (const [route, expectedLinks] of intentClusterLinks) {
 
 const contentErrors = [];
 
+for (const [path, requiredSnippet] of [
+  ["SEO-GEO.md", "Intent → canonical page map"],
+  ["SEO-GEO-BASELINE.md", "SEO / GEO Technical Baseline"],
+]) {
+  const fullPath = join(process.cwd(), path);
+  if (!existsSync(fullPath)) {
+    contentErrors.push(`${path}: required Website-Starter-Standard project overlay is missing`);
+    continue;
+  }
+
+  const source = readFileSync(fullPath, "utf8");
+  if (!source.includes(requiredSnippet)) {
+    contentErrors.push(`${path}: required SEO/GEO governance content is missing "${requiredSnippet}"`);
+  }
+}
+
+const llmsPath = join(process.cwd(), "public", "llms.txt");
+if (!existsSync(llmsPath)) {
+  contentErrors.push("public/llms.txt: optional GEO interoperability file is referenced by the site but missing");
+} else {
+  const llmsSource = readFileSync(llmsPath, "utf8");
+  for (const snippet of [
+    "Last updated:",
+    "## Freshness and citation notes",
+    "not presented as a Google ranking or citation signal",
+    "https://geometrydashspam.cc/geometry-dash-wave",
+    "https://geometrydashspam.cc/cps-test",
+    "https://geometrydashspam.cc/demon-list",
+    "https://geometrydashspam.cc/contact",
+  ]) {
+    if (!llmsSource.includes(snippet)) {
+      contentErrors.push(`public/llms.txt: missing GEO governance snippet "${snippet}"`);
+    }
+  }
+
+  const llmsUrls = [
+    ...llmsSource.matchAll(/https:\/\/geometrydashspam\.cc(\/[^\s)\]]*)?/g),
+  ].map((match) => match[1] || "/");
+
+  for (const rawRoute of [...new Set(llmsUrls)]) {
+    const route = rawRoute.split("#")[0].split("?")[0] || "/";
+    if (route === "/sitemap.xml") continue;
+
+    if (!internalTargetExists(route)) {
+      contentErrors.push(`public/llms.txt: linked route does not exist in the export: ${route}`);
+      continue;
+    }
+
+    if (noindexRoutes.includes(route)) {
+      contentErrors.push(`public/llms.txt: must not promote noindex route ${route}`);
+      continue;
+    }
+
+    const pagePath = exportedPath(route);
+    if (!pagePath) continue;
+    const html = readFileSync(pagePath, "utf8");
+    const robots = metaContent(html, "name", "robots")?.toLowerCase() ?? "";
+    const canonical = canonicalHref(html);
+    const expectedCanonical =
+      route === "/" ? "https://geometrydashspam.cc" : `https://geometrydashspam.cc${route}`;
+
+    if (robots.includes("noindex")) {
+      contentErrors.push(`public/llms.txt: linked route is noindex: ${route}`);
+    }
+
+    if (canonical !== expectedCanonical) {
+      contentErrors.push(
+        `public/llms.txt: ${route} canonical is "${canonical ?? "missing"}", expected "${expectedCanonical}"`
+      );
+    }
+  }
+}
+
+for (const [route, schemaType, requiredVisibleText] of [
+  ["/about", '"@type":"AboutPage"', "Editorial and source policy"],
+  ["/contact", '"@type":"ContactPage"', "ranking corrections"],
+]) {
+  const pagePath = exportedPath(route);
+  if (!pagePath) continue;
+  const html = readFileSync(pagePath, "utf8");
+
+  if (!html.includes(schemaType)) {
+    contentErrors.push(`${route}: missing ${schemaType} structured data`);
+  }
+
+  if (!html.includes("https://geometrydashspam.cc/#organization")) {
+    contentErrors.push(`${route}: structured data is not connected to the site Organization entity`);
+  }
+
+  if (!html.includes(requiredVisibleText)) {
+    contentErrors.push(`${route}: GEO/trust content is missing "${requiredVisibleText}"`);
+  }
+}
+
+const homeEntityPath = exportedPath("/");
+if (homeEntityPath) {
+  const homeEntityHtml = readFileSync(homeEntityPath, "utf8");
+  for (const snippet of [
+    '"@type":"Organization"',
+    '"@type":"WebSite"',
+    '"@type":"ContactPoint"',
+    "info@geometrydashspam.cc",
+    "Geometry Dash wave practice",
+  ]) {
+    if (!homeEntityHtml.includes(snippet)) {
+      contentErrors.push(`/: global entity graph is missing "${snippet}"`);
+    }
+  }
+}
+
 const breezePageSource = readFileSync(join(process.cwd(), "app", "geometry-dash-breeze", "page.tsx"), "utf8");
 if (
   breezePageSource.includes("called ${LATEST_MAIN_LEVEL}") ||
@@ -3659,5 +3769,5 @@ if (
 }
 
 console.log(
-  `Static export verified: ${requiredRoutes.length} core routes, metadata checks, ads/robots/manifest checks, permanent legacy redirects, search-snippet length checks, H1/title/description uniqueness checks, sitemap freshness checks, noindex utility policy, core-page authority leakage checks, HTML sitemap priority-link checks, indexable support-page guide checks, search-intent cluster checks, Demon data-to-page checks, Wraith data-to-page checks, ${htmlFiles.length} HTML files with internal-link checks, bidirectional sitemap/indexability coverage, sitemap URL/canonical/title/description/OpenGraph integrity, sitemap.xml and robots.txt.`
+  `Static export verified: ${requiredRoutes.length} core routes, metadata checks, ads/robots/manifest checks, permanent legacy redirects, search-snippet length checks, H1/title/description uniqueness checks, sitemap freshness checks, noindex utility policy, core-page authority leakage checks, HTML sitemap priority-link checks, indexable support-page guide checks, search-intent cluster checks, GEO interoperability/governance checks, About/Contact entity checks, Demon data-to-page checks, Wraith data-to-page checks, ${htmlFiles.length} HTML files with internal-link checks, bidirectional sitemap/indexability coverage, sitemap URL/canonical/title/description/OpenGraph integrity, sitemap.xml and robots.txt.`
 );
