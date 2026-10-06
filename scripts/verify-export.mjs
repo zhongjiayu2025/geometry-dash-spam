@@ -1576,6 +1576,16 @@ if (
 }
 
 if (
+  !scrollClientSource.includes("event.ctrlKey || event.deltaY === 0") ||
+  scrollClientSource.indexOf("event.ctrlKey || event.deltaY === 0") >
+    scrollClientSource.indexOf("event.preventDefault()")
+) {
+  infrastructureErrors.push(
+    "ScrollTest must ignore pinch-zoom and horizontal-only wheel input before preventing defaults or counting events"
+  );
+}
+
+if (
   !scrollClientSource.includes("performance.now() - startTimeRef.current >= TEST_MS") ||
   !scrollClientSource.includes("finishTest();\n      return;")
 ) {

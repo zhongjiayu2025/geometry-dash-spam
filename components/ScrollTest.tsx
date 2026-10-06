@@ -42,7 +42,7 @@ export default function ScrollTest() {
   }, []);
 
   const handleScroll = useCallback((event: WheelEvent) => {
-    if (finishedRef.current) return;
+    if (finishedRef.current || event.ctrlKey || event.deltaY === 0) return;
     event.preventDefault();
 
     if (
