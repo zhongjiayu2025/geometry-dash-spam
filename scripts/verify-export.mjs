@@ -495,6 +495,20 @@ for (const file of ["JitterClickTest.tsx", "ButterflyClickTest.tsx", "RightClick
   }
 }
 
+for (const file of ["JitterClickTest.tsx", "ButterflyClickTest.tsx"]) {
+  const source = supportClientSources.find(([name]) => name === file)?.[1] ?? "";
+  if (
+    !source.includes("pendingTouchRef") ||
+    !source.includes("touch-pan-y") ||
+    !source.includes("onPointerUp={handlePointerUp}") ||
+    !source.includes("onPointerCancel={handlePointerCancel}")
+  ) {
+    infrastructureErrors.push(
+      `${file}: mobile test start must allow scrolling before the run begins`
+    );
+  }
+}
+
 if (cpsClientSource.includes("RelatedTools") || cpsClientSource.includes("How is CPS Calculated?")) {
   infrastructureErrors.push("CPS static guide content must stay outside the client test component");
 }
