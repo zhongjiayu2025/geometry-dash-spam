@@ -61,6 +61,7 @@ export default function KeyboardGhostingTest() {
       if (!["F5", "F11", "F12"].includes(event.code) && !(event.ctrlKey || event.metaKey)) {
         event.preventDefault();
       }
+      if (event.repeat) return;
 
       setMeasurement((previous) => {
         const pressedKeys = new Set(previous.pressedKeys);
