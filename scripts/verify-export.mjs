@@ -442,6 +442,7 @@ const waveRendererSource = readFileSync(join(process.cwd(), "lib", "waveRenderer
 const waveRuntimeSource = readFileSync(join(process.cwd(), "lib", "waveRuntime.ts"), "utf8");
 const waveRunOverlaysSource = readFileSync(join(process.cwd(), "components", "WaveRunOverlays.tsx"), "utf8");
 const clickSoundSource = readFileSync(join(process.cwd(), "lib", "clickSound.ts"), "utf8");
+const lazyClickSoundSource = readFileSync(join(process.cwd(), "lib", "useLazyClickSound.ts"), "utf8");
 const secondaryClickFinishedSource = readFileSync(join(process.cwd(), "components", "SecondaryClickFinishedActions.tsx"), "utf8");
 const dragClickResultSource = readFileSync(join(process.cwd(), "components", "DragClickResult.tsx"), "utf8");
 const spacebarFinishedSource = readFileSync(join(process.cwd(), "components", "SpacebarFinishedActions.tsx"), "utf8");
@@ -610,18 +611,30 @@ if (
 }
 
 if (
-  !secondaryClickClientSource.includes('import("../lib/clickSound")') ||
+  !secondaryClickClientSource.includes('useLazyClickSound') ||
+  secondaryClickClientSource.includes('import("../lib/clickSound")') ||
   secondaryClickClientSource.includes("AudioContext") ||
   secondaryClickClientSource.includes("createOscillator") ||
   secondaryClickClientSource.includes("createGain")
 ) {
   infrastructureErrors.push(
-    "Shared SecondaryClickTest audio must stay in the lazy-loaded clickSound chunk"
+    "Shared SecondaryClickTest audio must use the shared lazy click-sound hook"
   );
 }
 
 if (!clickSoundSource.includes("createClickSoundEngine")) {
   infrastructureErrors.push("Shared clickSound engine is missing its lazy factory");
+}
+
+if (
+  !lazyClickSoundSource.includes('import("./clickSound")') ||
+  !lazyClickSoundSource.includes("createClickSoundEngine") ||
+  !lazyClickSoundSource.includes("engine.destroy()") ||
+  !lazyClickSoundSource.includes("engineRef.current.suspend()")
+) {
+  infrastructureErrors.push(
+    "useLazyClickSound must own the shared dynamic clickSound lifecycle"
+  );
 }
 
 if (
@@ -639,7 +652,8 @@ if (
 const spacebarClientSource = supportClientSources.find(([file]) => file === "SpacebarCounter.tsx")?.[1] ?? "";
 if (
   !spacebarClientSource.includes("useState(false)") ||
-  !spacebarClientSource.includes('import("../lib/clickSound")') ||
+  !spacebarClientSource.includes('useLazyClickSound') ||
+  spacebarClientSource.includes('import("../lib/clickSound")') ||
   !spacebarClientSource.includes("endTimerRef") ||
   !spacebarClientSource.includes("window.setInterval(updateTimer, 100)") ||
   !spacebarClientSource.includes("now - startTimeRef.current >= TEST_MS") ||
@@ -942,7 +956,8 @@ if (
 
 if (
   !aimClientSource.includes('dynamic(() => import("./AimTrainerResult")') ||
-  !aimClientSource.includes('import("../lib/clickSound")') ||
+  !aimClientSource.includes('useLazyClickSound') ||
+  aimClientSource.includes('import("../lib/clickSound")') ||
   !aimClientSource.includes("window.setInterval(updateTimer, 100)") ||
   !aimClientSource.includes("window.setTimeout(endGame, 30000)") ||
   aimClientSource.includes("AudioContext") ||
@@ -1025,7 +1040,8 @@ if (
 }
 
 if (
-  !soundReactionClientSource.includes("import('../lib/clickSound')") ||
+  !soundReactionClientSource.includes("useLazyClickSound") ||
+  soundReactionClientSource.includes("import('../lib/clickSound')") ||
   !soundReactionClientSource.includes("'soundReaction'") ||
   soundReactionClientSource.includes("AudioContext") ||
   soundReactionClientSource.includes("createOscillator") ||
@@ -1079,8 +1095,8 @@ if (
 
 const clientSourceBudgets = [
   ["WaveSimulator.tsx", waveClientSource, 11000],
-  ["CpsTest.tsx", cpsClientSource, 16500],
-  ["AimTrainer.tsx", aimClientSource, 12000],
+  ["CpsTest.tsx", cpsClientSource, 15000],
+  ["AimTrainer.tsx", aimClientSource, 10500],
   ["ReactionTest.tsx", reactionClientSource, 6500],
   ["VisualMemoryTest.tsx", visualMemoryClientSource, 11500],
   ["ChimpTest.tsx", chimpClientSource, 11500],
@@ -1088,10 +1104,10 @@ const clientSourceBudgets = [
   ["ScrollTest.tsx", scrollClientSource, 7500],
   ["RefreshRateTest.tsx", refreshRateClientSource, 4500],
   ["MouseAccelerationTest.tsx", mouseAccelerationClientSource, 5000],
-  ["SoundReactionTest.tsx", soundReactionClientSource, 9000],
-  ["SecondaryClickTest.tsx", secondaryClickClientSource, 16000],
+  ["SoundReactionTest.tsx", soundReactionClientSource, 8000],
+  ["SecondaryClickTest.tsx", secondaryClickClientSource, 14500],
   ["DragClickTest.tsx", dragClientSource, 10000],
-  ["SpacebarCounter.tsx", spacebarClientSource, 12000],
+  ["SpacebarCounter.tsx", spacebarClientSource, 10500],
   ["PersonalStats.tsx", personalStatsSource, 5000],
   ["GameCanvas.tsx", gameCanvasSource, 32500],
 ];
@@ -1344,7 +1360,8 @@ if (
 }
 
 if (
-  !cpsClientSource.includes("import('../lib/clickSound')") ||
+  !cpsClientSource.includes("useLazyClickSound") ||
+  cpsClientSource.includes("import('../lib/clickSound')") ||
   cpsClientSource.includes("AudioContext") ||
   cpsClientSource.includes("createOscillator") ||
   cpsClientSource.includes("createGain")
