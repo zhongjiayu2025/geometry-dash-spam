@@ -456,6 +456,7 @@ const dragClickResultSource = readFileSync(join(process.cwd(), "components", "Dr
 const dragClickStatsSource = readFileSync(join(process.cwd(), "lib", "dragClickStats.ts"), "utf8");
 const spacebarFinishedSource = readFileSync(join(process.cwd(), "components", "SpacebarFinishedActions.tsx"), "utf8");
 const mouseAccelerationResultSource = readFileSync(join(process.cwd(), "components", "MouseAccelerationResult.tsx"), "utf8");
+const reactionResultSource = readFileSync(join(process.cwd(), "components", "ReactionResult.tsx"), "utf8");
 const soundReactionResultSource = readFileSync(join(process.cwd(), "components", "SoundReactionResult.tsx"), "utf8");
 const visualMemoryGridSource = readFileSync(join(process.cwd(), "components", "VisualMemoryGrid.tsx"), "utf8");
 const chimpBoardSource = readFileSync(join(process.cwd(), "components", "ChimpBoard.tsx"), "utf8");
