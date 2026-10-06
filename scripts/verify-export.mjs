@@ -1051,6 +1051,16 @@ if (
 }
 
 if (
+  !chimpClientSource.includes("const nextStrikes = strikes + 1") ||
+  !chimpClientSource.includes("if (nextStrikes >= 3)") ||
+  !chimpClientSource.includes("scheduleTimeout(() => {\n                    setGameState('finished');")
+) {
+  infrastructureErrors.push(
+    "ChimpTest must transition to finished after the third strike instead of leaving a dead failed state"
+  );
+}
+
+if (
   !typingClientSource.includes('dynamic(() => import("./TypingResult")') ||
   !typingClientSource.includes("window.setInterval(updateTimer, 100)") ||
   !typingClientSource.includes("endTimerRef") ||
