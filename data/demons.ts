@@ -7,7 +7,7 @@ export type DemonEntry = {
 
 export const DEMON_SOURCE_URL = "https://pointercrate.com/demonlist/";
 export const DEMON_API_URL = "https://pointercrate.com/api/v2/demons/listed/?limit=50";
-export const DEMON_VERIFIED_AT = "2026-10-05";
+export const DEMON_VERIFIED_AT = "2026-10-06";
 
 export const DEMONS: DemonEntry[] = [
   { rank: 1, level: "GRIEF", publisher: "icedcave", difficulty: "Extreme Demon" },
