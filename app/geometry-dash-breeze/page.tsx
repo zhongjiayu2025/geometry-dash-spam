@@ -115,7 +115,7 @@ export default function GeometryDashBreezePage() {
             <h2 className="mb-3 text-2xl font-bold text-white">Latest version: {LATEST_VERSION}</h2>
             <p className="leading-7 text-slate-400">
               The GitHub Releases page currently marks {LATEST_VERSION} as Latest. Its release notes mention a new achievement,
-              a new main level called ${LATEST_MAIN_LEVEL}, and additional bug fixes and tweaks.
+              a new main level called {LATEST_MAIN_LEVEL}, and additional bug fixes and tweaks.
             </p>
           </div>
         </section>
@@ -144,7 +144,7 @@ export default function GeometryDashBreezePage() {
             </div>
             <div className="rounded-xl border border-white/10 bg-slate-900/30 p-4">
               <h3 className="mb-2 font-bold text-white">Android</h3>
-              <p className="text-sm leading-6 text-slate-400">Current project notes target Android ${ANDROID_MIN} through ${ANDROID_MAX}, while warning that not every Android version has been tested.</p>
+              <p className="text-sm leading-6 text-slate-400">Current project notes target Android {ANDROID_MIN} through {ANDROID_MAX}, while warning that not every Android version has been tested.</p>
             </div>
             <div className="rounded-xl border border-white/10 bg-slate-900/30 p-4">
               <h3 className="mb-2 font-bold text-white">Download source</h3>
