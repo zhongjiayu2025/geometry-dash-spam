@@ -814,6 +814,9 @@ const rightClickClientSource = supportClientSources.find(([file]) => file === "R
 const aimClientSource = supportClientSources.find(([file]) => file === "AimTrainer.tsx")?.[1] ?? "";
 const reactionClientSource = supportClientSources.find(([file]) => file === "ReactionTest.tsx")?.[1] ?? "";
 const visualMemoryClientSource = supportClientSources.find(([file]) => file === "VisualMemoryTest.tsx")?.[1] ?? "";
+const chimpClientSource = supportClientSources.find(([file]) => file === "ChimpTest.tsx")?.[1] ?? "";
+const typingClientSource = supportClientSources.find(([file]) => file === "TypingTest.tsx")?.[1] ?? "";
+const scrollClientSource = supportClientSources.find(([file]) => file === "ScrollTest.tsx")?.[1] ?? "";
 const reactionPageSource = readFileSync(join(process.cwd(), "app", "reaction-test", "page.tsx"), "utf8");
 if (
   rightClickClientSource.includes("Why Test Right Click CPS?") ||
@@ -944,12 +947,53 @@ if (
   );
 }
 
+if (
+  !chimpClientSource.includes("dynamic(() => import('./ChimpGameOver')") ||
+  chimpClientSource.includes("navigator.share") ||
+  chimpClientSource.includes("<Share2") ||
+  chimpClientSource.includes("<RotateCcw")
+) {
+  infrastructureErrors.push(
+    "ChimpTest must keep game-over sharing and replay controls in the lazy result chunk"
+  );
+}
+
+if (
+  !typingClientSource.includes('dynamic(() => import("./TypingResult")') ||
+  !typingClientSource.includes("window.setInterval(updateTimer, 100)") ||
+  !typingClientSource.includes("endTimerRef") ||
+  typingClientSource.includes("navigator.share") ||
+  typingClientSource.includes("<Share2") ||
+  typingClientSource.includes("<RotateCcw") ||
+  typingClientSource.includes("}, 50)")
+) {
+  infrastructureErrors.push(
+    "TypingTest must lazy-load finished controls and keep its live timer on the 100ms UI boundary with an exact end timer"
+  );
+}
+
+if (
+  !scrollClientSource.includes('dynamic(() => import("./ScrollResult")') ||
+  !scrollClientSource.includes("window.setInterval(updateUi, 100)") ||
+  !scrollClientSource.includes("window.setTimeout(finishTest, TEST_MS)") ||
+  !scrollClientSource.includes("patternRef.current.style.backgroundPositionY") ||
+  scrollClientSource.includes("setScrollY") ||
+  scrollClientSource.includes("setDistance(distanceRef.current);\n      setEvents(eventsRef.current);\n      setScrollY")
+) {
+  infrastructureErrors.push(
+    "ScrollTest wheel hot path must stay ref-based with 100ms UI sampling and exact cutoff timing"
+  );
+}
+
 const clientSourceBudgets = [
   ["WaveSimulator.tsx", waveClientSource, 11000],
   ["CpsTest.tsx", cpsClientSource, 18500],
   ["AimTrainer.tsx", aimClientSource, 12000],
   ["ReactionTest.tsx", reactionClientSource, 6500],
   ["VisualMemoryTest.tsx", visualMemoryClientSource, 11500],
+  ["ChimpTest.tsx", chimpClientSource, 11500],
+  ["TypingTest.tsx", typingClientSource, 10000],
+  ["ScrollTest.tsx", scrollClientSource, 7500],
   ["GameCanvas.tsx", gameCanvasSource, 48000],
 ];
 
