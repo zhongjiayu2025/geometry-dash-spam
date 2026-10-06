@@ -18,6 +18,11 @@ export default function ClickTechniqueGuide({ variant }: { variant: "jitter" | "
     return (
       <div className="defer-render">
         <section className="space-y-8 mb-16">
+          <div className="rounded-2xl border border-orange-500/20 bg-orange-950/10 p-5 md:p-6">
+            <p className="text-sm leading-7 text-slate-300">
+              <strong className="text-white">Quick answer:</strong> the jitter click test runs for 10 seconds and reports browser-registered CPS. Compare several runs on the same setup; the useful result is a repeatable range, not a universal target number.
+            </p>
+          </div>
           <div className="bg-slate-900/40 border border-white/5 rounded-2xl p-8 md:p-12">
             <h2 className="text-3xl font-display font-bold text-white mb-6 flex items-center gap-3">
               <CheckCircle className="text-orange-500 w-8 h-8" />
@@ -105,6 +110,11 @@ export default function ClickTechniqueGuide({ variant }: { variant: "jitter" | "
 
   return (
     <section className="defer-render space-y-8">
+      <div className="rounded-2xl border border-pink-500/20 bg-pink-950/10 p-5 md:p-6">
+        <p className="text-sm leading-7 text-slate-300">
+          <strong className="text-white">Quick answer:</strong> the butterfly click test runs for 10 seconds and measures browser-registered CPS while you alternate two fingers. Compare repeated runs on the same mouse instead of treating one peak score as a fixed benchmark.
+        </p>
+      </div>
       <div className="bg-slate-900/40 border border-white/5 rounded-2xl p-8 md:p-12">
         <h2 className="text-3xl font-display font-bold text-white mb-6">What is Butterfly Clicking?</h2>
         <div className="prose prose-invert prose-lg max-w-none text-slate-300">
@@ -125,12 +135,12 @@ export default function ClickTechniqueGuide({ variant }: { variant: "jitter" | "
             </div>
             <div>
               <h3 className="text-xl font-bold text-white mb-3 flex items-center gap-2">
-                <Mouse className="w-5 h-5 text-blue-400" /> Best Mice for Butterfly
+                <Mouse className="w-5 h-5 text-blue-400" /> Mouse factors that matter
               </h3>
               <ul className="list-disc pl-5 space-y-2 text-sm">
-                <li><strong>Glorious Model O:</strong> A commonly discussed shape for butterfly clicking; verify current switch and debounce behavior for the exact model.</li>
-                <li><strong>Razer Viper Mini:</strong> Optical-switch behavior differs from mechanical debounce designs; compare your own results rather than assuming a fixed CPS cap.</li>
-                <li><strong>Logitech G Pro:</strong> Button shape and click feel may suit some grips better than others.</li>
+                <li><strong>Button width and shape:</strong> Both fingers need a comfortable, repeatable contact area.</li>
+                <li><strong>Switch and debounce behavior:</strong> Registration can differ by exact mouse, firmware and settings.</li>
+                <li><strong>Grip comfort:</strong> A technique that feels fast for one hand may be awkward or tiring for another.</li>
               </ul>
             </div>
           </div>

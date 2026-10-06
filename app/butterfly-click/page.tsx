@@ -7,21 +7,21 @@ import ClickTechniqueGuide from "../../components/ClickTechniqueGuide";
 import ToolWebApplicationSchema from "../../components/ToolWebApplicationSchema";
 
 const description =
-  "Practice butterfly clicking and compare two-finger click speed and consistency in your browser.";
+  "Take a 10-second butterfly click test and measure two-finger CPS, click count and repeatability. Compare several runs on the same mouse and setup.";
 
 export const metadata: Metadata = {
-  title: "Butterfly Click Test | Two-Finger CPS Practice",
+  title: "Butterfly Click Test | 10 Second CPS Test",
   description,
   alternates: { canonical: "/butterfly-click" },
   openGraph: {
-    title: "Butterfly Click Test | Two-Finger CPS Practice",
+    title: "Butterfly Click Test | 10 Second CPS Test",
     description,
     url: "https://geometrydashspam.cc/butterfly-click",
     type: "website",
   },
   twitter: {
     card: "summary_large_image",
-    title: "Butterfly Click Test | Two-Finger CPS Practice",
+    title: "Butterfly Click Test | 10 Second CPS Test",
     description,
   },
 };

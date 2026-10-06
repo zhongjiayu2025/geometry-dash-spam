@@ -50,9 +50,21 @@ export default function HomeGuide() {
         <h2 className="text-2xl md:text-3xl font-display font-bold text-white mb-4">What is Geometry Dash spam?</h2>
         <p className="text-base md:text-lg">
           <strong className="text-white">Geometry Dash spam</strong> means sending rapid repeated inputs while still keeping enough rhythm and control to survive a tight section.
-          Raw speed matters, but consistent timing matters just as much. The main tool works as a <strong className="text-white">Geometry Dash spam click test</strong> with wave control, while the{" "}
+          Raw speed matters, but consistent timing matters just as much. The main tool is a <strong className="text-white">wave-spam control trainer</strong>, while the{" "}
           <Link href="/cps-test" className="text-blue-400 hover:underline">Geometry Dash CPS test (GD CPS test)</Link>{" "}
-          isolates raw click speed and timing metrics.
+          is the dedicated spam click test for raw click speed and timing metrics.
+        </p>
+      </div>
+
+      <div className="rounded-2xl border border-blue-500/20 bg-blue-950/10 p-6 md:p-8">
+        <h2 className="mb-3 text-2xl font-display font-bold text-white">Spam Test vs Spam Click Test</h2>
+        <p className="text-sm leading-7 text-slate-300 md:text-base">
+          Use this page when you want to practice <strong className="text-white">Geometry Dash wave spam and control</strong>.
+          If your goal is simply to count clicks and measure CPS, use the{" "}
+          <Link href="/cps-test" className="font-semibold text-blue-400 hover:underline">
+            spam click test / Geometry Dash CPS Test
+          </Link>.
+          Keeping the two tasks separate makes the results easier to interpret: one measures input speed, the other tests whether that speed stays controllable in a wave corridor.
         </p>
       </div>
 

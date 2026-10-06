@@ -12,7 +12,6 @@ export const metadata: Metadata = {
     "geometry dash spam",
     "geometry dash spam test",
     "geometry dash wave spam",
-    "spam click test",
     "gd spam",
   ],
   alternates: {
@@ -107,7 +106,7 @@ export default function Home() {
           <strong className="text-white">Wave spam:</strong> hold to rise, release to fall, and keep the rhythm through the corridor.
         </div>
         <a href="/cps-test" className="shrink-0 font-semibold text-blue-400 hover:text-blue-300">
-          Need raw click speed? GD CPS Test →
+          Looking for a spam click test? GD CPS Test →
         </a>
       </div>
 

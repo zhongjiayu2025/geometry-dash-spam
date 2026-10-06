@@ -7,21 +7,21 @@ import ClickTechniqueGuide from "../../components/ClickTechniqueGuide";
 import ToolWebApplicationSchema from "../../components/ToolWebApplicationSchema";
 
 const description =
-  "Run a 10-second jitter click test and compare browser-registered CPS. Practice a rapid clicking technique without relying on claimed benchmark speeds.";
+  "Take a 10-second jitter click test and measure CPS, click count and repeatability in your browser. Compare several runs on the same mouse and setup.";
 
 export const metadata: Metadata = {
-  title: "Jitter Click Test | 10-Second CPS Practice",
+  title: "Jitter Click Test | 10 Second CPS Test",
   description,
   alternates: { canonical: "/jitter-click" },
   openGraph: {
-    title: "Jitter Click Test | 10-Second CPS Practice",
+    title: "Jitter Click Test | 10 Second CPS Test",
     description,
     url: "https://geometrydashspam.cc/jitter-click",
     type: "website",
   },
   twitter: {
     card: "summary_large_image",
-    title: "Jitter Click Test | 10-Second CPS Practice",
+    title: "Jitter Click Test | 10 Second CPS Test",
     description,
   },
 };

@@ -7,20 +7,20 @@ import InputToolGuide from "../../components/InputToolGuide";
 import { Metadata } from "next";
 
 export const metadata: Metadata = {
-  title: "Spacebar Counter | Spacebar CPS & Press Speed Test",
+  title: "Spacebar CPS Test | 10 Second Spacebar Counter",
   description:
-    "Count spacebar presses and measure press speed in your browser. This is not a direct keyboard hardware-latency measurement.",
+    "Take a 10-second spacebar CPS test, count key presses and compare press speed across repeated runs. Browser results are not direct hardware-latency measurements.",
   alternates: { canonical: "/spacebar-counter" },
   openGraph: {
-    title: "Spacebar Counter | Spacebar CPS & Press Speed Test",
-    description: "Count spacebar presses and measure press speed in your browser. This is not a direct keyboard hardware-latency measurement.",
+    title: "Spacebar CPS Test | 10 Second Spacebar Counter",
+    description: "Take a 10-second spacebar CPS test, count key presses and compare press speed across repeated runs. Browser results are not direct hardware-latency measurements.",
     url: "https://geometrydashspam.cc/spacebar-counter",
     type: "website",
   },
   twitter: {
     card: "summary_large_image",
-    title: "Spacebar Counter | Spacebar CPS & Press Speed Test",
-    description: "Count spacebar presses and measure press speed in your browser. This is not a direct keyboard hardware-latency measurement.",
+    title: "Spacebar CPS Test | 10 Second Spacebar Counter",
+    description: "Take a 10-second spacebar CPS test, count key presses and compare press speed across repeated runs. Browser results are not direct hardware-latency measurements.",
   },
 };
 
@@ -30,16 +30,16 @@ export default function SpacebarCounterPage() {
       <ToolWebApplicationSchema
         name="Spacebar Counter"
         path="/spacebar-counter"
-        description="Count spacebar presses and measure press speed in your browser. This is not a direct keyboard hardware-latency measurement."
+        description="Take a 10-second spacebar CPS test, count key presses and compare press speed across repeated runs. Browser results are not direct hardware-latency measurements."
       />
       <Breadcrumbs items={[{ label: "Spacebar Counter", href: "/spacebar-counter", active: true }]} />
       <div className="mb-8 md:mb-12 text-center">
         <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-white/5 border border-white/10 text-xs font-mono text-slate-400 mb-4">
           KEY PRESS SPEED
         </div>
-        <h1 className="text-3xl md:text-5xl font-display font-bold text-white mb-2 uppercase">SPACEBAR COUNTER</h1>
+        <h1 className="text-3xl md:text-5xl font-display font-bold text-white mb-2 uppercase">SPACEBAR CPS TEST</h1>
         <p className="text-slate-500 max-w-2xl mx-auto text-sm md:text-base">
-          Count presses and compare spacebar speed across repeated runs.
+          Run a 10-second spacebar counter and compare presses per second across repeated runs.
         </p>
       </div>
       <SpacebarCounter />

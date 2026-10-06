@@ -5,7 +5,7 @@ const HEROES = {
     badge: "CLICKING TECHNIQUE",
     title: "Jitter Click Test",
     description:
-      "Practice jitter clicking and compare a repeatable 10-second browser-registered CPS result.",
+      "Run a 10-second jitter click test and compare CPS, click count and repeatability on the same setup.",
     badgeClass: "bg-orange-500/10 border-orange-500/20 text-orange-400",
     Icon: Zap,
   },
@@ -13,7 +13,7 @@ const HEROES = {
     badge: "DOUBLE FINGER TECHNIQUE",
     title: "Butterfly Click Test",
     description:
-      "Practice an alternating two-finger rhythm and compare your 10-second CPS result.",
+      "Run a 10-second butterfly click test and compare two-finger CPS, click count and repeatability.",
     badgeClass: "bg-pink-500/10 border-pink-500/20 text-pink-400",
     Icon: Fingerprint,
   },
