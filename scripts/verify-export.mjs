@@ -811,6 +811,10 @@ if (
 }
 
 const rightClickClientSource = supportClientSources.find(([file]) => file === "RightClickTest.tsx")?.[1] ?? "";
+const aimClientSource = supportClientSources.find(([file]) => file === "AimTrainer.tsx")?.[1] ?? "";
+const reactionClientSource = supportClientSources.find(([file]) => file === "ReactionTest.tsx")?.[1] ?? "";
+const visualMemoryClientSource = supportClientSources.find(([file]) => file === "VisualMemoryTest.tsx")?.[1] ?? "";
+const reactionPageSource = readFileSync(join(process.cwd(), "app", "reaction-test", "page.tsx"), "utf8");
 if (
   rightClickClientSource.includes("Why Test Right Click CPS?") ||
   rightClickClientSource.includes("Minecraft Bridging") ||
@@ -892,6 +896,69 @@ if (
   infrastructureErrors.push(
     "PollingRateTest must use native pointer events and real elapsed time instead of React mouse events or interval-count timing"
   );
+}
+
+if (
+  !aimClientSource.includes('dynamic(() => import("./AimTrainerResult")') ||
+  !aimClientSource.includes('import("../lib/clickSound")') ||
+  !aimClientSource.includes("window.setInterval(updateTimer, 100)") ||
+  !aimClientSource.includes("window.setTimeout(endGame, 30000)") ||
+  aimClientSource.includes("AudioContext") ||
+  aimClientSource.includes("createOscillator") ||
+  aimClientSource.includes("navigator.share") ||
+  aimClientSource.includes("}, 33)")
+) {
+  infrastructureErrors.push(
+    "AimTrainer must lazy-load audio/results and keep its live timer on the 100ms UI boundary with an exact end timer"
+  );
+}
+
+if (
+  !clickSoundSource.includes('"aimHit"') ||
+  !clickSoundSource.includes('"aimMiss"')
+) {
+  infrastructureErrors.push(
+    "Shared clickSound engine must retain Aim Trainer hit and miss tones"
+  );
+}
+
+if (
+  !reactionClientSource.includes("dynamic(() => import('./ReactionResult')") ||
+  reactionClientSource.includes("navigator.share") ||
+  reactionClientSource.includes("How to use this reaction test") ||
+  !reactionPageSource.includes("How to use this reaction test")
+) {
+  infrastructureErrors.push(
+    "ReactionTest must keep result sharing lazy and static guidance server-rendered"
+  );
+}
+
+if (
+  !visualMemoryClientSource.includes("dynamic(() => import('./VisualMemoryGameOver')") ||
+  visualMemoryClientSource.includes("navigator.share") ||
+  visualMemoryClientSource.includes("<Share2") ||
+  visualMemoryClientSource.includes("<RotateCcw")
+) {
+  infrastructureErrors.push(
+    "VisualMemoryTest must keep game-over sharing and retry controls in the lazy result chunk"
+  );
+}
+
+const clientSourceBudgets = [
+  ["WaveSimulator.tsx", waveClientSource, 11000],
+  ["CpsTest.tsx", cpsClientSource, 18500],
+  ["AimTrainer.tsx", aimClientSource, 12000],
+  ["ReactionTest.tsx", reactionClientSource, 6500],
+  ["VisualMemoryTest.tsx", visualMemoryClientSource, 11500],
+  ["GameCanvas.tsx", gameCanvasSource, 48000],
+];
+
+for (const [file, source, maxBytes] of clientSourceBudgets) {
+  if (source.length > maxBytes) {
+    infrastructureErrors.push(
+      `${file}: client source budget exceeded (${source.length} > ${maxBytes} bytes)`
+    );
+  }
 }
 
 if (cpsClientSource.includes("RelatedTools") || cpsClientSource.includes("How is CPS Calculated?")) {
