@@ -664,16 +664,17 @@ if (
   !spacebarClientSource.includes("useState(false)") ||
   !spacebarClientSource.includes('useLazyClickSound') ||
   spacebarClientSource.includes('import("../lib/clickSound")') ||
-  !spacebarClientSource.includes("endTimerRef") ||
-  !spacebarClientSource.includes("window.setInterval(updateTimer, 100)") ||
+  !spacebarClientSource.includes("useExactCountdown") ||
+  !spacebarClientSource.includes("durationMs: TEST_MS") ||
   !spacebarClientSource.includes("now - startTimeRef.current >= TEST_MS") ||
+  !spacebarClientSource.includes('usePersistentBestNumber("spacebarBest")') ||
   spacebarClientSource.includes("AudioContext") ||
   spacebarClientSource.includes("createOscillator") ||
   spacebarClientSource.includes("}, 33)") ||
   spacebarClientSource.includes("Spacebar spam as a separate input skill")
 ) {
   infrastructureErrors.push(
-    "SpacebarCounter must keep opt-in lazy audio, exact cutoff timing and server-rendered static guidance"
+    "SpacebarCounter must keep shared lazy audio, exact countdown timing, persistent best score and server-rendered guidance"
   );
 }
 
@@ -712,14 +713,16 @@ if (
 
 const dragClientSource = supportClientSources.find(([file]) => file === "DragClickTest.tsx")?.[1] ?? "";
 if (
-  !dragClientSource.includes("endTimerRef") ||
+  !dragClientSource.includes("useExactCountdown") ||
+  !dragClientSource.includes("durationMs: TEST_MS") ||
+  !dragClientSource.includes('usePersistentBestNumber("dragClickBest")') ||
   !dragClientSource.includes("touch-pan-y") ||
   !dragClientSource.includes("onPointerUp={handlePointerUp}") ||
-  !dragClientSource.includes("window.setInterval(updateTimer, 100)") ||
+  dragClientSource.includes("window.setInterval(updateTimer, 100)") ||
   dragClientSource.includes("}, 33)")
 ) {
   infrastructureErrors.push(
-    "DragClickTest must keep exact cutoff timing and allow mobile scrolling before a run starts"
+    "DragClickTest must use the shared exact countdown, persistent best score and mobile-safe pointer handling"
   );
 }
 
@@ -1246,8 +1249,8 @@ const clientSourceBudgets = [
   ["MouseAccelerationTest.tsx", mouseAccelerationClientSource, 5000],
   ["SoundReactionTest.tsx", soundReactionClientSource, 8000],
   ["SecondaryClickTest.tsx", secondaryClickClientSource, 13500],
-  ["DragClickTest.tsx", dragClientSource, 10000],
-  ["SpacebarCounter.tsx", spacebarClientSource, 10500],
+  ["DragClickTest.tsx", dragClientSource, 8200],
+  ["SpacebarCounter.tsx", spacebarClientSource, 9300],
   ["PersonalStats.tsx", personalStatsSource, 5000],
   ["GeometryDashClicker.tsx", clickerSource, 9200],
   ["GameCanvas.tsx", gameCanvasSource, 32200],
