@@ -22,6 +22,17 @@ interface GameCanvasProps {
   isMini?: boolean;
 }
 
+interface WaveRun {
+  time: number;
+  averageCps: number;
+  peakCps: number;
+  timingSd: number;
+  clicks: number;
+  result: "won" | "lost";
+  timestamp: number;
+  mode: string;
+}
+
 // --- SEEDED RNG UTILS ---
 const mulberry32 = (a: number) => {
     return function() {
