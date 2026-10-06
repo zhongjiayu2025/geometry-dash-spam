@@ -3303,6 +3303,8 @@ const intentClusterLinks = new Map([
   ["/jitter-click", ["/cps-test", "/blog/how-to-improve-cps-geometry-dash"]],
   ["/butterfly-click", ["/cps-test", "/blog/how-to-improve-cps-geometry-dash"]],
   ["/spacebar-counter", ["/cps-test", "/blog/how-to-improve-cps-geometry-dash"]],
+  ["/keyboard-ghosting", ["/key-rollover"]],
+  ["/key-rollover", ["/keyboard-ghosting"]],
 ]);
 
 for (const [route, expectedLinks] of intentClusterLinks) {
