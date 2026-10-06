@@ -15,7 +15,7 @@ export const metadata: Metadata = {
     type: "website",
   },
   twitter: {
-    card: "summary",
+    card: "summary_large_image",
     title: "Keyboard Ghosting Test | Multi-Key Input Visualizer",
     description: "Visualize which simultaneous key presses your browser receives and inspect possible rollover or ghosting limitations.",
   },
