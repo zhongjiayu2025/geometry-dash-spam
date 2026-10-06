@@ -8,6 +8,8 @@ import { WIN_TIME_MS, WAVE_SPEED_Y } from '../constants';
 import { Crown, Volume2, VolumeX, Maximize, Minimize, Activity, ZapOff } from 'lucide-react';
 import type { WaveAudioEngine, WaveSound } from '../lib/waveAudio';
 
+type WaveRenderer = typeof import('../lib/waveRenderer').renderWaveFrame;
+
 const WaveRunOverlays = dynamic(() => import('./WaveRunOverlays'), { ssr: false });
 
 interface GameCanvasProps {
@@ -198,6 +200,20 @@ const GameCanvas: React.FC<GameCanvasProps> = memo(({ difficulty, status, onStat
   const audioDisposedRef = useRef(false);
   const mutedRef = useRef(true);
   const statusRef = useRef(status);
+  const rendererRef = useRef<WaveRenderer | null>(null);
+  const rendererLoadRef = useRef<Promise<WaveRenderer | null> | null>(null);
+
+  const ensureRenderer = useCallback(async () => {
+      if (rendererRef.current) return rendererRef.current;
+      if (!rendererLoadRef.current) {
+          rendererLoadRef.current = import('../lib/waveRenderer')
+              .then(({ renderWaveFrame }) => renderWaveFrame)
+              .catch(() => null);
+      }
+      const renderer = await rendererLoadRef.current;
+      if (renderer) rendererRef.current = renderer;
+      return renderer;
+  }, []);
 
   // Game State Ref
   const gameState = useRef({
@@ -643,191 +659,34 @@ const GameCanvas: React.FC<GameCanvasProps> = memo(({ difficulty, status, onStat
 
     }
 
-    ctx.clearRect(0, 0, canvas.width, canvas.height);
-    
-    ctx.save();
-    
-    if (!reduceMotion) {
-        const scale = gameState.current.beatScale;
-        if (scale > 1.001) {
-            ctx.translate(canvas.width/2, canvas.height/2);
-            ctx.scale(scale, scale);
-            ctx.translate(-canvas.width/2, -canvas.height/2);
+    const renderer = rendererRef.current;
+    if (!renderer) {
+        if (status === GameStatus.Playing) {
+            requestRef.current = undefined;
+            void ensureRenderer().then((loadedRenderer) => {
+                if (loadedRenderer && statusRef.current === GameStatus.Playing) {
+                    gameLoop();
+                }
+            });
         }
-
-        if (gameState.current.shakeIntensity > 0) {
-            const random = gameState.current.rng; 
-            const dx = (random() - 0.5) * gameState.current.shakeIntensity;
-            const dy = (random() - 0.5) * gameState.current.shakeIntensity;
-            ctx.translate(dx, dy);
-            gameState.current.shakeIntensity *= 0.9;
-        }
+        return;
     }
 
-    ctx.fillStyle = '#020617'; 
-    ctx.fillRect(0, 0, canvas.width, canvas.height);
-
-    gameState.current.stars.forEach(star => {
-        ctx.fillStyle = `rgba(255,255,255,${star.opacity})`;
-        ctx.beginPath();
-        ctx.arc(star.x, star.y, star.size, 0, Math.PI * 2);
-        ctx.fill();
+    renderer(ctx, canvas, gameState.current, {
+        isEndless,
+        isMini,
+        reduceMotion,
+        lowVisuals: lowVisualsRef.current,
+        showPlayer: status !== GameStatus.Lost,
+        playerColor: difficulty.color,
     });
-
-    ctx.fillStyle = gameState.current.baseColor;
-    ctx.fillRect(0, 0, canvas.width, 10);
-    ctx.fillRect(0, canvas.height - 10, canvas.width, 10);
-    if (!lowVisualsRef.current && !reduceMotion) {
-        ctx.shadowBlur = 15;
-        ctx.shadowColor = gameState.current.baseColor;
-    }
-    ctx.strokeStyle = '#fff';
-    ctx.lineWidth = 2;
-    ctx.beginPath(); ctx.moveTo(0, 10); ctx.lineTo(canvas.width, 10); ctx.stroke();
-    ctx.beginPath(); ctx.moveTo(0, canvas.height - 10); ctx.lineTo(canvas.width, canvas.height - 10); ctx.stroke();
-    ctx.shadowBlur = 0;
-
-    gameState.current.obstacles.forEach(obs => {
-        const x = obs.x - gameState.current.distanceTraveled;
-        if (x > -obs.width && x < canvas.width) {
-            
-            if (lowVisualsRef.current || reduceMotion) {
-                ctx.fillStyle = `${gameState.current.baseColor}88`;
-                ctx.fillRect(x, 0, obs.width, obs.topHeight);
-                ctx.fillRect(x, obs.bottomY, obs.width, canvas.height - obs.bottomY);
-            } else {
-                const gradTop = ctx.createLinearGradient(0, 0, 0, obs.topHeight);
-                gradTop.addColorStop(0, gameState.current.baseColor);
-                gradTop.addColorStop(1, `${gameState.current.baseColor}44`);
-
-                const gradBottom = ctx.createLinearGradient(0, obs.bottomY, 0, canvas.height);
-                gradBottom.addColorStop(0, `${gameState.current.baseColor}44`);
-                gradBottom.addColorStop(1, gameState.current.baseColor);
-
-                ctx.fillStyle = gradTop;
-                ctx.fillRect(x, 0, obs.width, obs.topHeight);
-
-                ctx.fillStyle = gradBottom;
-                ctx.fillRect(x, obs.bottomY, obs.width, canvas.height - obs.bottomY);
-            }
-            
-            ctx.strokeStyle = '#fff';
-            ctx.lineWidth = 2;
-            
-            ctx.beginPath();
-            ctx.moveTo(x, 0); ctx.lineTo(x, obs.topHeight); ctx.lineTo(x + obs.width, obs.topHeight); ctx.lineTo(x + obs.width, 0);
-            ctx.stroke();
-
-            ctx.beginPath();
-            ctx.moveTo(x, canvas.height); ctx.lineTo(x, obs.bottomY); ctx.lineTo(x + obs.width, obs.bottomY); ctx.lineTo(x + obs.width, canvas.height);
-            ctx.stroke();
-        }
-    });
-
-    if (!isEndless) {
-        const finishX = gameState.current.finishLineX - gameState.current.distanceTraveled;
-        if (finishX < canvas.width) {
-            ctx.fillStyle = '#fff';
-            ctx.fillRect(finishX, 0, 10, canvas.height);
-            ctx.shadowBlur = 50;
-            ctx.shadowColor = '#fff';
-            ctx.fillRect(finishX, 0, 10, canvas.height);
-            ctx.shadowBlur = 0;
-        }
-    }
-
-    if (gameState.current.trail.length > 1) {
-        ctx.beginPath();
-        ctx.moveTo(gameState.current.trail[0].x, gameState.current.trail[0].y - gameState.current.trail[0].w/2);
-        for (let i = 1; i < gameState.current.trail.length; i++) {
-            ctx.lineTo(gameState.current.trail[i].x, gameState.current.trail[i].y - gameState.current.trail[i].w/2);
-        }
-        ctx.lineTo(gameState.current.playerX, gameState.current.playerY);
-        for (let i = gameState.current.trail.length - 1; i >= 0; i--) {
-            ctx.lineTo(gameState.current.trail[i].x, gameState.current.trail[i].y + gameState.current.trail[i].w/2);
-        }
-        ctx.closePath();
-        ctx.fillStyle = difficulty.color;
-        ctx.globalAlpha = 0.6;
-        ctx.fill();
-        ctx.globalAlpha = 1.0;
-        
-        ctx.beginPath();
-        ctx.moveTo(gameState.current.trail[0].x, gameState.current.trail[0].y);
-        for (let i = 1; i < gameState.current.trail.length; i++) {
-            ctx.lineTo(gameState.current.trail[i].x, gameState.current.trail[i].y);
-        }
-        ctx.lineTo(gameState.current.playerX, gameState.current.playerY);
-        ctx.strokeStyle = '#fff';
-        ctx.lineWidth = 2;
-        ctx.stroke();
-    }
-
-    if (status !== GameStatus.Lost) {
-        if (!lowVisualsRef.current && !reduceMotion) {
-            ctx.shadowBlur = 20;
-            ctx.shadowColor = '#fff';
-        }
-        ctx.save();
-        ctx.translate(gameState.current.playerX, gameState.current.playerY);
-        const rotation = gameState.current.velocityY > 0 ? 45 : -45;
-        ctx.rotate(rotation * Math.PI / 180);
-        
-        const size = isMini ? 6 : 12;
-        ctx.fillStyle = '#fff';
-        ctx.beginPath();
-        ctx.moveTo(-size, -size);
-        ctx.lineTo(size, 0);
-        ctx.lineTo(-size, size);
-        ctx.closePath();
-        ctx.fill();
-        
-        ctx.fillStyle = difficulty.color; 
-        ctx.beginPath();
-        ctx.moveTo(-size/2, -size/2);
-        ctx.lineTo(size/2, 0);
-        ctx.lineTo(-size/2, size/2);
-        ctx.closePath();
-        ctx.fill();
-        ctx.restore();
-        ctx.shadowBlur = 0;
-    }
-
-    gameState.current.particles.forEach(p => {
-        ctx.save();
-        ctx.translate(p.x, p.y);
-        ctx.rotate(p.rotation);
-        ctx.globalAlpha = p.life;
-        ctx.fillStyle = p.color;
-        
-        ctx.beginPath();
-        const s = p.size;
-        ctx.moveTo(-s/2, s/2);
-        ctx.lineTo(s/2, s/2);
-        ctx.lineTo(0, -s/2);
-        ctx.closePath();
-        ctx.fill();
-        
-        ctx.globalAlpha = 1.0;
-        ctx.restore();
-    });
-
-    gameState.current.shockwaves.forEach(s => {
-        ctx.beginPath();
-        ctx.arc(s.x, s.y, s.radius, 0, Math.PI * 2);
-        ctx.strokeStyle = `rgba(255, 255, 255, ${s.opacity})`;
-        ctx.lineWidth = 4;
-        ctx.stroke();
-    });
-
-    ctx.restore(); 
 
     if (status === GameStatus.Playing) {
         requestRef.current = requestAnimationFrame(gameLoop);
     } else {
         requestRef.current = undefined;
     }
-  }, [status, difficulty, isEndless, isMini, spawnObstacle, saveHighScore, playSound, reduceMotion]);
+  }, [status, difficulty, isEndless, isMini, spawnObstacle, saveHighScore, playSound, reduceMotion, ensureRenderer]);
 
   const handleDeath = () => {
       if (runRecordedRef.current) return;
