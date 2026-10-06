@@ -1,8 +1,6 @@
 "use client";
 
 import React, { useState, useEffect, useCallback, useRef } from 'react';
-import dynamic from 'next/dynamic';
-const RelatedTools = dynamic(() => import('./RelatedTools'));
 import { Keyboard, RotateCcw, Zap, Trophy, Volume2, VolumeX, Share2, Check } from 'lucide-react';
 
 
@@ -270,9 +268,7 @@ const SpacebarCounter: React.FC = () => {
               <p className="text-sm leading-6 text-slate-400">Repeated high-effort pressing can become uncomfortable; take breaks instead of forcing longer sessions.</p>
             </div>
           </div>
-
-          <RelatedTools currentTool="spacebar" />
-      </section>
+</section>
 
     </div>
   );
