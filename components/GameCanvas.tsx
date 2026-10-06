@@ -1115,7 +1115,13 @@ const GameCanvas: React.FC<GameCanvasProps> = memo(({ difficulty, status, onStat
 
   useEffect(() => {
       const handleKeyDown = (e: KeyboardEvent) => {
-          if (showShareModal) return;
+          if (showShareModal) {
+              if (e.key === 'Escape') {
+                  e.preventDefault();
+                  setShowShareModal(false);
+              }
+              return;
+          }
 
           const target = e.target as HTMLElement | null;
           if (
@@ -1357,7 +1363,7 @@ const GameCanvas: React.FC<GameCanvasProps> = memo(({ difficulty, status, onStat
 
       {/* --- GAME OVER SCREEN --- */}
       {status === GameStatus.Lost && (
-         <div className="absolute inset-0 flex flex-col items-center justify-center bg-red-900/40 backdrop-blur-sm z-20 animate-in zoom-in duration-100 pointer-events-none">
+         <div role="status" aria-live="polite" className="absolute inset-0 flex flex-col items-center justify-center bg-red-900/40 backdrop-blur-sm z-20 animate-in zoom-in duration-100 pointer-events-none">
              <div className="pointer-events-auto flex max-h-[calc(100%_-_1rem)] w-[calc(100%_-_1rem)] max-w-md flex-col items-center overflow-y-auto bg-black/55 p-4 sm:p-8 rounded-2xl border border-white/10 backdrop-blur-md shadow-2xl" onClick={(e) => e.stopPropagation()}>
                 {isNewBest && (
                     <div className="mb-4 flex items-center gap-2 px-4 py-1 bg-yellow-500 text-black font-black uppercase tracking-widest rounded-full animate-bounce shadow-lg shadow-yellow-500/50">
@@ -1432,7 +1438,7 @@ const GameCanvas: React.FC<GameCanvasProps> = memo(({ difficulty, status, onStat
 
       {/* --- WIN SCREEN --- */}
       {status === GameStatus.Won && (
-         <div className="absolute inset-0 flex flex-col items-center justify-center bg-green-900/40 backdrop-blur-sm z-20 animate-in zoom-in duration-500 pointer-events-auto" onClick={(e) => e.stopPropagation()}>
+         <div role="status" aria-live="polite" className="absolute inset-0 flex flex-col items-center justify-center bg-green-900/40 backdrop-blur-sm z-20 animate-in zoom-in duration-500 pointer-events-auto" onClick={(e) => e.stopPropagation()}>
              <div className="max-h-[calc(100%_-_1rem)] w-[calc(100%_-_1rem)] max-w-md overflow-y-auto bg-black/55 p-4 sm:p-8 rounded-2xl border border-white/10 backdrop-blur-md flex flex-col items-center shadow-2xl">
                 {isNewBest && (
                     <div className="mb-4 flex items-center gap-2 px-4 py-1 bg-yellow-500 text-black font-black uppercase tracking-widest rounded-full animate-bounce shadow-lg shadow-yellow-500/50">
@@ -1503,7 +1509,13 @@ const GameCanvas: React.FC<GameCanvasProps> = memo(({ difficulty, status, onStat
       {/* --- SHARE MODAL (CUSTOM OVERLAY) --- */}
       {showShareModal && (
         <div className="absolute inset-0 z-50 flex items-center justify-center bg-black/80 backdrop-blur-sm animate-in fade-in duration-200" onClick={() => setShowShareModal(false)}>
-            <div className="share-modal-content w-[90%] max-w-sm bg-[#0f172a] border border-white/10 rounded-2xl p-6 shadow-2xl relative" onClick={(e) => e.stopPropagation()}>
+            <div
+                role="dialog"
+                aria-modal="true"
+                aria-labelledby="wave-share-title"
+                className="share-modal-content w-[90%] max-w-sm bg-[#0f172a] border border-white/10 rounded-2xl p-6 shadow-2xl relative"
+                onClick={(e) => e.stopPropagation()}
+            >
                 <button 
                     aria-label="Close share dialog"
                     onClick={() => setShowShareModal(false)}
@@ -1512,7 +1524,7 @@ const GameCanvas: React.FC<GameCanvasProps> = memo(({ difficulty, status, onStat
                     <X className="w-5 h-5" />
                 </button>
 
-                <h3 className="text-xl font-display font-bold text-white mb-4 flex items-center gap-2">
+                <h3 id="wave-share-title" className="text-xl font-display font-bold text-white mb-4 flex items-center gap-2">
                     <Share2 className="w-5 h-5 text-blue-400" /> Share Result
                 </h3>
 
