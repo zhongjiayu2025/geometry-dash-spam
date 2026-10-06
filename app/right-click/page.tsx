@@ -1,50 +1,44 @@
+import type { Metadata } from "next";
 import RightClickTest from "../../components/RightClickTest";
 import Breadcrumbs from "../../components/Breadcrumbs";
 import ClickTestHero from "../../components/ClickTestHero";
 import RelatedTools from "../../components/RelatedTools";
 import InputToolGuide from "../../components/InputToolGuide";
-import { Metadata } from "next";
+import ToolWebApplicationSchema from "../../components/ToolWebApplicationSchema";
+
+const description =
+  "Measure right-mouse-button clicks per second with a simple browser-based RMB speed test.";
 
 export const metadata: Metadata = {
   title: "Right Click CPS Test | RMB Click Speed Test",
-  description:
-    "Measure right-mouse-button clicks per second with a simple browser-based RMB speed test.",
+  description,
   alternates: { canonical: "/right-click" },
   openGraph: {
     title: "Right Click CPS Test | RMB Click Speed Test",
-    description: "Measure right-mouse-button clicks per second with a simple browser-based RMB speed test.",
+    description,
     url: "https://geometrydashspam.cc/right-click",
     type: "website",
   },
   twitter: {
     card: "summary_large_image",
     title: "Right Click CPS Test | RMB Click Speed Test",
-    description: "Measure right-mouse-button clicks per second with a simple browser-based RMB speed test.",
+    description,
   },
 };
 
 export default function RightClickPage() {
-  const schema = {
-    "@context": "https://schema.org",
-    "@type": "WebApplication",
-    name: "Right Click CPS Test",
-    url: "https://geometrydashspam.cc/right-click",
-    description: "Measure right-mouse-button clicks per second with a simple browser-based RMB speed test.",
-    applicationCategory: "UtilityApplication",
-    operatingSystem: "Any",
-    isAccessibleForFree: true,
-    isPartOf: { "@id": "https://geometrydashspam.cc/#website" },
-    publisher: { "@id": "https://geometrydashspam.cc/#organization" },
-    offers: { "@type": "Offer", price: "0", priceCurrency: "USD" },
-  };
-
   return (
     <>
-            <Breadcrumbs items={[{ label: "Right Click", href: "/right-click", active: true }]} />
+      <ToolWebApplicationSchema
+        name="Right Click CPS Test"
+        path="/right-click"
+        description={description}
+      />
+      <Breadcrumbs items={[{ label: "Right Click", href: "/right-click", active: true }]} />
       <ClickTestHero variant="rightClick" />
       <RightClickTest />
       <InputToolGuide tool="right-click" />
-          <RelatedTools currentTool="rightClick" />
-</>
+      <RelatedTools currentTool="rightClick" />
+    </>
   );
 }
