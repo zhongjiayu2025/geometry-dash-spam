@@ -76,3 +76,8 @@ a {
   0% { transform: rotate(0deg); }
   100% { transform: rotate(360deg); }
 }
+
+.nav-route-link.nav-active {
+  background: rgb(255 255 255 / 0.1);
+  color: #fff;
+}
