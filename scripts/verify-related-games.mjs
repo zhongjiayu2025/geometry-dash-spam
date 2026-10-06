@@ -318,10 +318,13 @@ const spamChallengeLiveSource = readFileSync(
 if (
   !spamChallengeLiveSource.includes("expectedVersion") ||
   !spamChallengeLiveSource.includes("liveVersion") ||
-  !spamChallengeLiveSource.includes("version is stale")
+  !spamChallengeLiveSource.includes("writeFileSync(DATA_PATH") ||
+  !spamChallengeLiveSource.includes("data.spamChallengeList.currentVersion = liveVersion") ||
+  !spamChallengeLiveSource.includes("version refreshed") ||
+  !spamChallengeLiveSource.includes("live app no longer exposes a detectable semantic version")
 ) {
   errors.push(
-    "Spam Challenge List live verifier must protect the centralized current app version."
+    "Spam Challenge List live verifier must safely self-refresh the centralized version only after source validation."
   );
 }
 

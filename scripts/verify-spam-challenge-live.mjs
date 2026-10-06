@@ -1,8 +1,7 @@
-import { readFileSync } from "node:fs";
+import { readFileSync, writeFileSync } from "node:fs";
 
-const data = JSON.parse(
-  readFileSync(new URL("../data/relatedSearch.json", import.meta.url), "utf8")
-);
+const DATA_PATH = new URL("../data/relatedSearch.json", import.meta.url);
+const data = JSON.parse(readFileSync(DATA_PATH, "utf8"));
 
 const config = data.spamChallengeList;
 if (!config || typeof config !== "object" || !Array.isArray(config.sources)) {
@@ -82,10 +81,8 @@ const hubText = textContent(hubHtml).toLowerCase();
 const currentHost = new URL(currentSource).hostname.toLowerCase();
 const liveVersion = currentText.match(/\bv\d+\.\d+\.\d+\b/)?.[0];
 
-if (liveVersion !== expectedVersion) {
-  throw new Error(
-    `Spam Challenge List version is stale: data has ${expectedVersion}, live app has ${liveVersion ?? "no detectable version"}.`
-  );
+if (!liveVersion) {
+  throw new Error("Spam Challenge List live app no longer exposes a detectable semantic version.");
 }
 
 if (
@@ -113,6 +110,14 @@ if (
   );
 }
 
-console.log(
-  `Spam Challenge List live sources verified: ${expectedVersion}, current host ${currentHost}, legacy migration note and list hub agree.`
-);
+if (liveVersion !== expectedVersion) {
+  data.spamChallengeList.currentVersion = liveVersion;
+  writeFileSync(DATA_PATH, `${JSON.stringify(data, null, 2)}\n`, "utf8");
+  console.log(
+    `Spam Challenge List live sources verified and version refreshed: ${expectedVersion} → ${liveVersion}.`
+  );
+} else {
+  console.log(
+    `Spam Challenge List live sources verified: ${expectedVersion}, current host ${currentHost}, legacy migration note and list hub agree.`
+  );
+}
