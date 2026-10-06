@@ -7,8 +7,7 @@ import { DEMONS, DEMON_SOURCE_URL, DEMON_VERIFIED_AT } from "../../data/demons";
 const currentNumberOne = DEMONS[0];
 const demonListTitle = `Geometry Dash Demon List | Top 50 & #1 ${currentNumberOne.level}`;
 const demonListDescription = `Current Geometry Dash Demon List / Demonlist top 50 from a dated Pointercrate snapshot. Checked ${DEMON_VERIFIED_AT}: ${currentNumberOne.level} by ${currentNumberOne.publisher} is #1.`;
-const isGriefPlacementDay =
-  currentNumberOne.level === "GRIEF" && DEMON_VERIFIED_AT === "2026-10-05";
+const showGriefPlacementNote = currentNumberOne.level === "GRIEF";
 
 const demonFaqs = [
   {
@@ -93,9 +92,9 @@ export default function DemonListPage() {
       </header>
 
       <div className="mx-auto max-w-5xl">
-        {isGriefPlacementDay && (
+        {showGriefPlacementNote && (
           <section className="mb-5 rounded-2xl border border-amber-500/20 bg-amber-950/10 p-5 md:p-6">
-            <div className="mb-2 text-xs font-bold uppercase tracking-[0.18em] text-amber-300">Updated today</div>
+            <div className="mb-2 text-xs font-bold uppercase tracking-[0.18em] text-amber-300">Latest ranking change</div>
             <h2 className="mb-2 text-xl font-bold text-white">GRIEF is the new #1 Demon List level</h2>
             <p className="text-sm leading-6 text-slate-400">
               GRIEF was placed at #1 on October 5, 2026, moving Society to #2. This top-50 snapshot reflects the new order;

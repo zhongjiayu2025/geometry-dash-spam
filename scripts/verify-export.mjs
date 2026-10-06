@@ -489,6 +489,8 @@ const soundReactionResultSource = readFileSync(join(process.cwd(), "components",
 const visualMemoryGridSource = readFileSync(join(process.cwd(), "components", "VisualMemoryGrid.tsx"), "utf8");
 const chimpBoardSource = readFileSync(join(process.cwd(), "components", "ChimpBoard.tsx"), "utf8");
 const demonListSource = readFileSync(join(process.cwd(), "components", "DemonListTable.tsx"), "utf8");
+const demonPageSource = readFileSync(join(process.cwd(), "app", "demon-list", "page.tsx"), "utf8");
+const hardestPageSource = readFileSync(join(process.cwd(), "app", "hardest-level", "page.tsx"), "utf8");
 const demonFilterSource = readFileSync(join(process.cwd(), "components", "DemonListFilterControls.tsx"), "utf8");
 const clickTestHeroSource = readFileSync(join(process.cwd(), "components", "ClickTestHero.tsx"), "utf8");
 const clickerSource = readFileSync(join(process.cwd(), "components", "GeometryDashClicker.tsx"), "utf8");
@@ -2515,6 +2517,18 @@ if (
 ) {
   infrastructureErrors.push(
     "Geometry Dash Clicker must not synchronously persist on every state update"
+  );
+}
+
+if (
+  demonPageSource.includes('DEMON_VERIFIED_AT === "2026-10-05"') ||
+  hardestPageSource.includes('DEMON_VERIFIED_AT === "2026-10-05"') ||
+  !demonPageSource.includes('const showGriefPlacementNote = currentNumberOne.level === "GRIEF"') ||
+  !hardestPageSource.includes('const showGriefPlacementNote = currentHardest.level === "GRIEF"') ||
+  demonPageSource.includes(">Updated today<")
+) {
+  infrastructureErrors.push(
+    "Demon placement notes must not bind evergreen GRIEF context to a one-day verification date"
   );
 }
 
