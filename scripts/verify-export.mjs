@@ -433,6 +433,7 @@ const headerRouteStateSource = readFileSync(join(process.cwd(), "components", "H
 const cpsClientSource = readFileSync(join(process.cwd(), "components", "CpsTest.tsx"), "utf8");
 const cpsRunHistorySource = readFileSync(join(process.cwd(), "components", "CpsRunHistory.tsx"), "utf8");
 const cpsFinishedActionsSource = readFileSync(join(process.cwd(), "components", "CpsFinishedActions.tsx"), "utf8");
+const clickTestPanelsSource = readFileSync(join(process.cwd(), "components", "ClickTestPanels.tsx"), "utf8");
 const waveClientSource = readFileSync(join(process.cwd(), "components", "WaveSimulator.tsx"), "utf8");
 const wavePracticeDrillSource = readFileSync(join(process.cwd(), "components", "WavePracticeDrill.tsx"), "utf8");
 const difficultySelectorSource = readFileSync(join(process.cwd(), "components", "DifficultySelector.tsx"), "utf8");
@@ -608,6 +609,24 @@ if (
 ) {
   infrastructureErrors.push(
     "Shared SecondaryClickTest must keep finished actions and sharing in the lazy result chunk"
+  );
+}
+
+if (
+  !cpsClientSource.includes("ClickTestTimerCard") ||
+  !cpsClientSource.includes("ClickTestSpeedPanel") ||
+  !secondaryClickClientSource.includes("ClickTestTimerCard") ||
+  !secondaryClickClientSource.includes("ClickTestSpeedPanel") ||
+  cpsClientSource.includes("<Timer") ||
+  cpsClientSource.includes("<Volume2") ||
+  secondaryClickClientSource.includes("<Timer") ||
+  secondaryClickClientSource.includes("<Volume2") ||
+  !clickTestPanelsSource.includes("export function ClickTestTimerCard") ||
+  !clickTestPanelsSource.includes("export function ClickTestSpeedPanel") ||
+  !clickTestPanelsSource.includes('className="relative z-10"')
+) {
+  infrastructureErrors.push(
+    "CPS and secondary click tests must share timer/sound and speed/best UI panels"
   );
 }
 
@@ -1267,7 +1286,7 @@ if (
 
 const clientSourceBudgets = [
   ["WaveSimulator.tsx", waveClientSource, 11000],
-  ["CpsTest.tsx", cpsClientSource, 13600],
+  ["CpsTest.tsx", cpsClientSource, 11200],
   ["AimTrainer.tsx", aimClientSource, 9300],
   ["ReactionTest.tsx", reactionClientSource, 6500],
   ["VisualMemoryTest.tsx", visualMemoryClientSource, 9000],
@@ -1277,7 +1296,7 @@ const clientSourceBudgets = [
   ["RefreshRateTest.tsx", refreshRateClientSource, 4500],
   ["MouseAccelerationTest.tsx", mouseAccelerationClientSource, 5000],
   ["SoundReactionTest.tsx", soundReactionClientSource, 8000],
-  ["SecondaryClickTest.tsx", secondaryClickClientSource, 13500],
+  ["SecondaryClickTest.tsx", secondaryClickClientSource, 11600],
   ["DragClickTest.tsx", dragClientSource, 7800],
   ["SpacebarCounter.tsx", spacebarClientSource, 9300],
   ["PersonalStats.tsx", personalStatsSource, 5000],

@@ -102,7 +102,7 @@ export function ClickTestSpeedPanel({
         </div>
       ) : null}
 
-      {children}
+      {children ? <div className="relative z-10">{children}</div> : null}
     </div>
   );
 }
