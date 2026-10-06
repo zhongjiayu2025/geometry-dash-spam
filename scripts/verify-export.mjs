@@ -453,6 +453,7 @@ const clickTestHeroSource = readFileSync(join(process.cwd(), "components", "Clic
 const clickerSource = readFileSync(join(process.cwd(), "components", "GeometryDashClicker.tsx"), "utf8");
 const homeSource = readFileSync(join(process.cwd(), "app", "page.tsx"), "utf8");
 const personalStatsSource = readFileSync(join(process.cwd(), "components", "PersonalStats.tsx"), "utf8");
+const personalStatsContentSource = readFileSync(join(process.cwd(), "components", "PersonalStatsContent.tsx"), "utf8");
 const dashboardWaveHistorySource = readFileSync(join(process.cwd(), "components", "DashboardWaveHistory.tsx"), "utf8");
 const dashboardPageSource = readFileSync(join(process.cwd(), "app", "dashboard", "page.tsx"), "utf8");
 const supportClientPaths = [
@@ -1090,7 +1091,7 @@ const clientSourceBudgets = [
   ["SoundReactionTest.tsx", soundReactionClientSource, 9000],
   ["DragClickTest.tsx", dragClientSource, 10000],
   ["SpacebarCounter.tsx", spacebarClientSource, 12000],
-  ["PersonalStats.tsx", personalStatsSource, 13500],
+  ["PersonalStats.tsx", personalStatsSource, 5000],
   ["GameCanvas.tsx", gameCanvasSource, 33000],
 ];
 
@@ -1291,12 +1292,15 @@ if (
 }
 
 if (
-  !personalStatsSource.includes("dynamic(() => import('./DashboardWaveHistory')") ||
-  personalStatsSource.includes("Saved Runs") ||
+  !personalStatsSource.includes('dynamic(() => import("./PersonalStatsContent")') ||
+  personalStatsSource.includes("My Local Records") ||
+  personalStatsSource.includes("Standard CPS Records") ||
+  !personalStatsContentSource.includes("My Local Records") ||
+  !personalStatsContentSource.includes("dynamic(() => import(\"./DashboardWaveHistory\")") ||
   !dashboardWaveHistorySource.includes("Saved Runs")
 ) {
   infrastructureErrors.push(
-    "Dashboard wave history must stay in its conditional lazy chunk"
+    "Dashboard loader must only read local stats before lazy-loading record cards and wave history"
   );
 }
 
