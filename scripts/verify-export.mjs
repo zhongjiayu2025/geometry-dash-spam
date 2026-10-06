@@ -988,6 +988,15 @@ if (
 }
 
 if (
+  !doubleClickClientSource.includes("if (delta > 2000)") ||
+  !doubleClickClientSource.includes("lastDelta: null")
+) {
+  infrastructureErrors.push(
+    "DoubleClickTest must clear the displayed interval when a gap starts a new click sequence"
+  );
+}
+
+if (
   !doubleClickClientSource.includes("type MeasurementState") ||
   !doubleClickClientSource.includes("setMeasurement((current) => ({") ||
   doubleClickClientSource.includes("setClicks(") ||

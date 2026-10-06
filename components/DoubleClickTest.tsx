@@ -57,6 +57,7 @@ export default function DoubleClickTest() {
       setMeasurement((current) => ({
         ...current,
         clicks: current.clicks + 1,
+        lastDelta: null,
       }));
       return;
     }
