@@ -35,7 +35,7 @@ const SpacebarCounter: React.FC = () => {
       const parsed = Number(saved);
       if (Number.isFinite(parsed)) setBestCps(parsed);
     }
-  }, [setVisualPressed]);
+  }, []);
 
   useEffect(() => {
     return () => {
@@ -122,7 +122,7 @@ const SpacebarCounter: React.FC = () => {
       }
       return previous;
     });
-  }, []);
+  }, [setVisualPressed]);
 
   const startTest = useCallback((now: number) => {
     activeRef.current = true;
@@ -167,12 +167,11 @@ const SpacebarCounter: React.FC = () => {
     }
 
     countRef.current += 1;
-    setCount(countRef.current);
-  }, [ensureAudio, finishTest, soundEnabled, startTest]);
+  }, [ensureAudio, finishTest, setVisualPressed, soundEnabled, startTest]);
 
   const handleKeyUp = useCallback((event: KeyboardEvent) => {
     if (event.code === "Space") setVisualPressed(false);
-  }, []);
+  }, [setVisualPressed]);
 
   useEffect(() => {
     window.addEventListener("keydown", handleKeyDown);
@@ -258,10 +257,11 @@ const SpacebarCounter: React.FC = () => {
     }
   };
 
+  const renderedCount = active ? countRef.current : count;
   const liveCps = finished
     ? count / 10
     : active && timeLeft < 10
-      ? count / Math.max(0.05, 10 - timeLeft)
+      ? countRef.current / Math.max(0.05, 10 - timeLeft)
       : 0;
 
   return (
@@ -275,7 +275,7 @@ const SpacebarCounter: React.FC = () => {
           <div className="mb-12">
             <h2 className="mb-4 font-bold uppercase tracking-[0.2em] text-slate-400">Spacebar Presses</h2>
             <div className="text-8xl font-display font-black tracking-tighter text-white drop-shadow-2xl md:text-9xl">
-              {count}
+              {renderedCount}
             </div>
           </div>
 
