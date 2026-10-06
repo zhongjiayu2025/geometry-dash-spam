@@ -83,11 +83,25 @@ for (const page of pages) {
       errors.push("Dashmetry: legacyName and currentName must be non-empty strings.");
     }
 
+    if (
+      config.sources.length < 3 ||
+      config.sources[0] !== "https://dashmetry.io/" ||
+      config.sources[1] !== "https://challengerush.com/" ||
+      config.sources[2] !== "https://1games.io/challenge-rush"
+    ) {
+      errors.push(
+        "Dashmetry: sources must preserve the rebrand page, official Challenge Rush home, and separate update-note source."
+      );
+    }
+
     for (const token of [
       "relatedPageData.legacyName",
       "relatedPageData.currentName",
       "LEGACY_NAME",
       "CURRENT_NAME",
+      "REBRAND_SOURCE",
+      "OFFICIAL_GAME_SOURCE",
+      "UPDATE_SOURCE",
     ]) {
       if (!source.includes(token)) {
         errors.push(`Dashmetry: page must consume centralized ${token}.`);
@@ -96,9 +110,10 @@ for (const page of pages) {
 
     if (
       source.includes('const LEGACY_NAME = "Dashmetry"') ||
-      source.includes('const CURRENT_NAME = "Challenge Rush"')
+      source.includes('const CURRENT_NAME = "Challenge Rush"') ||
+      source.includes("href={CURRENT_GAME_SOURCE}")
     ) {
-      errors.push("Dashmetry: entity names must not be hard-coded in the page.");
+      errors.push("Dashmetry: entity names and official destination must stay centralized.");
     }
   }
 
@@ -148,6 +163,15 @@ if (
 ) {
   errors.push(
     "Related-game refresh workflow must run the live Breeze release verifier with the GitHub token."
+  );
+}
+
+if (
+  !workflowSource.includes('"scripts/verify-dashmetry-live.mjs"') ||
+  !workflowSource.includes("Validate Dashmetry rebrand and official home")
+) {
+  errors.push(
+    "Related-game refresh workflow must live-check the Dashmetry rebrand and official Challenge Rush home."
   );
 }
 

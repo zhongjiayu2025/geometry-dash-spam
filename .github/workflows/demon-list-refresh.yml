@@ -14,6 +14,7 @@ on:
       - "scripts/verify-vault-data.mjs"
       - "scripts/verify-related-games.mjs"
       - "scripts/verify-related-games-live.mjs"
+      - "scripts/verify-dashmetry-live.mjs"
       - "data/vaultCodes.ts"
       - "data/relatedSearch.json"
       - "app/spam-challenge-list/page.tsx"
@@ -62,6 +63,9 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ github.token }}
         run: node scripts/verify-related-games-live.mjs
+
+      - name: Validate Dashmetry rebrand and official home
+        run: node scripts/verify-dashmetry-live.mjs
 
       - name: Commit changes
         shell: bash

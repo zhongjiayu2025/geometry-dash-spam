@@ -5,7 +5,7 @@ import relatedSearchData from "../../data/relatedSearch.json";
 
 const relatedPageData = relatedSearchData.dashmetry;
 const CHECKED_AT = relatedPageData.checkedAt;
-const [REBRAND_SOURCE, CURRENT_GAME_SOURCE] = relatedPageData.sources;
+const [REBRAND_SOURCE, OFFICIAL_GAME_SOURCE, UPDATE_SOURCE] = relatedPageData.sources;
 const LEGACY_NAME = relatedPageData.legacyName;
 const CURRENT_NAME = relatedPageData.currentName;
 
@@ -53,7 +53,7 @@ export default function DashmetryPage() {
     isPartOf: { "@id": "https://geometrydashspam.cc/#website" },
     publisher: { "@id": "https://geometrydashspam.cc/#organization" },
     dateModified: CHECKED_AT,
-    isBasedOn: [REBRAND_SOURCE, CURRENT_GAME_SOURCE],
+    isBasedOn: [REBRAND_SOURCE, OFFICIAL_GAME_SOURCE, UPDATE_SOURCE],
     about: {
       "@type": "VideoGame",
       name: CURRENT_NAME,
@@ -101,7 +101,7 @@ export default function DashmetryPage() {
           </p>
           <div className="mt-4 flex flex-wrap gap-3">
             <a
-              href={CURRENT_GAME_SOURCE}
+              href={OFFICIAL_GAME_SOURCE}
               target="_blank"
               rel="noopener noreferrer"
               className="rounded-lg bg-cyan-400 px-4 py-2 text-sm font-bold text-slate-950 hover:bg-cyan-300"
@@ -139,21 +139,31 @@ export default function DashmetryPage() {
         <section className="mb-10 rounded-2xl border border-white/10 bg-black/20 p-6 md:p-8">
           <h2 className="mb-4 text-2xl font-bold text-white">Current Challenge Rush features</h2>
           <p className="mb-4 text-sm leading-7 text-slate-400">
-            The current 1Games.IO page documents active development rather than a frozen legacy build. Recent updates include
-            Race Mode, rated community-level rewards, player progress tracking, editor additions, graphics controls and gameplay fixes.
+            The official Challenge Rush site currently documents Normal, Practice and Endless play, a browser level editor,
+            community levels, leaderboards, achievements and cross-device progress. A separate 1Games.IO update note from
+            September describes Race Mode as released, while the current official site still labels Race Mode as “Coming Soon”;
+            treat race availability as rollout-dependent rather than a guaranteed current mode.
           </p>
           <div className="grid gap-3 sm:grid-cols-2">
             {[
-              ["Race Mode", "Quick-play races against a bot with finish standings."],
-              ["Community levels", "Rated levels can award progression resources and expose player progress."],
-              ["Level editor", "Current updates continue adding triggers, portals and customization tools."],
-              ["Performance options", "Graphics and effect controls are documented for reducing FPS drops on weaker devices."],
+              ["Normal + Practice", "Core progression and checkpoint-based practice are documented on the official site."],
+              ["Endless Mode", "The official site describes randomly generated obstacle runs that scale in difficulty."],
+              ["Level editor", "Creators can build and share browser levels with music-aligned obstacles and portals."],
+              ["Community + progress", "Leaderboards, achievements and cross-device progress are documented as current features."],
             ].map(([title, text]) => (
               <div key={title} className="rounded-xl border border-white/10 bg-slate-900/30 p-4">
                 <h3 className="mb-1 font-bold text-white">{title}</h3>
                 <p className="text-sm leading-6 text-slate-400">{text}</p>
               </div>
             ))}
+          </div>
+          <div className="mt-5 flex flex-wrap gap-3 text-xs font-bold">
+            <a href={OFFICIAL_GAME_SOURCE} target="_blank" rel="noopener noreferrer" className="text-cyan-300 hover:text-cyan-200">
+              Official current features ↗
+            </a>
+            <a href={UPDATE_SOURCE} target="_blank" rel="noopener noreferrer" className="text-slate-400 hover:text-slate-300">
+              1Games.IO update notes ↗
+            </a>
           </div>
         </section>
 
@@ -189,7 +199,7 @@ export default function DashmetryPage() {
         </section>
 
         <div className="flex flex-wrap gap-3">
-          <a href={CURRENT_GAME_SOURCE} target="_blank" rel="noopener noreferrer" className="rounded-lg bg-white px-4 py-2 text-sm font-bold text-black">
+          <a href={OFFICIAL_GAME_SOURCE} target="_blank" rel="noopener noreferrer" className="rounded-lg bg-white px-4 py-2 text-sm font-bold text-black">
             Open current {CURRENT_NAME}
           </a>
           <a href={REBRAND_SOURCE} target="_blank" rel="noopener noreferrer" className="rounded-lg border border-white/10 px-4 py-2 text-sm font-bold text-white">
