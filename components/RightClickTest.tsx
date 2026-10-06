@@ -283,20 +283,6 @@ const RightClickTest: React.FC = () => {
         </div>
       </div>
 
-      {/* SEO Content */}
-      <section className="bg-slate-900/40 border border-white/5 rounded-2xl p-8 md:p-12">
-        <h2 className="text-3xl font-display font-bold text-white mb-6">Why Test Right Click CPS?</h2>
-        <div className="space-y-4 text-slate-300">
-            <p>
-                While Geometry Dash primarily uses the Left Mouse Button (LMB) or Spacebar, a <strong>Right Click CPS</strong> test can help you compare how quickly the right button registers repeated clicks.
-            </p>
-            <ul className="list-disc pl-5 space-y-2">
-                <li><strong>MOBA Games:</strong> Games like League of Legends and Dota 2 rely almost exclusively on rapid right-clicking for movement.</li>
-                <li><strong>Minecraft Bridging:</strong> Techniques like God-bridging often require high RMB CPS.</li>
-                <li><strong>Switch Health:</strong> Repeated tests can reveal obvious inconsistencies, but this browser tool cannot diagnose switch wear on its own.</li>
-            </ul>
-        </div>
-      </section>
     </div>
   );
 };
