@@ -61,6 +61,7 @@ export default function VisualMemoryTest() {
                 setGameState('finished'); // Temp intermediate state
                 scheduleTimeout(() => {
                     const nextLevel = level + 1;
+                    commitBestScore(nextLevel);
                     setLevel(nextLevel);
                     startLevel(nextLevel);
                 }, 800);

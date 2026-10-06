@@ -1297,6 +1297,15 @@ if (
 }
 
 if (
+  !chimpClientSource.includes("const nextLevel = level + 1;\n                    commitBestScore(nextLevel);") ||
+  !visualMemoryClientSource.includes("const nextLevel = level + 1;\n                    commitBestScore(nextLevel);")
+) {
+  infrastructureErrors.push(
+    "Memory tests must persist a newly reached level immediately so navigation away cannot lose progress"
+  );
+}
+
+if (
   !chimpClientSource.includes("(gameState === 'showing' || gameState === 'playing' || gameState === 'failed')") ||
   chimpClientSource.includes("(gameState === 'failed' && strikes < 3)) && (\n                            <ChimpBoard")
 ) {

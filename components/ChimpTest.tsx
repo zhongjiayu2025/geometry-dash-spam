@@ -69,6 +69,7 @@ export default function ChimpTest() {
 
                 scheduleTimeout(() => {
                     const nextLevel = level + 1;
+                    commitBestScore(nextLevel);
                     setLevel(nextLevel);
                     generateLevel(nextLevel);
                 }, 500);
