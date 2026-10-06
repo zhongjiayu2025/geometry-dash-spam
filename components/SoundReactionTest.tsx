@@ -15,7 +15,7 @@ type SoundReactionState = "idle" | "waiting" | "ready" | "result";
 export default function SoundReactionTest() {
   const [gameState, setGameState] = useState<SoundReactionState>("idle");
   const [reactionTime, setReactionTime] = useState<number | null>(null);
-  const [bestTime, commitBestTime] = usePersistentBestNumber("soundReactionBest");
+  const [bestTime, commitBestTime] = usePersistentBestNumber("soundReactionBest", "min");
 
   const startTimeRef = useRef(0);
   const { ensure: ensureClickSound, play: playClickSound } = useLazyClickSound();

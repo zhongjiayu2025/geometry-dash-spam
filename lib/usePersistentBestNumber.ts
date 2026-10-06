@@ -2,7 +2,10 @@
 
 import { useCallback, useEffect, useState } from "react";
 
-export function usePersistentBestNumber(storageKey: string) {
+export function usePersistentBestNumber(
+  storageKey: string,
+  mode: "max" | "min" = "max"
+) {
   const [best, setBest] = useState<number | null>(null);
 
   useEffect(() => {
@@ -15,11 +18,15 @@ export function usePersistentBestNumber(storageKey: string) {
 
   const commitBest = useCallback((value: number) => {
     setBest((previous) => {
-      if (previous !== null && value <= previous) return previous;
+      if (previous !== null) {
+        const improves = mode === "min" ? value < previous : value > previous;
+        if (!improves) return previous;
+      }
+
       localStorage.setItem(storageKey, String(value));
       return value;
     });
-  }, [storageKey]);
+  }, [mode, storageKey]);
 
   return [best, commitBest] as const;
 }

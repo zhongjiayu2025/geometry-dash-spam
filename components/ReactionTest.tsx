@@ -14,7 +14,7 @@ type TestState = "idle" | "waiting" | "ready" | "result" | "early";
 export default function ReactionTest() {
   const [state, setState] = useState<TestState>("idle");
   const [result, setResult] = useState(0);
-  const [bestScore, commitBestScore] = usePersistentBestNumber("reactionBestScore");
+  const [bestScore, commitBestScore] = usePersistentBestNumber("reactionBestScore", "min");
   const startTimeRef = useRef(0);
   const { schedule: scheduleTimeout, clear: clearTimeout } = useManagedTimeout();
 

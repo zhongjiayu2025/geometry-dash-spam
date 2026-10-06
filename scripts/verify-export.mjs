@@ -1059,7 +1059,7 @@ if (
 
 if (
   !reactionClientSource.includes("useManagedTimeout") ||
-  !reactionClientSource.includes('usePersistentBestNumber("reactionBestScore")') ||
+  !reactionClientSource.includes('usePersistentBestNumber("reactionBestScore", "min")') ||
   !reactionClientSource.includes("isInteractiveKeyboardTarget(event.target)") ||
   !reactionClientSource.includes("event.repeat") ||
   !reactionClientSource.includes('target.closest("button")') ||
@@ -1187,6 +1187,15 @@ if (
   );
 }
 
+if (
+  !persistentBestSource.includes('mode: "max" | "min" = "max"') ||
+  !persistentBestSource.includes('mode === "min" ? value < previous : value > previous')
+) {
+  infrastructureErrors.push(
+    "Shared persistent best-score hook must support lower-is-better reaction metrics without regressing max-score tools"
+  );
+}
+
 for (const [file, source] of [
   ["ChimpTest.tsx", chimpClientSource],
   ["VisualMemoryTest.tsx", visualMemoryClientSource],
@@ -1281,7 +1290,7 @@ if (
 
 if (
   !soundReactionClientSource.includes("useManagedTimeout") ||
-  !soundReactionClientSource.includes('usePersistentBestNumber("soundReactionBest")') ||
+  !soundReactionClientSource.includes('usePersistentBestNumber("soundReactionBest", "min")') ||
   !soundReactionClientSource.includes("isInteractiveKeyboardTarget(event.target)") ||
   !soundReactionClientSource.includes("event.repeat") ||
   soundReactionClientSource.includes("handleInteraction(e as any)") ||
