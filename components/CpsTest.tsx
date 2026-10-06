@@ -3,7 +3,8 @@
 
 import React, { useState, useEffect, useRef, useCallback } from 'react';
 import dynamic from 'next/dynamic';
-import { MousePointer2, Timer, Clock, Trophy, Volume2, VolumeX } from 'lucide-react';
+import { MousePointer2, Clock } from 'lucide-react';
+import { ClickTestSpeedPanel, ClickTestTimerCard } from './ClickTestPanels';
 import { useLazyClickSound } from '../lib/useLazyClickSound';
 import { useExactCountdown } from '../lib/useExactCountdown';
 import type { CpsRun } from '../lib/cpsRecords';
@@ -255,58 +256,33 @@ const CpsTest: React.FC = () => {
         {/* Stats & Rank Panel */}
         <div className="flex flex-col gap-4">
            {/* Timer & Controls */}
-           <div className="bg-slate-900/50 backdrop-blur border border-white/10 p-4 sm:p-6 rounded-2xl flex items-center justify-between">
-              <div className="flex items-center gap-3">
-                 <div className="p-3 rounded-lg bg-slate-800 text-blue-400">
-                    <Timer className="w-6 h-6" />
-                 </div>
-                 <div>
-                    <h3 className="text-slate-400 text-xs font-bold uppercase tracking-widest">Time Remaining</h3>
-                    <p className="text-3xl font-mono font-bold text-white tabular-nums">{timeLeft.toFixed(2)}s</p>
-                 </div>
-              </div>
-              <div className="flex items-center gap-4">
-                 <button 
-                  onClick={toggleSound}
-                  aria-label={soundEnabled ? "Mute click sound" : "Enable click sound"}
-                  aria-pressed={soundEnabled}
-                  className={`p-3 rounded-xl border transition-colors ${soundEnabled ? 'bg-blue-600/20 border-blue-500/50 text-blue-400 hover:bg-blue-600/30' : 'bg-slate-800 border-white/10 text-slate-500 hover:text-slate-300'}`}
-                  title={soundEnabled ? "Mute Click Sound" : "Enable Click Sound"}
-                 >
-                   {soundEnabled ? <Volume2 className="w-5 h-5" /> : <VolumeX className="w-5 h-5" />}
-                 </button>
-                 <div className="h-12 w-12 rounded-full border-4 border-slate-700 flex items-center justify-center relative">
-                    <svg className="absolute inset-0 transform -rotate-90 w-full h-full">
-                       <circle cx="22" cy="22" r="18" stroke="currentColor" strokeWidth="4" fill="transparent" className="text-blue-600" strokeDasharray={113} strokeDashoffset={113 * (1 - timeLeft/selectedDuration)} />
-                    </svg>
-                 </div>
-              </div>
-           </div>
+           <ClickTestTimerCard
+             timeLeft={timeLeft}
+             soundEnabled={soundEnabled}
+             onToggleSound={toggleSound}
+             timerAccentClass="text-blue-400"
+             soundOnClass="bg-blue-600/20 border-blue-500/50 text-blue-400 hover:bg-blue-600/30"
+             progress={1 - timeLeft / selectedDuration}
+           />
 
            {/* Result Main */}
-           <div className="flex-grow bg-slate-900/50 backdrop-blur border border-white/10 p-5 sm:p-8 rounded-2xl flex flex-col items-center justify-center text-center relative overflow-hidden group">
-               <div className="absolute inset-0 bg-blue-600/5 group-hover:bg-blue-600/10 transition-colors"></div>
-               
-               <h3 className="text-slate-400 font-bold uppercase tracking-widest mb-2 relative z-10">Your Speed</h3>
-               <div className="text-5xl sm:text-7xl font-display font-black text-white mb-2 text-glow relative z-10">{finished ? cps : (active ? cps : '0.00')}</div>
-               <div className="text-xl text-blue-400 font-mono relative z-10 mb-6">CPS</div>
-               
-               {currentBest && (
-                 <div className="flex items-center justify-center gap-2 text-sm text-slate-300 bg-black/40 px-3 py-1.5 rounded-full border border-white/10 mb-6">
-                   <Trophy className="w-4 h-4 text-yellow-500" />
-                   Personal Best ({selectedDuration}s): <strong className="text-white">{currentBest.toFixed(2)} CPS</strong>
-                 </div>
-               )}
-
-               {finished && (
-                 <CpsFinishedActions
-                   clickTimes={clickTimesRef.current}
-                   clicks={clicks}
-                   duration={selectedDuration}
-                   onReset={() => reset()}
-                 />
-               )}
-           </div>
+           <ClickTestSpeedPanel
+             title="Your Speed"
+             value={finished ? cps : (active ? cps : "0.00")}
+             accentClass="text-blue-400"
+             bestCps={currentBest}
+             bestLabel={`Personal Best (${selectedDuration}s)`}
+             hoverAccent
+           >
+             {finished && (
+               <CpsFinishedActions
+                 clickTimes={clickTimesRef.current}
+                 clicks={clicks}
+                 duration={selectedDuration}
+                 onReset={() => reset()}
+               />
+             )}
+           </ClickTestSpeedPanel>
         </div>
       </div>
 

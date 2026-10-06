@@ -2,7 +2,8 @@
 
 import { useCallback, useEffect, useRef, useState } from "react";
 import dynamic from "next/dynamic";
-import { Mouse, MousePointer2, Timer, Trophy, Volume2, VolumeX, Zap } from "lucide-react";
+import { Mouse, MousePointer2, Zap } from "lucide-react";
+import { ClickTestSpeedPanel, ClickTestTimerCard } from "./ClickTestPanels";
 import type { ClickTone } from "../lib/clickSound";
 import { useLazyClickSound } from "../lib/useLazyClickSound";
 import { useExactCountdown } from "../lib/useExactCountdown";
@@ -111,8 +112,7 @@ export default function SecondaryClickTest({ variant }: { variant: SecondaryClic
 
   const { ensure: ensureClickSound, play: playClickSound, suspend: suspendClickSound } = useLazyClickSound();
 
-  const toggleSound = (event: React.MouseEvent) => {
-    event.stopPropagation();
+  const toggleSound = () => {
     const next = !soundEnabled;
     setSoundEnabled(next);
     localStorage.setItem(config.soundKey, String(next));
@@ -262,42 +262,20 @@ export default function SecondaryClickTest({ variant }: { variant: SecondaryClic
         </div>
 
         <div className="flex flex-col gap-4">
-          <div className="bg-slate-900/50 backdrop-blur border border-white/10 p-6 rounded-2xl flex items-center justify-between">
-            <div className="flex items-center gap-3">
-              <div className={`p-3 rounded-lg bg-slate-800 ${config.timerText}`}>
-                <Timer className="w-6 h-6" />
-              </div>
-              <div>
-                <h3 className="text-slate-400 text-xs font-bold uppercase tracking-widest">Time Remaining</h3>
-                <p className="text-3xl font-mono font-bold text-white tabular-nums">{timeLeft.toFixed(2)}s</p>
-              </div>
-            </div>
-            <button
-              type="button"
-              onClick={toggleSound}
-              aria-label={soundEnabled ? "Mute click sound" : "Enable click sound"}
-              aria-pressed={soundEnabled}
-              className={`p-3 rounded-xl border transition-colors ${soundEnabled ? config.soundOn : "bg-slate-800 border-white/10 text-slate-500 hover:text-slate-300"}`}
-              title={soundEnabled ? "Mute Click Sound" : "Enable Click Sound"}
-            >
-              {soundEnabled ? <Volume2 className="w-5 h-5" /> : <VolumeX className="w-5 h-5" />}
-            </button>
-          </div>
+          <ClickTestTimerCard
+            timeLeft={timeLeft}
+            soundEnabled={soundEnabled}
+            onToggleSound={toggleSound}
+            timerAccentClass={config.timerText}
+            soundOnClass={config.soundOn}
+          />
 
-          <div className="flex-grow bg-slate-900/50 backdrop-blur border border-white/10 p-8 rounded-2xl flex flex-col items-center justify-center text-center relative overflow-hidden group">
-            <h3 className="text-slate-400 font-bold uppercase tracking-widest mb-2 relative z-10">{config.speedLabel}</h3>
-            <div className="text-7xl font-display font-black text-white mb-2 text-glow relative z-10">
-              {active || finished ? cps : "0.00"}
-            </div>
-            <div className={`text-xl ${config.accentText} font-mono relative z-10 mb-6`}>CPS</div>
-
-            {bestCps && (
-              <div className="flex items-center justify-center gap-2 text-sm text-slate-300 bg-black/40 px-3 py-1.5 rounded-full border border-white/10 mb-6">
-                <Trophy className="w-4 h-4 text-yellow-500" />
-                Personal Best: <strong className="text-white">{bestCps.toFixed(2)} CPS</strong>
-              </div>
-            )}
-
+          <ClickTestSpeedPanel
+            title={config.speedLabel}
+            value={active || finished ? cps : "0.00"}
+            accentClass={config.accentText}
+            bestCps={bestCps}
+          >
             {finished && (
               <SecondaryClickFinishedActions
                 variant={variant}
@@ -308,7 +286,7 @@ export default function SecondaryClickTest({ variant }: { variant: SecondaryClic
                 withTopMargin={config.withTopMargin}
               />
             )}
-          </div>
+          </ClickTestSpeedPanel>
         </div>
       </div>
     </div>
