@@ -86,7 +86,7 @@ function loadStats(): UserStats {
         peakCps: Number(run.peakCps || 0),
         timingSd: Number(run.timingSd || 0),
         clicks: Number(run.clicks || 0),
-        result: run.result === "won" ? "won" : "lost",
+        result: (run.result === "won" ? "won" : "lost") as WaveRun["result"],
         timestamp: Number(run.timestamp || 0),
         mode: run.mode || `${difficulty} · ${inputMode} · ${runMode}`,
       }))
