@@ -735,6 +735,20 @@ if (
   );
 }
 
+if (
+  !keyboardTimingClientSource.includes("type TimingState") ||
+  !keyboardTimingClientSource.includes("setTiming((current) => ({") ||
+  !keyboardTimingClientSource.includes("startTime === undefined") ||
+  keyboardTimingClientSource.includes("setShortestPress(") ||
+  keyboardTimingClientSource.includes("setAveragePress(") ||
+  keyboardTimingClientSource.includes("setRecentPresses(") ||
+  keyboardTimingClientSource.includes("setActiveKey(")
+) {
+  infrastructureErrors.push(
+    "KeyboardLatencyTest must keep hold-duration results in one measurement state with an explicit missing-start guard"
+  );
+}
+
 const pollingClientSource = supportClientSources.find(([file]) => file === "PollingRateTest.tsx")?.[1] ?? "";
 if (
   !pollingClientSource.includes("(maxHz > 0 || isTracking)") ||
