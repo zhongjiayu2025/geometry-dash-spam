@@ -1922,10 +1922,11 @@ if (
 }
 
 if (
-  !gameCanvasSource.includes("import('../lib/waveStorage')") ||
   gameCanvasSource.includes("gd_spam_best_") ||
   gameCanvasSource.includes("gd_spam_runs_") ||
   gameCanvasSource.includes("JSON.parse(savedRuns)") ||
+  !gameCanvasSource.includes("useWaveRecords") ||
+  !waveRecordsHookSource.includes('import("./waveStorage")') ||
   !waveStorageSource.includes("export function loadWaveRecords") ||
   !waveStorageSource.includes("export function persistWaveHighScore") ||
   !waveStorageSource.includes("export function persistWaveRuns")
@@ -1942,10 +1943,13 @@ if (
   !waveStorageSource.includes("return merged") ||
   !waveStorageSource.includes("export function waveStorageKeys") ||
   !gameCanvasSource.includes("useWaveRecords(difficulty.id, isEndless, isMini)") ||
-  !gameCanvasSource.includes("setRecentRuns(merged)") ||
+  gameCanvasSource.includes("persistWaveHighScore") ||
+  gameCanvasSource.includes("persistWaveRuns") ||
   !waveRecordsHookSource.includes('window.addEventListener("storage", handleStorage)') ||
   !waveRecordsHookSource.includes("event.key === keys?.best") ||
-  !waveRecordsHookSource.includes("event.key === keys?.runs")
+  !waveRecordsHookSource.includes("event.key === keys?.runs") ||
+  !waveRecordsHookSource.includes("const saveHighScore = useCallback") ||
+  !waveRecordsHookSource.includes("const persistRun = useCallback")
 ) {
   infrastructureErrors.push(
     "Wave records must merge cross-tab history while useWaveRecords scopes live storage synchronization"
@@ -1953,12 +1957,14 @@ if (
 }
 
 if (
-  !gameCanvasSource.includes("const persistedBest = persistWaveHighScore(") ||
-  !gameCanvasSource.includes("if (persistedBest > highScoreRef.current)") ||
-  !gameCanvasSource.includes("if (persistedBest > time) setIsNewBest(false)")
+  !waveRecordsHookSource.includes("const persistedBest = persistWaveHighScore(scope, time)") ||
+  !waveRecordsHookSource.includes("if (persistedBest > highScoreRef.current)") ||
+  !waveRecordsHookSource.includes("if (persistedBest > time) setIsNewBest(false)") ||
+  !waveRecordsHookSource.includes("version !== scopeVersionRef.current") ||
+  !waveRecordsHookSource.includes("recentRunsRef.current = merged")
 ) {
   infrastructureErrors.push(
-    "GameCanvas must reconcile optimistic local wave bests with the monotonic persisted cross-tab score"
+    "useWaveRecords must reconcile persisted best/history and reject stale async updates after mode changes"
   );
 }
 

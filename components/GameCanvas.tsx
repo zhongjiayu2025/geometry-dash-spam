@@ -37,8 +37,7 @@ const GameCanvas: React.FC<GameCanvasProps> = memo(({ difficulty, status, onStat
   const [reduceMotion, setReduceMotion] = useState<boolean>(false);
 
   const {
-    highScore, isNewBest, recentRuns, highScoreRef,
-    setHighScore, setIsNewBest, setRecentRuns,
+    highScore, isNewBest, recentRuns, saveHighScore, persistRun, setIsNewBest,
   } = useWaveRecords(difficulty.id, isEndless, isMini);
   const lastHudUpdateRef = useRef<number>(0);
   const timeDisplayRef = useRef<HTMLDivElement>(null);
@@ -95,26 +94,6 @@ const GameCanvas: React.FC<GameCanvasProps> = memo(({ difficulty, status, onStat
       writeStorage('gd_spam_reduce_motion', String(newValue));
   }, [reduceMotion]);
 
-  const saveHighScore = useCallback((time: number) => {
-      if (time <= highScoreRef.current) return false;
-
-      highScoreRef.current = time;
-      setHighScore(time);
-      setIsNewBest(true);
-      void import('../lib/waveStorage').then(({ persistWaveHighScore }) => {
-        const persistedBest = persistWaveHighScore(
-          { difficultyId: difficulty.id, isEndless, isMini },
-          time
-        );
-        if (persistedBest > highScoreRef.current) {
-          highScoreRef.current = persistedBest;
-          setHighScore(persistedBest);
-          if (persistedBest > time) setIsNewBest(false);
-        }
-      });
-      return true;
-  }, [difficulty.id, isEndless, isMini]);
-  
   const [consistency, setConsistency] = useState<string>('100%');
   
   // Audio is dynamically imported only after the user opts in.
@@ -295,17 +274,7 @@ const GameCanvas: React.FC<GameCanvasProps> = memo(({ difficulty, status, onStat
       mode: `${difficulty.label}${isMini ? " · Mini" : " · Normal"}${isEndless ? " · Endless" : " · 15s"}`,
     };
 
-    setRecentRuns((previousRuns) => {
-      const next = [run, ...previousRuns].slice(0, 10);
-      void import('../lib/waveStorage').then(({ persistWaveRuns }) => {
-        const merged = persistWaveRuns(
-          { difficultyId: difficulty.id, isEndless, isMini },
-          next
-        );
-        setRecentRuns(merged);
-      });
-      return next;
-    });
+    persistRun(run);
     runRecordedRef.current = true;
   };
 
@@ -429,7 +398,7 @@ const GameCanvas: React.FC<GameCanvasProps> = memo(({ difficulty, status, onStat
             onStatusChange(GameStatus.Won);
             playSound('win');
             const didBreakRecord = saveHighScore(gameState.current.runTime / 1000);
-            if (didBreakRecord) setIsNewBest(true);
+            void didBreakRecord;
         }
     }
 
@@ -480,10 +449,7 @@ const GameCanvas: React.FC<GameCanvasProps> = memo(({ difficulty, status, onStat
       
       const currentTime = gameState.current.runTime / 1000;
       const didBreakRecord = saveHighScore(currentTime);
-      if (didBreakRecord) {
-          setIsNewBest(true);
-          playSound('newBest');
-      }
+      if (didBreakRecord) playSound('newBest');
   };
   
 
