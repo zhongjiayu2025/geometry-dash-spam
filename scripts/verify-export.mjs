@@ -602,6 +602,17 @@ if (
   );
 }
 
+if (
+  dragClientSource.includes("dragActive") ||
+  dragClientSource.includes("setDragActive") ||
+  dragClientSource.includes("clickTimesRef.current.push(now);\n    setClicks(clicksRef.current);") ||
+  !dragClientSource.includes("const renderedClicks = isActive ? clicksRef.current : clicks;")
+) {
+  infrastructureErrors.push(
+    "DragClickTest hot path must stay ref-based with CSS active feedback instead of per-input React state"
+  );
+}
+
 const ghostingClientSource = supportClientSources.find(([file]) => file === "KeyboardGhostingTest.tsx")?.[1] ?? "";
 if (
   ghostingClientSource.includes("<h1") ||
