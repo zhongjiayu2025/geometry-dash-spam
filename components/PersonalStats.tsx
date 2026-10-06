@@ -1,257 +1,157 @@
 "use client";
 
-import React, { useState, useEffect } from 'react';
-import dynamic from 'next/dynamic';
-import Link from 'next/link';
+import { useEffect, useState } from "react";
+import dynamic from "next/dynamic";
 
-const DashboardWaveHistory = dynamic(() => import('./DashboardWaveHistory'), { ssr: false });
-import { Trophy, MousePointer2, Target, Keyboard, Timer, Activity, RotateCcw, ArrowRight, BrainCircuit } from 'lucide-react';
+const PersonalStatsContent = dynamic(() => import("./PersonalStatsContent"), { ssr: false });
 
-
-interface WaveRun {
-    time: number;
-    averageCps: number;
-    peakCps: number;
-    timingSd: number;
-    clicks: number;
-    result: "won" | "lost";
-    timestamp: number;
-    mode: string;
+export interface WaveRun {
+  time: number;
+  averageCps: number;
+  peakCps: number;
+  timingSd: number;
+  clicks: number;
+  result: "won" | "lost";
+  timestamp: number;
+  mode: string;
 }
 
-interface UserStats {
-    cpsTests: Record<string, number>;
-    waveRuns: WaveRun[];
-    jitterCps: number | null;
-    butterflyCps: number | null;
-    rightClickCps: number | null;
-    dragPeakCps: number | null;
-    spacebarCps: number | null;
-    reactionMs: number | null;
-    soundReactionMs: number | null;
-    aimScore: number | null;
-    typingWpm: number | null;
-    chimpScore: number | null;
-    visualMemoryScore: number | null;
+export interface UserStats {
+  cpsTests: Record<string, number>;
+  waveRuns: WaveRun[];
+  jitterCps: number | null;
+  butterflyCps: number | null;
+  rightClickCps: number | null;
+  dragPeakCps: number | null;
+  spacebarCps: number | null;
+  reactionMs: number | null;
+  soundReactionMs: number | null;
+  aimScore: number | null;
+  typingWpm: number | null;
+  chimpScore: number | null;
+  visualMemoryScore: number | null;
+}
+
+const EMPTY_STATS: UserStats = {
+  cpsTests: {},
+  waveRuns: [],
+  jitterCps: null,
+  butterflyCps: null,
+  rightClickCps: null,
+  dragPeakCps: null,
+  spacebarCps: null,
+  reactionMs: null,
+  soundReactionMs: null,
+  aimScore: null,
+  typingWpm: null,
+  chimpScore: null,
+  visualMemoryScore: null,
+};
+
+function loadStats(): UserStats {
+  const loadStat = (key: string) => {
+    const value = localStorage.getItem(key);
+    if (!value) return null;
+    const parsed = Number.parseFloat(value);
+    return Number.isFinite(parsed) ? parsed : null;
+  };
+
+  const loadObject = (key: string) => {
+    const value = localStorage.getItem(key);
+    try {
+      return value ? JSON.parse(value) : {};
+    } catch {
+      return {};
+    }
+  };
+
+  const waveRuns: WaveRun[] = [];
+  for (let index = 0; index < localStorage.length; index += 1) {
+    const key = localStorage.key(index);
+    if (!key?.startsWith("gd_spam_runs_")) continue;
+
+    const stored = loadObject(key);
+    if (!Array.isArray(stored)) continue;
+
+    const suffix = key.slice("gd_spam_runs_".length);
+    const parts = suffix.split("_");
+    const inputMode = parts.at(-1) === "mini" ? "Mini" : "Normal";
+    const runMode = parts.at(-2) === "endless" ? "Endless" : "15s";
+    const difficulty = parts.slice(0, -2).join("_") || "Unknown";
+
+    waveRuns.push(
+      ...stored.map((run: Partial<WaveRun>) => ({
+        time: Number(run.time || 0),
+        averageCps: Number(run.averageCps || 0),
+        peakCps: Number(run.peakCps || 0),
+        timingSd: Number(run.timingSd || 0),
+        clicks: Number(run.clicks || 0),
+        result: run.result === "won" ? "won" : "lost",
+        timestamp: Number(run.timestamp || 0),
+        mode: run.mode || `${difficulty} · ${inputMode} · ${runMode}`,
+      }))
+    );
+  }
+
+  waveRuns.sort((a, b) => b.timestamp - a.timestamp);
+
+  return {
+    cpsTests: loadObject("cpsBestScores"),
+    waveRuns,
+    jitterCps: loadStat("jitterClickBest"),
+    butterflyCps: loadStat("butterflyClickBest"),
+    rightClickCps: loadStat("rightClickBest"),
+    dragPeakCps: loadStat("dragClickBest"),
+    spacebarCps: loadStat("spacebarBest"),
+    reactionMs: loadStat("reactionBestScore"),
+    soundReactionMs: loadStat("soundReactionBest"),
+    aimScore: loadStat("aimTrainerBest"),
+    typingWpm: loadStat("typingTestBestWpm"),
+    chimpScore: loadStat("chimpBestScore"),
+    visualMemoryScore: loadStat("visualMemoryBest"),
+  };
 }
 
 export default function PersonalStats() {
-    const [stats, setStats] = useState<UserStats>({
-        cpsTests: {},
-        waveRuns: [],
-        jitterCps: null,
-        butterflyCps: null,
-        rightClickCps: null,
-        dragPeakCps: null,
-        spacebarCps: null,
-        reactionMs: null,
-        soundReactionMs: null,
-        aimScore: null,
-        typingWpm: null,
-        chimpScore: null,
-        visualMemoryScore: null
-    });
-    
-    const [mounted, setMounted] = useState(false);
+  const [stats, setStats] = useState<UserStats | null>(null);
 
-    useEffect(() => {
-        setMounted(true);
-        if (typeof window !== 'undefined') {
-            const loadStat = (key: string) => {
-                const val = localStorage.getItem(key);
-                return val ? parseFloat(val) : null;
-            };
+  useEffect(() => {
+    setStats(loadStats());
+  }, []);
 
-            const loadObj = (key: string) => {
-                const val = localStorage.getItem(key);
-                try {
-                    return val ? JSON.parse(val) : {};
-                } catch {
-                    return {};
-                }
-            };
+  const clearStats = () => {
+    if (!confirm("Are you sure you want to clear all your local stats? This cannot be undone.")) return;
 
-            const waveRuns: WaveRun[] = [];
-            for (let index = 0; index < localStorage.length; index += 1) {
-                const key = localStorage.key(index);
-                if (!key?.startsWith('gd_spam_runs_')) continue;
+    for (const key of [
+      "cpsBestScores",
+      "cpsRunHistory",
+      "jitterClickBest",
+      "butterflyClickBest",
+      "rightClickBest",
+      "dragClickBest",
+      "spacebarBest",
+      "reactionBestScore",
+      "soundReactionBest",
+      "aimTrainerBest",
+      "typingTestBestWpm",
+      "chimpBestScore",
+      "visualMemoryBest",
+    ]) {
+      localStorage.removeItem(key);
+    }
 
-                const stored = loadObj(key);
-                if (Array.isArray(stored)) {
-                    const suffix = key.slice('gd_spam_runs_'.length);
-                    const parts = suffix.split('_');
-                    const inputMode = parts.at(-1) === 'mini' ? 'Mini' : 'Normal';
-                    const runMode = parts.at(-2) === 'endless' ? 'Endless' : '15s';
-                    const difficulty = parts.slice(0, -2).join('_') || 'Unknown';
+    const dynamicKeys: string[] = [];
+    for (let index = 0; index < localStorage.length; index += 1) {
+      const key = localStorage.key(index);
+      if (key?.startsWith("gd_spam_runs_") || key?.startsWith("gd_spam_best_")) {
+        dynamicKeys.push(key);
+      }
+    }
+    for (const key of dynamicKeys) localStorage.removeItem(key);
 
-                    waveRuns.push(
-                        ...stored.map((run: Partial<WaveRun>) => ({
-                            time: Number(run.time || 0),
-                            averageCps: Number(run.averageCps || 0),
-                            peakCps: Number(run.peakCps || 0),
-                            timingSd: Number(run.timingSd || 0),
-                            clicks: Number(run.clicks || 0),
-                            result: (run.result === 'won' ? 'won' : 'lost') as WaveRun["result"],
-                            timestamp: Number(run.timestamp || 0),
-                            mode: run.mode || `${difficulty} · ${inputMode} · ${runMode}`,
-                        }))
-                    );
-                }
-            }
-            waveRuns.sort((a, b) => (b.timestamp || 0) - (a.timestamp || 0));
+    setStats(EMPTY_STATS);
+  };
 
-            setStats({
-                cpsTests: loadObj('cpsBestScores'),
-                waveRuns,
-                jitterCps: loadStat('jitterClickBest'),
-                butterflyCps: loadStat('butterflyClickBest'),
-                rightClickCps: loadStat('rightClickBest'),
-                dragPeakCps: loadStat('dragClickBest'),
-                spacebarCps: loadStat('spacebarBest'),
-                reactionMs: loadStat('reactionBestScore'),
-                soundReactionMs: loadStat('soundReactionBest'),
-                aimScore: loadStat('aimTrainerBest'),
-                typingWpm: loadStat('typingTestBestWpm'),
-                chimpScore: loadStat('chimpBestScore'),
-                visualMemoryScore: loadStat('visualMemoryBest')
-            });
-        }
-    }, []);
-
-    const clearStats = () => {
-        if (confirm("Are you sure you want to clear all your local stats? This cannot be undone.")) {
-            localStorage.removeItem('cpsBestScores');
-            localStorage.removeItem('cpsRunHistory');
-            localStorage.removeItem('jitterClickBest');
-            localStorage.removeItem('butterflyClickBest');
-            localStorage.removeItem('rightClickBest');
-            localStorage.removeItem('dragClickBest');
-            localStorage.removeItem('spacebarBest');
-            localStorage.removeItem('reactionBestScore');
-            localStorage.removeItem('soundReactionBest');
-            localStorage.removeItem('aimTrainerBest');
-            localStorage.removeItem('typingTestBestWpm');
-            localStorage.removeItem('chimpBestScore');
-            localStorage.removeItem('visualMemoryBest');
-
-            const dynamicKeys: string[] = [];
-            for (let index = 0; index < localStorage.length; index += 1) {
-                const key = localStorage.key(index);
-                if (key?.startsWith('gd_spam_runs_') || key?.startsWith('gd_spam_best_')) {
-                    dynamicKeys.push(key);
-                }
-            }
-            dynamicKeys.forEach((key) => localStorage.removeItem(key));
-            
-            setStats({
-                cpsTests: {},
-                waveRuns: [],
-                jitterCps: null,
-                butterflyCps: null,
-                rightClickCps: null,
-                dragPeakCps: null,
-                spacebarCps: null,
-                reactionMs: null,
-                soundReactionMs: null,
-                aimScore: null,
-                typingWpm: null,
-                chimpScore: null,
-                visualMemoryScore: null
-            });
-        }
-    };
-
-    if (!mounted) return null;
-
-    const StatCard = ({ title, value, unit, icon: Icon, href, emptyText }: any) => {
-        const hasValue = value !== null && value !== undefined && !isNaN(value);
-
-        return (
-        <div className="bg-slate-900/40 border border-white/5 rounded-2xl p-6 relative overflow-hidden group hover:border-blue-500/30 transition-colors">
-            <div className="flex items-center gap-3 mb-4 relative z-10">
-                <div className="p-2.5 rounded-xl bg-slate-800 text-slate-400 group-hover:text-blue-400 group-hover:bg-blue-500/10 transition-colors">
-                    <Icon className="w-5 h-5" />
-                </div>
-                <h3 className="font-bold text-slate-300">{title}</h3>
-            </div>
-            
-            <div className="relative z-10 mb-6">
-                {hasValue ? (
-                    <div className="flex items-end gap-2">
-                        <span className="text-4xl font-display font-bold text-white drop-shadow-md">{value}</span>
-                        <span className="text-slate-400 font-mono mb-1">{unit}</span>
-                    </div>
-                ) : (
-                    <div className="text-slate-500 text-sm italic py-2">{emptyText || "No data yet"}</div>
-                )}
-            </div>
-
-            <Link href={href} className="inline-flex items-center gap-2 text-sm font-bold text-blue-400 hover:text-blue-300 transition-colors relative z-10">
-                {hasValue ? "Improve Score" : "Take Test"} <ArrowRight className="w-4 h-4" />
-            </Link>
-            
-            <div className="absolute -bottom-8 -right-8 text-white/[0.02] group-hover:text-blue-500/5 transition-colors pointer-events-none">
-                <Icon className="w-48 h-48" />
-            </div>
-        </div>
-        );
-    };
-
-    return (
-        <div className="w-full max-w-6xl mx-auto px-4 md:px-0">
-            <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-8">
-                <div>
-                    <h2 className="text-2xl font-display font-bold text-white mb-2 flex items-center gap-3">
-                        <Trophy className="w-6 h-6 text-yellow-500" />
-                        My Local Records
-                    </h2>
-                    <p className="text-slate-400 text-sm">Your personal best scores are stored locally in this browser and are not uploaded by this dashboard.</p>
-                </div>
-                
-                <button 
-                    onClick={clearStats}
-                    className="flex items-center justify-center gap-2 px-4 py-2 rounded-lg bg-red-500/10 hover:bg-red-500/20 text-red-400 text-sm font-bold transition-colors border border-red-500/20"
-                >
-                    <RotateCcw className="w-4 h-4" /> Clear History
-                </button>
-            </div>
-
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mb-16">
-                <DashboardWaveHistory runs={stats.waveRuns} />
-
-                {/* Regular CPS Stats */}
-                <div className="lg:col-span-3 bg-gradient-to-r from-blue-900/20 to-purple-900/20 border border-white/10 rounded-3xl p-8 mb-2">
-                    <h3 className="text-lg font-bold text-white mb-6 flex items-center gap-2">
-                        <MousePointer2 className="w-5 h-5 text-blue-400" /> Standard CPS Records
-                    </h3>
-                    <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-6 gap-4">
-                        {[1, 3, 5, 10, 30, 60].map(duration => (
-                            <div key={duration} className="bg-black/40 rounded-xl p-4 border border-white/5 text-center">
-                                <div className="text-xs text-slate-500 uppercase tracking-widest mb-1">{duration} Second</div>
-                                <div className="text-2xl font-bold text-white">
-                                    {stats.cpsTests[duration] ? stats.cpsTests[duration].toFixed(2) : '--'}
-                                </div>
-                            </div>
-                        ))}
-                    </div>
-                </div>
-
-                {/* Specialized Clicks */}
-                <StatCard title="Jitter Click Best" value={stats.jitterCps?.toFixed(2)} unit="CPS" icon={Activity} href="/jitter-click" emptyText="Try the 10s Jitter click test" />
-                <StatCard title="Butterfly Click Best" value={stats.butterflyCps?.toFixed(2)} unit="CPS" icon={MousePointer2} href="/butterfly-click" emptyText="Try the 10s Butterfly test" />
-                <StatCard title="Right Click Best" value={stats.rightClickCps?.toFixed(2)} unit="CPS" icon={MousePointer2} href="/right-click" emptyText="Try the Right Click test" />
-                <StatCard title="Drag Click Peak" value={stats.dragPeakCps?.toFixed(0)} unit="CPS" icon={MousePointer2} href="/drag-click" emptyText="Try the Drag Click test" />
-                <StatCard title="Visual Reaction Best" value={stats.reactionMs?.toFixed(0)} unit="ms" icon={Timer} href="/reaction-test" emptyText="Try the visual reaction test" />
-                <StatCard title="Sound Reaction Best" value={stats.soundReactionMs?.toFixed(0)} unit="ms" icon={Timer} href="/sound-reaction" emptyText="Try the audio reaction test" />
-                
-                {/* Aim & Keyboard */}
-                <StatCard title="Aim Trainer Best" value={stats.aimScore} unit="Targets" icon={Target} href="/aim-trainer" emptyText="Play the 30s Aim challenge" />
-                <StatCard title="Chimp Test Best" value={stats.chimpScore} unit="Numbers" icon={BrainCircuit} href="/chimp-test" emptyText="Test your visual memory" />
-                <StatCard title="Visual Memory Best" value={stats.visualMemoryScore} unit="Levels" icon={BrainCircuit} href="/visual-memory" emptyText="Grid recall game" />
-                <StatCard title="Typing Speed Best" value={stats.typingWpm} unit="WPM" icon={Keyboard} href="/typing-test" emptyText="Take the 60s Typing test" />
-                <StatCard title="Spacebar Best" value={stats.spacebarCps?.toFixed(2)} unit="CPS" icon={Timer} href="/spacebar-counter" emptyText="Take the 10s Spacebar test" />
-
-            </div>
-        </div>
-    );
+  if (!stats) return null;
+  return <PersonalStatsContent stats={stats} onClear={clearStats} />;
 }
