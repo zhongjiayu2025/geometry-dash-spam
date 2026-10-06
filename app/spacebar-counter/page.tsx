@@ -15,7 +15,7 @@ export const metadata: Metadata = {
     type: "website",
   },
   twitter: {
-    card: "summary",
+    card: "summary_large_image",
     title: "Spacebar Counter | Spacebar CPS & Press Speed Test",
     description: "Count spacebar presses and measure press speed in your browser. This is not a direct keyboard hardware-latency measurement.",
   },
