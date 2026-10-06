@@ -18,6 +18,7 @@ export default function GeometryDashClicker() {
   const [state, setState] = useState<SaveState>(INITIAL);
   const [loaded, setLoaded] = useState(false);
   const stateRef = useRef(state);
+  const dirtyRef = useRef(false);
   const autoTickRef = useRef(0);
   const pendingTouchRef = useRef<{ pointerId: number; x: number; y: number } | null>(null);
 
@@ -41,7 +42,9 @@ export default function GeometryDashClicker() {
     if (!loaded) return;
 
     const flushSave = () => {
+      if (!dirtyRef.current) return;
       localStorage.setItem(STORAGE_KEY, JSON.stringify(stateRef.current));
+      dirtyRef.current = false;
     };
     const saveInterval = window.setInterval(flushSave, 5000);
 
@@ -64,6 +67,7 @@ export default function GeometryDashClicker() {
     setState((prev) => {
       const next = updater(prev);
       stateRef.current = next;
+      if (next !== prev) dirtyRef.current = true;
       return next;
     });
   };
@@ -161,6 +165,7 @@ export default function GeometryDashClicker() {
 
   const reset = () => {
     stateRef.current = INITIAL;
+    dirtyRef.current = false;
     setState(INITIAL);
     localStorage.removeItem(STORAGE_KEY);
   };
