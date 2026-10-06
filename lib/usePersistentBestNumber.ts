@@ -13,11 +13,12 @@ export function usePersistentBestNumber(
     if (!saved) return;
 
     const parsed = Number(saved);
-    if (Number.isFinite(parsed)) setBest(parsed);
+    if (Number.isFinite(parsed) && parsed >= 0) setBest(parsed);
   }, [storageKey]);
 
   const commitBest = useCallback((value: number) => {
     setBest((previous) => {
+      if (!Number.isFinite(value) || value < 0) return previous;
       if (previous !== null) {
         const improves = mode === "min" ? value < previous : value > previous;
         if (!improves) return previous;

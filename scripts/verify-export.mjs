@@ -1386,6 +1386,15 @@ if (
 }
 
 if (
+  !persistentBestSource.includes("Number.isFinite(parsed) && parsed >= 0") ||
+  !persistentBestSource.includes("!Number.isFinite(value) || value < 0")
+) {
+  infrastructureErrors.push(
+    "Shared persistent best-score hook must reject corrupt, negative and non-finite values"
+  );
+}
+
+if (
   !persistentBestSource.includes('mode: "max" | "min" = "max"') ||
   !persistentBestSource.includes('mode === "min" ? value < previous : value > previous')
 ) {
@@ -2179,6 +2188,18 @@ if (
 ) {
   infrastructureErrors.push(
     "Geometry Dash Clicker pricing and purchase transactions must stay centralized in clickerEconomy"
+  );
+}
+
+if (
+  !clickerSource.includes("normalizeClickerState(JSON.parse(saved))") ||
+  clickerSource.includes("{ ...INITIAL_CLICKER_STATE, ...JSON.parse(saved) }") ||
+  !clickerEconomySource.includes("export function normalizeClickerState") ||
+  !clickerEconomySource.includes("Number.isFinite(number)") ||
+  !clickerEconomySource.includes("Number.MAX_SAFE_INTEGER")
+) {
+  infrastructureErrors.push(
+    "Geometry Dash Clicker must sanitize legacy/corrupt saved state before using it"
   );
 }
 

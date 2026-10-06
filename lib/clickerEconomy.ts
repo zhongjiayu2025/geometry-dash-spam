@@ -14,6 +14,27 @@ export const INITIAL_CLICKER_STATE: ClickerState = {
   totalClicks: 0,
 };
 
+function safeNumber(value: unknown, fallback: number) {
+  const number = typeof value === "number" ? value : Number(value);
+  if (!Number.isFinite(number) || number < 0) return fallback;
+  return Math.min(number, Number.MAX_SAFE_INTEGER);
+}
+
+export function normalizeClickerState(value: unknown): ClickerState {
+  if (!value || typeof value !== "object" || Array.isArray(value)) {
+    return INITIAL_CLICKER_STATE;
+  }
+
+  const record = value as Record<string, unknown>;
+  return {
+    orbs: safeNumber(record.orbs, 0),
+    clickPower: Math.max(1, Math.floor(safeNumber(record.clickPower, 1))),
+    autoPower: Math.floor(safeNumber(record.autoPower, 0)),
+    prestige: Math.floor(safeNumber(record.prestige, 0)),
+    totalClicks: Math.floor(safeNumber(record.totalClicks, 0)),
+  };
+}
+
 export const clickCostFor = (level: number) =>
   Math.floor(25 * Math.pow(1.65, level - 1));
 

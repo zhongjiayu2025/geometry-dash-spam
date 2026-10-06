@@ -12,6 +12,7 @@ import {
   buyPrestigeUpgrade,
   clickCostFor,
   prestigeCostFor,
+  normalizeClickerState,
   type ClickerState,
 } from "../lib/clickerEconomy";
 
@@ -28,7 +29,7 @@ export default function GeometryDashClicker() {
     try {
       const saved = localStorage.getItem(STORAGE_KEY);
       if (saved) {
-        const next = { ...INITIAL_CLICKER_STATE, ...JSON.parse(saved) };
+        const next = normalizeClickerState(JSON.parse(saved));
         stateRef.current = next;
         setState(next);
       }
