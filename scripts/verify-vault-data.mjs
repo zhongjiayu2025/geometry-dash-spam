@@ -9,6 +9,9 @@ const liveRefreshSource = readFileSync(LIVE_REFRESH_PATH, "utf8");
 
 const dateMatch = source.match(/VAULT_CODES_CHECKED_AT = "([^"]+)"/);
 const checkedAt = dateMatch?.[1] ?? null;
+const fingerprint = source.match(
+  /WRAITH_KNOWN_REWARDS_FINGERPRINT = "([0-9a-f]{8})"/
+)?.[1] ?? null;
 
 const blockMatch = source.match(/export const WRAITH_CODES:[\s\S]*?= \[([\s\S]*?)\n\];/);
 const block = blockMatch?.[1] ?? "";
@@ -27,6 +30,10 @@ const errors = [];
 
 if (!checkedAt || !/^\d{4}-\d{2}-\d{2}$/.test(checkedAt)) {
   errors.push("VAULT_CODES_CHECKED_AT must be a YYYY-MM-DD date.");
+}
+
+if (!fingerprint) {
+  errors.push("WRAITH_KNOWN_REWARDS_FINGERPRINT must be an 8-character lowercase hex value.");
 }
 
 if (!blockMatch) {
@@ -71,6 +78,9 @@ if (
   !liveRefreshSource.includes("api.php?action=parse&page=Secret_Room") ||
   !liveRefreshSource.includes('extractSection(wikitext, "Known rewards", "Limited-time rewards")') ||
   !liveRefreshSource.includes("limitedOverlap") ||
+  !liveRefreshSource.includes("fingerprintKnownRewards") ||
+  !liveRefreshSource.includes("WRAITH_KNOWN_REWARDS_FINGERPRINT") ||
+  !liveRefreshSource.includes("liveFingerprint !== expectedFingerprint") ||
   !liveRefreshSource.includes("VAULT_CODES_CHECKED_AT") ||
   !liveRefreshSource.includes("REFRESH_DAYS = 7")
 ) {

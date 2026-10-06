@@ -5,6 +5,7 @@ export type VaultCode = {
 };
 
 export const VAULT_CODES_CHECKED_AT = "2026-10-05";
+export const WRAITH_KNOWN_REWARDS_FINGERPRINT = "20aac626";
 
 export const VAULT_SOURCES = {
   vault: "https://geometrydash.wiki.gg/wiki/Vault",

@@ -18,6 +18,33 @@ function normalizeCode(value) {
   return value.toLowerCase().replace(/\s+/g, "").trim();
 }
 
+function fingerprintKnownRewards(section) {
+  const rows = [];
+
+  for (const block of section.split("----")) {
+    const code = block.match(/'''Code:'''\s*'([^']+)'/)?.[1]?.trim();
+    if (!code) continue;
+
+    const rewards = [];
+    const rewardPattern = /\[\[File:([^\]|]+)[^\]]*\]\](?:\s*x(\d+))?/g;
+    let match;
+    while ((match = rewardPattern.exec(block))) {
+      rewards.push(`${match[1].toLowerCase()}:${match[2] || "1"}`);
+    }
+
+    rows.push(`${normalizeCode(code)}|${rewards.join("+")}`);
+  }
+
+  rows.sort();
+  let hash = 2166136261;
+  for (const char of rows.join("\n")) {
+    hash ^= char.charCodeAt(0);
+    hash = Math.imul(hash, 16777619) >>> 0;
+  }
+
+  return hash.toString(16).padStart(8, "0");
+}
+
 function readLocalCodes(source) {
   const block = source.match(
     /export const WRAITH_CODES:[\s\S]*?= \[([\s\S]*?)\n\];/
@@ -124,6 +151,9 @@ function extractCodes(section) {
 
 const source = readFileSync(DATA_PATH, "utf8");
 const checkedAt = source.match(/VAULT_CODES_CHECKED_AT = "([^"]+)"/)?.[1];
+const expectedFingerprint = source.match(
+  /WRAITH_KNOWN_REWARDS_FINGERPRINT = "([0-9a-f]{8})"/
+)?.[1];
 const sourceUrl = source.match(/wraith:\s*"([^"]+)"/)?.[1];
 
 if (sourceUrl !== SOURCE_URL) {
@@ -136,6 +166,12 @@ if (!checkedAt || !/^\d{4}-\d{2}-\d{2}$/.test(checkedAt)) {
   throw new Error("VAULT_CODES_CHECKED_AT must be a YYYY-MM-DD date.");
 }
 
+if (!expectedFingerprint) {
+  throw new Error(
+    "WRAITH_KNOWN_REWARDS_FINGERPRINT must be an 8-character lowercase hex value."
+  );
+}
+
 const wikitext = await fetchWikitext();
 const knownSection = extractSection(wikitext, "Known rewards", "Limited-time rewards");
 const limitedSection = extractSection(
@@ -144,6 +180,7 @@ const limitedSection = extractSection(
   "Unavailable codes"
 );
 const liveCodes = extractCodes(knownSection);
+const liveFingerprint = fingerprintKnownRewards(knownSection);
 const limitedCodes = [
   ...limitedSection.matchAll(/'''Code:'''\s*'([^']+)'/g),
 ].map((match) => match[1].trim());
@@ -160,12 +197,22 @@ const removed = [...localMap.keys()]
 const limitedOverlap = limitedCodes
   .filter((code) => localMap.has(normalizeCode(code)));
 
-if (added.length || removed.length || limitedOverlap.length) {
+if (
+  added.length ||
+  removed.length ||
+  limitedOverlap.length ||
+  liveFingerprint !== expectedFingerprint
+) {
   const parts = [];
   if (added.length) parts.push(`new live codes: ${added.join(", ")}`);
   if (removed.length) parts.push(`no longer in Known rewards: ${removed.join(", ")}`);
   if (limitedOverlap.length) {
     parts.push(`limited-time codes incorrectly stored as permanent: ${limitedOverlap.join(", ")}`);
+  }
+  if (liveFingerprint !== expectedFingerprint) {
+    parts.push(
+      `Known rewards fingerprint changed: expected ${expectedFingerprint}, live ${liveFingerprint}`
+    );
   }
 
   throw new Error(
@@ -176,7 +223,7 @@ if (added.length || removed.length || limitedOverlap.length) {
 const today = new Date().toISOString().slice(0, 10);
 if (daysBetween(checkedAt, today) < REFRESH_DAYS) {
   console.log(
-    `Wraith live codes verified: ${liveCodes.length} permanent codes; checkedAt ${checkedAt} is still fresh.`
+    `Wraith live codes verified: ${liveCodes.length} permanent codes, reward fingerprint ${liveFingerprint}; checkedAt ${checkedAt} is still fresh.`
   );
   process.exit(0);
 }
@@ -187,5 +234,5 @@ const next = source.replace(
 );
 writeFileSync(DATA_PATH, next, "utf8");
 console.log(
-  `Wraith live codes verified: ${liveCodes.length} permanent codes. Refreshed checkedAt to ${today}.`
+  `Wraith live codes verified: ${liveCodes.length} permanent codes, reward fingerprint ${liveFingerprint}. Refreshed checkedAt to ${today}.`
 );
