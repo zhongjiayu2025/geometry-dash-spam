@@ -104,6 +104,43 @@ if (!updateText.includes(currentName.toLowerCase())) {
   );
 }
 
+for (const feature of [
+  "normal mode",
+  "practice mode",
+  "endless mode",
+  "level editor",
+  "leaderboards",
+  "achievements",
+  "cross-device progress",
+]) {
+  if (!officialText.includes(feature)) {
+    throw new Error(
+      `Official Challenge Rush page no longer contains expected current feature: ${feature}.`
+    );
+  }
+}
+
+if (!officialText.includes("race mode coming soon")) {
+  throw new Error(
+    'Official Challenge Rush page no longer labels Race Mode as "Coming Soon"; update the Dashmetry guide wording.'
+  );
+}
+
+if (!updateText.includes("race mode is here")) {
+  throw new Error(
+    'Configured Challenge Rush update source no longer says "Race Mode is here"; update the rollout note.'
+  );
+}
+
+if (
+  !updateText.includes("rated community levels") ||
+  !updateText.includes("stars and orbs")
+) {
+  throw new Error(
+    "Configured Challenge Rush update source no longer contains the rated-community-level reward update used by the guide."
+  );
+}
+
 console.log(
-  `Dashmetry live sources verified: ${legacyName} → ${currentName}, official host ${officialHost}.`
+  `Dashmetry live sources verified: ${legacyName} → ${currentName}, official features present, Race Mode source mismatch still current.`
 );

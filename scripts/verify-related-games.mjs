@@ -137,6 +137,20 @@ for (const page of pages) {
       }
     }
 
+    for (const phrase of [
+      "Normal, Practice and Endless play",
+      "browser level editor",
+      "leaderboards",
+      "achievements",
+      "cross-device progress",
+      "Race Mode",
+      "rollout-dependent",
+    ]) {
+      if (!source.includes(phrase)) {
+        errors.push(`Dashmetry: guide must retain source-checked current-feature wording: ${phrase}.`);
+      }
+    }
+
     if (
       source.includes('const LEGACY_NAME = "Dashmetry"') ||
       source.includes('const CURRENT_NAME = "Challenge Rush"') ||
@@ -243,6 +257,26 @@ if (
   errors.push(
     "Related-game refresh workflow must live-check the Dashmetry rebrand and official Challenge Rush home."
   );
+}
+
+const dashmetryLiveSource = readFileSync(
+  new URL("./verify-dashmetry-live.mjs", import.meta.url),
+  "utf8"
+);
+for (const token of [
+  '"normal mode"',
+  '"practice mode"',
+  '"endless mode"',
+  '"level editor"',
+  '"leaderboards"',
+  '"achievements"',
+  '"cross-device progress"',
+  '"race mode coming soon"',
+  '"race mode is here"',
+]) {
+  if (!dashmetryLiveSource.includes(token)) {
+    errors.push(`Dashmetry live verifier must protect current feature/race wording: ${token}.`);
+  }
 }
 
 if (
