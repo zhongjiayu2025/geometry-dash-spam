@@ -18,7 +18,7 @@ export const metadata: Metadata = {
     type: "website",
   },
   twitter: {
-    card: "summary",
+    card: "summary_large_image",
     title: "Geometry Dash Spam Guides – Wave, CPS & Demon Training",
     description: "Practical Geometry Dash guides covering spam, wave control, CPS measurement, input methods and demon practice without fabricated performance claims.",
   },
