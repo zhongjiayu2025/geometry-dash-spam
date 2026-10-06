@@ -1,5 +1,7 @@
 
 import JitterClickTest from "../../components/JitterClickTest";
+import Breadcrumbs from "../../components/Breadcrumbs";
+import RelatedTools from "../../components/RelatedTools";
 import { Metadata } from "next";
 
 export const metadata: Metadata = {
@@ -43,7 +45,9 @@ export default function JitterClickPage() {
                 type="application/ld+json"
                 dangerouslySetInnerHTML={{ __html: JSON.stringify(webAppSchema) }}
             />
-            <JitterClickTest />
+            <Breadcrumbs items={[{ label: "Jitter Click", href: "/jitter-click", active: true }]} />
+        <JitterClickTest />
+        <RelatedTools currentTool="jitter" />
         </>
     );
 }
