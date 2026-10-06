@@ -148,6 +148,13 @@ export default function SpamChallengeListPage() {
           </ol>
         </section>
 
+        <section className="mb-10 rounded-2xl border border-fuchsia-500/20 bg-fuchsia-950/10 p-5 md:p-6">
+          <h2 className="mb-2 text-xl font-bold text-white">Looking for top Geometry Dash spam levels?</h2>
+          <p className="text-sm leading-6 text-slate-400">
+            Use the <Link href="/blog/top-spam-levels-2026" className="font-semibold text-fuchsia-300 hover:underline">Top Geometry Dash Spam Levels & Demon Guide 2026</Link> for a source-led overview that explains when to use the SCL, the Demon List or spam-heavy Demon references.
+          </p>
+        </section>
+
         <section className="mb-10">
           <h2 className="mb-4 text-2xl font-bold text-white">Spam Challenge List FAQ</h2>
           <div className="grid gap-4 md:grid-cols-3">

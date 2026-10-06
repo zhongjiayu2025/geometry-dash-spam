@@ -134,6 +134,13 @@ export default function SpamDemonsPage() {
         ))}
       </section>
 
+      <section className="mt-10 rounded-2xl border border-blue-500/20 bg-blue-950/10 p-5 md:p-6">
+        <h2 className="mb-2 text-xl font-bold text-white">Need the broader spam-level guide?</h2>
+        <p className="text-sm leading-6 text-slate-400">
+          Read the <Link href="/blog/top-spam-levels-2026" className="font-semibold text-blue-300 hover:underline">Top Geometry Dash Spam Levels & Demon Guide 2026</Link> to compare community spam challenges, spam-heavy Demons and wave-focused references without mixing their ranking systems.
+        </p>
+      </section>
+
       <section className="mt-10">
         <h2 className="mb-4 text-2xl font-bold text-white">Spam demonlist FAQ</h2>
         <div className="grid gap-4 md:grid-cols-2">

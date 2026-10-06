@@ -3259,8 +3259,11 @@ for (const route of supportGuideRoutes) {
 const intentClusterErrors = [];
 const intentClusterLinks = new Map([
   ["/demon-list", ["/spam-challenge-list", "/demon-list/spam-demons"]],
-  ["/spam-challenge-list", ["/demon-list", "/demon-list/spam-demons"]],
-  ["/demon-list/spam-demons", ["/demon-list", "/spam-challenge-list"]],
+  ["/spam-challenge-list", ["/demon-list", "/demon-list/spam-demons", "/blog/top-spam-levels-2026"]],
+  ["/demon-list/spam-demons", ["/demon-list", "/spam-challenge-list", "/blog/top-spam-levels-2026"]],
+  ["/blog/top-spam-levels-2026", ["/spam-challenge-list", "/demon-list/spam-demons"]],
+  ["/cps-test", ["/blog/how-to-improve-cps-geometry-dash", "/jitter-click", "/butterfly-click", "/spacebar-counter"]],
+  ["/blog/how-to-improve-cps-geometry-dash", ["/cps-test", "/jitter-click", "/butterfly-click", "/spacebar-counter", "/geometry-dash-wave"]],
 ]);
 
 for (const [route, expectedLinks] of intentClusterLinks) {

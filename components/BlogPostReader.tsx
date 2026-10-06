@@ -14,6 +14,42 @@ const BlogPostReader: React.FC<BlogPostProps> = ({ post }) => {
   const encodedUrl = encodeURIComponent(articleUrl);
   const encodedTitle = encodeURIComponent(post.title);
 
+  const isCpsGuide = post.slug === 'how-to-improve-cps-geometry-dash';
+  const isTopSpamGuide = post.slug === 'top-spam-levels-2026';
+
+  const sidebarCta = isCpsGuide
+    ? {
+        title: "Test Your CPS",
+        description: "Use the same fixed-duration test before and after a training block.",
+        href: "/cps-test",
+        label: "Open CPS Test",
+      }
+    : isTopSpamGuide
+      ? {
+          title: "Check the Current SCL",
+          description: "Use the maintained Spam Challenge List source when exact placements matter.",
+          href: "/spam-challenge-list",
+          label: "Open SCL Guide",
+        }
+      : {
+          title: "Train Your Wave",
+          description: "Put this theory into practice now.",
+          href: "/geometry-dash-wave",
+          label: "Open Wave Trainer",
+        };
+
+  const primaryCta = isCpsGuide
+    ? { href: "/cps-test", label: "Take CPS Test" }
+    : isTopSpamGuide
+      ? { href: "/spam-challenge-list", label: "Open Spam Challenge List" }
+      : { href: "/", label: "Open Spam Test" };
+
+  const secondaryCta = isCpsGuide
+    ? { href: "/jitter-click", label: "Compare Jitter Clicking" }
+    : isTopSpamGuide
+      ? { href: "/demon-list/spam-demons", label: "Browse Spam Demons" }
+      : { href: "/cps-test", label: "Take CPS Test" };
+
   return (
     <article className="w-full max-w-4xl mx-auto animate-in slide-in-from-bottom-8 duration-500">
       
@@ -133,13 +169,13 @@ const BlogPostReader: React.FC<BlogPostProps> = ({ post }) => {
                  {/* Mini CTA in Sidebar */}
                  <div className="bg-gradient-to-b from-blue-900/20 to-slate-900/20 border border-blue-500/20 rounded-xl p-6 text-center">
                     <Zap className="w-8 h-8 text-blue-400 mx-auto mb-3" />
-                    <h4 className="font-bold text-white mb-2 text-sm">Train Your Wave</h4>
-                    <p className="text-xs text-slate-400 mb-4">Put this theory into practice now.</p>
+                    <h4 className="font-bold text-white mb-2 text-sm">{sidebarCta.title}</h4>
+                    <p className="text-xs text-slate-400 mb-4">{sidebarCta.description}</p>
                     <Link
-                        href="/geometry-dash-wave"
+                        href={sidebarCta.href}
                         className="w-full block py-2 bg-blue-600 hover:bg-blue-500 text-white text-xs font-bold rounded uppercase tracking-wider transition-colors"
                     >
-                        Open Wave Trainer
+                        {sidebarCta.label}
                     </Link>
                  </div>
              </div>
@@ -152,22 +188,30 @@ const BlogPostReader: React.FC<BlogPostProps> = ({ post }) => {
          <div className="absolute top-0 right-0 w-64 h-64 bg-blue-500/20 blur-[100px] rounded-full pointer-events-none"></div>
 
          <div className="flex-grow relative z-10 text-center md:text-left">
-            <h3 className="text-2xl font-display font-bold text-white mb-2">Ready to Test Your Skills?</h3>
-            <p className="text-slate-300">Don't just read about it. Put your clicking speed and wave consistency to the test right now.</p>
+            <h3 className="text-2xl font-display font-bold text-white mb-2">
+              {isTopSpamGuide ? "Continue With the Right List" : isCpsGuide ? "Turn the Guide Into a Repeatable Test" : "Ready to Test Your Skills?"}
+            </h3>
+            <p className="text-slate-300">
+              {isTopSpamGuide
+                ? "Use the live-list guide for current spam-challenge placements, or browse spam-heavy Demons as a separate practice reference."
+                : isCpsGuide
+                  ? "Keep the device and duration fixed, compare several runs, then test whether the faster rhythm still transfers into control."
+                  : "Don't just read about it. Put your clicking speed and wave consistency to the test right now."}
+            </p>
          </div>
          
          <div className="flex flex-col gap-3 relative z-10 w-full md:w-auto">
              <Link 
-                href="/"
+                href={primaryCta.href}
                 className="px-6 py-3 bg-blue-600 hover:bg-blue-500 text-white font-bold rounded-lg shadow-lg shadow-blue-900/50 flex items-center justify-center gap-2 transition-all transform hover:scale-105"
              >
-                <Zap className="w-5 h-5" /> Open Spam Test
+                <Zap className="w-5 h-5" /> {primaryCta.label}
              </Link>
              <Link 
-                href="/cps-test"
+                href={secondaryCta.href}
                 className="px-6 py-3 bg-slate-800 hover:bg-slate-700 text-white font-bold rounded-lg border border-white/10 flex items-center justify-center gap-2 transition-all"
              >
-                <MousePointer2 className="w-5 h-5" /> Take CPS Test
+                <MousePointer2 className="w-5 h-5" /> {secondaryCta.label}
              </Link>
          </div>
       </div>

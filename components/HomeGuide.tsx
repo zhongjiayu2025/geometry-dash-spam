@@ -169,6 +169,12 @@ export default function HomeGuide() {
             </p>
           </Link>
         </div>
+        <div className="mt-5 rounded-xl border border-blue-500/20 bg-blue-950/10 p-5">
+          <h3 className="mb-2 font-bold text-white">Want a structured CPS training routine?</h3>
+          <p className="text-sm leading-6 text-slate-400">
+            Use the <Link href="/blog/how-to-improve-cps-geometry-dash" className="font-semibold text-blue-400 hover:underline">How to Improve CPS in Geometry Dash guide</Link> to compare fixed-duration runs, clicking methods and the transfer from raw speed into controlled wave practice.
+          </p>
+        </div>
         <p className="mt-4 text-xs leading-5 text-slate-500">
           For ranked spam challenges, check the <Link href="/spam-challenge-list" className="text-fuchsia-400 hover:underline">current Spam Challenge List</Link> before assuming a technique or hardware setup is allowed.
         </p>
@@ -182,6 +188,10 @@ export default function HomeGuide() {
           If you want spam-heavy rated Demons instead, use the <Link href="/demon-list/spam-demons" className="text-blue-400 hover:underline">spam Demon reference guide</Link>.
         </p>
         <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
+          <Link href="/blog/top-spam-levels-2026" className="rounded-xl border border-fuchsia-500/20 bg-fuchsia-950/10 p-4 hover:border-fuchsia-400/40">
+            <h3 className="font-bold text-white mb-1">Top Spam Levels & Demon Guide 2026</h3>
+            <p className="text-xs leading-5 text-slate-500">A source-led guide separating spam challenges, spam-heavy Demons and wave references.</p>
+          </Link>
           <Link href="/spam-challenge-list" className="rounded-xl border border-fuchsia-500/20 bg-fuchsia-950/10 p-4 hover:border-fuchsia-400/40">
             <h3 className="font-bold text-white mb-1">Spam Challenge List</h3>
             <p className="text-xs leading-5 text-slate-500">Current SCL entry point and clear separation from the Demon List.</p>

@@ -137,7 +137,7 @@ export const BLOG_POSTS: BlogPost[] = [
         <p className="mb-4 text-slate-300">
           Normal clicking, jitter clicking, butterfly clicking and keyboard input feel different and can produce different speed-control tradeoffs. The useful method is the one you can repeat reliably for the section you are practicing.
         </p>
-        <div className="grid md:grid-cols-2 gap-4 my-6">
+        <div className="grid gap-4 my-6 md:grid-cols-3">
           <div className="rounded-xl border border-white/10 bg-slate-900/30 p-5">
             <h3 className="font-bold text-white mb-2">Jitter clicking</h3>
             <p className="text-sm text-slate-400">Compare your results in the <ToolLink href="/jitter-click">Jitter Click Test</ToolLink> and note whether speed comes at the cost of control.</p>
@@ -145,6 +145,10 @@ export const BLOG_POSTS: BlogPost[] = [
           <div className="rounded-xl border border-white/10 bg-slate-900/30 p-5">
             <h3 className="font-bold text-white mb-2">Butterfly clicking</h3>
             <p className="text-sm text-slate-400">Use the <ToolLink href="/butterfly-click">Butterfly Click Test</ToolLink> to compare a two-finger rhythm with your normal method.</p>
+          </div>
+          <div className="rounded-xl border border-white/10 bg-slate-900/30 p-5">
+            <h3 className="font-bold text-white mb-2">Spacebar input</h3>
+            <p className="text-sm text-slate-400">Use the <ToolLink href="/spacebar-counter">Spacebar CPS Test</ToolLink> to compare repeated keyboard presses with mouse clicking over a fixed duration.</p>
           </div>
         </div>
 
