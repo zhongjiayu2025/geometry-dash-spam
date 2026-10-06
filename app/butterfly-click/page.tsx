@@ -15,7 +15,7 @@ export const metadata: Metadata = {
     type: "website",
   },
   twitter: {
-    card: "summary",
+    card: "summary_large_image",
     title: "Butterfly Click Test | Two-Finger CPS Practice",
     description: "Practice butterfly clicking and compare two-finger click speed and consistency in your browser.",
   },
