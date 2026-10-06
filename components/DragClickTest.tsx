@@ -5,6 +5,7 @@ import dynamic from "next/dynamic";
 import { MousePointer2, Trophy } from "lucide-react";
 import { useExactCountdown } from "../lib/useExactCountdown";
 import { usePersistentBestNumber } from "../lib/usePersistentBestNumber";
+import { useIntentionalPointerAction } from "../lib/useIntentionalPointerAction";
 
 const DragClickResult = dynamic(() => import("./DragClickResult"), { ssr: false });
 
@@ -25,7 +26,6 @@ export default function DragClickTest() {
   const activeRef = useRef(false);
   const finishedRef = useRef(false);
   const analysisVersionRef = useRef(0);
-  const pendingTouchRef = useRef<{ pointerId: number; x: number; y: number } | null>(null);
 
   const finishTest = useCallback(() => {
     if (finishedRef.current) return;
@@ -86,34 +86,10 @@ export default function DragClickTest() {
     clickTimesRef.current.push(now);
   };
 
-  const handlePointerDown = (event: React.PointerEvent<HTMLButtonElement>) => {
-    if (!activeRef.current && event.pointerType === "touch") {
-      pendingTouchRef.current = {
-        pointerId: event.pointerId,
-        x: event.clientX,
-        y: event.clientY,
-      };
-      return;
-    }
-
-    event.preventDefault();
-    registerInput(performance.now());
-  };
-
-  const handlePointerUp = (event: React.PointerEvent<HTMLButtonElement>) => {
-    const pending = pendingTouchRef.current;
-    if (!pending || pending.pointerId !== event.pointerId) return;
-
-    pendingTouchRef.current = null;
-    const moved = Math.hypot(event.clientX - pending.x, event.clientY - pending.y);
-    if (moved <= 12 && !finishedRef.current) {
-      registerInput(performance.now());
-    }
-  };
-
-  const handlePointerCancel = () => {
-    pendingTouchRef.current = null;
-  };
+  const pointerAction = useIntentionalPointerAction<HTMLButtonElement>({
+    onAction: () => registerInput(performance.now()),
+    deferTouch: !isActive,
+  });
 
   const resetTest = () => {
     cancelCountdown();
@@ -123,7 +99,6 @@ export default function DragClickTest() {
     clicksRef.current = 0;
     activeRef.current = false;
     finishedRef.current = false;
-    pendingTouchRef.current = null;
 
     setClicks(0);
     setTimeLeft(10);
@@ -172,9 +147,7 @@ export default function DragClickTest() {
           {!isFinished ? (
             <button
               type="button"
-              onPointerDown={handlePointerDown}
-              onPointerUp={handlePointerUp}
-              onPointerCancel={handlePointerCancel}
+              {...pointerAction}
               className={`${isActive ? "touch-none" : "touch-pan-y"} w-full h-64 md:h-80 rounded-3xl border-2 flex flex-col items-center justify-center gap-4 transition-all duration-75 group select-none bg-indigo-900/10 border-indigo-500/20 hover:bg-indigo-800/20 hover:border-indigo-500/30 active:bg-indigo-600/20 active:border-indigo-500/50 active:scale-[0.98]`}
             >
               <MousePointer2 className="w-16 h-16 md:w-20 md:h-20 text-indigo-500/50 transition-all duration-75 group-hover:text-indigo-400 group-active:scale-90 group-active:text-indigo-400" />

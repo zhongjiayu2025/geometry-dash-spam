@@ -762,13 +762,15 @@ if (
   !dragClientSource.includes("useExactCountdown") ||
   !dragClientSource.includes("durationMs: TEST_MS") ||
   !dragClientSource.includes('usePersistentBestNumber("dragClickBest")') ||
+  !dragClientSource.includes("useIntentionalPointerAction") ||
+  !dragClientSource.includes("deferTouch: !isActive") ||
   !dragClientSource.includes("touch-pan-y") ||
-  !dragClientSource.includes("onPointerUp={handlePointerUp}") ||
+  dragClientSource.includes("pendingTouchRef") ||
   dragClientSource.includes("window.setInterval(updateTimer, 100)") ||
   dragClientSource.includes("}, 33)")
 ) {
   infrastructureErrors.push(
-    "DragClickTest must use the shared exact countdown, persistent best score and mobile-safe pointer handling"
+    "DragClickTest must use shared countdown, best-score and intentional-touch handling"
   );
 }
 
@@ -1505,7 +1507,7 @@ const clientSourceBudgets = [
   ["MouseAccelerationTest.tsx", mouseAccelerationClientSource, 5000],
   ["SoundReactionTest.tsx", soundReactionClientSource, 6000],
   ["SecondaryClickTest.tsx", secondaryClickClientSource, 8000],
-  ["DragClickTest.tsx", dragClientSource, 7800],
+  ["DragClickTest.tsx", dragClientSource, 7100],
   ["SpacebarCounter.tsx", spacebarClientSource, 9300],
   ["PersonalStats.tsx", personalStatsSource, 5000],
   ["GeometryDashClicker.tsx", clickerSource, 9200],
