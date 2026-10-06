@@ -23,7 +23,6 @@ type SystemDetails = {
   cookiesEnabled: boolean;
   platform: string;
   hardwareConcurrency: number | "Unknown";
-  memory: number | "Unknown";
   onLine: boolean;
 };
 
@@ -79,8 +78,6 @@ export default function SystemInfo() {
   useEffect(() => {
     const userAgent = navigator.userAgent;
     const detected = detectBrowserAndOs(userAgent);
-    const navigatorWithMemory = navigator as Navigator & { deviceMemory?: number };
-
     setInfo({
       os: detected.osName,
       browser: detected.browserName,
@@ -93,7 +90,6 @@ export default function SystemInfo() {
       cookiesEnabled: navigator.cookieEnabled,
       platform: navigator.platform,
       hardwareConcurrency: navigator.hardwareConcurrency || "Unknown",
-      memory: navigatorWithMemory.deviceMemory ?? "Unknown",
       onLine: navigator.onLine,
     });
 
