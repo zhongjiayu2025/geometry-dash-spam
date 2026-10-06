@@ -98,7 +98,10 @@ export default function SecondaryClickTest({
 
   const registerInput = () => {
     if (finished) return;
-    if (active && performance.now() - startTimeRef.current >= 10000) return;
+    if (active && performance.now() - startTimeRef.current >= 10000) {
+      finishTest();
+      return;
+    }
 
     if (soundEnabled) playClickSound(config.tone);
 

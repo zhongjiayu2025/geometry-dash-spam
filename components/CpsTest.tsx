@@ -63,7 +63,10 @@ const CpsTest: React.FC = () => {
     }
 
     const now = performance.now();
-    if (now - testStartRef.current >= selectedDuration * 1000) return;
+    if (now - testStartRef.current >= selectedDuration * 1000) {
+      finishTest();
+      return;
+    }
 
     clicksRef.current += 1;
     clickTimesRef.current.push(now);

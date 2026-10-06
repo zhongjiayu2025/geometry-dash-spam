@@ -2331,6 +2331,17 @@ if (
 }
 
 if (
+  !cpsClientSource.includes("now - testStartRef.current >= selectedDuration * 1000") ||
+  !cpsClientSource.includes("finishTest();\n      return;") ||
+  !secondaryClickClientSource.includes("performance.now() - startTimeRef.current >= 10000") ||
+  (secondaryClickClientSource.match(/finishTest\(\);\n      return;/g) ?? []).length < 1
+) {
+  infrastructureErrors.push(
+    "Click tests must finish immediately when a post-deadline input arrives instead of waiting for a throttled timeout"
+  );
+}
+
+if (
   !globalsSource.includes(".defer-render") ||
   !globalsSource.includes("content-visibility: auto")
 ) {
