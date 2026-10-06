@@ -1,7 +1,7 @@
 
 "use client";
 
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import dynamic from 'next/dynamic';
 import { Difficulty, GameStatus } from '../types';
 import { DIFFICULTY_CONFIGS } from '../constants';
@@ -25,36 +25,23 @@ const WAVE_PRESETS: Array<{ id: WavePreset; label: string; description: string }
 ];
 
 const WaveSimulator: React.FC<WaveSimulatorProps> = ({ variant = 'spam' }) => {
-  // Initialize with saved difficulty if present
-  const [difficulty, setDifficulty] = useState<Difficulty>(() => {
-    if (typeof window !== 'undefined') {
-        const saved = localStorage.getItem('gd_spam_last_difficulty');
-        return (saved && Object.values(Difficulty).includes(saved as Difficulty)) 
-        ? (saved as Difficulty) 
-        : Difficulty.Easy;
-    }
-    return Difficulty.Easy;
-  });
-  
-  // Initialize Endless Mode state
-  const [isEndless, setIsEndless] = useState<boolean>(() => {
-    if (typeof window !== 'undefined') {
-        return localStorage.getItem('gd_spam_endless_mode') === 'true';
-    }
-    return false;
-  });
-
-  // Initialize Mini Wave state
-  const [isMini, setIsMini] = useState<boolean>(() => {
-    if (typeof window !== 'undefined') {
-        return localStorage.getItem('gd_spam_mini_mode') === 'true';
-    }
-    return false;
-  });
+  const [difficulty, setDifficulty] = useState<Difficulty>(Difficulty.Easy);
+  const [isEndless, setIsEndless] = useState(false);
+  const [isMini, setIsMini] = useState(false);
   
   const [gameStatus, setGameStatus] = useState<GameStatus>(GameStatus.Idle);
   const [wavePreset, setWavePreset] = useState<WavePreset>('custom');
   const isWavePage = variant === 'wave';
+
+  useEffect(() => {
+    const savedDifficulty = localStorage.getItem('gd_spam_last_difficulty');
+    if (savedDifficulty && Object.values(Difficulty).includes(savedDifficulty as Difficulty)) {
+      setDifficulty(savedDifficulty as Difficulty);
+    }
+
+    setIsEndless(localStorage.getItem('gd_spam_endless_mode') === 'true');
+    setIsMini(localStorage.getItem('gd_spam_mini_mode') === 'true');
+  }, []);
 
   const handleDifficultySelect = (newDiff: Difficulty) => {
     setDifficulty(newDiff);
