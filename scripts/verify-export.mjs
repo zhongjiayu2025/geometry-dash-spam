@@ -640,6 +640,15 @@ if (
   );
 }
 
+if (
+  !spacebarClientSource.includes("isInteractiveKeyboardTarget(event.target)") ||
+  spacebarClientSource.includes("isInteractiveKeyboardTarget(e.target)")
+) {
+  infrastructureErrors.push(
+    "SpacebarCounter must use the current KeyboardEvent when skipping interactive controls"
+  );
+}
+
 const dragClientSource = supportClientSources.find(([file]) => file === "DragClickTest.tsx")?.[1] ?? "";
 if (
   !dragClientSource.includes("endTimerRef") ||
@@ -706,6 +715,17 @@ if (!ghostingClientSource.includes("if (event.repeat) return;")) {
   );
 }
 
+if (
+  !ghostingClientSource.includes("isInteractiveKeyboardTarget(event.target)") ||
+  ghostingClientSource.includes("isInteractiveKeyboardTarget(e.target)") ||
+  !ghostingClientSource.includes('["Space", "ArrowUp", "ArrowDown", "PageUp", "PageDown"]') ||
+  ghostingClientSource.includes('!["F5", "F11", "F12"].includes')
+) {
+  infrastructureErrors.push(
+    "KeyboardGhostingTest must preserve interactive controls and Tab navigation while only suppressing scrolling keys"
+  );
+}
+
 const rolloverClientSource = supportClientSources.find(([file]) => file === "KeyRolloverTest.tsx")?.[1] ?? "";
 if (
   rolloverClientSource.includes("setActiveKeys") ||
@@ -729,6 +749,15 @@ if (
 if (!rolloverClientSource.includes("if (event.repeat) return;")) {
   infrastructureErrors.push(
     "KeyRolloverTest must ignore repeated keydown events that do not change the active-key set"
+  );
+}
+
+if (
+  !rolloverClientSource.includes("isInteractiveKeyboardTarget(event.target)") ||
+  rolloverClientSource.includes("isInteractiveKeyboardTarget(e.target)")
+) {
+  infrastructureErrors.push(
+    "KeyRolloverTest must use the current KeyboardEvent when skipping interactive controls"
   );
 }
 
