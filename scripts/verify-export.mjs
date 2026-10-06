@@ -375,12 +375,15 @@ if (existsSync(manifestPath)) {
     infrastructureErrors.push("manifest must describe both games and utilities categories");
   }
 
-  const primaryIcon = manifest.icons?.[0];
-  if (
-    primaryIcon?.src !== "/logo.svg" ||
-    !String(primaryIcon?.purpose ?? "").includes("maskable")
-  ) {
-    infrastructureErrors.push("manifest primary icon must remain the maskable Geometry Dash Spam logo");
+  const manifestIcons = manifest.icons ?? [];
+  const hasAnyLogo = manifestIcons.some(
+    (icon) => icon.src === "/logo.svg" && icon.purpose === "any"
+  );
+  const hasMaskableLogo = manifestIcons.some(
+    (icon) => icon.src === "/logo.svg" && icon.purpose === "maskable"
+  );
+  if (!hasAnyLogo || !hasMaskableLogo) {
+    infrastructureErrors.push("manifest must expose the Geometry Dash Spam logo for both any and maskable purposes");
   }
 
   const shortcutUrls = new Set((manifest.shortcuts ?? []).map((item) => item.url));
