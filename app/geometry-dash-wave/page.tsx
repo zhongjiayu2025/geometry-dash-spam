@@ -52,6 +52,14 @@ export default function GeometryDashWavePage() {
     applicationCategory: "GameApplication",
     operatingSystem: "Any",
     isAccessibleForFree: true,
+    featureList: [
+      "Normal Wave practice",
+      "Mini Wave practice",
+      "Wave Spam practice",
+      "Precision Wave practice",
+      "Endless Wave practice",
+      "CPS and timing consistency metrics",
+    ],
     offers: { "@type": "Offer", price: "0", priceCurrency: "USD" },
   };
 
@@ -158,6 +166,33 @@ export default function GeometryDashWavePage() {
             <li><strong className="text-white">Move to Mini or Wave Spam.</strong> Increase input density only after basic control is stable.</li>
             <li><strong className="text-white">Use Precision last.</strong> Treat the hardest preset as a consistency check rather than a required benchmark.</li>
           </ol>
+        </section>
+
+        <section>
+          <h2 className="mb-3 text-2xl font-bold text-white">Wave practice & level guides</h2>
+          <p className="mb-5 max-w-3xl text-sm leading-6 text-slate-400">
+            Use the trainer for movement practice, then choose the guide that matches your next question instead of mixing level rankings with raw wave mechanics.
+          </p>
+          <div className="grid gap-4 md:grid-cols-3">
+            <Link href="/demon-list/wave-demons" className="rounded-xl border border-blue-500/20 bg-blue-950/10 p-5 hover:border-blue-400/40">
+              <h3 className="mb-2 font-bold text-white">Geometry Dash Wave Demons</h3>
+              <p className="text-sm leading-6 text-slate-400">
+                See wave-focused Demon references with dated Pointercrate rank context.
+              </p>
+            </Link>
+            <Link href="/blog/wave-vs-ufo-spam" className="rounded-xl border border-white/10 bg-slate-900/30 p-5 hover:border-blue-400/40">
+              <h3 className="mb-2 font-bold text-white">Wave vs UFO vs Ship Spam</h3>
+              <p className="text-sm leading-6 text-slate-400">
+                Compare why rapid inputs behave differently across the three movement modes.
+              </p>
+            </Link>
+            <Link href="/blog/notable-wave-spam-levels" className="rounded-xl border border-white/10 bg-slate-900/30 p-5 hover:border-blue-400/40">
+              <h3 className="mb-2 font-bold text-white">Notable Wave & Spam Levels</h3>
+              <p className="text-sm leading-6 text-slate-400">
+                Browse non-ranking level references associated with difficult wave and rapid-input gameplay.
+              </p>
+            </Link>
+          </div>
         </section>
 
         <section>

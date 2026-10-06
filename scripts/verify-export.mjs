@@ -3261,7 +3261,10 @@ const intentClusterLinks = new Map([
   ["/demon-list", ["/spam-challenge-list", "/demon-list/spam-demons", "/blog/top-spam-levels-2026"]],
   ["/spam-challenge-list", ["/demon-list", "/demon-list/spam-demons", "/blog/top-spam-levels-2026"]],
   ["/demon-list/spam-demons", ["/demon-list", "/spam-challenge-list", "/demon-list/wave-demons", "/blog/top-spam-levels-2026"]],
-  ["/demon-list/wave-demons", ["/demon-list/spam-demons", "/spam-challenge-list", "/blog/top-spam-levels-2026"]],
+  ["/demon-list/wave-demons", ["/geometry-dash-wave", "/demon-list/spam-demons", "/spam-challenge-list", "/blog/top-spam-levels-2026", "/blog/notable-wave-spam-levels"]],
+  ["/geometry-dash-wave", ["/demon-list/wave-demons", "/blog/wave-vs-ufo-spam", "/blog/notable-wave-spam-levels"]],
+  ["/blog/wave-vs-ufo-spam", ["/geometry-dash-wave", "/demon-list/wave-demons"]],
+  ["/blog/notable-wave-spam-levels", ["/geometry-dash-wave", "/demon-list/wave-demons", "/demon-list"]],
   ["/blog/top-spam-levels-2026", ["/spam-challenge-list", "/demon-list/spam-demons", "/demon-list/wave-demons"]],
   ["/cps-test", ["/blog/how-to-improve-cps-geometry-dash", "/jitter-click", "/butterfly-click", "/spacebar-counter", "/reaction-test", "/aim-trainer"]],
   ["/blog/how-to-improve-cps-geometry-dash", ["/cps-test", "/jitter-click", "/butterfly-click", "/spacebar-counter", "/geometry-dash-wave"]],
@@ -3297,6 +3300,36 @@ if (topSpamGuidePath) {
   ]) {
     if (!topSpamHtml.includes(snippet)) {
       contentErrors.push(`/blog/top-spam-levels-2026: FAQPage is missing "${snippet}"`);
+    }
+  }
+}
+
+for (const [route, snippets] of [
+  [
+    "/blog/wave-vs-ufo-spam",
+    [
+      '"@type":"FAQPage"',
+      "What is the difference between wave, UFO and ship spam?",
+      "Is higher CPS always better for Geometry Dash wave?",
+      "Where can I practice Geometry Dash wave online?",
+    ],
+  ],
+  [
+    "/blog/notable-wave-spam-levels",
+    [
+      '"@type":"FAQPage"',
+      "Is there an official Geometry Dash wave or spam level ranking?",
+      "Where can I see current ranks for wave-heavy Demons?",
+      "Where can I practice Geometry Dash wave control?",
+    ],
+  ],
+]) {
+  const pagePath = exportedPath(route);
+  if (!pagePath) continue;
+  const html = readFileSync(pagePath, "utf8");
+  for (const snippet of snippets) {
+    if (!html.includes(snippet)) {
+      contentErrors.push(`${route}: FAQPage is missing "${snippet}"`);
     }
   }
 }

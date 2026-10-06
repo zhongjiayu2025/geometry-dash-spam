@@ -322,11 +322,25 @@ export const BLOG_POSTS: BlogPost[] = [
     excerpt:
       "Wave, UFO and ship sections can all involve rapid inputs, but the control problem is different in each mode.",
     date: "January 10, 2026",
-    updated: "October 5, 2026",
+    updated: "October 7, 2026",
     readTime: "5 min read",
     coverImage:
       "https://images.unsplash.com/photo-1518770660439-4636190af475?auto=format&fit=crop&w=1200&h=630&q=72",
     tags: ["Mechanics", "Wave"],
+    faqs: [
+      {
+        q: "What is the difference between wave, UFO and ship spam?",
+        a: "Wave turns press-and-release timing into diagonal direction changes, UFO uses repeated tap impulses, and ship movement depends more on balancing hold and release duration. Rapid inputs can appear in all three, but the control problem is different.",
+      },
+      {
+        q: "Is higher CPS always better for Geometry Dash wave?",
+        a: "No. Higher CPS only helps when the spacing between inputs remains controlled enough to keep the wave path stable.",
+      },
+      {
+        q: "Where can I practice Geometry Dash wave online?",
+        a: "Use the Geometry Dash Wave Trainer for normal, mini, spam, precision and endless browser practice, then compare raw click speed separately with the CPS Test.",
+      },
+    ],
     content: (
       <>
         <h2 className="text-2xl font-bold text-white mt-8 mb-4">Wave: interval control</h2>
@@ -344,8 +358,11 @@ export const BLOG_POSTS: BlogPost[] = [
           Ship control is more about balancing hold duration and release timing. Fast corrections may look like spam, but the useful skill is controlled micro-adjustment rather than maximum CPS.
         </p>
 
+        <p className="text-slate-300 mb-4">
+          If your goal is specifically rapid-input wave control, use the <ToolLink href="/geometry-dash-wave">Geometry Dash Wave Trainer</ToolLink> for normal, mini, spam, precision and endless practice.
+        </p>
         <p className="text-slate-300">
-          If your goal is specifically rapid-input wave control, start with the <ToolLink href="/">Spam Test</ToolLink> and then move to the dedicated wave presets.
+          For difficult rated levels where wave control is the main practice focus, continue with the <ToolLink href="/demon-list/wave-demons">Wave Demon guide</ToolLink>.
         </p>
       </>
     ),
@@ -357,11 +374,25 @@ export const BLOG_POSTS: BlogPost[] = [
     excerpt:
       "A non-ranking list of well-known levels associated with difficult wave control and rapid-input sections, with links back to the current Demon List.",
     date: "January 10, 2026",
-    updated: "October 5, 2026",
+    updated: "October 7, 2026",
     readTime: "6 min read",
     coverImage:
       "https://images.unsplash.com/photo-1535905557558-afc4877a26fc?auto=format&fit=crop&w=1200&h=630&q=72",
     tags: ["Levels", "Wave"],
+    faqs: [
+      {
+        q: "Is there an official Geometry Dash wave or spam level ranking?",
+        a: "No single official ranking covers both ideas. Pointercrate ranks difficult rated Demons overall, while the Spam Challenge List is a separate community list for spam challenges.",
+      },
+      {
+        q: "Where can I see current ranks for wave-heavy Demons?",
+        a: "Use the dated Demon List snapshot or the live Pointercrate source linked from it. The Wave Demon guide uses those ranks only as context for wave-focused practice references.",
+      },
+      {
+        q: "Where can I practice Geometry Dash wave control?",
+        a: "Use the Geometry Dash Wave Trainer for browser-based normal, mini, spam, precision and endless wave practice.",
+      },
+    ],
     content: (
       <>
         <p className="text-slate-300 mb-6">
@@ -381,8 +412,11 @@ export const BLOG_POSTS: BlogPost[] = [
           </section>
         ))}
 
-        <p className="text-slate-300">
+        <p className="text-slate-300 mb-4">
           Before using a level&apos;s Demon List position as a fact, check the dated <ToolLink href="/demon-list">Top 50 snapshot</ToolLink> or the live source linked from that page.
+        </p>
+        <p className="text-slate-300">
+          For a focused practice path, use the <ToolLink href="/demon-list/wave-demons">Wave Demon guide</ToolLink> for ranked context and the <ToolLink href="/geometry-dash-wave">Geometry Dash Wave Trainer</ToolLink> for browser practice.
         </p>
       </>
     ),

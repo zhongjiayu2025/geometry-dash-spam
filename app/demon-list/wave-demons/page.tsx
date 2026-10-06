@@ -174,6 +174,13 @@ export default function WaveDemonsPage() {
         </div>
       </section>
 
+      <section className="mb-10 rounded-2xl border border-white/10 bg-slate-900/25 p-5 md:p-6">
+        <h2 className="mb-2 text-xl font-bold text-white">Want examples without treating them as a ranking?</h2>
+        <p className="text-sm leading-6 text-slate-400">
+          Read <Link href="/blog/notable-wave-spam-levels" className="font-semibold text-blue-300 hover:underline">Notable Wave and Spam Levels in Geometry Dash</Link> for a non-ranking overview, then return here when you need current Pointercrate rank context.
+        </p>
+      </section>
+
       <div className="rounded-xl border border-white/10 bg-slate-900/25 p-5 text-sm text-slate-400">
         Rankings can change.{" "}
         <a href={DEMON_SOURCE_URL} target="_blank" rel="noopener noreferrer" className="text-blue-400 hover:underline">
