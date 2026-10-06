@@ -4,9 +4,19 @@ import React, { useEffect, useState } from "react";
 import { AlertCircle, Keyboard as KeyboardIcon } from "lucide-react";
 
 
+type RolloverState = {
+  activeKeys: Set<string>;
+  maxKeys: number;
+};
+
+const EMPTY_ROLLOVER: RolloverState = {
+  activeKeys: new Set(),
+  maxKeys: 0,
+};
+
 export default function KeyRolloverTest() {
-  const [activeKeys, setActiveKeys] = useState<Set<string>>(new Set());
-  const [maxKeys, setMaxKeys] = useState(0);
+  const [measurement, setMeasurement] = useState<RolloverState>(EMPTY_ROLLOVER);
+  const { activeKeys, maxKeys } = measurement;
 
   useEffect(() => {
     const handleKeyDown = (event: KeyboardEvent) => {
@@ -17,23 +27,27 @@ export default function KeyRolloverTest() {
         event.preventDefault();
       }
 
-      setActiveKeys((previous) => {
-        const next = new Set(previous);
-        next.add(event.code);
-        setMaxKeys((current) => Math.max(current, next.size));
-        return next;
+      setMeasurement((previous) => {
+        const activeKeys = new Set(previous.activeKeys);
+        activeKeys.add(event.code);
+        return {
+          activeKeys,
+          maxKeys: Math.max(previous.maxKeys, activeKeys.size),
+        };
       });
     };
 
     const handleKeyUp = (event: KeyboardEvent) => {
-      setActiveKeys((previous) => {
-        const next = new Set(previous);
-        next.delete(event.code);
-        return next;
+      setMeasurement((previous) => {
+        const activeKeys = new Set(previous.activeKeys);
+        activeKeys.delete(event.code);
+        return { ...previous, activeKeys };
       });
     };
 
-    const clearPressed = () => setActiveKeys(new Set());
+    const clearPressed = () => {
+      setMeasurement((previous) => ({ ...previous, activeKeys: new Set() }));
+    };
 
     window.addEventListener("keydown", handleKeyDown, { passive: false });
     window.addEventListener("keyup", handleKeyUp);
@@ -110,7 +124,7 @@ export default function KeyRolloverTest() {
 
           {maxKeys > 0 && (
             <button
-              onClick={() => setMaxKeys(0)}
+              onClick={() => setMeasurement((previous) => ({ ...previous, maxKeys: 0 }))}
               className="mt-6 px-6 py-2 bg-white/5 hover:bg-white/10 text-slate-300 font-medium rounded-lg transition-colors text-sm"
             >
               Reset Max Record
