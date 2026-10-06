@@ -445,6 +445,7 @@ const waveRunOverlaysSource = readFileSync(join(process.cwd(), "components", "Wa
 const clickSoundSource = readFileSync(join(process.cwd(), "lib", "clickSound.ts"), "utf8");
 const cpsRecordsSource = readFileSync(join(process.cwd(), "lib", "cpsRecords.ts"), "utf8");
 const persistentBestSource = readFileSync(join(process.cwd(), "lib", "usePersistentBestNumber.ts"), "utf8");
+const managedTimeoutSource = readFileSync(join(process.cwd(), "lib", "useManagedTimeout.ts"), "utf8");
 const lazyClickSoundSource = readFileSync(join(process.cwd(), "lib", "useLazyClickSound.ts"), "utf8");
 const secondaryClickFinishedSource = readFileSync(join(process.cwd(), "components", "SecondaryClickFinishedActions.tsx"), "utf8");
 const dragClickResultSource = readFileSync(join(process.cwd(), "components", "DragClickResult.tsx"), "utf8");
@@ -1057,6 +1058,30 @@ if (
   );
 }
 
+for (const [file, source] of [
+  ["ChimpTest.tsx", chimpClientSource],
+  ["VisualMemoryTest.tsx", visualMemoryClientSource],
+]) {
+  if (
+    !source.includes("useManagedTimeout") ||
+    source.includes("setTimeout(")
+  ) {
+    infrastructureErrors.push(
+      `${file}: delayed level transitions must use the shared managed-timeout hook`
+    );
+  }
+}
+
+if (
+  !managedTimeoutSource.includes("window.clearTimeout(timeoutRef.current)") ||
+  !managedTimeoutSource.includes("useEffect(() => clear, [clear])") ||
+  !managedTimeoutSource.includes("timeoutRef.current = null")
+) {
+  infrastructureErrors.push(
+    "Shared managed-timeout hook must clear stale timers on reschedule and unmount"
+  );
+}
+
 if (
   !scrollClientSource.includes('dynamic(() => import("./ScrollResult")') ||
   !scrollClientSource.includes("window.setInterval(updateUi, 100)") ||
@@ -1129,7 +1154,7 @@ const clientSourceBudgets = [
   ["CpsTest.tsx", cpsClientSource, 14200],
   ["AimTrainer.tsx", aimClientSource, 10500],
   ["ReactionTest.tsx", reactionClientSource, 6500],
-  ["VisualMemoryTest.tsx", visualMemoryClientSource, 10800],
+  ["VisualMemoryTest.tsx", visualMemoryClientSource, 10700],
   ["ChimpTest.tsx", chimpClientSource, 10800],
   ["TypingTest.tsx", typingClientSource, 9300],
   ["ScrollTest.tsx", scrollClientSource, 7500],
