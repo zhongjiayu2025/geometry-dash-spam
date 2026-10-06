@@ -452,6 +452,7 @@ const persistentBestSource = readFileSync(join(process.cwd(), "lib", "usePersist
 const browserStorageSource = readFileSync(join(process.cwd(), "lib", "browserStorage.ts"), "utf8");
 const managedTimeoutSource = readFileSync(join(process.cwd(), "lib", "useManagedTimeout.ts"), "utf8");
 const intentionalPointerSource = readFileSync(join(process.cwd(), "lib", "useIntentionalPointerAction.ts"), "utf8");
+const bpmRuntimeSource = readFileSync(join(process.cwd(), "lib", "bpmRuntime.ts"), "utf8");
 const reactionTrialGuardSource = readFileSync(join(process.cwd(), "lib", "useReactionTrialGuard.ts"), "utf8");
 const exactCountdownSource = readFileSync(join(process.cwd(), "lib", "useExactCountdown.ts"), "utf8");
 const keyboardChordSource = readFileSync(join(process.cwd(), "lib", "useKeyboardChordMeasurement.ts"), "utf8");
@@ -1648,6 +1649,18 @@ if (
 ) {
   infrastructureErrors.push(
     "BpmTapper must suppress repeat, preserve focused-button Space/Enter input, ignore other interactive controls, and use the shared managed timeout"
+  );
+}
+
+if (
+  !bpmClientSource.includes('import { updateBpmTaps } from "../lib/bpmRuntime"') ||
+  bpmClientSource.includes("const median =") ||
+  !bpmRuntimeSource.includes("now - last > 3000") ||
+  !bpmRuntimeSource.includes("taps.length > 10") ||
+  !bpmRuntimeSource.includes("Math.round(60000 / median)")
+) {
+  infrastructureErrors.push(
+    "BPM tap-window math must stay in bpmRuntime and discard stale taps after a real 3-second gap even if timers were throttled"
   );
 }
 

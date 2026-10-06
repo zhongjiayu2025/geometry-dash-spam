@@ -5,6 +5,7 @@ import { RotateCcw, Timer } from "lucide-react";
 import { isInteractiveKeyboardTarget } from "../lib/inputTarget";
 import { useManagedTimeout } from "../lib/useManagedTimeout";
 import { useIntentionalPointerAction } from "../lib/useIntentionalPointerAction";
+import { updateBpmTaps } from "../lib/bpmRuntime";
 
 export default function BpmTapper() {
   const [bpm, setBpm] = useState(0);
@@ -23,27 +24,11 @@ export default function BpmTapper() {
   }, [clearReset]);
 
   const recordTap = useCallback(() => {
-    const now = performance.now();
-    let taps = [...tapsRef.current, now];
-
-    if (taps.length > 10) taps = taps.slice(-10);
-
-    tapsRef.current = taps;
-    setTapCount(taps.length);
+    const next = updateBpmTaps(tapsRef.current, performance.now());
+    tapsRef.current = next.taps;
+    setTapCount(next.taps.length);
+    setBpm(next.bpm);
     setIsActive(true);
-
-    if (taps.length >= 2) {
-      const intervals = taps.slice(1).map((time, index) => time - taps[index]);
-      const sorted = [...intervals].sort((a, b) => a - b);
-      const median =
-        sorted.length % 2 === 0
-          ? (sorted[sorted.length / 2 - 1] + sorted[sorted.length / 2]) / 2
-          : sorted[Math.floor(sorted.length / 2)];
-
-      const estimate = median > 0 ? Math.round(60000 / median) : 0;
-      setBpm(estimate > 0 && estimate < 1000 ? estimate : 0);
-    }
-
     scheduleReset(reset, 3000);
   }, [reset, scheduleReset]);
 
