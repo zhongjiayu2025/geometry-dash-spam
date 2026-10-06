@@ -9,6 +9,21 @@ import ToolWebApplicationSchema from "../../components/ToolWebApplicationSchema"
 const description =
   "Take a 10-second butterfly click test and measure two-finger CPS, click count and repeatability. Compare several runs on the same mouse and setup.";
 
+const butterflyFaqs = [
+  {
+    q: "What is Butterfly Clicking?",
+    a: "Butterfly clicking alternates two fingers on the same mouse button to produce repeated clicks. Results vary by player, mouse, browser and technique.",
+  },
+  {
+    q: "Why use Butterfly Clicking in Geometry Dash?",
+    a: "Alternating two fingers may feel more sustainable or controllable for some players during rapid-input sections, but it is not universally better. Compare it with your normal method on the same device and test length.",
+  },
+  {
+    q: "Is it Cheating?",
+    a: "Rules vary by leaderboard or community. Check the rules of the specific competition or list before using modified input behavior.",
+  },
+];
+
 export const metadata: Metadata = {
   title: "Butterfly Click Test | 10 Second CPS Test",
   description,
@@ -27,8 +42,19 @@ export const metadata: Metadata = {
 };
 
 export default function ButterflyClickPage() {
+  const faqSchema = {
+    "@context": "https://schema.org",
+    "@type": "FAQPage",
+    mainEntity: butterflyFaqs.map((item) => ({
+      "@type": "Question",
+      name: item.q,
+      acceptedAnswer: { "@type": "Answer", text: item.a },
+    })),
+  };
+
   return (
     <>
+      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(faqSchema) }} />
       <ToolWebApplicationSchema
         name="Butterfly Click Test"
         path="/butterfly-click"

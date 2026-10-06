@@ -6,6 +6,21 @@ import RelatedTools from "../../components/RelatedTools";
 import InputToolGuide from "../../components/InputToolGuide";
 import { Metadata } from "next";
 
+const spacebarFaqs = [
+  {
+    q: "What does the spacebar CPS test measure?",
+    a: "It counts browser-registered Space key presses over 10 seconds and converts the total into presses per second.",
+  },
+  {
+    q: "Is this a keyboard latency test?",
+    a: "No. The page measures repeated key presses in the browser. It does not measure physical switch actuation, scan rate or end-to-end keyboard latency.",
+  },
+  {
+    q: "Can I use the spacebar for Geometry Dash?",
+    a: "Yes. Space is a standard Geometry Dash input option. Raw press speed is still separate from the timing and control needed for wave spam.",
+  },
+];
+
 export const metadata: Metadata = {
   title: "Spacebar CPS Test | 10 Second Spacebar Counter",
   description:
@@ -25,8 +40,19 @@ export const metadata: Metadata = {
 };
 
 export default function SpacebarCounterPage() {
+  const faqSchema = {
+    "@context": "https://schema.org",
+    "@type": "FAQPage",
+    mainEntity: spacebarFaqs.map((item) => ({
+      "@type": "Question",
+      name: item.q,
+      acceptedAnswer: { "@type": "Answer", text: item.a },
+    })),
+  };
+
   return (
     <>
+      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(faqSchema) }} />
       <ToolWebApplicationSchema
         name="Spacebar Counter"
         path="/spacebar-counter"
@@ -45,6 +71,17 @@ export default function SpacebarCounterPage() {
       <SpacebarCounter />
       <SpacebarGuide />
       <InputToolGuide tool="spacebar" />
+      <section className="mx-auto mt-10 max-w-5xl">
+        <h2 className="mb-4 text-2xl font-display font-bold text-white">Spacebar CPS Test FAQ</h2>
+        <div className="grid gap-4 md:grid-cols-3">
+          {spacebarFaqs.map((item) => (
+            <div key={item.q} className="rounded-xl border border-white/10 bg-slate-900/30 p-5">
+              <h3 className="mb-2 font-bold text-white">{item.q}</h3>
+              <p className="text-sm leading-6 text-slate-400">{item.a}</p>
+            </div>
+          ))}
+        </div>
+      </section>
       <RelatedTools currentTool="spacebar" />
     </>
   );

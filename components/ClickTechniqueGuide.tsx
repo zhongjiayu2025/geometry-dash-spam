@@ -83,20 +83,20 @@ export default function ClickTechniqueGuide({ variant }: { variant: "jitter" | "
         </section>
 
         <Link
-          href="/blog/common-spam-mistakes"
+          href="/blog/how-to-improve-cps-geometry-dash"
           className="block mb-12 group relative overflow-hidden rounded-2xl border border-orange-500/30 bg-gradient-to-r from-orange-900/40 to-slate-900/40 p-8 transition-all hover:border-orange-400/50"
         >
           <div aria-hidden="true" className="absolute right-0 top-0 h-full w-1/3 bg-orange-500/10 blur-[50px] transition-all group-hover:bg-orange-500/20" />
           <div className="relative z-10 flex flex-col items-start gap-4 md:flex-row md:items-center md:justify-between">
             <div className="space-y-2">
               <div className="flex items-center gap-2 text-xs font-bold uppercase tracking-wider text-orange-400">
-                <BookOpen className="h-4 w-4" /> Improve Your Form
+                <BookOpen className="h-4 w-4" /> CPS Training Guide
               </div>
               <h3 className="font-display text-2xl font-bold text-white group-hover:text-orange-200">
-                Losing control while clicking faster?
+                Improve CPS without losing control
               </h3>
               <p className="max-w-xl text-slate-400">
-                Use the spam-mistakes guide to separate raw speed from repeatable timing and avoid treating maximum CPS as the only training goal.
+                Compare fixed-duration runs, jitter and butterfly clicking, then transfer the faster rhythm into controlled Geometry Dash wave practice.
               </p>
             </div>
             <div aria-hidden="true" className="flex h-12 w-12 items-center justify-center rounded-full bg-orange-600 text-white shadow-lg shadow-orange-900/50 transition-transform group-hover:translate-x-2 group-hover:scale-110">
@@ -164,6 +164,21 @@ export default function ClickTechniqueGuide({ variant }: { variant: "jitter" | "
           <p className="text-xs text-slate-400">Any repetitive clicking technique can become uncomfortable. Use a relaxed posture, take breaks and stop if you feel pain or numbness.</p>
         </div>
       </div>
+
+      <Link
+        href="/blog/how-to-improve-cps-geometry-dash"
+        className="group block rounded-2xl border border-pink-500/20 bg-pink-950/10 p-6 hover:border-pink-400/40"
+      >
+        <div className="mb-2 flex items-center gap-2 text-xs font-bold uppercase tracking-wider text-pink-300">
+          <BookOpen className="h-4 w-4" /> CPS Training Guide
+        </div>
+        <h3 className="mb-2 text-xl font-bold text-white group-hover:text-pink-200">
+          Build a repeatable CPS routine
+        </h3>
+        <p className="text-sm leading-6 text-slate-400">
+          Compare butterfly, jitter and keyboard input with fixed-duration tests, then check whether the faster rhythm still transfers into controlled wave practice.
+        </p>
+      </Link>
     </section>
   );
 }

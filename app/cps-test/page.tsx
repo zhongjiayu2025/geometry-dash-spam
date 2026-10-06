@@ -40,6 +40,19 @@ const cpsFaqs = [
   },
 ];
 
+const supportingToolLinks = [
+  {
+    href: "/reaction-test",
+    title: "Reaction Time Test",
+    description: "Compare browser-observed visual response timing separately from repeated-input speed.",
+  },
+  {
+    href: "/aim-trainer",
+    title: "Aim Trainer",
+    description: "Practice mouse accuracy and target clicking as a separate precision skill.",
+  },
+];
+
 const clickMethodLinks = [
   {
     href: "/jitter-click",
@@ -162,6 +175,27 @@ export default function CpsTestPage() {
               <h3 className="mb-2 font-bold text-white">{item.title}</h3>
               <p className="text-sm leading-6 text-slate-400">{item.description}</p>
               <span className="mt-3 inline-block text-sm font-semibold text-blue-400">Open test →</span>
+            </Link>
+          ))}
+        </div>
+      </section>
+
+      <section className="mx-auto mt-12 max-w-5xl">
+        <p className="mb-2 text-xs font-bold uppercase tracking-[0.18em] text-slate-500">Supporting diagnostics</p>
+        <h2 className="mb-3 text-2xl font-display font-bold text-white">Supporting response & precision tools</h2>
+        <p className="mb-5 max-w-3xl text-sm leading-6 text-slate-400">
+          CPS measures repeated-input speed. Use these separate tools when you want to compare visual response or pointer precision without mixing those results into your click-speed score.
+        </p>
+        <div className="grid gap-3 md:grid-cols-2">
+          {supportingToolLinks.map((item) => (
+            <Link
+              key={item.href}
+              href={item.href}
+              className="rounded-xl border border-white/10 bg-slate-900/30 p-5 transition-colors hover:border-blue-500/40"
+            >
+              <h3 className="mb-2 font-bold text-white">{item.title}</h3>
+              <p className="text-sm leading-6 text-slate-400">{item.description}</p>
+              <span className="mt-3 inline-block text-sm font-semibold text-blue-400">Open tool →</span>
             </Link>
           ))}
         </div>

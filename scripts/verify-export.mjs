@@ -3262,8 +3262,11 @@ const intentClusterLinks = new Map([
   ["/spam-challenge-list", ["/demon-list", "/demon-list/spam-demons", "/blog/top-spam-levels-2026"]],
   ["/demon-list/spam-demons", ["/demon-list", "/spam-challenge-list", "/blog/top-spam-levels-2026"]],
   ["/blog/top-spam-levels-2026", ["/spam-challenge-list", "/demon-list/spam-demons"]],
-  ["/cps-test", ["/blog/how-to-improve-cps-geometry-dash", "/jitter-click", "/butterfly-click", "/spacebar-counter"]],
+  ["/cps-test", ["/blog/how-to-improve-cps-geometry-dash", "/jitter-click", "/butterfly-click", "/spacebar-counter", "/reaction-test", "/aim-trainer"]],
   ["/blog/how-to-improve-cps-geometry-dash", ["/cps-test", "/jitter-click", "/butterfly-click", "/spacebar-counter", "/geometry-dash-wave"]],
+  ["/jitter-click", ["/cps-test", "/blog/how-to-improve-cps-geometry-dash"]],
+  ["/butterfly-click", ["/cps-test", "/blog/how-to-improve-cps-geometry-dash"]],
+  ["/spacebar-counter", ["/cps-test", "/blog/how-to-improve-cps-geometry-dash"]],
 ]);
 
 for (const [route, expectedLinks] of intentClusterLinks) {

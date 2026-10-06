@@ -1,3 +1,4 @@
+import Link from "next/link";
 import { Keyboard } from "lucide-react";
 
 export default function SpacebarGuide() {
@@ -32,6 +33,16 @@ export default function SpacebarGuide() {
           <p className="text-sm leading-6 text-slate-400">Repeated high-effort pressing can become uncomfortable; take breaks instead of forcing longer sessions.</p>
         </div>
       </div>
+
+      <Link
+        href="/blog/how-to-improve-cps-geometry-dash"
+        className="block rounded-xl border border-purple-500/20 bg-purple-950/10 p-5 hover:border-purple-400/40"
+      >
+        <h3 className="mb-2 font-bold text-white">Compare keyboard and mouse CPS in one routine</h3>
+        <p className="text-sm leading-6 text-slate-400">
+          The CPS training guide explains how to keep duration fixed, compare jitter, butterfly and spacebar input, and separate raw speed from wave control.
+        </p>
+      </Link>
     </section>
   );
 }
