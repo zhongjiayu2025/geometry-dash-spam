@@ -499,9 +499,6 @@ const GameCanvas: React.FC<GameCanvasProps> = memo(({ difficulty, status, onStat
      if (status === GameStatus.Lost || status === GameStatus.Won) {
          resetGame();
          onStatusChange(GameStatus.Playing);
-         gameState.current.isHolding = true; 
-         playSound('click');
-         return;
      }
      
      if (status === GameStatus.Idle) {
