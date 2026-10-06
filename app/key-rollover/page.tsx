@@ -1,4 +1,5 @@
 import KeyRolloverTest from "../../components/KeyRolloverTest";
+import Breadcrumbs from "../../components/Breadcrumbs";
 import ToolWebApplicationSchema from "../../components/ToolWebApplicationSchema";
 import RelatedTools from "../../components/RelatedTools";
 import InputToolGuide from "../../components/InputToolGuide";
@@ -30,6 +31,7 @@ export default function KeyRolloverPage() {
         path="/key-rollover"
         description="Check how many simultaneous key presses your browser receives and inspect keyboard rollover behavior."
       />
+      <Breadcrumbs items={[{ label: "Key Rollover", href: "/key-rollover", active: true }]} />
       <div className="mb-8 md:mb-12 text-center">
         <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-white/5 border border-white/10 text-xs font-mono text-slate-400 mb-4">
           KEYBOARD INPUT CHECK
