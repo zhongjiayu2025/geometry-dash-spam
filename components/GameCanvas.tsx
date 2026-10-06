@@ -91,6 +91,7 @@ const GameCanvas: React.FC<GameCanvasProps> = memo(({ difficulty, status, onStat
   // Settings State
   const [isMuted, setIsMuted] = useState<boolean>(true);
   const [isFullscreen, setIsFullscreen] = useState<boolean>(false);
+  const [canFullscreen, setCanFullscreen] = useState<boolean>(false);
   const [reduceMotion, setReduceMotion] = useState<boolean>(false);
 
   const [highScore, setHighScore] = useState<number>(0);
@@ -123,6 +124,8 @@ const GameCanvas: React.FC<GameCanvasProps> = memo(({ difficulty, status, onStat
 
   // Handle Fullscreen Change Events
   useEffect(() => {
+    setCanFullscreen(Boolean(document.fullscreenEnabled && containerRef.current?.requestFullscreen));
+
     const handleFsChange = () => {
         setIsFullscreen(!!document.fullscreenElement);
     };
@@ -1276,15 +1279,17 @@ const GameCanvas: React.FC<GameCanvasProps> = memo(({ difficulty, status, onStat
               >
                   {reduceMotion ? <ZapOff className="w-5 h-5"/> : <Activity className="w-5 h-5"/>}
               </button>
-              <button 
-                  aria-label={isFullscreen ? "Exit fullscreen" : "Enter fullscreen"}
-                  aria-pressed={isFullscreen}
-                  title="Toggle Fullscreen"
-                  onClick={(e) => { e.stopPropagation(); toggleFullscreen(); }} 
-                  className="p-2 bg-black/40 hover:bg-black/60 rounded-full text-white/70 hover:text-white backdrop-blur-md transition-colors"
-              >
-                  {isFullscreen ? <Minimize className="w-5 h-5"/> : <Maximize className="w-5 h-5"/>}
-              </button>
+              {canFullscreen && (
+                <button 
+                    aria-label={isFullscreen ? "Exit fullscreen" : "Enter fullscreen"}
+                    aria-pressed={isFullscreen}
+                    title="Toggle Fullscreen"
+                    onClick={(e) => { e.stopPropagation(); toggleFullscreen(); }} 
+                    className="p-2 bg-black/40 hover:bg-black/60 rounded-full text-white/70 hover:text-white backdrop-blur-md transition-colors"
+                >
+                    {isFullscreen ? <Minimize className="w-5 h-5"/> : <Maximize className="w-5 h-5"/>}
+                </button>
+              )}
               <button 
                   aria-label={isMuted ? "Unmute" : "Mute"}
                   aria-pressed={isMuted}
