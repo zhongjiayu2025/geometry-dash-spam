@@ -217,10 +217,7 @@ export default function DoubleClickTest() {
         </div>
       </div>
 
-      <div className="mt-8 rounded-xl border border-blue-500/20 bg-blue-950/15 p-5 text-sm leading-6 text-slate-400">
-        Very short intervals can come from intentional fast clicking, switch bounce, software behavior or the input stack.
-        This browser page can flag rapid registered events, but it cannot diagnose a mouse switch by itself.
-      </div>
+
 </div>
   );
 }
