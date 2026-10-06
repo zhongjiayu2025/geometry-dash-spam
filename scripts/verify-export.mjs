@@ -440,6 +440,7 @@ const gameCanvasSource = readFileSync(join(process.cwd(), "components", "GameCan
 const waveAudioSource = readFileSync(join(process.cwd(), "lib", "waveAudio.ts"), "utf8");
 const waveRendererSource = readFileSync(join(process.cwd(), "lib", "waveRenderer.ts"), "utf8");
 const waveRuntimeSource = readFileSync(join(process.cwd(), "lib", "waveRuntime.ts"), "utf8");
+const waveStorageSource = readFileSync(join(process.cwd(), "lib", "waveStorage.ts"), "utf8");
 const waveRunOverlaysSource = readFileSync(join(process.cwd(), "components", "WaveRunOverlays.tsx"), "utf8");
 const clickSoundSource = readFileSync(join(process.cwd(), "lib", "clickSound.ts"), "utf8");
 const cpsRecordsSource = readFileSync(join(process.cwd(), "lib", "cpsRecords.ts"), "utf8");
@@ -1139,7 +1140,7 @@ const clientSourceBudgets = [
   ["DragClickTest.tsx", dragClientSource, 10000],
   ["SpacebarCounter.tsx", spacebarClientSource, 10500],
   ["PersonalStats.tsx", personalStatsSource, 5000],
-  ["GameCanvas.tsx", gameCanvasSource, 32500],
+  ["GameCanvas.tsx", gameCanvasSource, 32200],
 ];
 
 for (const [file, source, maxBytes] of clientSourceBudgets) {
@@ -1233,6 +1234,20 @@ if (
 ) {
   infrastructureErrors.push(
     "Wave seeded RNG, star setup, and beat decay must stay inside the lazy waveRuntime chunk"
+  );
+}
+
+if (
+  !gameCanvasSource.includes("import('../lib/waveStorage')") ||
+  gameCanvasSource.includes("gd_spam_best_") ||
+  gameCanvasSource.includes("gd_spam_runs_") ||
+  gameCanvasSource.includes("JSON.parse(savedRuns)") ||
+  !waveStorageSource.includes("export function loadWaveRecords") ||
+  !waveStorageSource.includes("export function persistWaveHighScore") ||
+  !waveStorageSource.includes("export function persistWaveRuns")
+) {
+  infrastructureErrors.push(
+    "Wave high-score and run-history persistence must stay in the deferred waveStorage module"
   );
 }
 
