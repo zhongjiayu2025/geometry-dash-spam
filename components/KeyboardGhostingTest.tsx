@@ -1,10 +1,8 @@
 "use client";
 
 import React, { useEffect, useState } from "react";
-import dynamic from "next/dynamic";
 import { Info, Keyboard as KeyboardIcon, RotateCcw } from "lucide-react";
 
-const RelatedTools = dynamic(() => import("./RelatedTools"));
 
 const virtualKeyboardLayout = [
   ["Escape", "F1", "F2", "F3", "F4", "F5", "F6", "F7", "F8", "F9", "F10", "F11", "F12"],
@@ -161,8 +159,6 @@ export default function KeyboardGhostingTest() {
           but it does not prove the exact electrical cause inside the keyboard.
         </div>
       </div>
-
-      <RelatedTools currentTool="keyboardGhosting" />
-    </div>
+</div>
   );
 }
