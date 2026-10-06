@@ -10,6 +10,7 @@ import type { ChimpNumber } from '../lib/memoryTestRuntime';
 type MemoryTestRuntime = typeof import('../lib/memoryTestRuntime');
 
 const ChimpGameOver = dynamic(() => import('./ChimpGameOver'), { ssr: false });
+const ChimpBoard = dynamic(() => import('./ChimpBoard'), { ssr: false });
 
 export default function ChimpTest() {
     const [gameState, setGameState] = useState<'idle' | 'showing' | 'playing' | 'finished' | 'failed'>('idle');
@@ -174,34 +175,11 @@ export default function ChimpTest() {
                         )}
 
                         {(gameState === 'showing' || gameState === 'playing' || (gameState === 'failed' && strikes < 3)) && (
-                            <div className="relative w-full max-w-[600px] aspect-[8/5] bg-black/20 rounded-xl overflow-hidden border border-white/5">
-                                {numbers.map((n) => {
-                                    if (n.clicked) return null; // Hide clicked blocks
-                                    return (
-                                        <button
-                                            key={n.id}
-                                            onClick={() => handleNumberClick(n.val)}
-                                            style={{
-                                                left: `${(n.x / 8) * 100}%`,
-                                                top: `${(n.y / 5) * 100}%`,
-                                                width: `${100 / 8}%`,
-                                                height: `${100 / 5}%`
-                                            }}
-                                            className="absolute flex items-center justify-center p-1"
-                                            disabled={gameState === 'failed'}
-                                        >
-                                            <div className={`w-full h-full flex items-center justify-center rounded-lg shadow-md font-display font-medium text-xl md:text-2xl transition-all duration-150 border active:scale-95
-                                                ${n.hidden 
-                                                    ? 'bg-indigo-600/90 border-indigo-400/30 text-transparent' 
-                                                    : 'bg-white border-white text-indigo-900 hover:bg-slate-100'}
-                                                ${gameState === 'failed' && 'bg-red-500/20 border-red-500 text-white'}
-                                            `}>
-                                                {!n.hidden && n.val}
-                                            </div>
-                                        </button>
-                                    );
-                                })}
-                            </div>
+                            <ChimpBoard
+                                gameState={gameState}
+                                numbers={numbers}
+                                onNumberClick={handleNumberClick}
+                            />
                         )}
                     </div>
                 </div>
