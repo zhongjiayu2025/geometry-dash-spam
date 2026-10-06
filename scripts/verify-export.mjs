@@ -1940,6 +1940,7 @@ if (
   !waveStorageSource.includes("...readWaveRuns(scope)") ||
   !waveStorageSource.includes("const seen = new Set<string>()") ||
   !waveStorageSource.includes("return merged") ||
+  !waveStorageSource.includes("export function waveStorageKeys") ||
   !gameCanvasSource.includes("useWaveRecords(difficulty.id, isEndless, isMini)") ||
   !gameCanvasSource.includes("setRecentRuns(merged)") ||
   !waveRecordsHookSource.includes('window.addEventListener("storage", handleStorage)') ||

@@ -65,6 +65,10 @@ function runsKey(scope: WaveStorageScope) {
   return `gd_spam_runs_${scope.difficultyId}_${scope.isEndless ? "endless" : "timed"}_${scope.isMini ? "mini" : "normal"}`;
 }
 
+export function waveStorageKeys(scope: WaveStorageScope) {
+  return { best: bestKey(scope), runs: runsKey(scope) };
+}
+
 function readWaveRuns(scope: WaveStorageScope) {
   const savedRuns = readStorage(runsKey(scope));
   if (!savedRuns) return [];
