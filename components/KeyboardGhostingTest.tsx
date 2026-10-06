@@ -42,9 +42,19 @@ const getKeyWidthClass = (code: string) => {
   }
 };
 
+type GhostingState = {
+  pressedKeys: Set<string>;
+  maxKeys: number;
+};
+
+const EMPTY_GHOSTING: GhostingState = {
+  pressedKeys: new Set(),
+  maxKeys: 0,
+};
+
 export default function KeyboardGhostingTest() {
-  const [pressedKeys, setPressedKeys] = useState<Set<string>>(new Set());
-  const [maxKeys, setMaxKeys] = useState(0);
+  const [measurement, setMeasurement] = useState<GhostingState>(EMPTY_GHOSTING);
+  const { pressedKeys, maxKeys } = measurement;
 
   useEffect(() => {
     const handleKeyDown = (event: KeyboardEvent) => {
@@ -52,23 +62,27 @@ export default function KeyboardGhostingTest() {
         event.preventDefault();
       }
 
-      setPressedKeys((previous) => {
-        const next = new Set(previous);
-        next.add(event.code);
-        setMaxKeys((current) => Math.max(current, next.size));
-        return next;
+      setMeasurement((previous) => {
+        const pressedKeys = new Set(previous.pressedKeys);
+        pressedKeys.add(event.code);
+        return {
+          pressedKeys,
+          maxKeys: Math.max(previous.maxKeys, pressedKeys.size),
+        };
       });
     };
 
     const handleKeyUp = (event: KeyboardEvent) => {
-      setPressedKeys((previous) => {
-        const next = new Set(previous);
-        next.delete(event.code);
-        return next;
+      setMeasurement((previous) => {
+        const pressedKeys = new Set(previous.pressedKeys);
+        pressedKeys.delete(event.code);
+        return { ...previous, pressedKeys };
       });
     };
 
-    const handleBlur = () => setPressedKeys(new Set());
+    const handleBlur = () => {
+      setMeasurement((previous) => ({ ...previous, pressedKeys: new Set() }));
+    };
 
     window.addEventListener("keydown", handleKeyDown, { passive: false });
     window.addEventListener("keyup", handleKeyUp);
@@ -82,8 +96,7 @@ export default function KeyboardGhostingTest() {
   }, []);
 
   const reset = () => {
-    setMaxKeys(0);
-    setPressedKeys(new Set());
+    setMeasurement({ pressedKeys: new Set(), maxKeys: 0 });
   };
 
   return (
