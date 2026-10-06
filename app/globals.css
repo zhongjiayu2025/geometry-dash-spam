@@ -81,3 +81,10 @@ a {
   background: rgb(255 255 255 / 0.1);
   color: #fff;
 }
+
+
+/* Keep long below-the-fold content in the HTML while deferring offscreen layout/paint. */
+.defer-render {
+  content-visibility: auto;
+  contain-intrinsic-size: auto 800px;
+}
