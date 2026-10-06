@@ -50,6 +50,8 @@ export default function GeometryDashBreezePage() {
     "@type": "WebPage",
     name: "Geometry Dash Breeze",
     url: "https://geometrydashspam.cc/geometry-dash-breeze",
+    isPartOf: { "@id": "https://geometrydashspam.cc/#website" },
+    publisher: { "@id": "https://geometrydashspam.cc/#organization" },
     dateModified: CHECKED_AT,
     isBasedOn: [REPO_SOURCE, RELEASE_SOURCE],
     about: {

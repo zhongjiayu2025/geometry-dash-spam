@@ -2656,6 +2656,18 @@ for (const [route, requiredLinks] of [
   }
 }
 
+for (const [route, source] of [
+  ["/dashmetry", readFileSync(join(process.cwd(), "app", "dashmetry", "page.tsx"), "utf8")],
+  ["/geometry-dash-breeze", readFileSync(join(process.cwd(), "app", "geometry-dash-breeze", "page.tsx"), "utf8")],
+]) {
+  if (
+    !source.includes('isPartOf: { "@id": "https://geometrydashspam.cc/#website" }') ||
+    !source.includes('publisher: { "@id": "https://geometrydashspam.cc/#organization" }')
+  ) {
+    infrastructureErrors.push(`${route}: related-game WebPage schema must attach to the site Website and Organization entities`);
+  }
+}
+
 const metadataErrors = [];
 
 for (const [route, expected] of Object.entries(metadataExpectations)) {

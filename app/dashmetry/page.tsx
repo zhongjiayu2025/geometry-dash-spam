@@ -48,6 +48,8 @@ export default function DashmetryPage() {
     "@type": "WebPage",
     name: "Dashmetry Is Now Challenge Rush",
     url: "https://geometrydashspam.cc/dashmetry",
+    isPartOf: { "@id": "https://geometrydashspam.cc/#website" },
+    publisher: { "@id": "https://geometrydashspam.cc/#organization" },
     dateModified: CHECKED_AT,
     isBasedOn: [REBRAND_SOURCE, CURRENT_GAME_SOURCE],
     about: {
