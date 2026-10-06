@@ -147,6 +147,7 @@ if (
 }
 
 const readmeLower = readme.toLowerCase();
+const readmePlain = readmeLower.replace(/\*\*/g, "");
 for (const phrase of [
   "fanmade spinoff",
   "not affiliated with robtop games",
@@ -155,7 +156,7 @@ for (const phrase of [
   'all levels may show "coming soon"',
   "reopen it",
 ]) {
-  if (!readmeLower.includes(phrase.toLowerCase())) {
+  if (!readmePlain.includes(phrase.toLowerCase())) {
     throw new Error(
       `Geometry Dash Breeze README no longer contains expected live fact: ${phrase}.`
     );

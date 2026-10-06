@@ -245,32 +245,27 @@ if (
   );
 }
 
-if (
-  !readFileSync(new URL("./verify-related-games-live.mjs", import.meta.url), "utf8").includes(
-    "readmePayload.encoding !== \"base64\""
-  ) ||
-  !readFileSync(new URL("./verify-related-games-live.mjs", import.meta.url), "utf8").includes(
-    'Buffer.from('
-  ) ||
-  !readFileSync(new URL("./verify-related-games-live.mjs", import.meta.url), "utf8").includes(
-    "currently consists of\\s+\\*{0,2}(\\d+)\\s+levels\\*{0,2}"
-  ) ||
-  !readFileSync(new URL("./verify-related-games-live.mjs", import.meta.url), "utf8").includes(
-    "/^\\\\s*[-*]\\\\s+(.+)$/gm"
-  ) ||
-  !readFileSync(new URL("./verify-related-games-live.mjs", import.meta.url), "utf8").includes(
-    ".replace(/\\*\\*/g"
-  ) ||
-  !readFileSync(new URL("./verify-related-games-live.mjs", import.meta.url), "utf8").includes(
-    "latestMainLevel"
-  ) ||
-  !readFileSync(new URL("./verify-related-games-live.mjs", import.meta.url), "utf8").includes(
-    "androidMin"
-  )
-) {
-  errors.push(
-    "Breeze live verifier must validate README level/platform/support facts in addition to the latest release tag."
-  );
+const breezeLiveSource = readFileSync(
+  new URL("./verify-related-games-live.mjs", import.meta.url),
+  "utf8"
+);
+for (const token of [
+  "readmePayload.encoding",
+  "Buffer.from(",
+  "levelMatch",
+  "livePlatforms",
+  "replace(/\\*\\*/g",
+  "latestMainLevel",
+  "androidMin",
+  "androidMax",
+  "readmePlain",
+  "releaseLower",
+]) {
+  if (!breezeLiveSource.includes(token)) {
+    errors.push(
+      `Breeze live verifier must validate README/release mutable facts: ${token}.`
+    );
+  }
 }
 
 if (
