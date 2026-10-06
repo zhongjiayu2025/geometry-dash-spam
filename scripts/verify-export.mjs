@@ -680,10 +680,10 @@ if (
 }
 
 if (
-  !waveSimulatorSource.includes("useEffect(() => {") ||
-  !waveSimulatorSource.includes("gd_spam_last_difficulty") ||
-  waveSimulatorSource.includes("useState<Difficulty>(() =>") ||
-  waveSimulatorSource.includes("useState<boolean>(() =>")
+  !waveClientSource.includes("useEffect(() => {") ||
+  !waveClientSource.includes("gd_spam_last_difficulty") ||
+  waveClientSource.includes("useState<Difficulty>(() =>") ||
+  waveClientSource.includes("useState<boolean>(() =>")
 ) {
   infrastructureErrors.push(
     "WaveSimulator saved preferences must hydrate after mount instead of changing initial server/client state"
