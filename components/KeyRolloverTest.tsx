@@ -1,6 +1,7 @@
 "use client";
 
 import React, { useEffect, useState } from "react";
+import { isInteractiveKeyboardTarget } from "../lib/inputTarget";
 import { Keyboard as KeyboardIcon } from "lucide-react";
 
 
@@ -20,6 +21,7 @@ export default function KeyRolloverTest() {
 
   useEffect(() => {
     const handleKeyDown = (event: KeyboardEvent) => {
+    if (isInteractiveKeyboardTarget(e.target)) return;
       if (
         [" ", "ArrowUp", "ArrowDown", "PageUp", "PageDown"].includes(event.key) &&
         !(event.ctrlKey || event.metaKey)
@@ -39,6 +41,7 @@ export default function KeyRolloverTest() {
     };
 
     const handleKeyUp = (event: KeyboardEvent) => {
+    if (isInteractiveKeyboardTarget(e.target)) return;
       setMeasurement((previous) => {
         const activeKeys = new Set(previous.activeKeys);
         activeKeys.delete(event.code);
