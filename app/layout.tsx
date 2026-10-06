@@ -37,6 +37,11 @@ export const metadata: Metadata = {
     shortcut: "/logo.svg",
     apple: "/logo.svg",
   },
+  appleWebApp: {
+    capable: true,
+    title: "GD Spam",
+    statusBarStyle: "black-translucent",
+  },
   verification: {
     google: "Yz_6YlW_BzjxZVMUNDmQKQV3n-Jf8cRUr6sMnqJDzyQ",
   },
