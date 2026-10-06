@@ -446,6 +446,7 @@ const clickSoundSource = readFileSync(join(process.cwd(), "lib", "clickSound.ts"
 const cpsRecordsSource = readFileSync(join(process.cwd(), "lib", "cpsRecords.ts"), "utf8");
 const persistentBestSource = readFileSync(join(process.cwd(), "lib", "usePersistentBestNumber.ts"), "utf8");
 const managedTimeoutSource = readFileSync(join(process.cwd(), "lib", "useManagedTimeout.ts"), "utf8");
+const exactCountdownSource = readFileSync(join(process.cwd(), "lib", "useExactCountdown.ts"), "utf8");
 const typingRuntimeSource = readFileSync(join(process.cwd(), "lib", "typingRuntime.ts"), "utf8");
 const memoryTestRuntimeSource = readFileSync(join(process.cwd(), "lib", "memoryTestRuntime.ts"), "utf8");
 const lazyClickSoundSource = readFileSync(join(process.cwd(), "lib", "useLazyClickSound.ts"), "utf8");
@@ -580,16 +581,16 @@ for (const [file, variantMarker] of secondaryWrappers) {
 }
 
 if (
-  !secondaryClickClientSource.includes("useState(false)") ||
-  !secondaryClickClientSource.includes("10000 - elapsedMs") ||
-  !secondaryClickClientSource.includes("window.setInterval(updateTimer, 100)") ||
+  !secondaryClickClientSource.includes("useExactCountdown") ||
+  !secondaryClickClientSource.includes("durationMs: 10000") ||
   !secondaryClickClientSource.includes("performance.now() - startTimeRef.current >= 10000") ||
-  secondaryClickClientSource.includes("}, 33)") ||
+  secondaryClickClientSource.includes("window.setInterval(updateTimer, 100)") ||
   secondaryClickClientSource.includes("setClicks(clicksRef.current)") ||
-  !secondaryClickClientSource.includes("const renderedClicks = active ? clicksRef.current : clicks;")
+  !secondaryClickClientSource.includes("const renderedClicks = active ? clicksRef.current : clicks;") ||
+  !secondaryClickClientSource.includes("usePersistentBestNumber(config.bestKey)")
 ) {
   infrastructureErrors.push(
-    "Shared SecondaryClickTest must keep exact 10-second timing and a ref-based click hot path"
+    "Shared SecondaryClickTest must use the exact-countdown and persistent-best hooks with a ref-based click hot path"
   );
 }
 
@@ -1127,6 +1128,17 @@ if (
 }
 
 if (
+  !exactCountdownSource.includes("intervalMs = 100") ||
+  !exactCountdownSource.includes("window.clearInterval(intervalRef.current)") ||
+  !exactCountdownSource.includes("window.clearTimeout(endRef.current)") ||
+  !exactCountdownSource.includes("performance.now() - startTimeRef.current")
+) {
+  infrastructureErrors.push(
+    "Shared exact-countdown hook must own timer cleanup and elapsed-time normalization"
+  );
+}
+
+if (
   !scrollClientSource.includes('dynamic(() => import("./ScrollResult")') ||
   !scrollClientSource.includes("window.setInterval(updateUi, 100)") ||
   !scrollClientSource.includes("window.setTimeout(finishTest, TEST_MS)") ||
@@ -1195,7 +1207,7 @@ if (
 
 const clientSourceBudgets = [
   ["WaveSimulator.tsx", waveClientSource, 11000],
-  ["CpsTest.tsx", cpsClientSource, 14200],
+  ["CpsTest.tsx", cpsClientSource, 13600],
   ["AimTrainer.tsx", aimClientSource, 10500],
   ["ReactionTest.tsx", reactionClientSource, 6500],
   ["VisualMemoryTest.tsx", visualMemoryClientSource, 10700],
@@ -1205,7 +1217,7 @@ const clientSourceBudgets = [
   ["RefreshRateTest.tsx", refreshRateClientSource, 4500],
   ["MouseAccelerationTest.tsx", mouseAccelerationClientSource, 5000],
   ["SoundReactionTest.tsx", soundReactionClientSource, 8000],
-  ["SecondaryClickTest.tsx", secondaryClickClientSource, 14500],
+  ["SecondaryClickTest.tsx", secondaryClickClientSource, 13500],
   ["DragClickTest.tsx", dragClientSource, 10000],
   ["SpacebarCounter.tsx", spacebarClientSource, 10500],
   ["PersonalStats.tsx", personalStatsSource, 5000],
@@ -1529,13 +1541,16 @@ if (
 }
 
 if (
-  !cpsClientSource.includes("window.setInterval(updateTimer, 100)") ||
-  !cpsClientSource.includes("Math.max(0, selectedDuration * 1000 - elapsedMs)") ||
+  !cpsClientSource.includes("useExactCountdown") ||
+  !cpsClientSource.includes("durationMs: selectedDuration * 1000") ||
   !cpsClientSource.includes("setClicks(finalClicks)") ||
-  cpsClientSource.includes("}, 33)")
+  cpsClientSource.includes("window.setInterval(updateTimer, 100)") ||
+  !exactCountdownSource.includes("window.setInterval(update, intervalMs)") ||
+  !exactCountdownSource.includes("Math.max(0, durationMs - elapsedMs)") ||
+  !exactCountdownSource.includes("onFinishRef.current()")
 ) {
   infrastructureErrors.push(
-    "CPS live UI must refresh on the 100ms boundary while final results synchronously publish the exact ref count"
+    "CPS and shared click timers must preserve 100ms UI sampling with an exact elapsed-time cutoff"
   );
 }
 
