@@ -5,19 +5,19 @@ import { Metadata } from "next";
 export const metadata: Metadata = {
   title: "Scroll Speed Test | Mouse Wheel Speed Test",
   description:
-    "Measure browser-observed mouse-wheel scrolling speed during a timed test.",
+    "Measure browser-observed mouse-wheel or trackpad scrolling speed during a timed test.",
   robots: { index: false, follow: true },
   alternates: { canonical: "/scroll-test" },
   openGraph: {
     title: "Scroll Speed Test | Mouse Wheel Speed Test",
-    description: "Measure browser-observed mouse-wheel scrolling speed during a timed test.",
+    description: "Measure browser-observed mouse-wheel or trackpad scrolling speed during a timed test.",
     url: "https://geometrydashspam.cc/scroll-test",
     type: "website",
   },
   twitter: {
     card: "summary",
     title: "Scroll Speed Test | Mouse Wheel Speed Test",
-    description: "Measure browser-observed mouse-wheel scrolling speed during a timed test.",
+    description: "Measure browser-observed mouse-wheel or trackpad scrolling speed during a timed test.",
   },
 };
 
@@ -30,7 +30,7 @@ export default function ScrollTestPage() {
         </div>
         <h1 className="text-3xl md:text-5xl font-display font-bold text-white mb-2 uppercase">SCROLL SPEED TEST</h1>
         <p className="text-slate-500 max-w-2xl mx-auto text-sm md:text-base">
-          Test how quickly your browser receives mouse-wheel input during the timed run.
+          Test how quickly your browser receives vertical wheel or trackpad-scroll input during the timed run.
         </p>
       </div>
       <ScrollTest />

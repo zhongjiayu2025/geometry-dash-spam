@@ -1727,7 +1727,7 @@ if (
   mouseAccelerationClientSource.includes("<RotateCcw") ||
   !mouseAccelerationClientSource.includes("getBoundingClientRect()") ||
   !mouseAccelerationClientSource.includes("e.clientX - bounds.left") ||
-  !mouseAccelerationPageSource.includes("Place your mouse against the left edge") ||
+  !mouseAccelerationPageSource.includes("touch and pen input are ignored") ||
   !mouseAccelerationResultSource.includes("Cursor difference:") ||
   !mouseAccelerationResultSource.includes("outboundDistance >= 100") ||
   !mouseAccelerationResultSource.includes("returnDistance >= 100") ||

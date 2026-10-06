@@ -30,12 +30,12 @@ export default function MouseAccelerationPage() {
         </div>
         <h1 className="text-3xl md:text-5xl font-display font-bold text-white mb-2 uppercase">MOUSE ACCELERATION TEST</h1>
         <p className="text-slate-500 max-w-2xl mx-auto text-sm md:text-base">
-          Compare pointer movement consistency in the browser. The page cannot directly inspect system acceleration settings.
+          Compare desktop-mouse pointer movement consistency in the browser. Touch and pen input are ignored, and the page cannot directly inspect system acceleration settings.
         </p>
       </div>
       <div className="mx-auto mb-8 w-full max-w-2xl rounded-2xl border border-white/5 bg-slate-900/50 p-6">
         <ol className="list-inside list-decimal space-y-3 text-slate-300">
-          <li>Place your mouse against the left edge of your mousepad.</li>
+          <li>Use a desktop mouse; touch and pen input are ignored. Place the mouse against the left edge of your mousepad.</li>
           <li><strong>Click inside the box below to set Point A.</strong></li>
           <li>Move your mouse <strong>RAPIDLY</strong> to the right edge of your mousepad.</li>
           <li><strong>Click again to set Point B.</strong></li>

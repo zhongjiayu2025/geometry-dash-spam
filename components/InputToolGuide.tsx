@@ -58,7 +58,7 @@ const GUIDES: Record<
   "polling-rate": {
     heading: "What the browser Hz estimate can tell you",
     measures:
-      "The tool estimates how frequently pointer-move events reach the page while you move the mouse. A stable browser-observed event rate can be useful for spotting large differences between setups or browser conditions.",
+      "The tool estimates how frequently mouse/trackpad pointer-move events reach the page while you move the pointer. Touch and pen movement are ignored so the result stays scoped to desktop pointing input.",
     practice:
       "For Geometry Dash, polling rate is secondary to consistent input timing. Use this diagnostic only when investigating mouse behavior; use the CPS and wave tools when the goal is actual repeated-input practice.",
     limits:
