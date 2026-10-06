@@ -1055,6 +1055,17 @@ if (
 }
 
 if (
+  !pollingClientSource.includes("const trackingRef = useRef(false)") ||
+  (pollingClientSource.match(/if \(!trackingRef\.current\) return;/g) ?? []).length < 2 ||
+  !pollingClientSource.includes("trackingRef.current = true") ||
+  !pollingClientSource.includes("trackingRef.current = false")
+) {
+  infrastructureErrors.push(
+    "PollingRateTest stop paths must be idempotent so blur and visibility events cannot double-sample"
+  );
+}
+
+if (
   !secondaryClickClientSource.includes('isRightClick ? "touch-pan-y"') ||
   secondaryClickClientSource.includes('isRightClick ? "touch-none"')
 ) {
@@ -1499,6 +1510,7 @@ const clientSourceBudgets = [
   ["GeometryDashClicker.tsx", clickerSource, 9200],
   ["BpmTapper.tsx", bpmClientSource, 5000],
   ["DoubleClickTest.tsx", doubleClickClientSource, 8000],
+  ["PollingRateTest.tsx", pollingClientSource, 8500],
   ["KeyboardLatencyTest.tsx", keyboardTimingClientSource, 8000],
   ["SystemInfo.tsx", systemInfoClientSource, 5000],
   ["KeyboardGhostingTest.tsx", ghostingClientSource, 5500],

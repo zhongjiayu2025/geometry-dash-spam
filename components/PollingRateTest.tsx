@@ -12,6 +12,7 @@ export default function PollingRateTest() {
   const [avgHz, setAvgHz] = useState(0);
 
   const trackingAreaRef = useRef<HTMLDivElement>(null);
+  const trackingRef = useRef(false);
   const eventCountRef = useRef(0);
   const totalEventsRef = useRef(0);
   const startedAtRef = useRef(0);
@@ -53,15 +54,16 @@ export default function PollingRateTest() {
     setHz(0);
     setMaxHz(0);
     setAvgHz(0);
+    trackingRef.current = true;
     setIsTracking(true);
 
     intervalRef.current = window.setInterval(sampleRates, SAMPLE_MS);
   };
 
   const stopTracking = () => {
-    if (isTracking && totalEventsRef.current > 0) {
-      sampleRates();
-    }
+    if (!trackingRef.current) return;
+    trackingRef.current = false;
+    if (totalEventsRef.current > 0) sampleRates();
     setIsTracking(false);
     clearSampler();
   };
@@ -88,6 +90,8 @@ export default function PollingRateTest() {
     if (!isTracking) return;
 
     const stopInterruptedTracking = () => {
+      if (!trackingRef.current) return;
+      trackingRef.current = false;
       if (totalEventsRef.current > 0) sampleRates();
       setIsTracking(false);
       clearSampler();
@@ -107,7 +111,10 @@ export default function PollingRateTest() {
   }, [isTracking]);
 
   useEffect(() => {
-    return () => clearSampler();
+    return () => {
+      trackingRef.current = false;
+      clearSampler();
+    };
   }, []);
 
   const observedBand =
