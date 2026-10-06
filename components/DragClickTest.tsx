@@ -1,8 +1,10 @@
 "use client";
 
-import React, { useCallback, useEffect, useRef, useState } from "react";
+import React, { useCallback, useRef, useState } from "react";
 import dynamic from "next/dynamic";
 import { MousePointer2, Trophy } from "lucide-react";
+import { useExactCountdown } from "../lib/useExactCountdown";
+import { usePersistentBestNumber } from "../lib/usePersistentBestNumber";
 
 const DragClickResult = dynamic(() => import("./DragClickResult"), { ssr: false });
 
@@ -40,10 +42,8 @@ export default function DragClickTest() {
   const [isFinished, setIsFinished] = useState(false);
   const [buckets, setBuckets] = useState<number[]>(Array(10).fill(0));
   const [peakCps, setPeakCps] = useState(0);
-  const [bestPeakCps, setBestPeakCps] = useState<number | null>(null);
+  const [bestPeakCps, commitBestPeakCps] = usePersistentBestNumber("dragClickBest");
 
-  const timerRef = useRef<number | null>(null);
-  const endTimerRef = useRef<number | null>(null);
   const startTimeRef = useRef(0);
   const clickTimesRef = useRef<number[]>([]);
   const clicksRef = useRef(0);
@@ -51,33 +51,11 @@ export default function DragClickTest() {
   const finishedRef = useRef(false);
   const pendingTouchRef = useRef<{ pointerId: number; x: number; y: number } | null>(null);
 
-  useEffect(() => {
-    const saved = localStorage.getItem("dragClickBest");
-    if (saved) {
-      const parsed = Number(saved);
-      if (Number.isFinite(parsed)) setBestPeakCps(parsed);
-    }
-
-    return () => {
-      if (timerRef.current) window.clearInterval(timerRef.current);
-      if (endTimerRef.current) window.clearTimeout(endTimerRef.current);
-    };
-  }, []);
-
   const finishTest = useCallback(() => {
     if (finishedRef.current) return;
 
     finishedRef.current = true;
     activeRef.current = false;
-
-    if (timerRef.current) {
-      window.clearInterval(timerRef.current);
-      timerRef.current = null;
-    }
-    if (endTimerRef.current) {
-      window.clearTimeout(endTimerRef.current);
-      endTimerRef.current = null;
-    }
 
     const times = clickTimesRef.current;
     const peak = getPeakOneSecondCps(times);
@@ -89,14 +67,8 @@ export default function DragClickTest() {
     setBuckets(getBuckets(times, startTimeRef.current));
     setClicks(clicksRef.current);
 
-    setBestPeakCps((previous) => {
-      if (previous === null || peak > previous) {
-        localStorage.setItem("dragClickBest", String(peak));
-        return peak;
-      }
-      return previous;
-    });
-  }, []);
+    commitBestPeakCps(peak);
+  }, [commitBestPeakCps]);
 
   const startTest = useCallback((now: number) => {
     activeRef.current = true;
@@ -108,34 +80,13 @@ export default function DragClickTest() {
     setTimeLeft(10);
   }, []);
 
-  useEffect(() => {
-    if (!isActive || isFinished) return;
-
-    const updateTimer = () => {
-      const elapsed = performance.now() - startTimeRef.current;
-      setTimeLeft(Math.max(0, (TEST_MS - elapsed) / 1000));
-    };
-
-    updateTimer();
-    timerRef.current = window.setInterval(updateTimer, 100);
-
-    const elapsedMs = performance.now() - startTimeRef.current;
-    endTimerRef.current = window.setTimeout(
-      finishTest,
-      Math.max(0, TEST_MS - elapsedMs)
-    );
-
-    return () => {
-      if (timerRef.current) {
-        window.clearInterval(timerRef.current);
-        timerRef.current = null;
-      }
-      if (endTimerRef.current) {
-        window.clearTimeout(endTimerRef.current);
-        endTimerRef.current = null;
-      }
-    };
-  }, [finishTest, isActive, isFinished]);
+  const cancelCountdown = useExactCountdown({
+    running: isActive && !isFinished,
+    durationMs: TEST_MS,
+    startTimeRef,
+    onTick: (remainingMs) => setTimeLeft(remainingMs / 1000),
+    onFinish: finishTest,
+  });
 
   const registerInput = (now: number) => {
     if (finishedRef.current) return;
@@ -181,11 +132,7 @@ export default function DragClickTest() {
   };
 
   const resetTest = () => {
-    if (timerRef.current) window.clearInterval(timerRef.current);
-    if (endTimerRef.current) window.clearTimeout(endTimerRef.current);
-
-    timerRef.current = null;
-    endTimerRef.current = null;
+    cancelCountdown();
     startTimeRef.current = 0;
     clickTimesRef.current = [];
     clicksRef.current = 0;

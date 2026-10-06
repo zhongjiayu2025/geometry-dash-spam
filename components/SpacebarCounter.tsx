@@ -7,6 +7,8 @@ import { Keyboard, Trophy, Volume2, VolumeX, Zap } from "lucide-react";
 
 const SpacebarFinishedActions = dynamic(() => import("./SpacebarFinishedActions"), { ssr: false });
 import { useLazyClickSound } from "../lib/useLazyClickSound";
+import { useExactCountdown } from "../lib/useExactCountdown";
+import { usePersistentBestNumber } from "../lib/usePersistentBestNumber";
 
 const TEST_MS = 10000;
 
@@ -15,13 +17,11 @@ const SpacebarCounter: React.FC = () => {
   const [finished, setFinished] = useState(false);
   const [count, setCount] = useState(0);
   const [timeLeft, setTimeLeft] = useState(10);
-  const [bestCps, setBestCps] = useState<number | null>(null);
+  const [bestCps, commitBestCps] = usePersistentBestNumber("spacebarBest");
   const [soundEnabled, setSoundEnabled] = useState(false);
 
-  const timerRef = useRef<number | null>(null);
   const visualKeyRef = useRef<HTMLDivElement>(null);
   const visualKeyLabelRef = useRef<HTMLSpanElement>(null);
-  const endTimerRef = useRef<number | null>(null);
   const startTimeRef = useRef(0);
   const countRef = useRef(0);
   const activeRef = useRef(false);
@@ -29,12 +29,6 @@ const SpacebarCounter: React.FC = () => {
 
   useEffect(() => {
     setSoundEnabled(localStorage.getItem("spacebarSoundEnabled") === "true");
-
-    const saved = localStorage.getItem("spacebarBest");
-    if (saved) {
-      const parsed = Number(saved);
-      if (Number.isFinite(parsed)) setBestCps(parsed);
-    }
   }, []);
 
 
@@ -74,23 +68,8 @@ const SpacebarCounter: React.FC = () => {
     setTimeLeft(0);
     setCount(finalCount);
 
-    if (timerRef.current) {
-      window.clearInterval(timerRef.current);
-      timerRef.current = null;
-    }
-    if (endTimerRef.current) {
-      window.clearTimeout(endTimerRef.current);
-      endTimerRef.current = null;
-    }
-
-    setBestCps((previous) => {
-      if (previous === null || finalCps > previous) {
-        localStorage.setItem("spacebarBest", String(finalCps));
-        return finalCps;
-      }
-      return previous;
-    });
-  }, [setVisualPressed]);
+    commitBestCps(finalCps);
+  }, [commitBestCps, setVisualPressed]);
 
   const startTest = useCallback((now: number) => {
     activeRef.current = true;
@@ -146,34 +125,13 @@ const SpacebarCounter: React.FC = () => {
     };
   }, [handleKeyDown, handleKeyUp]);
 
-  useEffect(() => {
-    if (!active || finished) return;
-
-    const updateTimer = () => {
-      const elapsed = performance.now() - startTimeRef.current;
-      setTimeLeft(Math.max(0, (TEST_MS - elapsed) / 1000));
-    };
-
-    updateTimer();
-    timerRef.current = window.setInterval(updateTimer, 100);
-
-    const elapsedMs = performance.now() - startTimeRef.current;
-    endTimerRef.current = window.setTimeout(
-      finishTest,
-      Math.max(0, TEST_MS - elapsedMs)
-    );
-
-    return () => {
-      if (timerRef.current) {
-        window.clearInterval(timerRef.current);
-        timerRef.current = null;
-      }
-      if (endTimerRef.current) {
-        window.clearTimeout(endTimerRef.current);
-        endTimerRef.current = null;
-      }
-    };
-  }, [active, finished, finishTest]);
+  const cancelCountdown = useExactCountdown({
+    running: active && !finished,
+    durationMs: TEST_MS,
+    startTimeRef,
+    onTick: (remainingMs) => setTimeLeft(remainingMs / 1000),
+    onFinish: finishTest,
+  });
 
   const reset = () => {
     activeRef.current = false;
@@ -186,11 +144,7 @@ const SpacebarCounter: React.FC = () => {
     setCount(0);
     setTimeLeft(10);
     setVisualPressed(false);
-
-    if (timerRef.current) window.clearInterval(timerRef.current);
-    if (endTimerRef.current) window.clearTimeout(endTimerRef.current);
-    timerRef.current = null;
-    endTimerRef.current = null;
+    cancelCountdown();
   };
 
   const toggleSound = () => {
