@@ -1167,6 +1167,29 @@ for (const route of supportGuideRoutes) {
   }
 }
 
+for (const route of supportGuideRoutes) {
+  const path = exportedPath(route);
+  if (!path) continue;
+
+  const html = readFileSync(path, "utf8");
+  const hrefs = [...html.matchAll(/href=["']([^"']+)["']/gi)].map((match) => match[1]);
+
+  for (const noindexRoute of noindexRoutes) {
+    if (
+      hrefs.some(
+        (href) =>
+          href === noindexRoute ||
+          href.startsWith(`${noindexRoute}#`) ||
+          href.startsWith(`${noindexRoute}?`)
+      )
+    ) {
+      supportGuideErrors.push(
+        `${route}: indexable support page must not link to noindex utility ${noindexRoute}`
+      );
+    }
+  }
+}
+
 const intentClusterErrors = [];
 const intentClusterLinks = new Map([
   ["/demon-list", ["/spam-challenge-list", "/demon-list/spam-demons"]],
