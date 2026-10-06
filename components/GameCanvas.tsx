@@ -4,11 +4,13 @@
 import React, { useRef, useEffect, useCallback, useState, memo } from 'react';
 import dynamic from 'next/dynamic';
 import { DifficultyConfig, GameStatus } from '../types';
-import { WIN_TIME_MS, WAVE_SPEED_Y } from '../constants';
+import { WIN_TIME_MS } from '../constants';
 import { Crown, Volume2, VolumeX, Maximize, Minimize, Activity, ZapOff } from 'lucide-react';
 import type { WaveAudioEngine, WaveSound } from '../lib/waveAudio';
+import type { WaveRuntimeState } from '../lib/waveRuntime';
 
 type WaveRenderer = typeof import('../lib/waveRenderer').renderWaveFrame;
+type WaveRuntime = typeof import('../lib/waveRuntime');
 
 const WaveRunOverlays = dynamic(() => import('./WaveRunOverlays'), { ssr: false });
 
@@ -19,55 +21,6 @@ interface GameCanvasProps {
   isEndless?: boolean;
   isMini?: boolean;
 }
-
-interface Obstacle {
-  x: number;
-  width: number;
-  topHeight: number;
-  bottomY: number;
-}
-
-// Improved Particle for Shatter Effect
-interface Particle {
-  x: number;
-  y: number;
-  vx: number;
-  vy: number;
-  life: number;
-  color: string;
-  size: number;
-  rotation: number;
-  rotationSpeed: number;
-}
-
-interface Star {
-  x: number;
-  y: number;
-  size: number;
-  speed: number;
-  opacity: number;
-}
-
-interface Shockwave {
-  x: number;
-  y: number;
-  radius: number;
-  opacity: number;
-}
-
-interface WaveRun {
-  time: number;
-  averageCps: number;
-  peakCps: number;
-  timingSd: number;
-  clicks: number;
-  result: "won" | "lost";
-  timestamp: number;
-  mode: string;
-}
-
-// Level Generation Patterns
-type PatternType = 'random' | 'corridor' | 'stairs_up' | 'stairs_down' | 'zigzag' | 'sawtooth';
 
 // --- SEEDED RNG UTILS ---
 const mulberry32 = (a: number) => {
@@ -202,6 +155,8 @@ const GameCanvas: React.FC<GameCanvasProps> = memo(({ difficulty, status, onStat
   const statusRef = useRef(status);
   const rendererRef = useRef<WaveRenderer | null>(null);
   const rendererLoadRef = useRef<Promise<WaveRenderer | null> | null>(null);
+  const runtimeRef = useRef<WaveRuntime | null>(null);
+  const runtimeLoadRef = useRef<Promise<WaveRuntime | null> | null>(null);
 
   const ensureRenderer = useCallback(async () => {
       if (rendererRef.current) return rendererRef.current;
@@ -215,22 +170,32 @@ const GameCanvas: React.FC<GameCanvasProps> = memo(({ difficulty, status, onStat
       return renderer;
   }, []);
 
+  const ensureRuntime = useCallback(async () => {
+      if (runtimeRef.current) return runtimeRef.current;
+      if (!runtimeLoadRef.current) {
+          runtimeLoadRef.current = import('../lib/waveRuntime').catch(() => null);
+      }
+      const runtime = await runtimeLoadRef.current;
+      if (runtime) runtimeRef.current = runtime;
+      return runtime;
+  }, []);
+
   // Game State Ref
-  const gameState = useRef({
+  const gameState = useRef<WaveRuntimeState>({
     playerY: 250,
     playerX: 100,
     velocityY: 0,
     isHolding: false,
-    obstacles: [] as Obstacle[],
-    particles: [] as Particle[], // Shards
-    shockwaves: [] as Shockwave[],
-    stars: [] as Star[], 
+    obstacles: [],
+    particles: [],
+    shockwaves: [],
+    stars: [], 
     trail: [] as {x: number, y: number, w: number}[],
     startTime: 0,
     lastFrameTime: 0,
     distanceTraveled: 0,
     lastObstacleX: 0,
-    currentPattern: 'random' as PatternType,
+    currentPattern: 'random',
     patternStep: 0,
     lastCenterY: 225, 
     shakeIntensity: 0,
@@ -324,153 +289,6 @@ const GameCanvas: React.FC<GameCanvasProps> = memo(({ difficulty, status, onStat
 
   // --- GAMEPLAY & VISUALS ---
 
-  const spawnObstacle = useCallback((canvasWidth: number, canvasHeight: number) => {
-    const minGap = isMini ? difficulty.gap * 0.8 : difficulty.gap;
-    const obstacleWidth = 60;
-    
-    const random = gameState.current.rng;
-
-    if (gameState.current.patternStep <= 0) {
-        const patterns: PatternType[] = ['random', 'corridor', 'stairs_up', 'stairs_down', 'zigzag', 'sawtooth'];
-        let nextPattern: PatternType = 'random';
-        if (random() > 0.3) {
-             nextPattern = patterns[Math.floor(random() * patterns.length)];
-        }
-        gameState.current.currentPattern = nextPattern;
-        gameState.current.patternStep = Math.floor(random() * 5) + 5; 
-    }
-
-    const safeDelta = Math.min(60, Math.max(10, minGap - 30)); 
-
-    let center = gameState.current.lastCenterY;
-    let delta = 0;
-
-    switch (gameState.current.currentPattern) {
-        case 'corridor': delta = (random() * 10 - 5); break;
-        case 'stairs_up': delta = -safeDelta * 0.6; break;
-        case 'stairs_down': delta = safeDelta * 0.6; break;
-        case 'zigzag': delta = safeDelta * (gameState.current.patternStep % 2 === 0 ? 1 : -1); break;
-        case 'sawtooth': delta = (random() * 20 - 10); break;
-        case 'random': default: delta = (random() - 0.5) * (safeDelta * 1.5); break;
-    }
-
-    center += delta;
-    const margin = minGap / 2 + 20; 
-    center = Math.max(margin, Math.min(canvasHeight - margin, center));
-    
-    const actualDiff = center - gameState.current.lastCenterY;
-    if (Math.abs(actualDiff) > safeDelta) {
-        center = gameState.current.lastCenterY + Math.sign(actualDiff) * safeDelta;
-    }
-
-    gameState.current.lastCenterY = center;
-    gameState.current.patternStep--;
-
-    let topHeight = center - minGap / 2;
-    let bottomY = center + minGap / 2;
-    
-    if (gameState.current.currentPattern === 'sawtooth') {
-        if (gameState.current.patternStep % 2 === 0) {
-            const shrink = Math.min(10, minGap * 0.2); 
-            topHeight += shrink; 
-            bottomY -= shrink;
-        }
-    }
-
-    gameState.current.obstacles.push({
-      x: gameState.current.lastObstacleX + obstacleWidth,
-      width: obstacleWidth,
-      topHeight: topHeight,
-      bottomY: bottomY,
-    });
-
-    gameState.current.lastObstacleX += obstacleWidth;
-  }, [difficulty, isMini]);
-
-  const createExplosion = (x: number, y: number, color: string) => {
-    if (reduceMotion) return;
-    const random = gameState.current.rng;
-    const particleCount = lowVisualsRef.current ? 10 : 20;
-    for (let i = 0; i < particleCount; i++) {
-      const angle = random() * Math.PI * 2;
-      const speed = random() * 10 + 5;
-      gameState.current.particles.push({
-        x, y,
-        vx: Math.cos(angle) * speed,
-        vy: Math.sin(angle) * speed,
-        life: 1.0,
-        color: color,
-        size: random() * 8 + 4,
-        rotation: random() * Math.PI * 2,
-        rotationSpeed: (random() - 0.5) * 0.5
-      });
-    }
-    gameState.current.shockwaves.push({ x, y, radius: 10, opacity: 1.0 });
-  };
-
-  const calculateConsistency = () => {
-    const intervals = gameState.current.clickIntervals;
-    if (intervals.length < 2) return 'N/A';
-    const mean = intervals.reduce((a, b) => a + b, 0) / intervals.length;
-    const variance = intervals.reduce((a, b) => a + Math.pow(b - mean, 2), 0) / intervals.length;
-    const stdDev = Math.sqrt(variance);
-    const coefficient = mean > 0 ? stdDev / mean : 0;
-    const score = Math.max(0, Math.min(100, 100 - coefficient * 100));
-    return score.toFixed(1) + '%';
-  };
-
-  const getRunStats = () => {
-    const seconds = Math.max(0.001, gameState.current.runTime / 1000);
-    const intervals = gameState.current.clickIntervals;
-    const clickCount = gameState.current.clickCount;
-    const averageCps = clickCount / seconds;
-    const clickTimes = gameState.current.clickTimes;
-    let peakCps = 0;
-    let left = 0;
-    for (let right = 0; right < clickTimes.length; right++) {
-      while (clickTimes[right] - clickTimes[left] > 1000) left++;
-      peakCps = Math.max(peakCps, right - left + 1);
-    }
-    if (clickTimes.length < 2) peakCps = averageCps;
-    const meanInterval = intervals.length
-      ? intervals.reduce((a, b) => a + b, 0) / intervals.length
-      : 0;
-    const variance = intervals.length
-      ? intervals.reduce((a, b) => a + Math.pow(b - meanInterval, 2), 0) / intervals.length
-      : 0;
-
-    return {
-      clickCount,
-      averageCps,
-      peakCps,
-      averageInterval: meanInterval,
-      intervalStdDev: Math.sqrt(variance),
-    };
-  };
-
-  const recordRun = (result: "won" | "lost") => {
-    if (runRecordedRef.current) return;
-
-    const stats = getRunStats();
-    const run: WaveRun = {
-      time: Number((gameState.current.runTime / 1000).toFixed(2)),
-      averageCps: Number(stats.averageCps.toFixed(2)),
-      peakCps: Number(stats.peakCps.toFixed(2)),
-      timingSd: Number(stats.intervalStdDev.toFixed(0)),
-      clicks: stats.clickCount,
-      result,
-      timestamp: Date.now(),
-      mode: `${difficulty.label}${isMini ? " · Mini" : " · Normal"}${isEndless ? " · Endless" : " · 15s"}`,
-    };
-
-    setRecentRuns((previousRuns) => {
-      const next = [run, ...previousRuns].slice(0, 10);
-      localStorage.setItem(getRunHistoryKey(), JSON.stringify(next));
-      return next;
-    });
-    runRecordedRef.current = true;
-  };
-
   const initStars = (width: number, height: number) => {
       gameState.current.stars = [];
       const random = gameState.current.rng;
@@ -544,20 +362,29 @@ const GameCanvas: React.FC<GameCanvasProps> = memo(({ difficulty, status, onStat
     gameState.current.beatScale = 1.0 + (gameState.current.beatScale - 1.0) * 0.9;
 
     if (status === GameStatus.Playing) {
-        const now = performance.now();
-        if (gameState.current.startTime === 0) {
-            gameState.current.startTime = now;
-            gameState.current.lastFrameTime = now;
+        const runtime = runtimeRef.current;
+        if (!runtime) {
+            requestRef.current = undefined;
+            void Promise.all([ensureRuntime(), ensureRenderer()]).then(([loadedRuntime, loadedRenderer]) => {
+                if (loadedRuntime && loadedRenderer && statusRef.current === GameStatus.Playing) {
+                    gameLoop();
+                }
+            });
+            return;
         }
 
-        const rawDeltaMs = now - gameState.current.lastFrameTime;
-        const frameDeltaMs = Math.min(1000 / 30, Math.max(0, rawDeltaMs));
-        const frameFactor = frameDeltaMs / (1000 / 60);
-        gameState.current.lastFrameTime = now;
-        gameState.current.runTime += frameDeltaMs;
+        const step = runtime.advanceWaveFrame(gameState.current, {
+            now: performance.now(),
+            canvasWidth: canvas.width,
+            canvasHeight: canvas.height,
+            difficultySpeed: difficulty.speed,
+            difficultyGap: difficulty.gap,
+            isMini,
+            isEndless,
+            lowVisuals: lowVisualsRef.current,
+        });
 
-        const hudInterval = lowVisualsRef.current ? 100 : 50;
-        if (now - lastHudUpdateRef.current >= hudInterval) {
+        if (step.now - lastHudUpdateRef.current >= (lowVisualsRef.current ? 100 : 50)) {
             if (timeDisplayRef.current) {
                 timeDisplayRef.current.textContent = `${(gameState.current.runTime / 1000).toFixed(2)}s`;
             }
@@ -568,95 +395,22 @@ const GameCanvas: React.FC<GameCanvasProps> = memo(({ difficulty, status, onStat
                 );
                 progressRef.current.style.width = `${progress}%`;
             }
-            lastHudUpdateRef.current = now;
+            lastHudUpdateRef.current = step.now;
         }
 
-        const speedY = isMini ? WAVE_SPEED_Y * 1.5 : WAVE_SPEED_Y;
-        gameState.current.velocityY = gameState.current.isHolding ? -speedY : speedY;
-        gameState.current.playerY += gameState.current.velocityY * frameFactor;
-
-        const moveSpeed = difficulty.speed * frameFactor;
-        gameState.current.distanceTraveled += moveSpeed;
-        
-        gameState.current.stars.forEach(star => {
-            star.x -= star.speed * (moveSpeed / 3);
-            if (star.x < 0) star.x = canvas.width;
-        });
-
-        const spawnThreshold = isEndless ? Infinity : gameState.current.finishLineX - 400;
-        const lastOb = gameState.current.obstacles.length > 0 ? gameState.current.obstacles[gameState.current.obstacles.length - 1] : null;
-        if (!lastOb || (lastOb.x < gameState.current.distanceTraveled + canvas.width + 100 && gameState.current.lastObstacleX < spawnThreshold)) {
-            spawnObstacle(canvas.width, canvas.height);
-        }
-
-        const playerRadius = isMini ? 4 : 8;
-        const hitboxSize = playerRadius * 0.5; 
-        const playerHitbox = {
-             x: gameState.current.playerX - hitboxSize,
-             y: gameState.current.playerY - hitboxSize,
-             w: hitboxSize * 2,
-             h: hitboxSize * 2
-        };
-
-        if (gameState.current.playerY < 0 || gameState.current.playerY > canvas.height) {
+        if (step.died) {
             handleDeath();
             return;
         }
 
-        gameState.current.obstacles.forEach(obs => {
-             const obsScreenX = obs.x - gameState.current.distanceTraveled;
-             if (obsScreenX < canvas.width && obsScreenX + obs.width > 0) {
-                 if (playerHitbox.x < obsScreenX + obs.width &&
-                     playerHitbox.x + playerHitbox.w > obsScreenX) {
-                     if (playerHitbox.y < obs.topHeight) handleDeath();
-                     if (playerHitbox.y + playerHitbox.h > obs.bottomY) handleDeath();
-                 }
-             }
-        });
-
-        if (!isEndless) {
-             const finishScreenX = gameState.current.finishLineX - gameState.current.distanceTraveled;
-             if (finishScreenX <= gameState.current.playerX && !runRecordedRef.current) {
-                 setConsistency(calculateConsistency());
-                 recordRun("won");
-                 onStatusChange(GameStatus.Won);
-                 playSound('win');
-                 const didBreakRecord = saveHighScore(gameState.current.runTime / 1000);
-                 if(didBreakRecord) setIsNewBest(true);
-             }
+        if (step.won && !runRecordedRef.current) {
+            setConsistency(runtime.calculateWaveConsistency(gameState.current));
+            recordRun("won");
+            onStatusChange(GameStatus.Won);
+            playSound('win');
+            const didBreakRecord = saveHighScore(gameState.current.runTime / 1000);
+            if (didBreakRecord) setIsNewBest(true);
         }
-
-        gameState.current.trailAccumulator += frameFactor;
-        const trailStep = lowVisualsRef.current ? 3 : 2;
-        const maxTrailPoints = lowVisualsRef.current ? 18 : 30;
-        if (gameState.current.trailAccumulator >= trailStep) {
-            const w = isMini ? 4 : 8;
-            gameState.current.trail.push({ x: gameState.current.playerX, y: gameState.current.playerY, w });
-            if (gameState.current.trail.length > maxTrailPoints) gameState.current.trail.shift();
-            gameState.current.trailAccumulator %= trailStep;
-        }
-
-        for (let i = 0; i < gameState.current.trail.length; i++) {
-             gameState.current.trail[i].x -= moveSpeed;
-             gameState.current.trail[i].w *= Math.pow(0.94, frameFactor);
-        }
-
-        gameState.current.particles = gameState.current.particles.filter(p => p.life > 0);
-        gameState.current.particles.forEach(p => {
-            p.x += p.vx * frameFactor;
-            p.y += p.vy * frameFactor;
-            p.vy += 0.5 * frameFactor;
-            p.rotation += p.rotationSpeed * frameFactor;
-            p.life -= 0.02 * frameFactor;
-            p.size *= Math.pow(0.98, frameFactor);
-        });
-
-        gameState.current.shockwaves = gameState.current.shockwaves.filter(s => s.opacity > 0);
-        gameState.current.shockwaves.forEach(s => {
-            s.radius += 8 * frameFactor;
-            s.opacity -= 0.05 * frameFactor;
-        });
-
     }
 
     const renderer = rendererRef.current;
@@ -686,15 +440,22 @@ const GameCanvas: React.FC<GameCanvasProps> = memo(({ difficulty, status, onStat
     } else {
         requestRef.current = undefined;
     }
-  }, [status, difficulty, isEndless, isMini, spawnObstacle, saveHighScore, playSound, reduceMotion, ensureRenderer]);
+  }, [status, difficulty, isEndless, isMini, saveHighScore, playSound, reduceMotion, ensureRenderer, ensureRuntime]);
 
   const handleDeath = () => {
       if (runRecordedRef.current) return;
       onStatusChange(GameStatus.Lost);
       gameState.current.shakeIntensity = reduceMotion ? 0 : 40; 
-      createExplosion(gameState.current.playerX, gameState.current.playerY, '#fff');
+      runtimeRef.current?.createWaveExplosion(
+          gameState.current,
+          gameState.current.playerX,
+          gameState.current.playerY,
+          '#fff',
+          lowVisualsRef.current,
+          reduceMotion
+      );
       playSound('crash');
-      setConsistency(calculateConsistency());
+      setConsistency(runtimeRef.current?.calculateWaveConsistency(gameState.current) ?? 'N/A');
       recordRun("lost");
       
       const currentTime = gameState.current.runTime / 1000;
@@ -917,7 +678,13 @@ const GameCanvas: React.FC<GameCanvasProps> = memo(({ difficulty, status, onStat
 
   const runStats =
     status === GameStatus.Lost || status === GameStatus.Won
-      ? getRunStats()
+      ? runtimeRef.current?.getWaveRunStats(gameState.current) ?? {
+          clickCount: gameState.current.clickCount,
+          averageCps: 0,
+          peakCps: 0,
+          averageInterval: 0,
+          intervalStdDev: 0,
+        }
       : {
           clickCount: 0,
           averageCps: 0,
