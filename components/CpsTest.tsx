@@ -449,7 +449,6 @@ const CpsTest: React.FC = () => {
                    onShare={shareScore}
                  />
                )}
-               )}
            </div>
         </div>
       </div>
