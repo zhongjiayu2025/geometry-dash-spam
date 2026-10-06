@@ -1,94 +1,29 @@
-"use client";
-
-import React, { useMemo, useState } from "react";
+import React from "react";
 import { DEMONS, DEMON_SOURCE_URL, DEMON_VERIFIED_AT } from "../data/demons";
-
-type RangeFilter = "all" | "top10" | "top25" | "26to50";
+import DemonListFilterControls from "./DemonListFilterControls";
 
 export default function DemonListTable() {
-  const [query, setQuery] = useState("");
-  const [range, setRange] = useState<RangeFilter>("all");
-
-  const filtered = useMemo(() => {
-    const value = query.trim().toLowerCase();
-
-    return DEMONS.filter((item) => {
-      const matchesQuery =
-        !value ||
-        item.level.toLowerCase().includes(value) ||
-        item.publisher.toLowerCase().includes(value);
-
-      const matchesRange =
-        range === "all" ||
-        (range === "top10" && item.rank <= 10) ||
-        (range === "top25" && item.rank <= 25) ||
-        (range === "26to50" && item.rank >= 26 && item.rank <= 50);
-
-      return matchesQuery && matchesRange;
-    });
-  }, [query, range]);
-
   return (
     <div className="space-y-4">
-      <div className="rounded-xl border border-white/10 bg-slate-900/35 p-4">
-        <div className="flex flex-col gap-3 md:flex-row md:items-center md:justify-between">
-          <label className="flex-1">
-            <span className="sr-only">Search demon list</span>
-            <input
-              value={query}
-              onChange={(event) => setQuery(event.target.value)}
-              placeholder="Search level or publisher…"
-              aria-controls="demon-list-results"
-              className="w-full rounded-lg border border-white/10 bg-black/30 px-4 py-3 text-sm text-white outline-none placeholder:text-slate-600 focus:border-blue-500/60"
-            />
-          </label>
-          <div className="text-xs leading-5 text-slate-500 md:text-right">
-            <div>Top 50 snapshot · checked {DEMON_VERIFIED_AT}</div>
-            <a
-              href={DEMON_SOURCE_URL}
-              target="_blank"
-              rel="noopener noreferrer"
-              className="text-blue-400 hover:text-blue-300"
-            >
-              Source: Pointercrate Demonlist
-            </a>
-          </div>
-        </div>
-
-        <div className="mt-3 flex flex-wrap gap-2">
-          {[
-            ["all", "All 50"],
-            ["top10", "Top 10"],
-            ["top25", "Top 25"],
-            ["26to50", "#26–50"],
-          ].map(([value, label]) => (
-            <button
-              key={value}
-              type="button"
-              onClick={() => setRange(value as RangeFilter)}
-              aria-pressed={range === value}
-              className={
-                "rounded-full border px-3 py-1.5 text-xs font-semibold transition-colors " +
-                (range === value
-                  ? "border-blue-400/60 bg-blue-500/15 text-blue-200"
-                  : "border-white/10 bg-black/20 text-slate-500 hover:text-white")
-              }
-            >
-              {label}
-            </button>
-          ))}
-        </div>
+      <div className="flex flex-col gap-2 rounded-xl border border-white/10 bg-slate-900/25 px-4 py-3 text-xs leading-5 text-slate-500 md:flex-row md:items-center md:justify-between">
+        <div>Top 50 snapshot · checked {DEMON_VERIFIED_AT}</div>
+        <a
+          href={DEMON_SOURCE_URL}
+          target="_blank"
+          rel="noopener noreferrer"
+          className="text-blue-400 hover:text-blue-300"
+        >
+          Source: Pointercrate Demonlist
+        </a>
       </div>
 
-      <p className="text-xs text-slate-500" role="status" aria-live="polite">
-        Showing {filtered.length} of {DEMONS.length} ranked levels.
-      </p>
+      <DemonListFilterControls total={DEMONS.length} />
 
       <div
         id="demon-list-results"
         role="table"
         aria-label="Filtered Demon List"
-        aria-rowcount={filtered.length}
+        aria-rowcount={DEMONS.length}
         className="overflow-hidden rounded-xl border border-white/10"
       >
         <div
@@ -102,10 +37,13 @@ export default function DemonListTable() {
         </div>
 
         <div role="rowgroup" className="divide-y divide-white/5">
-          {filtered.map((item) => (
+          {DEMONS.map((item) => (
             <div
               key={item.rank}
               role="row"
+              data-demon-row
+              data-rank={item.rank}
+              data-search={`${item.level} ${item.publisher}`.toLowerCase()}
               className="grid grid-cols-[52px_minmax(0,1fr)_auto] items-start gap-3 bg-slate-950/25 p-4 md:grid-cols-[72px_minmax(0,2fr)_minmax(0,1.2fr)_110px] md:items-center md:gap-0 md:p-0"
             >
               <div role="cell" className="font-mono text-sm font-bold text-blue-400 md:px-4 md:py-4">
@@ -124,13 +62,11 @@ export default function DemonListTable() {
             </div>
           ))}
 
-          {!filtered.length && (
-            <div role="row">
-              <div role="cell" className="bg-slate-950/25 px-4 py-8 text-center text-sm text-slate-500">
-                No matching demon found in this top-50 snapshot.
-              </div>
+          <div id="demon-list-empty-state" role="row" hidden>
+            <div role="cell" className="bg-slate-950/25 px-4 py-8 text-center text-sm text-slate-500">
+              No matching demon found in this top-50 snapshot.
             </div>
-          )}
+          </div>
         </div>
       </div>
 
