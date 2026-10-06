@@ -25,7 +25,10 @@ if (
   !updaterSource.includes("Pointercrate page fallback yielded") ||
   !updaterSource.includes("Loaded Demon List from Pointercrate page fallback.") ||
   !updaterSource.includes("[\\u2066-\\u2069]") ||
-  !updaterSource.includes("items.length !== 50")
+  !updaterSource.includes("items.length !== 50") ||
+  !updaterSource.includes("Mozilla/5.0 (X11; Linux x86_64)") ||
+  !updaterSource.includes("const headings = [...html.matchAll") ||
+  !updaterSource.includes("const sectionEnd = headings[index + 1]?.index ?? html.length")
 ) {
   errors.push(
     "Demon List updater must retain the validated Pointercrate page fallback when the API is unavailable."

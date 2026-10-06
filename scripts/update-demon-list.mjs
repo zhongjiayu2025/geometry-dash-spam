@@ -14,7 +14,10 @@ async function fetchWithTimeout(url, headers = {}) {
   try {
     return await fetch(url, {
       headers: {
-        "User-Agent": "geometrydashspam.cc demon-list refresh",
+        "User-Agent":
+          "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 Chrome/151 Safari/537.36",
+        "Accept-Language": "en-US,en;q=0.9",
+        Referer: "https://pointercrate.com/demonlist/",
         ...headers,
       },
       signal: controller.signal,
@@ -76,19 +79,41 @@ async function fetchFromPage() {
   }
 
   const html = await response.text();
-  const matches = [
-    ...html.matchAll(
-      /<h2[^>]*>\s*#(\d+)\s*[–-]\s*([\s\S]*?)<\/h2>\s*<h3[^>]*>\s*published by\s*([\s\S]*?)<\/h3>/gi
-    ),
-  ];
+  const headings = [...html.matchAll(/<h2[^>]*>([\s\S]*?)<\/h2>/gi)];
 
-  const items = matches
-    .map((match) => ({
-      position: Number(match[1]),
-      name: decodeHtml(match[2]),
-      publisher: { name: decodeHtml(match[3]) },
-    }))
-    .filter((item) => item.position >= 1 && item.position <= 50);
+  const items = headings
+    .map((heading, index) => {
+      const headingText = decodeHtml(heading[1]);
+      const rankMatch = headingText.match(/^#(\d+)\s*[–-]\s*(.+)$/);
+      if (!rankMatch) return null;
+
+      const sectionStart = (heading.index ?? 0) + heading[0].length;
+      const sectionEnd = headings[index + 1]?.index ?? html.length;
+      const section = html.slice(sectionStart, sectionEnd);
+      const publisherMatch = section.match(
+        /<h3[^>]*>([\s\S]*?published by[\s\S]*?)<\/h3>/i
+      );
+      if (!publisherMatch) return null;
+
+      const publisherText = decodeHtml(publisherMatch[1]).replace(
+        /^published by\s*/i,
+        ""
+      );
+
+      return {
+        position: Number(rankMatch[1]),
+        name: rankMatch[2].trim(),
+        publisher: { name: publisherText },
+      };
+    })
+    .filter(
+      (item) =>
+        item &&
+        item.position >= 1 &&
+        item.position <= 50 &&
+        item.name &&
+        item.publisher.name
+    );
 
   if (items.length !== 50) {
     throw new Error(`Pointercrate page fallback yielded ${items.length} top-50 rows`);
