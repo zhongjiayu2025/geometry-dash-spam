@@ -1,300 +1,285 @@
 "use client";
 
-import React, { useState, useEffect, useRef } from 'react';
-import { RotateCcw, Target, Trophy, Volume2, VolumeX, Share2, Check } from 'lucide-react';
+import React, { useCallback, useEffect, useRef, useState } from "react";
+import dynamic from "next/dynamic";
+import { Target, Trophy, Volume2, VolumeX } from "lucide-react";
+import type { ClickSoundEngine, ClickTone } from "../lib/clickSound";
 
-const playSound = (audioCtx: AudioContext | null, type: 'hit' | 'miss') => {
-    if (!audioCtx) return;
-    const oscillator = audioCtx.createOscillator();
-    const gainNode = audioCtx.createGain();
-    
-    oscillator.type = type === 'hit' ? 'square' : 'sawtooth';
-    oscillator.frequency.setValueAtTime(type === 'hit' ? 600 : 150, audioCtx.currentTime);
-    if (type === 'hit') {
-       oscillator.frequency.exponentialRampToValueAtTime(1200, audioCtx.currentTime + 0.05);
-    } else {
-       oscillator.frequency.exponentialRampToValueAtTime(50, audioCtx.currentTime + 0.1);
-    }
-    
-    gainNode.gain.setValueAtTime(0.1, audioCtx.currentTime);
-    gainNode.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + (type === 'hit' ? 0.05 : 0.1));
-    
-    oscillator.connect(gainNode);
-    gainNode.connect(audioCtx.destination);
-    
-    oscillator.start();
-    oscillator.stop(audioCtx.currentTime + (type === 'hit' ? 0.05 : 0.1));
-};
+const AimTrainerResult = dynamic(() => import("./AimTrainerResult"), { ssr: false });
 
 export default function AimTrainer() {
-    const [isActive, setIsActive] = useState(false);
-    const [isFinished, setIsFinished] = useState(false);
-    const [timeLeft, setTimeLeft] = useState(30);
-    const [score, setScore] = useState(0);
-    const [misses, setMisses] = useState(0);
-    const [targetPos, setTargetPos] = useState({ x: 50, y: 50 });
-    
-    const [bestScore, setBestScore] = useState<number | null>(null);
-    const [soundEnabled, setSoundEnabled] = useState(true);
-    const [copied, setCopied] = useState(false);
-    
-    const clickTimes = useRef<number[]>([]);
-    const lastClickTime = useRef<number>(0);
-    const timerRef = useRef<number | null>(null);
-    const audioCtxRef = useRef<AudioContext | null>(null);
-    const startTimeRef = useRef(0);
+  const [isActive, setIsActive] = useState(false);
+  const [isFinished, setIsFinished] = useState(false);
+  const [timeLeft, setTimeLeft] = useState(30);
+  const [score, setScore] = useState(0);
+  const [misses, setMisses] = useState(0);
+  const [targetPos, setTargetPos] = useState({ x: 50, y: 50 });
+  const [bestScore, setBestScore] = useState<number | null>(null);
+  const [soundEnabled, setSoundEnabled] = useState(true);
 
-    useEffect(() => {
-        if (typeof window !== 'undefined') {
-            const AudioContextClass = window.AudioContext || (window as any).webkitAudioContext;
-            if (AudioContextClass) {
-                audioCtxRef.current = new AudioContextClass();
-            }
-            const saved = localStorage.getItem('aimTrainerBest');
-            if (saved) {
-                try { setBestScore(parseInt(saved, 10)); } catch(e) {}
-            }
+  const clickTimes = useRef<number[]>([]);
+  const lastClickTime = useRef(0);
+  const timerRef = useRef<number | null>(null);
+  const endTimerRef = useRef<number | null>(null);
+  const audioEngineRef = useRef<ClickSoundEngine | null>(null);
+  const audioLoadRef = useRef<Promise<ClickSoundEngine | null> | null>(null);
+  const audioDisposedRef = useRef(false);
+  const startTimeRef = useRef(0);
+
+  useEffect(() => {
+    const saved = localStorage.getItem("aimTrainerBest");
+    if (saved) {
+      const parsed = Number.parseInt(saved, 10);
+      if (Number.isFinite(parsed)) setBestScore(parsed);
+    }
+
+    return () => {
+      audioDisposedRef.current = true;
+      if (timerRef.current) window.clearInterval(timerRef.current);
+      if (endTimerRef.current) window.clearTimeout(endTimerRef.current);
+      const engine = audioEngineRef.current;
+      audioEngineRef.current = null;
+      if (engine) void engine.destroy();
+    };
+  }, []);
+
+  const ensureAudio = useCallback(async () => {
+    if (audioDisposedRef.current) return null;
+
+    if (audioEngineRef.current) {
+      await audioEngineRef.current.resume();
+      return audioEngineRef.current;
+    }
+
+    if (!audioLoadRef.current) {
+      audioLoadRef.current = import("../lib/clickSound")
+        .then(({ createClickSoundEngine }) => createClickSoundEngine())
+        .catch(() => null);
+    }
+
+    const engine = await audioLoadRef.current;
+    if (!engine) return null;
+
+    if (audioDisposedRef.current) {
+      await engine.destroy();
+      return null;
+    }
+
+    audioEngineRef.current = engine;
+    await engine.resume();
+    return engine;
+  }, []);
+
+  const playAimSound = useCallback((tone: ClickTone) => {
+    if (!soundEnabled) return;
+
+    const engine = audioEngineRef.current;
+    if (engine) {
+      engine.play(tone);
+    } else {
+      void ensureAudio().then((loadedEngine) => loadedEngine?.play(tone));
+    }
+  }, [ensureAudio, soundEnabled]);
+
+  const toggleSound = useCallback(() => {
+    const next = !soundEnabled;
+    setSoundEnabled(next);
+
+    if (next) {
+      void ensureAudio();
+    } else if (audioEngineRef.current) {
+      void audioEngineRef.current.suspend();
+    }
+  }, [ensureAudio, soundEnabled]);
+
+  const generateTarget = () => {
+    setTargetPos({
+      x: Math.floor(Math.random() * 80) + 10,
+      y: Math.floor(Math.random() * 80) + 10,
+    });
+  };
+
+  const endGame = useCallback(() => {
+    setIsActive(false);
+    setIsFinished(true);
+    setTimeLeft(0);
+
+    if (timerRef.current) window.clearInterval(timerRef.current);
+    if (endTimerRef.current) window.clearTimeout(endTimerRef.current);
+
+    setScore((currentScore) => {
+      setBestScore((previousBest) => {
+        if (previousBest === null || currentScore > previousBest) {
+          localStorage.setItem("aimTrainerBest", currentScore.toString());
+          return currentScore;
         }
-        return () => {
-            if (timerRef.current) clearInterval(timerRef.current);
-        };
-    }, []);
+        return previousBest;
+      });
+      return currentScore;
+    });
+  }, []);
 
-    const generateTarget = () => {
-        // Generate random coordinates between 10% and 90% to keep target fully visible
-        const x = Math.floor(Math.random() * 80) + 10;
-        const y = Math.floor(Math.random() * 80) + 10;
-        setTargetPos({ x, y });
+  const startGame = () => {
+    if (timerRef.current) window.clearInterval(timerRef.current);
+    if (endTimerRef.current) window.clearTimeout(endTimerRef.current);
+
+    setIsActive(true);
+    setIsFinished(false);
+    setScore(0);
+    setMisses(0);
+    setTimeLeft(30);
+    clickTimes.current = [];
+
+    const now = performance.now();
+    lastClickTime.current = now;
+    startTimeRef.current = now;
+    generateTarget();
+
+    if (soundEnabled) void ensureAudio();
+
+    const updateTimer = () => {
+      const elapsed = performance.now() - startTimeRef.current;
+      setTimeLeft(Math.max(0, (30000 - elapsed) / 1000));
     };
 
-    const startGame = () => {
-        setIsActive(true);
-        setIsFinished(false);
-        setScore(0);
-        setMisses(0);
-        setTimeLeft(30);
-        clickTimes.current = [];
-        const now = performance.now();
-        lastClickTime.current = now;
-        startTimeRef.current = now;
-        generateTarget();
+    timerRef.current = window.setInterval(updateTimer, 100);
+    endTimerRef.current = window.setTimeout(endGame, 30000);
+  };
 
-        timerRef.current = window.setInterval(() => {
-            const elapsed = performance.now() - startTimeRef.current;
-            const remaining = Math.max(0, (30000 - elapsed) / 1000);
-            setTimeLeft(remaining);
+  const handleTargetClick = (event: React.PointerEvent<HTMLButtonElement>) => {
+    event.stopPropagation();
+    if (!isActive || isFinished) return;
 
-            if (elapsed >= 30000) {
-                endGame();
-            }
-        }, 33);
-    };
+    playAimSound("aimHit");
 
-    const endGame = () => {
-        setIsActive(false);
-        setIsFinished(true);
-        if (timerRef.current) clearInterval(timerRef.current);
-        
-        setScore(currentScore => {
-             setBestScore(prevBest => {
-                 if (prevBest === null || currentScore > prevBest) {
-                     localStorage.setItem('aimTrainerBest', currentScore.toString());
-                     return currentScore;
-                 }
-                 return prevBest;
-             });
-             return currentScore;
-        });
-    };
+    const now = performance.now();
+    clickTimes.current.push(now - lastClickTime.current);
+    lastClickTime.current = now;
 
-    const handleTargetClick = (e: React.PointerEvent<HTMLButtonElement>) => {
-        e.stopPropagation();
-        if (!isActive || isFinished) return;
-        
-        if (soundEnabled && audioCtxRef.current) {
-            if (audioCtxRef.current.state === 'suspended') audioCtxRef.current.resume();
-            playSound(audioCtxRef.current, 'hit');
-        }
-        
-        const now = performance.now();
-        const reactionTime = now - lastClickTime.current;
-        clickTimes.current.push(reactionTime);
-        lastClickTime.current = now;
+    setScore((previous) => previous + 1);
+    generateTarget();
+  };
 
-        setScore(prev => prev + 1);
-        generateTarget();
-    };
+  const handleBackgroundClick = () => {
+    if (!isActive || isFinished) return;
+    playAimSound("aimMiss");
+    setMisses((previous) => previous + 1);
+  };
 
-    const handleBackgroundClick = (e: React.PointerEvent<HTMLDivElement>) => {
-        if (!isActive || isFinished) return;
-        
-        if (soundEnabled && audioCtxRef.current) {
-            if (audioCtxRef.current.state === 'suspended') audioCtxRef.current.resume();
-            playSound(audioCtxRef.current, 'miss');
-        }
-        
-        setMisses(prev => prev + 1);
-    };
+  const resetGame = () => {
+    setIsActive(false);
+    setIsFinished(false);
+    setScore(0);
+    setMisses(0);
+    setTimeLeft(30);
+    if (timerRef.current) window.clearInterval(timerRef.current);
+    if (endTimerRef.current) window.clearTimeout(endTimerRef.current);
+  };
 
-    const resetGame = () => {
-        setIsActive(false);
-        setIsFinished(false);
-        setScore(0);
-        setMisses(0);
-        setTimeLeft(30);
-        if (timerRef.current) clearInterval(timerRef.current);
-    };
+  const totalClicks = score + misses;
+  const accuracy = totalClicks > 0 ? ((score / totalClicks) * 100).toFixed(1) : "0.0";
+  const averageTime =
+    clickTimes.current.length > 0
+      ? Math.round(clickTimes.current.reduce((sum, value) => sum + value, 0) / clickTimes.current.length)
+      : 0;
 
-    useEffect(() => {
-        return () => {
-            if (timerRef.current) clearInterval(timerRef.current);
-        };
-    }, []);
+  return (
+    <div className="w-full max-w-4xl mx-auto px-4 md:px-0">
+      <div className="bg-[#0b1021] border border-white/10 rounded-3xl p-6 md:p-12 shadow-2xl relative overflow-hidden">
+        <div className="absolute top-0 right-0 w-64 h-64 bg-cyan-500/10 rounded-full blur-[80px] -translate-y-1/2 translate-x-1/3" />
 
-    const totalClicks = score + misses;
-    const accuracy = totalClicks > 0 ? ((score / totalClicks) * 100).toFixed(1) : '0.0';
-    const averageTime = clickTimes.current.length > 0
-        ? Math.round(clickTimes.current.reduce((a, b) => a + b, 0) / clickTimes.current.length)
-        : 0;
-
-    const shareScore = async () => {
-        const text = `I got a score of ${score} with ${accuracy}% accuracy on the Geometry Dash Aim Trainer!`;
-        const url = `https://geometrydashspam.cc/aim-trainer`;
-        if (typeof navigator !== 'undefined' && navigator.share) {
-            try {
-                await navigator.share({ title: 'Aim Trainer Test', text, url });
-            } catch(e) { console.log(e); }
-        } else {
-            navigator.clipboard.writeText(`${text} ${url}`);
-            setCopied(true);
-            setTimeout(() => setCopied(false), 2000);
-        }
-    };
-
-    return (
-        <div className="w-full max-w-4xl mx-auto px-4 md:px-0">
-            <div className="bg-[#0b1021] border border-white/10 rounded-3xl p-6 md:p-12 shadow-2xl relative overflow-hidden">
-                <div className="absolute top-0 right-0 w-64 h-64 bg-cyan-500/10 rounded-full blur-[80px] -translate-y-1/2 translate-x-1/3"></div>
-                
-                <div className="relative z-10 flex flex-col items-center">
-                    
-                    <div className="flex w-full justify-between items-center mb-4 bg-slate-900/50 p-4 rounded-2xl border border-white/5">
-                        <div className="text-center">
-                            <div className="text-sm text-slate-400 font-bold uppercase tracking-wider mb-1">Time Left</div>
-                            <div className="text-3xl md:text-4xl font-display font-bold text-white">{timeLeft.toFixed(2)}s</div>
-                        </div>
-                        <div className="text-center">
-                            <div className="text-sm text-slate-400 font-bold uppercase tracking-wider mb-1">Score</div>
-                            <div className="text-3xl md:text-4xl font-display font-bold text-cyan-400">{score}</div>
-                        </div>
-                        <div className="text-center">
-                            <div className="text-sm text-slate-400 font-bold uppercase tracking-wider mb-1">Accuracy</div>
-                            <div className="text-3xl md:text-4xl font-display font-bold text-white">{accuracy}%</div>
-                        </div>
-                        <div className="text-center hidden md:block">
-                            <button 
-                              onClick={() => setSoundEnabled(!soundEnabled)}
-                              className={`p-2 rounded-xl border transition-colors ${soundEnabled ? 'bg-cyan-600/20 border-cyan-500/50 text-cyan-400 hover:bg-cyan-600/30' : 'bg-slate-800 border-white/10 text-slate-500 hover:text-slate-300'}`}
-                              title={soundEnabled ? "Mute Sounds" : "Enable Sounds"}
-                            >
-                               {soundEnabled ? <Volume2 className="w-5 h-5" /> : <VolumeX className="w-5 h-5" />}
-                            </button>
-                        </div>
-                    </div>
-                    
-                    <div className="w-full flex justify-between items-center mb-4 px-2">
-                         {bestScore !== null ? (
-                             <div className="flex items-center gap-2 text-sm text-slate-400">
-                                 <Trophy className="w-4 h-4 text-yellow-500" />
-                                 Best Score: <strong className="text-white">{bestScore}</strong>
-                             </div>
-                         ) : <div></div>}
-                         <div className="md:hidden">
-                            <button 
-                              onClick={() => setSoundEnabled(!soundEnabled)}
-                              className={`p-1.5 rounded-lg border transition-colors ${soundEnabled ? 'bg-cyan-600/20 border-cyan-500/50 text-cyan-400' : 'bg-slate-800 border-white/10 text-slate-500'}`}
-                            >
-                               {soundEnabled ? <Volume2 className="w-4 h-4" /> : <VolumeX className="w-4 h-4" />}
-                            </button>
-                        </div>
-                    </div>
-
-                    {!isActive && !isFinished ? (
-                        <button
-                            onClick={startGame}
-                            className="w-full h-80 rounded-3xl border-2 flex flex-col items-center justify-center gap-4 transition-all duration-300 group select-none bg-cyan-900/10 border-cyan-500/20 hover:bg-cyan-800/20 hover:border-cyan-500/30"
-                        >
-                            <Target className="w-16 h-16 md:w-20 md:h-20 text-cyan-500/50 group-hover:text-cyan-400 transition-colors" />
-                            <div className="text-center">
-                                <h3 className="text-2xl md:text-3xl font-display font-bold text-slate-300 group-hover:text-white transition-colors">
-                                    Start Aim Trainer
-                                </h3>
-                                <p className="text-slate-500 mt-2 text-sm max-w-sm mx-auto px-4">
-                                    Click the targets as quickly and accurately as you can. Pointer presses outside the target count as misses.
-                                </p>
-                            </div>
-                        </button>
-                    ) : isActive ? (
-                        <div 
-                            className="w-full h-80 bg-slate-900/40 border border-white/5 rounded-3xl relative overflow-hidden cursor-crosshair"
-                            onPointerDown={handleBackgroundClick}
-                        >
-                            <button
-                                type="button"
-                                aria-label="Aim target"
-                                className="absolute w-12 h-12 bg-cyan-500 rounded-full shadow-[0_0_15px_rgba(6,182,212,0.6)] cursor-pointer flex items-center justify-center -translate-x-1/2 -translate-y-1/2"
-                                style={{ left: `${targetPos.x}%`, top: `${targetPos.y}%` }}
-                                onPointerDown={handleTargetClick}
-                            >
-                                <div className="w-8 h-8 rounded-full border-2 border-white/30 flex items-center justify-center">
-                                    <div className="w-2 h-2 rounded-full bg-white/80"></div>
-                                </div>
-                            </button>
-                        </div>
-                    ) : (
-                        <div className="w-full animate-in zoom-in-95 duration-500">
-                            <div className="bg-cyan-900/20 border border-cyan-500/30 rounded-3xl p-8 text-center relative overflow-hidden">
-                                <h3 className="text-2xl text-cyan-200 font-bold mb-2">Trainer Complete!</h3>
-                                
-                                <div className="grid grid-cols-2 md:grid-cols-4 gap-4 my-8">
-                                    <div className="bg-slate-900/50 p-4 rounded-xl border border-white/5">
-                                        <div className="text-sm text-slate-400 uppercase tracking-wider mb-1">Score</div>
-                                        <div className="text-3xl font-bold text-cyan-400">{score}</div>
-                                    </div>
-                                    <div className="bg-slate-900/50 p-4 rounded-xl border border-white/5">
-                                        <div className="text-sm text-slate-400 uppercase tracking-wider mb-1">Misses</div>
-                                        <div className="text-3xl font-bold text-rose-400">{misses}</div>
-                                    </div>
-                                    <div className="bg-slate-900/50 p-4 rounded-xl border border-white/5">
-                                        <div className="text-sm text-slate-400 uppercase tracking-wider mb-1">Accuracy</div>
-                                        <div className="text-3xl font-bold text-white">{accuracy}%</div>
-                                    </div>
-                                    <div className="bg-slate-900/50 p-4 rounded-xl border border-white/5">
-                                        <div className="text-sm text-slate-400 uppercase tracking-wider mb-1">Avg Hit Interval</div>
-                                        <div className="text-3xl font-bold text-yellow-400">{averageTime}ms</div>
-                                    </div>
-                                </div>
-
-                                <div className="flex gap-2 justify-center">
-                                    <button
-                                        onClick={resetGame}
-                                        className="px-8 py-4 bg-cyan-600 hover:bg-cyan-500 text-white font-bold rounded-xl transition-colors flex items-center gap-2 shadow-lg shadow-cyan-600/20"
-                                    >
-                                        <RotateCcw className="w-5 h-5" /> Try Again
-                                    </button>
-                                    <button
-                                        onClick={shareScore}
-                                        className="px-5 py-4 bg-slate-800 hover:bg-slate-700 text-white rounded-xl transition-colors flex items-center justify-center border border-white/10"
-                                        title="Share your score"
-                                    >
-                                        {copied ? <Check className="w-5 h-5 text-green-400" /> : <Share2 className="w-5 h-5" />}
-                                    </button>
-                                </div>
-                            </div>
-                        </div>
-                    )}
-                </div>
+        <div className="relative z-10 flex flex-col items-center">
+          <div className="flex w-full justify-between items-center mb-4 bg-slate-900/50 p-4 rounded-2xl border border-white/5">
+            <div className="text-center">
+              <div className="text-sm text-slate-400 font-bold uppercase tracking-wider mb-1">Time Left</div>
+              <div className="text-3xl md:text-4xl font-display font-bold text-white">{timeLeft.toFixed(2)}s</div>
             </div>
-</div>
-    );
+            <div className="text-center">
+              <div className="text-sm text-slate-400 font-bold uppercase tracking-wider mb-1">Score</div>
+              <div className="text-3xl md:text-4xl font-display font-bold text-cyan-400">{score}</div>
+            </div>
+            <div className="text-center">
+              <div className="text-sm text-slate-400 font-bold uppercase tracking-wider mb-1">Accuracy</div>
+              <div className="text-3xl md:text-4xl font-display font-bold text-white">{accuracy}%</div>
+            </div>
+            <div className="text-center hidden md:block">
+              <button
+                type="button"
+                onClick={toggleSound}
+                aria-pressed={soundEnabled}
+                aria-label={soundEnabled ? "Mute aim trainer sounds" : "Enable aim trainer sounds"}
+                className={`p-2 rounded-xl border transition-colors ${soundEnabled ? "bg-cyan-600/20 border-cyan-500/50 text-cyan-400 hover:bg-cyan-600/30" : "bg-slate-800 border-white/10 text-slate-500 hover:text-slate-300"}`}
+                title={soundEnabled ? "Mute Sounds" : "Enable Sounds"}
+              >
+                {soundEnabled ? <Volume2 className="w-5 h-5" /> : <VolumeX className="w-5 h-5" />}
+              </button>
+            </div>
+          </div>
+
+          <div className="w-full flex justify-between items-center mb-4 px-2">
+            {bestScore !== null ? (
+              <div className="flex items-center gap-2 text-sm text-slate-400">
+                <Trophy className="w-4 h-4 text-yellow-500" />
+                Best Score: <strong className="text-white">{bestScore}</strong>
+              </div>
+            ) : <div />}
+            <div className="md:hidden">
+              <button
+                type="button"
+                onClick={toggleSound}
+                aria-pressed={soundEnabled}
+                aria-label={soundEnabled ? "Mute aim trainer sounds" : "Enable aim trainer sounds"}
+                className={`p-1.5 rounded-lg border transition-colors ${soundEnabled ? "bg-cyan-600/20 border-cyan-500/50 text-cyan-400" : "bg-slate-800 border-white/10 text-slate-500"}`}
+              >
+                {soundEnabled ? <Volume2 className="w-4 h-4" /> : <VolumeX className="w-4 h-4" />}
+              </button>
+            </div>
+          </div>
+
+          {!isActive && !isFinished ? (
+            <button
+              type="button"
+              onClick={startGame}
+              className="w-full h-80 rounded-3xl border-2 flex flex-col items-center justify-center gap-4 transition-all duration-300 group select-none bg-cyan-900/10 border-cyan-500/20 hover:bg-cyan-800/20 hover:border-cyan-500/30"
+            >
+              <Target className="w-16 h-16 md:w-20 md:h-20 text-cyan-500/50 group-hover:text-cyan-400 transition-colors" />
+              <div className="text-center">
+                <h3 className="text-2xl md:text-3xl font-display font-bold text-slate-300 group-hover:text-white transition-colors">
+                  Start Aim Trainer
+                </h3>
+                <p className="text-slate-500 mt-2 text-sm max-w-sm mx-auto px-4">
+                  Click the targets as quickly and accurately as you can. Pointer presses outside the target count as misses.
+                </p>
+              </div>
+            </button>
+          ) : isActive ? (
+            <div
+              className="w-full h-80 bg-slate-900/40 border border-white/5 rounded-3xl relative overflow-hidden cursor-crosshair"
+              onPointerDown={handleBackgroundClick}
+            >
+              <button
+                type="button"
+                aria-label="Aim target"
+                className="absolute w-12 h-12 bg-cyan-500 rounded-full shadow-[0_0_15px_rgba(6,182,212,0.6)] cursor-pointer flex items-center justify-center -translate-x-1/2 -translate-y-1/2"
+                style={{ left: `${targetPos.x}%`, top: `${targetPos.y}%` }}
+                onPointerDown={handleTargetClick}
+              >
+                <div className="w-8 h-8 rounded-full border-2 border-white/30 flex items-center justify-center">
+                  <div className="w-2 h-2 rounded-full bg-white/80" />
+                </div>
+              </button>
+            </div>
+          ) : (
+            <AimTrainerResult
+              score={score}
+              misses={misses}
+              accuracy={accuracy}
+              averageTime={averageTime}
+              onReset={resetGame}
+            />
+          )}
+        </div>
+      </div>
+    </div>
+  );
 }

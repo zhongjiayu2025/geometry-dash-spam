@@ -1,4 +1,4 @@
-export type ClickTone = "jitter" | "butterfly" | "rightClick" | "spacebar" | "cps";
+export type ClickTone = "jitter" | "butterfly" | "rightClick" | "spacebar" | "cps" | "aimHit" | "aimMiss";
 
 export interface ClickSoundEngine {
   resume(): Promise<void>;
@@ -13,6 +13,8 @@ const TONE_FREQUENCIES: Record<ClickTone, number> = {
   rightClick: 700,
   spacebar: 400,
   cps: 800,
+  aimHit: 600,
+  aimMiss: 150,
 };
 
 class BrowserClickSoundEngine implements ClickSoundEngine {
@@ -40,18 +42,35 @@ class BrowserClickSoundEngine implements ClickSoundEngine {
     const oscillator = this.ctx.createOscillator();
     const gainNode = this.ctx.createGain();
     const now = this.ctx.currentTime;
+    const duration = tone === "aimMiss" ? 0.1 : 0.05;
 
-    oscillator.type = tone === "spacebar" ? "triangle" : "sine";
+    oscillator.type =
+      tone === "aimHit"
+        ? "square"
+        : tone === "aimMiss"
+          ? "sawtooth"
+          : tone === "spacebar"
+            ? "triangle"
+            : "sine";
     oscillator.frequency.setValueAtTime(TONE_FREQUENCIES[tone], now);
-    oscillator.frequency.exponentialRampToValueAtTime(tone === "spacebar" ? 100 : 300, now + 0.05);
+    oscillator.frequency.exponentialRampToValueAtTime(
+      tone === "aimHit"
+        ? 1200
+        : tone === "aimMiss"
+          ? 50
+          : tone === "spacebar"
+            ? 100
+            : 300,
+      now + duration
+    );
 
-    gainNode.gain.setValueAtTime(0.2, now);
-    gainNode.gain.exponentialRampToValueAtTime(0.01, now + 0.05);
+    gainNode.gain.setValueAtTime(tone === "aimHit" || tone === "aimMiss" ? 0.1 : 0.2, now);
+    gainNode.gain.exponentialRampToValueAtTime(0.01, now + duration);
 
     oscillator.connect(gainNode);
     gainNode.connect(this.ctx.destination);
     oscillator.start(now);
-    oscillator.stop(now + 0.05);
+    oscillator.stop(now + duration);
   }
 
   async destroy() {
