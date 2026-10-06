@@ -1,4 +1,5 @@
 import RightClickTest from "../../components/RightClickTest";
+import RelatedTools from "../../components/RelatedTools";
 import InputToolGuide from "../../components/InputToolGuide";
 import { Metadata } from "next";
 
@@ -25,6 +26,7 @@ export default function RightClickPage() {
     <>
       <RightClickTest />
       <InputToolGuide tool="right-click" />
-    </>
+          <RelatedTools currentTool="rightClick" />
+</>
   );
 }
