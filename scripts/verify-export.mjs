@@ -817,7 +817,10 @@ const visualMemoryClientSource = supportClientSources.find(([file]) => file === 
 const chimpClientSource = supportClientSources.find(([file]) => file === "ChimpTest.tsx")?.[1] ?? "";
 const typingClientSource = supportClientSources.find(([file]) => file === "TypingTest.tsx")?.[1] ?? "";
 const scrollClientSource = supportClientSources.find(([file]) => file === "ScrollTest.tsx")?.[1] ?? "";
+const soundReactionClientSource = supportClientSources.find(([file]) => file === "SoundReactionTest.tsx")?.[1] ?? "";
+const refreshRateClientSource = supportClientSources.find(([file]) => file === "RefreshRateTest.tsx")?.[1] ?? "";
 const reactionPageSource = readFileSync(join(process.cwd(), "app", "reaction-test", "page.tsx"), "utf8");
+const refreshRatePageSource = readFileSync(join(process.cwd(), "app", "refresh-rate", "page.tsx"), "utf8");
 if (
   rightClickClientSource.includes("Why Test Right Click CPS?") ||
   rightClickClientSource.includes("Minecraft Bridging") ||
@@ -985,6 +988,35 @@ if (
   );
 }
 
+if (
+  !soundReactionClientSource.includes("import('../lib/clickSound')") ||
+  !soundReactionClientSource.includes("'soundReaction'") ||
+  soundReactionClientSource.includes("AudioContext") ||
+  soundReactionClientSource.includes("createOscillator") ||
+  soundReactionClientSource.includes("createGain")
+) {
+  infrastructureErrors.push(
+    "SoundReactionTest must keep Web Audio synthesis in the shared lazy clickSound chunk"
+  );
+}
+
+if (!clickSoundSource.includes('"soundReaction"')) {
+  infrastructureErrors.push(
+    "Shared clickSound engine must retain the Sound Reaction cue tone"
+  );
+}
+
+if (
+  refreshRateClientSource.includes("<h1") ||
+  refreshRateClientSource.includes("If the number is lower than expected") ||
+  !refreshRatePageSource.includes("Browser Refresh Rate Test") ||
+  !refreshRatePageSource.includes("If the number is lower than expected")
+) {
+  infrastructureErrors.push(
+    "RefreshRateTest static heading and troubleshooting guidance must stay server-rendered"
+  );
+}
+
 const clientSourceBudgets = [
   ["WaveSimulator.tsx", waveClientSource, 11000],
   ["CpsTest.tsx", cpsClientSource, 18500],
@@ -994,6 +1026,8 @@ const clientSourceBudgets = [
   ["ChimpTest.tsx", chimpClientSource, 11500],
   ["TypingTest.tsx", typingClientSource, 10000],
   ["ScrollTest.tsx", scrollClientSource, 7500],
+  ["RefreshRateTest.tsx", refreshRateClientSource, 4500],
+  ["SoundReactionTest.tsx", soundReactionClientSource, 10000],
   ["GameCanvas.tsx", gameCanvasSource, 48000],
 ];
 
