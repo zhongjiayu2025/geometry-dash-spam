@@ -4,6 +4,7 @@ import { useCallback, useEffect, useRef, useState } from "react";
 import { RotateCcw, Timer } from "lucide-react";
 import { isInteractiveKeyboardTarget } from "../lib/inputTarget";
 import { useManagedTimeout } from "../lib/useManagedTimeout";
+import { useIntentionalPointerAction } from "../lib/useIntentionalPointerAction";
 
 export default function BpmTapper() {
   const [bpm, setBpm] = useState(0);
@@ -11,7 +12,6 @@ export default function BpmTapper() {
   const [isActive, setIsActive] = useState(false);
 
   const tapsRef = useRef<number[]>([]);
-  const pendingTouchRef = useRef<{ pointerId: number; x: number; y: number } | null>(null);
   const { schedule: scheduleReset, clear: clearReset } = useManagedTimeout();
 
   const reset = useCallback(() => {
@@ -60,32 +60,10 @@ export default function BpmTapper() {
     return () => window.removeEventListener("keydown", handleKeyDown);
   }, [recordTap]);
 
-  const handlePointerDown = (event: React.PointerEvent<HTMLButtonElement>) => {
-    if (!isActive && event.pointerType === "touch") {
-      pendingTouchRef.current = {
-        pointerId: event.pointerId,
-        x: event.clientX,
-        y: event.clientY,
-      };
-      return;
-    }
-
-    event.preventDefault();
-    recordTap();
-  };
-
-  const handlePointerUp = (event: React.PointerEvent<HTMLButtonElement>) => {
-    const pending = pendingTouchRef.current;
-    if (!pending || pending.pointerId !== event.pointerId) return;
-
-    pendingTouchRef.current = null;
-    const moved = Math.hypot(event.clientX - pending.x, event.clientY - pending.y);
-    if (moved <= 12) recordTap();
-  };
-
-  const handlePointerCancel = () => {
-    pendingTouchRef.current = null;
-  };
+  const pointerAction = useIntentionalPointerAction<HTMLButtonElement>({
+    onAction: recordTap,
+    deferTouch: !isActive,
+  });
 
   return (
     <div className="w-full max-w-4xl mx-auto px-4 md:px-0">
@@ -111,9 +89,7 @@ export default function BpmTapper() {
           <button
             id="bpm-btn"
             type="button"
-            onPointerDown={handlePointerDown}
-            onPointerUp={handlePointerUp}
-            onPointerCancel={handlePointerCancel}
+            {...pointerAction}
             onKeyDown={(event) => {
               if (event.repeat || (event.key !== " " && event.key !== "Enter")) return;
               event.preventDefault();

@@ -6,6 +6,7 @@ import { Volume2, Ear } from "lucide-react";
 import { isInteractiveKeyboardTarget } from "../lib/inputTarget";
 import { useLazyClickSound } from "../lib/useLazyClickSound";
 import { useManagedTimeout } from "../lib/useManagedTimeout";
+import { useIntentionalPointerAction } from "../lib/useIntentionalPointerAction";
 import { usePersistentBestNumber } from "../lib/usePersistentBestNumber";
 
 const SoundReactionResult = dynamic(() => import("./SoundReactionResult"), { ssr: false });
@@ -18,7 +19,6 @@ export default function SoundReactionTest() {
   const [bestTime, commitBestTime] = usePersistentBestNumber("soundReactionBest", "min");
 
   const startTimeRef = useRef(0);
-  const pendingTouchRef = useRef<{ pointerId: number; x: number; y: number } | null>(null);
   const { ensure: ensureClickSound, play: playClickSound } = useLazyClickSound();
   const { schedule: scheduleTimeout, clear: clearTimeout } = useManagedTimeout();
 
@@ -71,33 +71,10 @@ export default function SoundReactionTest() {
     return () => window.removeEventListener("keydown", handleKeyDown);
   }, [handleInteraction]);
 
-  const handlePointerDown = (event: React.PointerEvent<HTMLDivElement>) => {
-    const allowsScroll = gameState === "idle" || gameState === "result";
-    if (event.pointerType === "touch" && allowsScroll) {
-      pendingTouchRef.current = {
-        pointerId: event.pointerId,
-        x: event.clientX,
-        y: event.clientY,
-      };
-      return;
-    }
-
-    event.preventDefault();
-    handleInteraction();
-  };
-
-  const handlePointerUp = (event: React.PointerEvent<HTMLDivElement>) => {
-    const pending = pendingTouchRef.current;
-    if (!pending || pending.pointerId !== event.pointerId) return;
-
-    pendingTouchRef.current = null;
-    const moved = Math.hypot(event.clientX - pending.x, event.clientY - pending.y);
-    if (moved <= 12) handleInteraction();
-  };
-
-  const handlePointerCancel = () => {
-    pendingTouchRef.current = null;
-  };
+  const pointerAction = useIntentionalPointerAction<HTMLDivElement>({
+    onAction: handleInteraction,
+    deferTouch: gameState === "idle" || gameState === "result",
+  });
 
   return (
     <div className="w-full max-w-4xl mx-auto px-4 md:px-0">
@@ -118,9 +95,7 @@ export default function SoundReactionTest() {
           </div>
 
           <div
-            onPointerDown={handlePointerDown}
-            onPointerUp={handlePointerUp}
-            onPointerCancel={handlePointerCancel}
+            {...pointerAction}
             className={`
               ${gameState === "waiting" || gameState === "ready" ? "touch-none" : "touch-pan-y"} w-full h-80 rounded-3xl border-2 flex flex-col items-center justify-center gap-4 transition-all duration-300 select-none cursor-pointer
               ${gameState === "idle" ? "bg-violet-900/10 border-violet-500/20 hover:bg-violet-800/20 hover:border-violet-500/30" : ""}

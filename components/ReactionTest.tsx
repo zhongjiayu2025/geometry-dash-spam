@@ -5,6 +5,7 @@ import dynamic from "next/dynamic";
 import { Timer, AlertCircle, Play, Trophy } from "lucide-react";
 import { isInteractiveKeyboardTarget } from "../lib/inputTarget";
 import { useManagedTimeout } from "../lib/useManagedTimeout";
+import { useIntentionalPointerAction } from "../lib/useIntentionalPointerAction";
 import { usePersistentBestNumber } from "../lib/usePersistentBestNumber";
 
 const ReactionResult = dynamic(() => import("./ReactionResult"), { ssr: false });
@@ -16,7 +17,6 @@ export default function ReactionTest() {
   const [result, setResult] = useState(0);
   const [bestScore, commitBestScore] = usePersistentBestNumber("reactionBestScore", "min");
   const startTimeRef = useRef(0);
-  const pendingTouchRef = useRef<{ pointerId: number; x: number; y: number } | null>(null);
   const { schedule: scheduleTimeout, clear: clearTimeout } = useManagedTimeout();
 
   const startTest = useCallback(() => {
@@ -69,43 +69,16 @@ export default function ReactionTest() {
     return () => window.removeEventListener("keydown", handleKeyDown);
   }, [handleInteraction]);
 
-  const handlePointerDown = (event: React.PointerEvent<HTMLDivElement>) => {
-    const target = event.target as Element;
-    if (target.closest("button")) return;
-
-    const allowsScroll = state === "idle" || state === "result" || state === "early";
-    if (event.pointerType === "touch" && allowsScroll) {
-      pendingTouchRef.current = {
-        pointerId: event.pointerId,
-        x: event.clientX,
-        y: event.clientY,
-      };
-      return;
-    }
-
-    event.preventDefault();
-    handleInteraction();
-  };
-
-  const handlePointerUp = (event: React.PointerEvent<HTMLDivElement>) => {
-    const pending = pendingTouchRef.current;
-    if (!pending || pending.pointerId !== event.pointerId) return;
-
-    pendingTouchRef.current = null;
-    const moved = Math.hypot(event.clientX - pending.x, event.clientY - pending.y);
-    if (moved <= 12) handleInteraction();
-  };
-
-  const handlePointerCancel = () => {
-    pendingTouchRef.current = null;
-  };
+  const pointerAction = useIntentionalPointerAction<HTMLDivElement>({
+    onAction: handleInteraction,
+    deferTouch: state === "idle" || state === "result" || state === "early",
+    ignoreSelector: "button",
+  });
 
   return (
     <div className="w-full max-w-4xl mx-auto animate-in slide-in-from-bottom-4 duration-500">
       <div
-        onPointerDown={handlePointerDown}
-        onPointerUp={handlePointerUp}
-        onPointerCancel={handlePointerCancel}
+        {...pointerAction}
         className={`
           ${state === "waiting" || state === "ready" ? "touch-none" : "touch-pan-y"} relative w-full h-[400px] rounded-2xl cursor-pointer transition-all duration-200 select-none flex flex-col items-center justify-center p-8 text-center shadow-2xl mb-12
           ${state === "idle" ? "bg-slate-800 hover:bg-slate-700 border-4 border-slate-600" : ""}
