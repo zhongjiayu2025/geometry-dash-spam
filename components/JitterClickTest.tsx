@@ -2,8 +2,14 @@
 "use client";
 
 import React, { useState, useEffect, useRef, useCallback } from 'react';
+import dynamic from 'next/dynamic';
 import type { ClickSoundEngine } from '../lib/clickSound';
-import { RotateCcw, Timer, Zap, Trophy, Volume2, VolumeX, Share2, Check } from 'lucide-react';
+
+const SecondaryClickFinishedActions = dynamic(
+  () => import('./SecondaryClickFinishedActions'),
+  { ssr: false }
+);
+import { Timer, Zap, Trophy, Volume2, VolumeX } from 'lucide-react';
 
 
 const JitterClickTest: React.FC = () => {
@@ -293,21 +299,13 @@ const JitterClickTest: React.FC = () => {
                )}
                
                {finished && (
-                 <div className="animate-in fade-in zoom-in duration-300 relative z-10 flex gap-2">
-                   <button 
-                    onClick={reset}
-                    className="px-8 py-3 bg-white text-orange-900 font-bold rounded-lg flex items-center gap-2 hover:bg-orange-50 transition-colors shadow-lg"
-                   >
-                     <RotateCcw className="w-5 h-5" /> TRY AGAIN
-                   </button>
-                   <button
-                    onClick={shareScore}
-                    className="p-3 bg-slate-800 text-white rounded-lg flex items-center justify-center hover:bg-slate-700 transition-colors border border-white/10"
-                    title="Share your score"
-                   >
-                     {copied ? <Check className="w-5 h-5 text-green-400" /> : <Share2 className="w-5 h-5" />}
-                   </button>
-                 </div>
+                 <SecondaryClickFinishedActions
+                   variant="jitter"
+                   copied={copied}
+                   onReset={reset}
+                   onShare={shareScore}
+                   withTopMargin={false}
+                 />
                )}
            </div>
         </div>
