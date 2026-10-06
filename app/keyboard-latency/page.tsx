@@ -15,7 +15,7 @@ export const metadata: Metadata = {
     type: "website",
   },
   twitter: {
-    card: "summary",
+    card: "summary_large_image",
     title: "Keyboard Key Timing Test | Key Press Duration Utility",
     description: "Measure browser-observed key press and release timing. This is not a laboratory keyboard latency measurement.",
   },
