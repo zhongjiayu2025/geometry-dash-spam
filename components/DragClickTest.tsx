@@ -10,31 +10,6 @@ const DragClickResult = dynamic(() => import("./DragClickResult"), { ssr: false 
 
 const TEST_MS = 10000;
 
-function getPeakOneSecondCps(times: number[]) {
-  if (!times.length) return 0;
-
-  let left = 0;
-  let peak = 0;
-
-  for (let right = 0; right < times.length; right++) {
-    while (times[right] - times[left] > 1000) left++;
-    peak = Math.max(peak, right - left + 1);
-  }
-
-  return peak;
-}
-
-function getBuckets(times: number[], startTime: number) {
-  const buckets = Array(10).fill(0);
-
-  for (const time of times) {
-    const index = Math.min(9, Math.max(0, Math.floor((time - startTime) / 1000)));
-    buckets[index] += 1;
-  }
-
-  return buckets;
-}
-
 export default function DragClickTest() {
   const [clicks, setClicks] = useState(0);
   const [timeLeft, setTimeLeft] = useState(10);
@@ -57,17 +32,21 @@ export default function DragClickTest() {
     finishedRef.current = true;
     activeRef.current = false;
 
-    const times = clickTimesRef.current;
-    const peak = getPeakOneSecondCps(times);
+    const times = clickTimesRef.current.slice();
+    const startTime = startTimeRef.current;
+    const finalClicks = clicksRef.current;
 
     setIsFinished(true);
     setIsActive(false);
     setTimeLeft(0);
-    setPeakCps(peak);
-    setBuckets(getBuckets(times, startTimeRef.current));
-    setClicks(clicksRef.current);
+    setClicks(finalClicks);
 
-    commitBestPeakCps(peak);
+    void import("../lib/dragClickStats").then(({ getDragPeakOneSecondCps, getDragBuckets }) => {
+      const peak = getDragPeakOneSecondCps(times);
+      setPeakCps(peak);
+      setBuckets(getDragBuckets(times, startTime));
+      commitBestPeakCps(peak);
+    });
   }, [commitBestPeakCps]);
 
   const startTest = useCallback((now: number) => {
@@ -78,6 +57,7 @@ export default function DragClickTest() {
     setIsActive(true);
     setIsFinished(false);
     setTimeLeft(10);
+    void import("../lib/dragClickStats");
   }, []);
 
   const cancelCountdown = useExactCountdown({

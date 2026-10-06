@@ -49,20 +49,24 @@ const GameCanvas: React.FC<GameCanvasProps> = memo(({ difficulty, status, onStat
       window.matchMedia('(pointer: coarse)').matches ||
       window.matchMedia('(max-width: 640px)').matches;
 
-    highScoreRef.current = 0;
-    setHighScore(0);
-    setRecentRuns([]);
-    setIsNewBest(false);
-
     const savedMuted = localStorage.getItem('gd_spam_muted');
     const muted = savedMuted === null ? true : savedMuted === 'true';
     mutedRef.current = muted;
     setIsMuted(muted);
+
     const savedMotion = localStorage.getItem('gd_spam_reduce_motion');
     setReduceMotion(
       savedMotion === 'true' ||
       (savedMotion === null && window.matchMedia('(prefers-reduced-motion: reduce)').matches)
     );
+  }, []);
+
+  useEffect(() => {
+    highScoreRef.current = 0;
+    setHighScore(0);
+    setRecentRuns([]);
+    setIsNewBest(false);
+
     let cancelled = false;
     void import('../lib/waveStorage').then(({ loadWaveRecords }) => {
       if (cancelled) return;
@@ -533,36 +537,33 @@ const GameCanvas: React.FC<GameCanvasProps> = memo(({ difficulty, status, onStat
       });
   }, []);
 
+  const syncMusic = useCallback(() => {
+      if (
+          mutedRef.current ||
+          statusRef.current !== GameStatus.Playing ||
+          document.hidden
+      ) {
+          audioEngineRef.current?.stopMusic();
+          return;
+      }
+
+      void ensureAudio().then((engine) => {
+          if (
+              engine &&
+              !mutedRef.current &&
+              statusRef.current === GameStatus.Playing &&
+              !document.hidden
+          ) {
+              engine.startMusic(triggerBeat);
+          }
+      });
+  }, [ensureAudio, triggerBeat]);
+
   useEffect(() => {
       statusRef.current = status;
       mutedRef.current = isMuted;
-
-      const syncMusic = () => {
-          if (isMuted || status !== GameStatus.Playing || document.hidden) {
-              audioEngineRef.current?.stopMusic();
-              return;
-          }
-
-          void ensureAudio().then((engine) => {
-              if (
-                  engine &&
-                  !mutedRef.current &&
-                  statusRef.current === GameStatus.Playing &&
-                  !document.hidden
-              ) {
-                  engine.startMusic(triggerBeat);
-              }
-          });
-      };
-
       syncMusic();
-      document.addEventListener('visibilitychange', syncMusic);
-
-      return () => {
-          document.removeEventListener('visibilitychange', syncMusic);
-          audioEngineRef.current?.stopMusic();
-      };
-  }, [ensureAudio, isMuted, status, triggerBeat]);
+  }, [isMuted, status, syncMusic]);
 
   useEffect(() => {
       return () => {
@@ -583,6 +584,7 @@ const GameCanvas: React.FC<GameCanvasProps> = memo(({ difficulty, status, onStat
               releaseInput();
           }
           gameState.current.lastFrameTime = performance.now();
+          syncMusic();
       };
 
       window.addEventListener('blur', releaseInput);
@@ -592,7 +594,7 @@ const GameCanvas: React.FC<GameCanvasProps> = memo(({ difficulty, status, onStat
           window.removeEventListener('blur', releaseInput);
           document.removeEventListener('visibilitychange', handleVisibilityChange);
       };
-  }, []);
+  }, [syncMusic]);
 
   useEffect(() => {
       const handleKeyDown = (e: KeyboardEvent) => {
