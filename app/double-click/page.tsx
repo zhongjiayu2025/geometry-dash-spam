@@ -1,4 +1,5 @@
 import DoubleClickTest from "../../components/DoubleClickTest";
+import RelatedTools from "../../components/RelatedTools";
 import InputToolGuide from "../../components/InputToolGuide";
 import { Metadata } from "next";
 
@@ -34,6 +35,7 @@ export default function DoubleClickPage() {
       </div>
       <DoubleClickTest />
       <InputToolGuide tool="double-click" />
-    </>
+          <RelatedTools currentTool="doubleClick" />
+</>
   );
 }
