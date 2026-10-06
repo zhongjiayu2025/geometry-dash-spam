@@ -262,7 +262,7 @@ export const SitemapPage = () => (
   <InfoPageLayout
     title="Sitemap"
     icon={<Map className="w-10 h-10" />}
-    lastUpdated="October 5, 2026"
+    lastUpdated="October 6, 2026"
   >
     <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
       <div className="bg-slate-950/30 border border-white/5 rounded-xl p-6">
