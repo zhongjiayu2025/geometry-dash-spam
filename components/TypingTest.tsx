@@ -86,6 +86,13 @@ export default function TypingTest() {
 
   const handleChange = (event: React.ChangeEvent<HTMLTextAreaElement>) => {
     if (status === "finished") return;
+    if (
+      status === "running" &&
+      performance.now() - startTimeRef.current >= TEST_MS
+    ) {
+      finishTest(TEST_MS);
+      return;
+    }
 
     const value = event.target.value;
 

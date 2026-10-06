@@ -90,6 +90,10 @@ export default function AimTrainer() {
   const handleTargetClick = (event: React.PointerEvent<HTMLButtonElement>) => {
     event.stopPropagation();
     if (!isActive || isFinished) return;
+    if (performance.now() - startTimeRef.current >= 30000) {
+      endGame();
+      return;
+    }
 
     playAimSound("aimHit");
 
@@ -103,6 +107,10 @@ export default function AimTrainer() {
 
   const handleBackgroundClick = () => {
     if (!isActive || isFinished) return;
+    if (performance.now() - startTimeRef.current >= 30000) {
+      endGame();
+      return;
+    }
     playAimSound("aimMiss");
     setMisses((previous) => previous + 1);
   };

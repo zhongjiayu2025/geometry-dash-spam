@@ -1053,6 +1053,14 @@ if (
 }
 
 if (
+  (aimClientSource.match(/performance\.now\(\) - startTimeRef\.current >= 30000/g) ?? []).length < 2
+) {
+  infrastructureErrors.push(
+    "AimTrainer must reject target and miss inputs that arrive after the 30-second cutoff"
+  );
+}
+
+if (
   !clickSoundSource.includes('"aimHit"') ||
   !clickSoundSource.includes('"aimMiss"')
 ) {
@@ -1173,6 +1181,16 @@ if (
   );
 }
 
+if (
+  !typingClientSource.includes('status === "running"') ||
+  !typingClientSource.includes("performance.now() - startTimeRef.current >= TEST_MS") ||
+  !typingClientSource.includes("finishTest(TEST_MS)")
+) {
+  infrastructureErrors.push(
+    "TypingTest must reject text input arriving after the exact 60-second cutoff"
+  );
+}
+
 for (const [file, source, storageKey] of [
   ["AimTrainer.tsx", aimClientSource, "aimTrainerBest"],
   ["ChimpTest.tsx", chimpClientSource, "chimpBestScore"],
@@ -1286,6 +1304,15 @@ if (
 ) {
   infrastructureErrors.push(
     "ScrollTest wheel hot path must stay ref-based while shared exact countdown samples UI at 100ms"
+  );
+}
+
+if (
+  !scrollClientSource.includes("performance.now() - startTimeRef.current >= TEST_MS") ||
+  !scrollClientSource.includes("finishTest();\n      return;")
+) {
+  infrastructureErrors.push(
+    "ScrollTest must reject wheel events that arrive after the exact 10-second cutoff"
   );
 }
 

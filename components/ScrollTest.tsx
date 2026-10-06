@@ -45,6 +45,14 @@ export default function ScrollTest() {
     if (finishedRef.current) return;
     event.preventDefault();
 
+    if (
+      activeRef.current &&
+      performance.now() - startTimeRef.current >= TEST_MS
+    ) {
+      finishTest();
+      return;
+    }
+
     if (!activeRef.current) startTest();
 
     const target = event.currentTarget as HTMLElement;
@@ -62,7 +70,7 @@ export default function ScrollTest() {
     if (patternRef.current) {
       patternRef.current.style.backgroundPositionY = `${scrollOffsetRef.current}px`;
     }
-  }, [startTest]);
+  }, [finishTest, startTest]);
 
   useEffect(() => {
     const target = document.getElementById("scroll-target");
