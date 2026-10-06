@@ -12,7 +12,7 @@ export const metadata: Metadata = {
     type: "website",
   },
   twitter: {
-    card: "summary",
+    card: "summary_large_image",
     title: "Sitemap – Geometry Dash Tools & Guides",
     description: "Browse Geometry Dash spam, wave, CPS, codes, demon guides and browser utilities.",
   },
