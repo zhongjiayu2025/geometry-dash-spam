@@ -384,6 +384,7 @@ if (existsSync(llmsPath)) {
 }
 
 const layoutSource = readFileSync(join(process.cwd(), "app", "layout.tsx"), "utf8");
+const globalsSource = readFileSync(join(process.cwd(), "app", "globals.css"), "utf8");
 const headerSource = readFileSync(join(process.cwd(), "components", "Header.tsx"), "utf8");
 const headerRouteStateSource = readFileSync(join(process.cwd(), "components", "HeaderRouteState.tsx"), "utf8");
 const cpsClientSource = readFileSync(join(process.cwd(), "components", "CpsTest.tsx"), "utf8");
@@ -450,6 +451,28 @@ if (
   gameCanvasSource.includes("runTime = now - gameState.current.startTime")
 ) {
   infrastructureErrors.push("Wave physics must remain delta-time normalized instead of frame-rate dependent");
+}
+
+if (
+  !gameCanvasSource.includes("useState<boolean>(true)") ||
+  !gameCanvasSource.includes("savedMuted === null ? true") ||
+  !gameCanvasSource.includes("if (!isMuted) initAudio()")
+) {
+  infrastructureErrors.push("Wave audio must remain opt-in on first visit and avoid initializing while muted");
+}
+
+if (
+  !cpsClientSource.includes("const timingStats = finished") ||
+  cpsClientSource.includes("const timingStats = getTimingStats();")
+) {
+  infrastructureErrors.push("CPS timing statistics must only run after the test finishes");
+}
+
+if (
+  !globalsSource.includes(".defer-render") ||
+  !globalsSource.includes("content-visibility: auto")
+) {
+  infrastructureErrors.push("Below-the-fold rendering containment must remain enabled");
 }
 
 if (
