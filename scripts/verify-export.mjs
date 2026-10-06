@@ -406,6 +406,7 @@ const headerRouteStateSource = readFileSync(join(process.cwd(), "components", "H
 const cpsClientSource = readFileSync(join(process.cwd(), "components", "CpsTest.tsx"), "utf8");
 const waveClientSource = readFileSync(join(process.cwd(), "components", "WaveSimulator.tsx"), "utf8");
 const gameCanvasSource = readFileSync(join(process.cwd(), "components", "GameCanvas.tsx"), "utf8");
+const waveAudioSource = readFileSync(join(process.cwd(), "lib", "waveAudio.ts"), "utf8");
 const demonListSource = readFileSync(join(process.cwd(), "components", "DemonListTable.tsx"), "utf8");
 const homeSource = readFileSync(join(process.cwd(), "app", "page.tsx"), "utf8");
 const blogReaderSource = readFileSync(join(process.cwd(), "components", "BlogPostReader.tsx"), "utf8");
@@ -489,9 +490,20 @@ if (
 if (
   !gameCanvasSource.includes("useState<boolean>(true)") ||
   !gameCanvasSource.includes("savedMuted === null ? true") ||
-  !gameCanvasSource.includes("if (!isMuted) initAudio()")
+  !gameCanvasSource.includes("import('../lib/waveAudio')") ||
+  !gameCanvasSource.includes("mutedRef.current") ||
+  !waveAudioSource.includes("createWaveAudioEngine")
 ) {
-  infrastructureErrors.push("Wave audio must remain opt-in on first visit and avoid initializing while muted");
+  infrastructureErrors.push("Wave audio must remain opt-in and dynamically loaded after user intent");
+}
+
+if (
+  gameCanvasSource.includes("new AudioContext") ||
+  gameCanvasSource.includes("createOscillator()") ||
+  gameCanvasSource.includes("createBiquadFilter()") ||
+  gameCanvasSource.includes("const scheduleMusic")
+) {
+  infrastructureErrors.push("Web Audio synthesis must stay outside the initial GameCanvas client bundle");
 }
 
 if (
