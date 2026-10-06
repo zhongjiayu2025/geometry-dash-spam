@@ -1241,6 +1241,13 @@ const GameCanvas: React.FC<GameCanvasProps> = memo(({ difficulty, status, onStat
         boxShadow: isFullscreen ? 'none' : `0 0 30px ${difficulty.color}15, 0 0 0 1px ${difficulty.color}30`
       }}
     >
+      <p className="sr-only" role="status" aria-live="polite" aria-atomic="true">
+        {status === GameStatus.Lost
+          ? `Run crashed after ${(gameState.current.runTime / 1000).toFixed(2)} seconds.`
+          : status === GameStatus.Won
+            ? `Run complete in ${(gameState.current.runTime / 1000).toFixed(2)} seconds.`
+            : ""}
+      </p>
       <canvas
           ref={canvasRef}
           width={800}
@@ -1363,7 +1370,7 @@ const GameCanvas: React.FC<GameCanvasProps> = memo(({ difficulty, status, onStat
 
       {/* --- GAME OVER SCREEN --- */}
       {status === GameStatus.Lost && (
-         <div role="status" aria-live="polite" className="absolute inset-0 flex flex-col items-center justify-center bg-red-900/40 backdrop-blur-sm z-20 animate-in zoom-in duration-100 pointer-events-none">
+         <div className="absolute inset-0 flex flex-col items-center justify-center bg-red-900/40 backdrop-blur-sm z-20 animate-in zoom-in duration-100 pointer-events-none">
              <div className="pointer-events-auto flex max-h-[calc(100%_-_1rem)] w-[calc(100%_-_1rem)] max-w-md flex-col items-center overflow-y-auto bg-black/55 p-4 sm:p-8 rounded-2xl border border-white/10 backdrop-blur-md shadow-2xl" onClick={(e) => e.stopPropagation()}>
                 {isNewBest && (
                     <div className="mb-4 flex items-center gap-2 px-4 py-1 bg-yellow-500 text-black font-black uppercase tracking-widest rounded-full animate-bounce shadow-lg shadow-yellow-500/50">
@@ -1438,7 +1445,7 @@ const GameCanvas: React.FC<GameCanvasProps> = memo(({ difficulty, status, onStat
 
       {/* --- WIN SCREEN --- */}
       {status === GameStatus.Won && (
-         <div role="status" aria-live="polite" className="absolute inset-0 flex flex-col items-center justify-center bg-green-900/40 backdrop-blur-sm z-20 animate-in zoom-in duration-500 pointer-events-auto" onClick={(e) => e.stopPropagation()}>
+         <div className="absolute inset-0 flex flex-col items-center justify-center bg-green-900/40 backdrop-blur-sm z-20 animate-in zoom-in duration-500 pointer-events-auto" onClick={(e) => e.stopPropagation()}>
              <div className="max-h-[calc(100%_-_1rem)] w-[calc(100%_-_1rem)] max-w-md overflow-y-auto bg-black/55 p-4 sm:p-8 rounded-2xl border border-white/10 backdrop-blur-md flex flex-col items-center shadow-2xl">
                 {isNewBest && (
                     <div className="mb-4 flex items-center gap-2 px-4 py-1 bg-yellow-500 text-black font-black uppercase tracking-widest rounded-full animate-bounce shadow-lg shadow-yellow-500/50">
