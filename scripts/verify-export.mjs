@@ -598,6 +598,39 @@ if (
   );
 }
 
+const doubleClickClientSource = supportClientSources.find(([file]) => file === "DoubleClickTest.tsx")?.[1] ?? "";
+if (
+  !doubleClickClientSource.includes("pendingTouchRef") ||
+  !doubleClickClientSource.includes("touch-pan-y") ||
+  !doubleClickClientSource.includes("onPointerUp={handlePointerUp}") ||
+  doubleClickClientSource.includes('className="touch-none')
+) {
+  infrastructureErrors.push(
+    "DoubleClickTest must allow vertical mobile scrolling and count only intentional taps"
+  );
+}
+
+const keyboardTimingClientSource = supportClientSources.find(([file]) => file === "KeyboardLatencyTest.tsx")?.[1] ?? "";
+if (
+  !keyboardTimingClientSource.includes("clearInterruptedPress") ||
+  !keyboardTimingClientSource.includes("visibilitychange") ||
+  !keyboardTimingClientSource.includes("'blur'")
+) {
+  infrastructureErrors.push(
+    "KeyboardLatencyTest must discard interrupted key holds on blur or backgrounding"
+  );
+}
+
+const pollingClientSource = supportClientSources.find(([file]) => file === "PollingRateTest.tsx")?.[1] ?? "";
+if (
+  !pollingClientSource.includes("(maxHz > 0 || isTracking)") ||
+  !pollingClientSource.includes("Stop tracking")
+) {
+  infrastructureErrors.push(
+    "PollingRateTest must remain stoppable even before the first pointer event is recorded"
+  );
+}
+
 if (cpsClientSource.includes("RelatedTools") || cpsClientSource.includes("How is CPS Calculated?")) {
   infrastructureErrors.push("CPS static guide content must stay outside the client test component");
 }
