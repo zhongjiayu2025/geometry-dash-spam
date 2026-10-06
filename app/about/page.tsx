@@ -20,5 +20,25 @@ export const metadata: Metadata = {
 };
 
 export default function Page() {
-  return <AboutPage />;
+  const schema = {
+    "@context": "https://schema.org",
+    "@type": "AboutPage",
+    "@id": "https://geometrydashspam.cc/about#page",
+    url: "https://geometrydashspam.cc/about",
+    name: "About Geometry Dash Spam",
+    description:
+      "How GeometryDashSpam.cc measures browser inputs, handles source-checked claims and separates fan-made practice tools from official Geometry Dash.",
+    dateModified: "2026-10-07",
+    inLanguage: "en",
+    isPartOf: { "@id": "https://geometrydashspam.cc/#website" },
+    about: { "@id": "https://geometrydashspam.cc/#organization" },
+    publisher: { "@id": "https://geometrydashspam.cc/#organization" },
+  };
+
+  return (
+    <>
+      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(schema) }} />
+      <AboutPage />
+    </>
+  );
 }
