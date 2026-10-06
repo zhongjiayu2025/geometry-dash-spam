@@ -1,20 +1,20 @@
 {
   "spamChallengeList": {
-    "checkedAt": "2026-10-05",
+    "checkedAt": "2026-10-06",
     "sources": [
       "https://sites.google.com/view/gdspamchallengeslist/main-list",
       "https://linktr.ee/GeometryDashLists"
     ]
   },
   "dashmetry": {
-    "checkedAt": "2026-10-05",
+    "checkedAt": "2026-10-06",
     "sources": [
       "https://dashmetry.io/",
       "https://1games.io/challenge-rush"
     ]
   },
   "breeze": {
-    "checkedAt": "2026-10-05",
+    "checkedAt": "2026-10-06",
     "sources": [
       "https://github.com/ItzZyann/Geometry-Dash-Breeze",
       "https://github.com/ItzZyann/Geometry-Dash-Breeze/releases"

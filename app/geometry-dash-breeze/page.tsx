@@ -36,7 +36,7 @@ const faqs = [
   },
   {
     q: "What is the latest Geometry Dash Breeze version?",
-    a: "As checked on October 5, 2026, the project's GitHub Releases page marks v1.3.1 as the latest release.",
+    a: `As checked on ${CHECKED_AT}, the project's GitHub Releases page marks v1.3.1 as the latest release.`,
   },
   {
     q: "Where should I download Geometry Dash Breeze?",
