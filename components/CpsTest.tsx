@@ -305,7 +305,13 @@ const CpsTest: React.FC = () => {
     };
   };
 
-  const timingStats = getTimingStats();
+  const timingStats = finished
+    ? getTimingStats()
+    : {
+        averageInterval: null as number | null,
+        peakCps: 0,
+        consistency: null as number | null,
+      };
 
   const currentBest = bestScores[selectedDuration];
   const recentRuns = runHistory
