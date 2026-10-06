@@ -1,7 +1,10 @@
 "use client";
 
 import React, { useEffect, useRef, useState } from "react";
-import { Check, Keyboard, RotateCcw, Share2, Trophy } from "lucide-react";
+import dynamic from "next/dynamic";
+import { Keyboard } from "lucide-react";
+
+const TypingResult = dynamic(() => import("./TypingResult"), { ssr: false });
 
 const WORDS = [
   "the", "be", "of", "and", "a", "to", "in", "he", "have", "it", "that", "for", "they", "I", "with", "as", "not", "on", "she", "at",
@@ -48,10 +51,10 @@ export default function TypingTest() {
   const [wpm, setWpm] = useState(0);
   const [accuracy, setAccuracy] = useState(100);
   const [bestWpm, setBestWpm] = useState<number | null>(null);
-  const [copied, setCopied] = useState(false);
 
   const inputRef = useRef<HTMLTextAreaElement>(null);
   const timerRef = useRef<number | null>(null);
+  const endTimerRef = useRef<number | null>(null);
   const startTimeRef = useRef(0);
   const userInputRef = useRef("");
   const targetTextRef = useRef("");
@@ -69,6 +72,7 @@ export default function TypingTest() {
 
     return () => {
       if (timerRef.current) clearInterval(timerRef.current);
+      if (endTimerRef.current) clearTimeout(endTimerRef.current);
     };
   }, []);
 
@@ -76,6 +80,10 @@ export default function TypingTest() {
     if (timerRef.current) {
       clearInterval(timerRef.current);
       timerRef.current = null;
+    }
+    if (endTimerRef.current) {
+      clearTimeout(endTimerRef.current);
+      endTimerRef.current = null;
     }
 
     const result = scoreTyping(
@@ -102,15 +110,13 @@ export default function TypingTest() {
     startTimeRef.current = performance.now();
     setStatus("running");
 
-    timerRef.current = window.setInterval(() => {
+    const updateTimer = () => {
       const elapsed = performance.now() - startTimeRef.current;
-      const remaining = Math.max(0, (TEST_MS - elapsed) / 1000);
-      setTimeLeft(remaining);
+      setTimeLeft(Math.max(0, (TEST_MS - elapsed) / 1000));
+    };
 
-      if (elapsed >= TEST_MS) {
-        finishTest(elapsed);
-      }
-    }, 50);
+    timerRef.current = window.setInterval(updateTimer, 100);
+    endTimerRef.current = window.setTimeout(() => finishTest(TEST_MS), TEST_MS);
   };
 
   const handleChange = (event: React.ChangeEvent<HTMLTextAreaElement>) => {
@@ -134,7 +140,9 @@ export default function TypingTest() {
 
   const resetTest = () => {
     if (timerRef.current) clearInterval(timerRef.current);
+    if (endTimerRef.current) clearTimeout(endTimerRef.current);
     timerRef.current = null;
+    endTimerRef.current = null;
     startTimeRef.current = 0;
     userInputRef.current = "";
 
@@ -151,20 +159,6 @@ export default function TypingTest() {
     window.setTimeout(() => inputRef.current?.focus(), 0);
   };
 
-  const shareScore = async () => {
-    const text = `I typed ${wpm} WPM with ${accuracy}% character accuracy on the 60-second typing test.`;
-    const url = "https://geometrydashspam.cc/typing-test";
-
-    if (typeof navigator !== "undefined" && navigator.share) {
-      try {
-        await navigator.share({ title: "Typing Speed Test", text, url });
-      } catch {}
-    } else {
-      await navigator.clipboard.writeText(`${text} ${url}`);
-      setCopied(true);
-      window.setTimeout(() => setCopied(false), 2000);
-    }
-  };
 
   const renderText = () =>
     targetText.split("").map((char, index) => {
@@ -205,48 +199,12 @@ export default function TypingTest() {
           </div>
 
           {status === "finished" ? (
-            <div className="w-full bg-slate-900/40 border border-sky-500/30 rounded-3xl p-8 text-center">
-              <h2 className="text-3xl text-sky-200 font-bold mb-6">Test Complete</h2>
-
-              <div className="grid grid-cols-2 gap-4 max-w-lg mx-auto mb-6">
-                <div className="bg-slate-800/50 p-5 rounded-2xl">
-                  <div className="text-xs text-slate-400 uppercase tracking-wider mb-2">Speed</div>
-                  <div className="text-4xl font-bold text-sky-400">{wpm} WPM</div>
-                </div>
-                <div className="bg-slate-800/50 p-5 rounded-2xl">
-                  <div className="text-xs text-slate-400 uppercase tracking-wider mb-2">Character accuracy</div>
-                  <div className="text-4xl font-bold text-white">{accuracy}%</div>
-                </div>
-              </div>
-
-              {bestWpm !== null && (
-                <div className="flex items-center justify-center gap-2 text-sm text-slate-300 bg-black/40 px-4 py-2 rounded-full border border-white/10 mb-8 mx-auto w-max">
-                  <Trophy className="w-4 h-4 text-yellow-500" />
-                  Personal Best: <strong className="text-white">{bestWpm} WPM</strong>
-                </div>
-              )}
-
-              <p className="text-sm leading-6 text-slate-500 max-w-xl mx-auto mb-7">
-                WPM is calculated from correctly matched characters using the common five-characters-per-word convention over the 60-second test.
-              </p>
-
-              <div className="flex gap-2 justify-center">
-                <button
-                  onClick={resetTest}
-                  className="px-8 py-4 bg-sky-600 hover:bg-sky-500 text-white font-bold rounded-xl transition-colors flex items-center gap-2"
-                >
-                  <RotateCcw className="w-5 h-5" /> Try Again
-                </button>
-                <button
-                  onClick={shareScore}
-                  className="p-4 bg-slate-800 text-white rounded-xl flex items-center justify-center hover:bg-slate-700 transition-colors border border-white/10"
-                  title={copied ? "Copied" : "Share your score"}
-                  aria-label={copied ? "Typing result copied" : "Share typing result"}
-                >
-                  {copied ? <Check className="w-5 h-5 text-green-400" /> : <Share2 className="w-5 h-5" />}
-                </button>
-              </div>
-            </div>
+            <TypingResult
+              wpm={wpm}
+              accuracy={accuracy}
+              bestWpm={bestWpm}
+              onReset={resetTest}
+            />
           ) : (
             <div
               className="w-full min-h-64 rounded-3xl border-2 bg-slate-900/40 border-white/10 p-6 md:p-8 relative cursor-text group"

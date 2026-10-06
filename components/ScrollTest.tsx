@@ -1,8 +1,10 @@
 "use client";
 
 import React, { useCallback, useEffect, useRef, useState } from "react";
-import { Activity, RotateCcw } from "lucide-react";
+import dynamic from "next/dynamic";
+import { Activity } from "lucide-react";
 
+const ScrollResult = dynamic(() => import("./ScrollResult"), { ssr: false });
 const TEST_MS = 10000;
 
 export default function ScrollTest() {
@@ -11,12 +13,14 @@ export default function ScrollTest() {
   const [timeLeft, setTimeLeft] = useState(10);
   const [isActive, setIsActive] = useState(false);
   const [isFinished, setIsFinished] = useState(false);
-  const [scrollY, setScrollY] = useState(0);
 
+  const patternRef = useRef<HTMLDivElement>(null);
   const timerRef = useRef<number | null>(null);
+  const endTimerRef = useRef<number | null>(null);
   const startTimeRef = useRef(0);
   const distanceRef = useRef(0);
   const eventsRef = useRef(0);
+  const scrollOffsetRef = useRef(0);
   const activeRef = useRef(false);
   const finishedRef = useRef(false);
 
@@ -28,57 +32,60 @@ export default function ScrollTest() {
     setTimeLeft(0);
     setDistance(distanceRef.current);
     setEvents(eventsRef.current);
+
     if (timerRef.current) {
-      clearInterval(timerRef.current);
+      window.clearInterval(timerRef.current);
       timerRef.current = null;
+    }
+    if (endTimerRef.current) {
+      window.clearTimeout(endTimerRef.current);
+      endTimerRef.current = null;
     }
   }, []);
 
   const startTest = useCallback(() => {
+    if (timerRef.current) window.clearInterval(timerRef.current);
+    if (endTimerRef.current) window.clearTimeout(endTimerRef.current);
+
     activeRef.current = true;
     finishedRef.current = false;
     startTimeRef.current = performance.now();
     setIsActive(true);
     setIsFinished(false);
 
-    timerRef.current = window.setInterval(() => {
+    const updateUi = () => {
       const elapsed = performance.now() - startTimeRef.current;
-      const remaining = Math.max(0, (TEST_MS - elapsed) / 1000);
-      setTimeLeft(remaining);
+      setTimeLeft(Math.max(0, (TEST_MS - elapsed) / 1000));
+      setDistance(distanceRef.current);
+      setEvents(eventsRef.current);
+    };
 
-      if (elapsed >= TEST_MS) {
-        finishTest();
-      }
-    }, 33);
+    timerRef.current = window.setInterval(updateUi, 100);
+    endTimerRef.current = window.setTimeout(finishTest, TEST_MS);
   }, [finishTest]);
 
-  const handleScroll = useCallback(
-    (event: WheelEvent) => {
-      if (finishedRef.current) return;
-      event.preventDefault();
+  const handleScroll = useCallback((event: WheelEvent) => {
+    if (finishedRef.current) return;
+    event.preventDefault();
 
-      if (!activeRef.current) {
-        startTest();
-      }
+    if (!activeRef.current) startTest();
 
-      const target = event.currentTarget as HTMLElement;
-      const factor =
-        event.deltaMode === WheelEvent.DOM_DELTA_LINE
-          ? 16
-          : event.deltaMode === WheelEvent.DOM_DELTA_PAGE
+    const target = event.currentTarget as HTMLElement;
+    const factor =
+      event.deltaMode === WheelEvent.DOM_DELTA_LINE
+        ? 16
+        : event.deltaMode === WheelEvent.DOM_DELTA_PAGE
           ? Math.max(1, target.clientHeight)
           : 1;
 
-      const normalized = Math.abs(event.deltaY * factor);
-      distanceRef.current += normalized;
-      eventsRef.current += 1;
+    distanceRef.current += Math.abs(event.deltaY * factor);
+    eventsRef.current += 1;
+    scrollOffsetRef.current = (scrollOffsetRef.current + (event.deltaY > 0 ? 10 : -10)) % 40;
 
-      setDistance(distanceRef.current);
-      setEvents(eventsRef.current);
-      setScrollY((value) => (value + (event.deltaY > 0 ? 10 : -10)) % 40);
-    },
-    [startTest]
-  );
+    if (patternRef.current) {
+      patternRef.current.style.backgroundPositionY = `${scrollOffsetRef.current}px`;
+    }
+  }, [startTest]);
 
   useEffect(() => {
     const target = document.getElementById("scroll-target");
@@ -90,25 +97,30 @@ export default function ScrollTest() {
 
   useEffect(() => {
     return () => {
-      if (timerRef.current) clearInterval(timerRef.current);
+      if (timerRef.current) window.clearInterval(timerRef.current);
+      if (endTimerRef.current) window.clearTimeout(endTimerRef.current);
     };
   }, []);
 
   const resetTest = () => {
-    if (timerRef.current) clearInterval(timerRef.current);
+    if (timerRef.current) window.clearInterval(timerRef.current);
+    if (endTimerRef.current) window.clearTimeout(endTimerRef.current);
     timerRef.current = null;
+    endTimerRef.current = null;
     startTimeRef.current = 0;
     distanceRef.current = 0;
     eventsRef.current = 0;
+    scrollOffsetRef.current = 0;
     activeRef.current = false;
     finishedRef.current = false;
+
+    if (patternRef.current) patternRef.current.style.backgroundPositionY = "0px";
 
     setDistance(0);
     setEvents(0);
     setTimeLeft(10);
     setIsActive(false);
     setIsFinished(false);
-    setScrollY(0);
   };
 
   const distancePerSecond = Math.round(distance / 10);
@@ -140,11 +152,7 @@ export default function ScrollTest() {
               id="scroll-target"
               className="w-full h-64 md:h-80 rounded-3xl border-2 flex flex-col items-center justify-center gap-4 transition-colors group select-none bg-teal-900/10 border-teal-500/20 hover:bg-teal-800/20 hover:border-teal-500/30 overflow-hidden relative cursor-n-resize"
             >
-              <div
-                className="absolute inset-0 opacity-10 bg-grid"
-                style={{ backgroundPositionY: `${scrollY}px` }}
-              />
-
+              <div ref={patternRef} className="absolute inset-0 opacity-10 bg-grid" />
               <Activity className="w-16 h-16 md:w-20 md:h-20 text-teal-500/50 group-hover:text-teal-400 transition-colors relative z-10" />
               <div className="text-center relative z-10 px-5">
                 <h2 className="text-2xl md:text-3xl font-display font-bold text-slate-300 group-hover:text-white transition-colors">
@@ -156,33 +164,14 @@ export default function ScrollTest() {
               </div>
             </div>
           ) : (
-            <div className="w-full">
-              <div className="bg-teal-900/20 border border-teal-500/30 rounded-3xl p-8 text-center">
-                <h2 className="text-2xl text-teal-200 font-bold mb-5">Test Complete</h2>
-                <div className="grid gap-3 sm:grid-cols-2 mb-7">
-                  <div className="rounded-xl bg-black/25 p-4">
-                    <div className="text-xs uppercase tracking-wider text-slate-500 mb-1">Normalized distance / second</div>
-                    <div className="text-3xl font-display font-bold text-white">{distancePerSecond}</div>
-                  </div>
-                  <div className="rounded-xl bg-black/25 p-4">
-                    <div className="text-xs uppercase tracking-wider text-slate-500 mb-1">Wheel events / second</div>
-                    <div className="text-3xl font-display font-bold text-teal-300">{eventsPerSecond}</div>
-                  </div>
-                </div>
-                <p className="text-sm leading-6 text-slate-400 max-w-xl mx-auto mb-7">
-                  Distance is normalized from WheelEvent deltaMode so line/page deltas can be displayed on one scale. Use it to compare repeated runs on the same setup rather than to rank different devices.
-                </p>
-                <button
-                  onClick={resetTest}
-                  className="px-8 py-4 bg-teal-600 hover:bg-teal-500 text-white font-bold rounded-xl transition-colors inline-flex items-center gap-2"
-                >
-                  <RotateCcw className="w-5 h-5" /> Try Again
-                </button>
-              </div>
-            </div>
+            <ScrollResult
+              distancePerSecond={distancePerSecond}
+              eventsPerSecond={eventsPerSecond}
+              onReset={resetTest}
+            />
           )}
         </div>
       </div>
-</div>
+    </div>
   );
 }
