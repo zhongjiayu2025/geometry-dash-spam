@@ -69,12 +69,13 @@ export default function GeometryDashClicker() {
   }, [loaded]);
 
   const updateState = (updater: (prev: ClickerState) => ClickerState) => {
-    setState((prev) => {
-      const next = updater(prev);
-      stateRef.current = next;
-      if (next !== prev) dirtyRef.current = true;
-      return next;
-    });
+    const previous = stateRef.current;
+    const next = updater(previous);
+    if (next === previous) return;
+
+    stateRef.current = next;
+    dirtyRef.current = true;
+    setState(next);
   };
 
   useEffect(() => {

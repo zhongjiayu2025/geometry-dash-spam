@@ -2409,6 +2409,19 @@ if (
 }
 
 if (
+  !clickerSource.includes("const previous = stateRef.current") ||
+  !clickerSource.includes("const next = updater(previous)") ||
+  !clickerSource.includes("stateRef.current = next") ||
+  !clickerSource.includes("dirtyRef.current = true") ||
+  !clickerSource.includes("setState(next)") ||
+  clickerSource.includes("setState((prev) =>")
+) {
+  infrastructureErrors.push(
+    "Geometry Dash Clicker mutations must use stateRef as the synchronous transaction baseline without React updater side effects"
+  );
+}
+
+if (
   !clickerSource.includes('from "../lib/clickerEconomy"') ||
   clickerSource.includes("Math.pow(1.65") ||
   clickerSource.includes("Math.pow(1.75") ||
