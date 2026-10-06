@@ -1040,6 +1040,39 @@ for (const [route, expectedLinks] of intentClusterLinks) {
 
 const contentErrors = [];
 
+const serverRenderedGuideExpectations = new Map([
+  [
+    "/jitter-click",
+    [
+      "How to Practice Jitter Clicking",
+      "Losing control while clicking faster?",
+      'href="/cps-test"',
+      'href="/butterfly-click"',
+    ],
+  ],
+  [
+    "/butterfly-click",
+    [
+      "What is Butterfly Clicking?",
+      "Why use Butterfly Clicking in Geometry Dash?",
+      'href="/cps-test"',
+      'href="/jitter-click"',
+    ],
+  ],
+]);
+
+for (const [route, expectedSnippets] of serverRenderedGuideExpectations) {
+  const path = exportedPath(route);
+  if (!path) continue;
+
+  const html = readFileSync(path, "utf8");
+  for (const snippet of expectedSnippets) {
+    if (!html.includes(snippet)) {
+      contentErrors.push(`${route}: server-rendered HTML is missing "${snippet}"`);
+    }
+  }
+}
+
 const demonExportPath = exportedPath("/demon-list");
 if (demonExportPath) {
   const demonHtml = readFileSync(demonExportPath, "utf8");
