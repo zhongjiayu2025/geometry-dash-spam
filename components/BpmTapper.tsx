@@ -11,6 +11,7 @@ export default function BpmTapper() {
   const [isActive, setIsActive] = useState(false);
 
   const tapsRef = useRef<number[]>([]);
+  const pendingTouchRef = useRef<{ pointerId: number; x: number; y: number } | null>(null);
   const { schedule: scheduleReset, clear: clearReset } = useManagedTimeout();
 
   const reset = useCallback(() => {
@@ -59,6 +60,33 @@ export default function BpmTapper() {
     return () => window.removeEventListener("keydown", handleKeyDown);
   }, [recordTap]);
 
+  const handlePointerDown = (event: React.PointerEvent<HTMLButtonElement>) => {
+    if (!isActive && event.pointerType === "touch") {
+      pendingTouchRef.current = {
+        pointerId: event.pointerId,
+        x: event.clientX,
+        y: event.clientY,
+      };
+      return;
+    }
+
+    event.preventDefault();
+    recordTap();
+  };
+
+  const handlePointerUp = (event: React.PointerEvent<HTMLButtonElement>) => {
+    const pending = pendingTouchRef.current;
+    if (!pending || pending.pointerId !== event.pointerId) return;
+
+    pendingTouchRef.current = null;
+    const moved = Math.hypot(event.clientX - pending.x, event.clientY - pending.y);
+    if (moved <= 12) recordTap();
+  };
+
+  const handlePointerCancel = () => {
+    pendingTouchRef.current = null;
+  };
+
   return (
     <div className="w-full max-w-4xl mx-auto px-4 md:px-0">
       <div className="bg-[#0b1021] border border-white/10 rounded-3xl p-6 md:p-12 shadow-2xl relative overflow-hidden">
@@ -83,16 +111,15 @@ export default function BpmTapper() {
           <button
             id="bpm-btn"
             type="button"
-            onPointerDown={(event) => {
-              event.preventDefault();
-              recordTap();
-            }}
+            onPointerDown={handlePointerDown}
+            onPointerUp={handlePointerUp}
+            onPointerCancel={handlePointerCancel}
             onKeyDown={(event) => {
               if (event.repeat || (event.key !== " " && event.key !== "Enter")) return;
               event.preventDefault();
               recordTap();
             }}
-            className="touch-none w-full h-64 md:h-80 rounded-3xl border-2 flex flex-col items-center justify-center gap-4 transition-all duration-75 group select-none bg-rose-900/10 border-rose-500/20 hover:bg-rose-800/20 hover:border-rose-500/30 active:scale-[0.99]"
+            className={`${isActive ? "touch-none" : "touch-pan-y"} w-full h-64 md:h-80 rounded-3xl border-2 flex flex-col items-center justify-center gap-4 transition-all duration-75 group select-none bg-rose-900/10 border-rose-500/20 hover:bg-rose-800/20 hover:border-rose-500/30 active:scale-[0.99]`}
           >
             <Timer className="w-16 h-16 md:w-20 md:h-20 text-rose-500/50 group-hover:text-rose-400 transition-colors" />
             <div className="text-center px-5">

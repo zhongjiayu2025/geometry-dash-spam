@@ -18,6 +18,7 @@ export default function SoundReactionTest() {
   const [bestTime, commitBestTime] = usePersistentBestNumber("soundReactionBest", "min");
 
   const startTimeRef = useRef(0);
+  const pendingTouchRef = useRef<{ pointerId: number; x: number; y: number } | null>(null);
   const { ensure: ensureClickSound, play: playClickSound } = useLazyClickSound();
   const { schedule: scheduleTimeout, clear: clearTimeout } = useManagedTimeout();
 
@@ -70,6 +71,34 @@ export default function SoundReactionTest() {
     return () => window.removeEventListener("keydown", handleKeyDown);
   }, [handleInteraction]);
 
+  const handlePointerDown = (event: React.PointerEvent<HTMLDivElement>) => {
+    const allowsScroll = gameState === "idle" || gameState === "result";
+    if (event.pointerType === "touch" && allowsScroll) {
+      pendingTouchRef.current = {
+        pointerId: event.pointerId,
+        x: event.clientX,
+        y: event.clientY,
+      };
+      return;
+    }
+
+    event.preventDefault();
+    handleInteraction();
+  };
+
+  const handlePointerUp = (event: React.PointerEvent<HTMLDivElement>) => {
+    const pending = pendingTouchRef.current;
+    if (!pending || pending.pointerId !== event.pointerId) return;
+
+    pendingTouchRef.current = null;
+    const moved = Math.hypot(event.clientX - pending.x, event.clientY - pending.y);
+    if (moved <= 12) handleInteraction();
+  };
+
+  const handlePointerCancel = () => {
+    pendingTouchRef.current = null;
+  };
+
   return (
     <div className="w-full max-w-4xl mx-auto px-4 md:px-0">
       <div className="bg-[#0b1021] border border-white/10 rounded-3xl p-6 md:p-12 shadow-2xl relative overflow-hidden">
@@ -89,9 +118,11 @@ export default function SoundReactionTest() {
           </div>
 
           <div
-            onPointerDown={handleInteraction}
+            onPointerDown={handlePointerDown}
+            onPointerUp={handlePointerUp}
+            onPointerCancel={handlePointerCancel}
             className={`
-              touch-manipulation w-full h-80 rounded-3xl border-2 flex flex-col items-center justify-center gap-4 transition-all duration-300 select-none cursor-pointer
+              ${gameState === "waiting" || gameState === "ready" ? "touch-none" : "touch-pan-y"} w-full h-80 rounded-3xl border-2 flex flex-col items-center justify-center gap-4 transition-all duration-300 select-none cursor-pointer
               ${gameState === "idle" ? "bg-violet-900/10 border-violet-500/20 hover:bg-violet-800/20 hover:border-violet-500/30" : ""}
               ${gameState === "waiting" ? "bg-amber-900/40 border-amber-500/40" : ""}
               ${gameState === "ready" ? "bg-green-600/40 border-green-400/50" : ""}
