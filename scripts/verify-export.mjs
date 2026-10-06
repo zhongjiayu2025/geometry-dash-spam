@@ -430,6 +430,7 @@ const globalsSource = readFileSync(join(process.cwd(), "app", "globals.css"), "u
 const headerSource = readFileSync(join(process.cwd(), "components", "Header.tsx"), "utf8");
 const headerRouteStateSource = readFileSync(join(process.cwd(), "components", "HeaderRouteState.tsx"), "utf8");
 const cpsClientSource = readFileSync(join(process.cwd(), "components", "CpsTest.tsx"), "utf8");
+const cpsRunHistorySource = readFileSync(join(process.cwd(), "components", "CpsRunHistory.tsx"), "utf8");
 const waveClientSource = readFileSync(join(process.cwd(), "components", "WaveSimulator.tsx"), "utf8");
 const gameCanvasSource = readFileSync(join(process.cwd(), "components", "GameCanvas.tsx"), "utf8");
 const waveAudioSource = readFileSync(join(process.cwd(), "lib", "waveAudio.ts"), "utf8");
@@ -737,6 +738,16 @@ if (
 ) {
   infrastructureErrors.push(
     "CPS click audio must stay in the shared lazy-loaded clickSound chunk"
+  );
+}
+
+if (
+  !cpsClientSource.includes("dynamic(() => import('./CpsRunHistory')") ||
+  cpsClientSource.includes("recentRuns.map") ||
+  !cpsRunHistorySource.includes("recentRuns.map")
+) {
+  infrastructureErrors.push(
+    "CPS recent-run cards must stay in the lazy-loaded history chunk"
   );
 }
 
