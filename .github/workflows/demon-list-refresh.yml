@@ -58,9 +58,6 @@ jobs:
       - name: Validate Wraith code freshness
         run: node scripts/verify-vault-data.mjs
 
-      - name: Validate related game source freshness
-        run: node scripts/verify-related-games.mjs
-
       - name: Validate Breeze latest release
         env:
           GITHUB_TOKEN: ${{ github.token }}
@@ -74,6 +71,9 @@ jobs:
 
       - name: Refresh related search verification dates
         run: node scripts/refresh-related-search-checks.mjs
+
+      - name: Validate related game source freshness
+        run: node scripts/verify-related-games.mjs
 
       - name: Commit changes
         shell: bash

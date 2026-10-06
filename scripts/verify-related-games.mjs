@@ -224,6 +224,18 @@ if (
   );
 }
 
+const refreshDateStepIndex = workflowSource.indexOf("Refresh related search verification dates");
+const validateRelatedStepIndex = workflowSource.indexOf("Validate related game source freshness");
+if (
+  refreshDateStepIndex < 0 ||
+  validateRelatedStepIndex < 0 ||
+  validateRelatedStepIndex < refreshDateStepIndex
+) {
+  errors.push(
+    "Related-game workflow must refresh successful live-check dates before enforcing static freshness age."
+  );
+}
+
 if (
   !refreshDatesSource.includes('const REFRESH_KEYS = ["spamChallengeList", "dashmetry", "breeze"]') ||
   !refreshDatesSource.includes("const MIN_REFRESH_DAYS = 7") ||
