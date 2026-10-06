@@ -434,6 +434,8 @@ const cpsClientSource = readFileSync(join(process.cwd(), "components", "CpsTest.
 const cpsRunHistorySource = readFileSync(join(process.cwd(), "components", "CpsRunHistory.tsx"), "utf8");
 const cpsFinishedActionsSource = readFileSync(join(process.cwd(), "components", "CpsFinishedActions.tsx"), "utf8");
 const waveClientSource = readFileSync(join(process.cwd(), "components", "WaveSimulator.tsx"), "utf8");
+const wavePracticeDrillSource = readFileSync(join(process.cwd(), "components", "WavePracticeDrill.tsx"), "utf8");
+const difficultySelectorSource = readFileSync(join(process.cwd(), "components", "DifficultySelector.tsx"), "utf8");
 const gameCanvasSource = readFileSync(join(process.cwd(), "components", "GameCanvas.tsx"), "utf8");
 const waveAudioSource = readFileSync(join(process.cwd(), "lib", "waveAudio.ts"), "utf8");
 const waveRunOverlaysSource = readFileSync(join(process.cwd(), "components", "WaveRunOverlays.tsx"), "utf8");
@@ -819,6 +821,25 @@ if (
 ) {
   infrastructureErrors.push(
     "WaveSimulator dynamic GameCanvas must reserve its responsive height while the chunk loads"
+  );
+}
+
+if (
+  !waveClientSource.includes("dynamic(() => import('./WavePracticeDrill')") ||
+  waveClientSource.includes("15-Second Mini Wave Drill") ||
+  !wavePracticeDrillSource.includes("15-Second Mini Wave Drill")
+) {
+  infrastructureErrors.push(
+    "Homepage-only Wave practice drill must stay outside the WaveSimulator initial client chunk"
+  );
+}
+
+if (
+  !waveClientSource.includes("useCallback((newDiff: Difficulty)") ||
+  !difficultySelectorSource.includes("memo(function DifficultySelector")
+) {
+  infrastructureErrors.push(
+    "DifficultySelector must stay memoized behind a stable selection callback"
   );
 }
 
