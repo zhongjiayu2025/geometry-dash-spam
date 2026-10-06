@@ -23,7 +23,11 @@ export default function GeometryDashClicker() {
   useEffect(() => {
     try {
       const saved = localStorage.getItem(STORAGE_KEY);
-      if (saved) setState({ ...INITIAL, ...JSON.parse(saved) });
+      if (saved) {
+        const next = { ...INITIAL, ...JSON.parse(saved) };
+        stateRef.current = next;
+        setState(next);
+      }
     } catch {}
     setLoaded(true);
   }, []);
@@ -57,19 +61,31 @@ export default function GeometryDashClicker() {
     };
 
     window.addEventListener("pagehide", flushSave);
-    document.addEventListener("visibilitychange", flushSave);
+    const flushWhenHidden = () => {
+      if (document.hidden) flushSave();
+    };
+
+    document.addEventListener("visibilitychange", flushWhenHidden);
 
     return () => {
       window.removeEventListener("pagehide", flushSave);
-      document.removeEventListener("visibilitychange", flushSave);
+      document.removeEventListener("visibilitychange", flushWhenHidden);
       flushSave();
     };
   }, [loaded]);
 
+  const updateState = (updater: (prev: SaveState) => SaveState) => {
+    setState((prev) => {
+      const next = updater(prev);
+      stateRef.current = next;
+      return next;
+    });
+  };
+
   useEffect(() => {
     if (state.autoPower <= 0) return;
     const timer = window.setInterval(() => {
-      setState((prev) => ({ ...prev, orbs: prev.orbs + prev.autoPower }));
+      updateState((prev) => ({ ...prev, orbs: prev.orbs + prev.autoPower }));
     }, 1000);
     return () => window.clearInterval(timer);
   }, [state.autoPower]);
@@ -86,7 +102,7 @@ export default function GeometryDashClicker() {
   ];
 
   const clickCube = () => {
-    setState((prev) => {
+    updateState((prev) => {
       const gain = prev.clickPower * (prev.prestige + 1);
       return {
         ...prev,
@@ -98,26 +114,27 @@ export default function GeometryDashClicker() {
 
   const buyClick = () => {
     if (state.orbs < clickCost) return;
-    setState((prev) => ({ ...prev, orbs: prev.orbs - clickCost, clickPower: prev.clickPower + 1 }));
+    updateState((prev) => ({ ...prev, orbs: prev.orbs - clickCost, clickPower: prev.clickPower + 1 }));
   };
 
   const buyAuto = () => {
     if (state.orbs < autoCost) return;
-    setState((prev) => ({ ...prev, orbs: prev.orbs - autoCost, autoPower: prev.autoPower + 1 }));
+    updateState((prev) => ({ ...prev, orbs: prev.orbs - autoCost, autoPower: prev.autoPower + 1 }));
   };
 
   const prestige = () => {
     if (state.orbs < prestigeCost) return;
-    setState({
+    updateState((prev) => ({
       orbs: 0,
       clickPower: 1,
       autoPower: 0,
-      prestige: state.prestige + 1,
-      totalClicks: state.totalClicks,
-    });
+      prestige: prev.prestige + 1,
+      totalClicks: prev.totalClicks,
+    }));
   };
 
   const reset = () => {
+    stateRef.current = INITIAL;
     setState(INITIAL);
     localStorage.removeItem(STORAGE_KEY);
   };
