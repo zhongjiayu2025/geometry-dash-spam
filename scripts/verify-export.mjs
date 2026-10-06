@@ -531,6 +531,18 @@ for (const file of ["JitterClickTest.tsx", "ButterflyClickTest.tsx", "RightClick
 for (const file of ["JitterClickTest.tsx", "ButterflyClickTest.tsx", "RightClickTest.tsx"]) {
   const source = supportClientSources.find(([name]) => name === file)?.[1] ?? "";
   if (
+    source.includes("setClicks(clicksRef.current)") ||
+    !source.includes("const renderedClicks = active ? clicksRef.current : clicks;")
+  ) {
+    infrastructureErrors.push(
+      `${file}: click hot path must accumulate in refs instead of re-rendering React on every input`
+    );
+  }
+}
+
+for (const file of ["JitterClickTest.tsx", "ButterflyClickTest.tsx", "RightClickTest.tsx"]) {
+  const source = supportClientSources.find(([name]) => name === file)?.[1] ?? "";
+  if (
     !source.includes("import('../lib/clickSound')") ||
     source.includes("AudioContext") ||
     source.includes("createOscillator") ||
