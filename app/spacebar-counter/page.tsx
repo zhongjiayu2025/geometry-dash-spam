@@ -1,4 +1,5 @@
 import SpacebarCounter from "../../components/SpacebarCounter";
+import RelatedTools from "../../components/RelatedTools";
 import InputToolGuide from "../../components/InputToolGuide";
 import { Metadata } from "next";
 
@@ -34,6 +35,7 @@ export default function SpacebarCounterPage() {
       </div>
       <SpacebarCounter />
       <InputToolGuide tool="spacebar" />
-    </>
+          <RelatedTools currentTool="spacebar" />
+</>
   );
 }
