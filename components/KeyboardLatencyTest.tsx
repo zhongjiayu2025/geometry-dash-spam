@@ -55,12 +55,25 @@ export default function KeyboardLatencyTest() {
             }
         };
 
+        const clearInterruptedPress = () => {
+            setActiveKey(null);
+            pressTimes.current.clear();
+        };
+
+        const handleVisibilityChange = () => {
+            if (document.hidden) clearInterruptedPress();
+        };
+
         window.addEventListener('keydown', handleKeyDown, { passive: false });
         window.addEventListener('keyup', handleKeyUp);
+        window.addEventListener('blur', clearInterruptedPress);
+        document.addEventListener('visibilitychange', handleVisibilityChange);
 
         return () => {
             window.removeEventListener('keydown', handleKeyDown);
             window.removeEventListener('keyup', handleKeyUp);
+            window.removeEventListener('blur', clearInterruptedPress);
+            document.removeEventListener('visibilitychange', handleVisibilityChange);
         };
     }, []);
 
