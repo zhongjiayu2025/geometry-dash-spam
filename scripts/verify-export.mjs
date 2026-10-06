@@ -449,6 +449,7 @@ const clickSoundSource = readFileSync(join(process.cwd(), "lib", "clickSound.ts"
 const cpsRecordsSource = readFileSync(join(process.cwd(), "lib", "cpsRecords.ts"), "utf8");
 const persistentBestSource = readFileSync(join(process.cwd(), "lib", "usePersistentBestNumber.ts"), "utf8");
 const managedTimeoutSource = readFileSync(join(process.cwd(), "lib", "useManagedTimeout.ts"), "utf8");
+const intentionalPointerSource = readFileSync(join(process.cwd(), "lib", "useIntentionalPointerAction.ts"), "utf8");
 const exactCountdownSource = readFileSync(join(process.cwd(), "lib", "useExactCountdown.ts"), "utf8");
 const keyboardChordSource = readFileSync(join(process.cwd(), "lib", "useKeyboardChordMeasurement.ts"), "utf8");
 const typingRuntimeSource = readFileSync(join(process.cwd(), "lib", "typingRuntime.ts"), "utf8");
@@ -1082,10 +1083,13 @@ if (
 
 if (
   !reactionClientSource.includes("useManagedTimeout") ||
+  !reactionClientSource.includes("useIntentionalPointerAction") ||
+  !reactionClientSource.includes('deferTouch: state === "idle" || state === "result" || state === "early"') ||
+  !reactionClientSource.includes('"touch-none" : "touch-pan-y"') ||
   !reactionClientSource.includes('usePersistentBestNumber("reactionBestScore", "min")') ||
   !reactionClientSource.includes("isInteractiveKeyboardTarget(event.target)") ||
   !reactionClientSource.includes("event.repeat") ||
-  !reactionClientSource.includes('target.closest("button")') ||
+  reactionClientSource.includes("pendingTouchRef") ||
   reactionClientSource.includes("localStorage.setItem") ||
   !reactionResultSource.includes("onClick={shareScore}")
 ) {
@@ -1282,6 +1286,17 @@ if (
 }
 
 if (
+  !intentionalPointerSource.includes('event.pointerType === "touch" && deferTouch') ||
+  !intentionalPointerSource.includes("Math.hypot") ||
+  !intentionalPointerSource.includes("moved <= moveThreshold") ||
+  !intentionalPointerSource.includes("pendingTouchRef.current = null")
+) {
+  infrastructureErrors.push(
+    "Shared intentional-pointer hook must defer scrollable touch starts and reject moved gestures"
+  );
+}
+
+if (
   !exactCountdownSource.includes("intervalMs = 100") ||
   !exactCountdownSource.includes("window.clearInterval(intervalRef.current)") ||
   !exactCountdownSource.includes("window.clearTimeout(endRef.current)") ||
@@ -1332,9 +1347,13 @@ if (
 
 if (
   !soundReactionClientSource.includes("useManagedTimeout") ||
+  !soundReactionClientSource.includes("useIntentionalPointerAction") ||
+  !soundReactionClientSource.includes('deferTouch: gameState === "idle" || gameState === "result"') ||
+  !soundReactionClientSource.includes('"touch-none" : "touch-pan-y"') ||
   !soundReactionClientSource.includes('usePersistentBestNumber("soundReactionBest", "min")') ||
   !soundReactionClientSource.includes("isInteractiveKeyboardTarget(event.target)") ||
   !soundReactionClientSource.includes("event.repeat") ||
+  soundReactionClientSource.includes("pendingTouchRef") ||
   soundReactionClientSource.includes("handleInteraction(e as any)") ||
   soundReactionClientSource.includes("localStorage.setItem")
 ) {
@@ -1345,9 +1364,13 @@ if (
 
 if (
   !bpmClientSource.includes("useManagedTimeout") ||
+  !bpmClientSource.includes("useIntentionalPointerAction") ||
+  !bpmClientSource.includes("deferTouch: !isActive") ||
+  !bpmClientSource.includes('isActive ? "touch-none" : "touch-pan-y"') ||
   !bpmClientSource.includes("isInteractiveKeyboardTarget(event.target)") ||
   !bpmClientSource.includes("event.repeat") ||
   !bpmClientSource.includes('event.key !== " " && event.key !== "Enter"') ||
+  bpmClientSource.includes("pendingTouchRef") ||
   bpmClientSource.includes("resetTimeoutRef")
 ) {
   infrastructureErrors.push(

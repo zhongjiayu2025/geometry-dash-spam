@@ -87,7 +87,6 @@ export default function BpmTapper() {
           </div>
 
           <button
-            id="bpm-btn"
             type="button"
             {...pointerAction}
             onKeyDown={(event) => {
