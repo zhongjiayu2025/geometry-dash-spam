@@ -1101,6 +1101,32 @@ const coreAuthorityRoutes = [
 
 const authorityLeakErrors = [];
 
+const coreInterlinkRoutes = [
+  "/",
+  "/geometry-dash-wave",
+  "/cps-test",
+  "/demon-list",
+];
+
+const coreInterlinkErrors = [];
+
+for (const route of coreInterlinkRoutes) {
+  const path = exportedPath(route);
+  if (!path) continue;
+
+  const html = readFileSync(path, "utf8");
+  for (const target of coreInterlinkRoutes) {
+    if (target === route) continue;
+
+    const href = target === "/" ? 'href="/"' : `href="${target}"`;
+    if (!html.includes(href)) {
+      coreInterlinkErrors.push(
+        `${route}: core page is missing internal link to ${target}`
+      );
+    }
+  }
+}
+
 for (const route of coreAuthorityRoutes) {
   const path = exportedPath(route);
   if (!path) continue;
@@ -1411,6 +1437,7 @@ if (
   semanticErrors.length ||
   noindexErrors.length ||
   authorityLeakErrors.length ||
+  coreInterlinkErrors.length ||
   htmlSitemapErrors.length ||
   supportGuideErrors.length ||
   intentClusterErrors.length ||
@@ -1453,6 +1480,11 @@ if (
   if (authorityLeakErrors.length) {
     console.error("Core-page authority leakage:");
     for (const error of authorityLeakErrors) console.error(`- ${error}`);
+  }
+
+  if (coreInterlinkErrors.length) {
+    console.error("Core-page interlink errors:");
+    for (const error of coreInterlinkErrors) console.error(`- ${error}`);
   }
 
   if (htmlSitemapErrors.length) {
