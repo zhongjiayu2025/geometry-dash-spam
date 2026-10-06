@@ -1935,6 +1935,16 @@ if (
 }
 
 if (
+  !gameCanvasSource.includes("const persistedBest = persistWaveHighScore(") ||
+  !gameCanvasSource.includes("if (persistedBest > highScoreRef.current)") ||
+  !gameCanvasSource.includes("if (persistedBest > time) setIsNewBest(false)")
+) {
+  infrastructureErrors.push(
+    "GameCanvas must reconcile optimistic local wave bests with the monotonic persisted cross-tab score"
+  );
+}
+
+if (
   !waveStorageSource.includes("export function normalizeWaveRuns") ||
   !waveStorageSource.includes('typeof value !== "number" && typeof value !== "string"') ||
   !waveStorageSource.includes('typeof value === "string" && !value.trim()') ||

@@ -133,7 +133,15 @@ const GameCanvas: React.FC<GameCanvasProps> = memo(({ difficulty, status, onStat
       setHighScore(time);
       setIsNewBest(true);
       void import('../lib/waveStorage').then(({ persistWaveHighScore }) => {
-        persistWaveHighScore({ difficultyId: difficulty.id, isEndless, isMini }, time);
+        const persistedBest = persistWaveHighScore(
+          { difficultyId: difficulty.id, isEndless, isMini },
+          time
+        );
+        if (persistedBest > highScoreRef.current) {
+          highScoreRef.current = persistedBest;
+          setHighScore(persistedBest);
+          if (persistedBest > time) setIsNewBest(false);
+        }
       });
       return true;
   }, [difficulty.id, isEndless, isMini]);
