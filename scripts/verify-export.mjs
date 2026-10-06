@@ -408,6 +408,8 @@ const waveClientSource = readFileSync(join(process.cwd(), "components", "WaveSim
 const gameCanvasSource = readFileSync(join(process.cwd(), "components", "GameCanvas.tsx"), "utf8");
 const demonListSource = readFileSync(join(process.cwd(), "components", "DemonListTable.tsx"), "utf8");
 const homeSource = readFileSync(join(process.cwd(), "app", "page.tsx"), "utf8");
+const blogReaderSource = readFileSync(join(process.cwd(), "components", "BlogPostReader.tsx"), "utf8");
+const copyLinkSource = readFileSync(join(process.cwd(), "components", "CopyLinkButton.tsx"), "utf8");
 if (!layoutSource.includes(`client=ca-${publisherId}`)) {
   infrastructureErrors.push(
     `AdSense script client does not match ads.txt publisher ID ${publisherId}`
@@ -458,6 +460,21 @@ if (waveClientSource.includes("Core next steps") || waveClientSource.includes("H
 
 if (homeSource.includes('next/dynamic') && homeSource.includes("HomeGuide")) {
   infrastructureErrors.push("HomeGuide should be server-rendered directly, not wrapped in next/dynamic");
+}
+
+if (
+  blogReaderSource.includes('"use client"') ||
+  blogReaderSource.includes("useState") ||
+  blogReaderSource.includes("window.")
+) {
+  infrastructureErrors.push("Blog article body and TOC must remain server-rendered");
+}
+
+if (
+  !blogReaderSource.includes("<CopyLinkButton") ||
+  !copyLinkSource.includes('"use client"')
+) {
+  infrastructureErrors.push("Blog client JS should stay isolated to the small CopyLinkButton");
 }
 
 if (
