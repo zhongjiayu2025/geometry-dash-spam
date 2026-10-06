@@ -19,7 +19,10 @@ export function useLazyClickSound() {
     if (!loadRef.current) {
       loadRef.current = import("./clickSound")
         .then(({ createClickSoundEngine }) => createClickSoundEngine())
-        .catch(() => null);
+        .catch(() => {
+          loadRef.current = null;
+          return null;
+        });
     }
 
     const engine = await loadRef.current;

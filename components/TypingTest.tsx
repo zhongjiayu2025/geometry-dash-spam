@@ -32,7 +32,10 @@ export default function TypingTest() {
   const ensureRuntime = useCallback(async () => {
     if (runtimeRef.current) return runtimeRef.current;
     if (!runtimeLoadRef.current) {
-      runtimeLoadRef.current = import("../lib/typingRuntime").catch(() => null);
+      runtimeLoadRef.current = import("../lib/typingRuntime").catch(() => {
+        runtimeLoadRef.current = null;
+        return null;
+      });
     }
     const runtime = await runtimeLoadRef.current;
     if (runtime) runtimeRef.current = runtime;

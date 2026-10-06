@@ -12,7 +12,10 @@ export function useMemoryTestRuntime() {
     if (runtimeRef.current) return runtimeRef.current;
 
     if (!loadRef.current) {
-      loadRef.current = import("./memoryTestRuntime").catch(() => null);
+      loadRef.current = import("./memoryTestRuntime").catch(() => {
+        loadRef.current = null;
+        return null;
+      });
     }
 
     const runtime = await loadRef.current;

@@ -1437,6 +1437,16 @@ if (
 }
 
 if (
+  !memoryRuntimeHookSource.includes("loadRef.current = null") ||
+  !lazyClickSoundSource.includes("loadRef.current = null") ||
+  !typingClientSource.includes("runtimeLoadRef.current = null")
+) {
+  infrastructureErrors.push(
+    "Lazy runtime and audio loaders must clear failed import promises so later interaction can retry"
+  );
+}
+
+if (
   !memoryTestRuntimeSource.includes("export function generateChimpLevel") ||
   !memoryTestRuntimeSource.includes("export function generateVisualLevel") ||
   !memoryTestRuntimeSource.includes("Math.random()")
