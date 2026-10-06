@@ -1,7 +1,11 @@
 import { readFileSync } from "node:fs";
 
 const DATA_PATH = new URL("../data/vaultCodes.ts", import.meta.url);
+const WORKFLOW_PATH = new URL("../.github/workflows/demon-list-refresh.yml", import.meta.url);
+const LIVE_REFRESH_PATH = new URL("./refresh-wraith-codes.mjs", import.meta.url);
 const source = readFileSync(DATA_PATH, "utf8");
+const workflowSource = readFileSync(WORKFLOW_PATH, "utf8");
+const liveRefreshSource = readFileSync(LIVE_REFRESH_PATH, "utf8");
 
 const dateMatch = source.match(/VAULT_CODES_CHECKED_AT = "([^"]+)"/);
 const checkedAt = dateMatch?.[1] ?? null;
@@ -50,6 +54,29 @@ for (const item of entries) {
       `Wraith code "${item.code}" uses ambiguous "key reward" wording; specify Demon Key or Gold Key.`
     );
   }
+}
+
+if (
+  !workflowSource.includes('"scripts/refresh-wraith-codes.mjs"') ||
+  !workflowSource.includes("Refresh Wraith live verification") ||
+  !workflowSource.includes("data/vaultCodes.ts")
+) {
+  errors.push(
+    "Search-data workflow must live-verify Wraith codes and include vaultCodes.ts in persisted refresh changes."
+  );
+}
+
+if (
+  !liveRefreshSource.includes('const RAW_URL = `${SOURCE_URL}?action=raw`') ||
+  !liveRefreshSource.includes("api.php?action=parse&page=Secret_Room") ||
+  !liveRefreshSource.includes('extractSection(wikitext, "Known rewards", "Limited-time rewards")') ||
+  !liveRefreshSource.includes("limitedOverlap") ||
+  !liveRefreshSource.includes("VAULT_CODES_CHECKED_AT") ||
+  !liveRefreshSource.includes("REFRESH_DAYS = 7")
+) {
+  errors.push(
+    "Wraith live refresher must compare permanent Known rewards exactly, exclude limited-time codes, and only refresh verified dates."
+  );
 }
 
 if (checkedAt && /^\d{4}-\d{2}-\d{2}$/.test(checkedAt)) {

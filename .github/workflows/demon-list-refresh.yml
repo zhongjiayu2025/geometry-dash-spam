@@ -12,6 +12,7 @@ on:
       - "components/DemonListTable.tsx"
       - "components/DemonListFilterControls.tsx"
       - "scripts/verify-vault-data.mjs"
+      - "scripts/refresh-wraith-codes.mjs"
       - "scripts/verify-related-games.mjs"
       - "scripts/verify-related-games-live.mjs"
       - "scripts/verify-dashmetry-live.mjs"
@@ -55,6 +56,9 @@ jobs:
       - name: Validate Demon List data
         run: node scripts/verify-demon-data.mjs
 
+      - name: Refresh Wraith live verification
+        run: node scripts/refresh-wraith-codes.mjs
+
       - name: Validate Wraith code data
         run: node scripts/verify-vault-data.mjs
 
@@ -78,14 +82,14 @@ jobs:
       - name: Commit changes
         shell: bash
         run: |
-          if git diff --quiet -- data/demons.ts data/relatedSearch.json; then
+          if git diff --quiet -- data/demons.ts data/relatedSearch.json data/vaultCodes.ts; then
             echo "No verified search-data changes to commit."
             exit 0
           fi
 
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-          git add data/demons.ts data/relatedSearch.json
+          git add data/demons.ts data/relatedSearch.json data/vaultCodes.ts
           git commit -m "data: refresh verified search sources"
           git pull --rebase origin main
           git push origin HEAD:main
