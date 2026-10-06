@@ -2,9 +2,12 @@
 "use client";
 
 import React, { useState, useEffect, useRef, useCallback } from 'react';
+import dynamic from 'next/dynamic';
 import { MousePointer2, RotateCcw, Timer, Check, Clock, Trophy, Share2, ArrowRight, Volume2, VolumeX } from 'lucide-react';
 import Link from 'next/link';
 import type { ClickSoundEngine } from '../lib/clickSound';
+
+const CpsRunHistory = dynamic(() => import('./CpsRunHistory'), { ssr: false });
 
 interface CpsRun {
   duration: number;
@@ -323,12 +326,6 @@ const CpsTest: React.FC = () => {
       };
 
   const currentBest = bestScores[selectedDuration];
-  const recentRuns = runHistory
-    .filter((run) => run.duration === selectedDuration)
-    .slice(0, 5);
-  const recentAverage = recentRuns.length
-    ? recentRuns.reduce((sum, run) => sum + run.cps, 0) / recentRuns.length
-    : 0;
 
   return (
     <div className="w-full max-w-5xl mx-auto animate-in slide-in-from-bottom-4 duration-500">
@@ -499,36 +496,19 @@ const CpsTest: React.FC = () => {
         </div>
       </div>
 
-      <section className="mb-12 rounded-2xl border border-white/10 bg-slate-900/30 p-6 md:p-8">
-        <div className="mb-5 flex flex-col gap-2 sm:flex-row sm:items-end sm:justify-between">
-          <div>
+      {runHistory.length > 0 ? (
+        <CpsRunHistory runs={runHistory} selectedDuration={selectedDuration} />
+      ) : (
+        <section className="mb-12 rounded-2xl border border-white/10 bg-slate-900/30 p-6 md:p-8">
+          <div className="mb-3">
             <p className="text-xs font-bold uppercase tracking-[0.16em] text-blue-400">Local training history</p>
             <h2 className="text-2xl font-display font-bold text-white">Recent {selectedDuration}s CPS runs</h2>
           </div>
-          {recentRuns.length > 0 && (
-            <div className="text-sm text-slate-400">
-              Last {recentRuns.length} average: <strong className="text-white">{recentAverage.toFixed(2)} CPS</strong>
-            </div>
-          )}
-        </div>
-
-        {recentRuns.length ? (
-          <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-5">
-            {recentRuns.map((run, index) => (
-              <div key={`${run.timestamp}-${index}`} className="rounded-xl border border-white/10 bg-black/20 p-4">
-                <div className="text-xs text-slate-500">Run {index + 1}</div>
-                <div className="mt-1 font-mono text-2xl font-bold text-white">{run.cps.toFixed(2)}</div>
-                <div className="text-xs font-semibold text-blue-400">CPS</div>
-                <div className="mt-2 text-xs text-slate-500">{run.clicks} clicks</div>
-              </div>
-            ))}
-          </div>
-        ) : (
           <p className="text-sm leading-6 text-slate-400">
             Complete a {selectedDuration}-second test to start a private browser-only history. Your recent runs stay on this device and are not uploaded.
           </p>
-        )}
-      </section>
+        </section>
+      )}
 
     </div>
   );
