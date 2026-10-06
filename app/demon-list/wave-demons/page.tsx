@@ -63,10 +63,14 @@ export default function WaveDemonsPage() {
     mainEntity: {
       "@type": "ItemList",
       numberOfItems: entries.length,
-      itemListElement: entries.map(({ demon }) => ({
+      itemListElement: entries.map(({ demon, note }, index) => ({
         "@type": "ListItem",
-        position: demon?.rank,
-        name: demon?.level,
+        position: index + 1,
+        item: {
+          "@type": "Thing",
+          name: demon?.level,
+          description: `${note} Pointercrate Main List rank: #${demon?.rank} as checked ${DEMON_VERIFIED_AT}.`,
+        },
       })),
     },
   };
@@ -138,6 +142,24 @@ export default function WaveDemonsPage() {
             <p className="text-sm leading-6 text-slate-400">{body}</p>
           </div>
         ))}
+      </section>
+
+      <section className="mb-10 rounded-2xl border border-blue-500/20 bg-blue-950/10 p-5 md:p-6">
+        <h2 className="mb-3 text-xl font-bold text-white">Wave demons, spam demons and the SCL answer different questions</h2>
+        <div className="grid gap-3 md:grid-cols-3">
+          <Link href="/demon-list/spam-demons" className="rounded-xl border border-white/10 bg-slate-900/30 p-4 hover:border-blue-400/40">
+            <h3 className="mb-1 font-bold text-white">Spam Demon references</h3>
+            <p className="text-sm leading-6 text-slate-400">Rated Demons selected as rapid-input practice references, with their real Pointercrate positions kept separate.</p>
+          </Link>
+          <Link href="/spam-challenge-list" className="rounded-xl border border-fuchsia-500/20 bg-fuchsia-950/10 p-4 hover:border-fuchsia-400/40">
+            <h3 className="mb-1 font-bold text-white">Spam Challenge List</h3>
+            <p className="text-sm leading-6 text-slate-400">Use the SCL when the search intent is a community ranking of spam challenges rather than rated Demons.</p>
+          </Link>
+          <Link href="/blog/top-spam-levels-2026" className="rounded-xl border border-white/10 bg-slate-900/30 p-4 hover:border-blue-400/40">
+            <h3 className="mb-1 font-bold text-white">Top Spam Levels 2026</h3>
+            <p className="text-sm leading-6 text-slate-400">Use the overview when you need help choosing the correct list or practice reference.</p>
+          </Link>
+        </div>
       </section>
 
       <section className="mb-10">
