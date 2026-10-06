@@ -178,6 +178,9 @@ const RightClickTest: React.FC = () => {
 
   return (
     <div className="w-full max-w-4xl mx-auto animate-in slide-in-from-bottom-4 duration-500">
+      <p className="sr-only" role="status" aria-live="polite" aria-atomic="true">
+        {finished ? `Test complete. ${cps} right clicks per second over 10 seconds.` : ""}
+      </p>
       <div className="text-center mb-8">
          <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-emerald-500/10 border border-emerald-500/20 text-xs font-mono text-emerald-400 mb-4">
             <Mouse className="w-3 h-3" /> RMB TEST
@@ -243,6 +246,8 @@ const RightClickTest: React.FC = () => {
               <div className="flex items-center gap-4">
                  <button 
                   onClick={toggleSound}
+                  aria-label={soundEnabled ? "Mute click sound" : "Enable click sound"}
+                  aria-pressed={soundEnabled}
                   className={`p-3 rounded-xl border transition-colors ${soundEnabled ? 'bg-emerald-600/20 border-emerald-500/50 text-emerald-400 hover:bg-emerald-600/30' : 'bg-slate-800 border-white/10 text-slate-500 hover:text-slate-300'}`}
                   title={soundEnabled ? "Mute Click Sound" : "Enable Click Sound"}
                  >
