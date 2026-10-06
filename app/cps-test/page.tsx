@@ -40,6 +40,35 @@ const cpsFaqs = [
   },
 ];
 
+const clickMethodLinks = [
+  {
+    href: "/jitter-click",
+    title: "Jitter Click Test",
+    description: "Compare rapid vibration-style clicking with the same browser-side CPS metric.",
+  },
+  {
+    href: "/butterfly-click",
+    title: "Butterfly Click Test",
+    description: "Compare a two-finger rhythm and whether the faster pace stays repeatable.",
+  },
+  {
+    href: "/drag-click",
+    title: "Drag Click Test",
+    description: "Measure short rolling click bursts separately from ordinary repeated clicking.",
+  },
+  {
+    href: "/right-click",
+    title: "Right Click CPS Test",
+    description: "Run the same speed question with the right mouse button.",
+  },
+  {
+    href: "/spacebar-counter",
+    title: "Spacebar CPS Test",
+    description: "Compare repeated keyboard input with mouse-based clicking practice.",
+  },
+];
+
+
 export default function CpsTestPage() {
   const webAppSchema = {
     "@context": "https://schema.org",
@@ -114,6 +143,29 @@ export default function CpsTestPage() {
       <div className="mx-auto max-w-5xl">
         <CpsGuide />
       </div>
+
+      <section className="mx-auto mt-12 max-w-5xl">
+        <p className="mb-2 text-xs font-bold uppercase tracking-[0.18em] text-blue-400">Clicking technique</p>
+        <h2 className="mb-3 text-2xl font-display font-bold text-white">
+          Compare Geometry Dash clicking & input methods
+        </h2>
+        <p className="mb-5 max-w-3xl text-sm leading-6 text-slate-400">
+          Keep the main CPS test as your baseline, then compare one technique at a time. Use the same duration and device when you want a fair like-for-like result.
+        </p>
+        <div className="grid gap-3 md:grid-cols-2 lg:grid-cols-3">
+          {clickMethodLinks.map((item) => (
+            <Link
+              key={item.href}
+              href={item.href}
+              className="rounded-xl border border-white/10 bg-slate-900/30 p-5 transition-colors hover:border-blue-500/40 hover:bg-slate-900/50"
+            >
+              <h3 className="mb-2 font-bold text-white">{item.title}</h3>
+              <p className="text-sm leading-6 text-slate-400">{item.description}</p>
+              <span className="mt-3 inline-block text-sm font-semibold text-blue-400">Open test →</span>
+            </Link>
+          ))}
+        </div>
+      </section>
 
       <section className="mx-auto mt-14 grid max-w-5xl gap-4 md:grid-cols-2">
         <div className="rounded-2xl border border-blue-500/20 bg-blue-950/15 p-6">

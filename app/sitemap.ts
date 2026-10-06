@@ -6,7 +6,7 @@ import relatedSearchData from "../data/relatedSearch.json";
 
 export const dynamic = "force-static";
 
-const UPDATED = "2026-10-06";
+const UPDATED = "2026-10-07";
 
 const DEMON_ROUTES = new Set([
   "/demon-list",
@@ -31,6 +31,7 @@ const CORE_ROUTES = [
   "",
   "/geometry-dash-wave",
   "/cps-test",
+  "/reaction-test",
   "/demon-list",
   "/demon-list/wave-demons",
   "/demon-list/spam-demons",

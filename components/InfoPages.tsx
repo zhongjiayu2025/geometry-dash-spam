@@ -262,7 +262,7 @@ export const SitemapPage = () => (
   <InfoPageLayout
     title="Sitemap"
     icon={<Map className="w-10 h-10" />}
-    lastUpdated="October 6, 2026"
+    lastUpdated="October 7, 2026"
   >
     <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
       <div className="bg-slate-950/30 border border-white/5 rounded-xl p-6">
@@ -307,7 +307,7 @@ export const SitemapPage = () => (
           Input & Hardware Tools
         </h2>
         <p className="mb-5 text-sm leading-6 text-slate-500">
-          Supporting click, keyboard and hardware diagnostics that directly relate to Geometry Dash input practice. General-purpose browser tests are intentionally kept out of the search sitemap.
+          Supporting click, reaction, keyboard and hardware diagnostics that directly relate to Geometry Dash input practice. Only utilities with a clear training or input-diagnostic role are included in the search sitemap.
         </p>
         <div className="grid gap-2 sm:grid-cols-2">
           {[
@@ -317,6 +317,7 @@ export const SitemapPage = () => (
             ["/right-click", "Right Click CPS"],
             ["/double-click", "Double Click Test"],
             ["/spacebar-counter", "Spacebar Counter"],
+            ["/reaction-test", "Reaction Time Test"],
             ["/polling-rate", "Mouse Polling Rate"],
             ["/keyboard-latency", "Keyboard Timing"],
             ["/keyboard-ghosting", "Keyboard Ghosting"],
