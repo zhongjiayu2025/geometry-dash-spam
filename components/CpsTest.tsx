@@ -9,6 +9,7 @@ import { useLazyClickSound } from '../lib/useLazyClickSound';
 import { useExactCountdown } from '../lib/useExactCountdown';
 import { readStorage, writeStorage } from '../lib/browserStorage';
 import { useCpsRecords } from '../lib/useCpsRecords';
+import { CPS_DURATIONS } from '../data/cpsDurations';
 
 const CpsRunHistory = dynamic(() => import('./CpsRunHistory'), { ssr: false });
 const CpsFinishedActions = dynamic(() => import('./CpsFinishedActions'), { ssr: false });
@@ -185,7 +186,7 @@ const CpsTest: React.FC = () => {
       </p>
       {/* Time Selector - Critical for SEO (1s CPS Test, 5s CPS Test keywords) */}
       <div className="flex flex-nowrap justify-start sm:justify-center gap-2 mb-5 sm:mb-8 overflow-x-auto overscroll-x-contain pb-1">
-          {[1, 3, 5, 10, 30, 60].map(sec => (
+          {CPS_DURATIONS.map(sec => (
               <button
                 key={sec}
                 onClick={() => handleDurationChange(sec)}

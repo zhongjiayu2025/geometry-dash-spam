@@ -3,11 +3,12 @@ import Breadcrumbs from "../../components/Breadcrumbs";
 import { Metadata } from "next";
 import Link from "next/link";
 import CpsGuide from "../../components/CpsGuide";
+import { CPS_DURATIONS, CPS_DURATION_LABEL } from "../../data/cpsDurations";
 
 export const metadata: Metadata = {
   title: "Geometry Dash CPS Test (GD CPS Test) | Spam Click Test",
   description:
-    "Take a Geometry Dash CPS test (GD CPS test) and spam click test in 1, 3, 5, 10, 30 or 60 seconds. Measure click speed, peak CPS and consistency.",
+    `Take a Geometry Dash CPS test (GD CPS test) and spam click test in ${CPS_DURATION_LABEL} second modes. Measure click speed, peak CPS and consistency.`,
   alternates: {
     canonical: "/cps-test",
   },
@@ -68,6 +69,19 @@ export default function CpsTestPage() {
     })),
   };
 
+  const durationSchema = {
+    "@context": "https://schema.org",
+    "@type": "ItemList",
+    name: "Geometry Dash CPS Test Durations",
+    numberOfItems: CPS_DURATIONS.length,
+    itemListElement: CPS_DURATIONS.map((seconds, index) => ({
+      "@type": "ListItem",
+      position: index + 1,
+      name: `${seconds} Second CPS Test`,
+      url: "https://geometrydashspam.cc/cps-test",
+    })),
+  };
+
   return (
     <>
       <script
@@ -78,18 +92,22 @@ export default function CpsTestPage() {
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(faqSchema) }}
       />
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(durationSchema) }}
+      />
       <Breadcrumbs items={[{ label: "Geometry Dash CPS Test", href: "/cps-test" }]} />
       <header className="mb-8 md:mb-10 text-center">
         <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-white/5 border border-white/10 text-xs font-mono text-slate-400 mb-4">
           <span className="w-1.5 h-1.5 rounded-full bg-green-500"></span>
-          1–60 SECOND MODES
+          {CPS_DURATIONS[0]}–{CPS_DURATIONS.at(-1)} SECOND MODES
         </div>
         <h1 className="text-3xl md:text-5xl font-display font-bold text-white mb-3 uppercase">
           Geometry Dash CPS Test
         </h1>
         <p className="text-slate-400 max-w-2xl mx-auto text-sm md:text-base">
           Use this <strong className="text-slate-200">Geometry Dash click test</strong> as a raw <strong className="text-slate-200">spam click test</strong>:
-          measure CPS, peak one-second CPS, timing consistency and local personal bests across 1, 3, 5, 10, 30 and 60 second modes.
+          measure CPS, peak one-second CPS, timing consistency and local personal bests across {CPS_DURATION_LABEL} second modes.
         </p>
       </header>
       <CpsTest />

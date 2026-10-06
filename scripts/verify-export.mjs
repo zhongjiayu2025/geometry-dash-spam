@@ -475,6 +475,8 @@ const globalsSource = readFileSync(join(process.cwd(), "app", "globals.css"), "u
 const headerSource = readFileSync(join(process.cwd(), "components", "Header.tsx"), "utf8");
 const headerRouteStateSource = readFileSync(join(process.cwd(), "components", "HeaderRouteState.tsx"), "utf8");
 const cpsClientSource = readFileSync(join(process.cwd(), "components", "CpsTest.tsx"), "utf8");
+const cpsPageSource = readFileSync(join(process.cwd(), "app", "cps-test", "page.tsx"), "utf8");
+const cpsDurationsSource = readFileSync(join(process.cwd(), "data", "cpsDurations.ts"), "utf8");
 const cpsRunHistorySource = readFileSync(join(process.cwd(), "components", "CpsRunHistory.tsx"), "utf8");
 const cpsFinishedActionsSource = readFileSync(join(process.cwd(), "components", "CpsFinishedActions.tsx"), "utf8");
 const clickTestPanelsSource = readFileSync(join(process.cwd(), "components", "ClickTestPanels.tsx"), "utf8");
@@ -2428,6 +2430,20 @@ if (
 ) {
   infrastructureErrors.push(
     "CPS and shared click timers must preserve 100ms UI sampling with an exact elapsed-time cutoff"
+  );
+}
+
+if (
+  !cpsDurationsSource.includes("CPS_DURATIONS = [1, 3, 5, 10, 30, 60]") ||
+  !cpsClientSource.includes("CPS_DURATIONS.map") ||
+  cpsClientSource.includes("[1, 3, 5, 10, 30, 60].map") ||
+  !cpsPageSource.includes("CPS_DURATION_LABEL") ||
+  !cpsPageSource.includes('"@type": "ItemList"') ||
+  !cpsPageSource.includes("numberOfItems: CPS_DURATIONS.length") ||
+  !cpsPageSource.includes("itemListElement: CPS_DURATIONS.map")
+) {
+  infrastructureErrors.push(
+    "CPS duration modes must come from one shared source and be exposed in server content plus ItemList schema"
   );
 }
 
