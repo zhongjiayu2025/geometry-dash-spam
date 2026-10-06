@@ -431,6 +431,7 @@ const headerSource = readFileSync(join(process.cwd(), "components", "Header.tsx"
 const headerRouteStateSource = readFileSync(join(process.cwd(), "components", "HeaderRouteState.tsx"), "utf8");
 const cpsClientSource = readFileSync(join(process.cwd(), "components", "CpsTest.tsx"), "utf8");
 const cpsRunHistorySource = readFileSync(join(process.cwd(), "components", "CpsRunHistory.tsx"), "utf8");
+const cpsFinishedActionsSource = readFileSync(join(process.cwd(), "components", "CpsFinishedActions.tsx"), "utf8");
 const waveClientSource = readFileSync(join(process.cwd(), "components", "WaveSimulator.tsx"), "utf8");
 const gameCanvasSource = readFileSync(join(process.cwd(), "components", "GameCanvas.tsx"), "utf8");
 const waveAudioSource = readFileSync(join(process.cwd(), "lib", "waveAudio.ts"), "utf8");
@@ -748,6 +749,18 @@ if (
 ) {
   infrastructureErrors.push(
     "CPS recent-run cards must stay in the lazy-loaded history chunk"
+  );
+}
+
+if (
+  !cpsClientSource.includes("dynamic(() => import('./CpsFinishedActions')") ||
+  cpsClientSource.includes("Train Wave Control") ||
+  cpsClientSource.includes("<Share2") ||
+  !cpsFinishedActionsSource.includes("Train Wave Control") ||
+  !cpsFinishedActionsSource.includes("<Share2")
+) {
+  infrastructureErrors.push(
+    "CPS finished metrics and action controls must stay in the lazy-loaded finished-actions chunk"
   );
 }
 
