@@ -8,6 +8,7 @@ import { useLazyClickSound } from "../lib/useLazyClickSound";
 import { useManagedTimeout } from "../lib/useManagedTimeout";
 import { useIntentionalPointerAction } from "../lib/useIntentionalPointerAction";
 import { usePersistentBestNumber } from "../lib/usePersistentBestNumber";
+import { useReactionTrialGuard } from "../lib/useReactionTrialGuard";
 
 const SoundReactionResult = dynamic(() => import("./SoundReactionResult"), { ssr: false });
 
@@ -51,12 +52,9 @@ export default function SoundReactionTest() {
     const nextTime = Math.round(performance.now() - startTimeRef.current);
     setReactionTime(nextTime);
 
-    if (bestTime === null || nextTime < bestTime) {
-      commitBestTime(nextTime);
-    }
-
+    commitBestTime(nextTime);
     setGameState("result");
-  }, [bestTime, clearTimeout, commitBestTime, gameState, startTest]);
+  }, [clearTimeout, commitBestTime, gameState, startTest]);
 
   useEffect(() => {
     const handleKeyDown = (event: KeyboardEvent) => {
@@ -71,27 +69,12 @@ export default function SoundReactionTest() {
     return () => window.removeEventListener("keydown", handleKeyDown);
   }, [handleInteraction]);
 
-  useEffect(() => {
-    const cancelInterruptedTrial = () => {
-      clearTimeout();
-      startTimeRef.current = 0;
-      setReactionTime(null);
-      setGameState((current) =>
-        current === "waiting" || current === "ready" ? "idle" : current
-      );
-    };
-
-    const handleVisibilityChange = () => {
-      if (document.hidden) cancelInterruptedTrial();
-    };
-
-    window.addEventListener("blur", cancelInterruptedTrial);
-    document.addEventListener("visibilitychange", handleVisibilityChange);
-    return () => {
-      window.removeEventListener("blur", cancelInterruptedTrial);
-      document.removeEventListener("visibilitychange", handleVisibilityChange);
-    };
-  }, [clearTimeout]);
+  useReactionTrialGuard({
+    clearTimeout,
+    startTimeRef,
+    setState: setGameState,
+    onInterrupt: () => setReactionTime(null),
+  });
 
   const pointerAction = useIntentionalPointerAction<HTMLDivElement>({
     onAction: handleInteraction,

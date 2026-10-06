@@ -7,6 +7,7 @@ import { isInteractiveKeyboardTarget } from "../lib/inputTarget";
 import { useManagedTimeout } from "../lib/useManagedTimeout";
 import { useIntentionalPointerAction } from "../lib/useIntentionalPointerAction";
 import { usePersistentBestNumber } from "../lib/usePersistentBestNumber";
+import { useReactionTrialGuard } from "../lib/useReactionTrialGuard";
 
 const ReactionResult = dynamic(() => import("./ReactionResult"), { ssr: false });
 
@@ -45,16 +46,13 @@ export default function ReactionTest() {
       const nextResult = Math.round(performance.now() - startTimeRef.current);
       setResult(nextResult);
 
-      if (bestScore === null || nextResult < bestScore) {
-        commitBestScore(nextResult);
-      }
-
+      commitBestScore(nextResult);
       setState("result");
       return;
     }
 
     startTest();
-  }, [bestScore, clearTimeout, commitBestScore, startTest, state]);
+  }, [clearTimeout, commitBestScore, startTest, state]);
 
   useEffect(() => {
     const handleKeyDown = (event: KeyboardEvent) => {
@@ -69,26 +67,11 @@ export default function ReactionTest() {
     return () => window.removeEventListener("keydown", handleKeyDown);
   }, [handleInteraction]);
 
-  useEffect(() => {
-    const cancelInterruptedTrial = () => {
-      clearTimeout();
-      startTimeRef.current = 0;
-      setState((current) =>
-        current === "waiting" || current === "ready" ? "idle" : current
-      );
-    };
-
-    const handleVisibilityChange = () => {
-      if (document.hidden) cancelInterruptedTrial();
-    };
-
-    window.addEventListener("blur", cancelInterruptedTrial);
-    document.addEventListener("visibilitychange", handleVisibilityChange);
-    return () => {
-      window.removeEventListener("blur", cancelInterruptedTrial);
-      document.removeEventListener("visibilitychange", handleVisibilityChange);
-    };
-  }, [clearTimeout]);
+  useReactionTrialGuard({
+    clearTimeout,
+    startTimeRef,
+    setState,
+  });
 
   const pointerAction = useIntentionalPointerAction<HTMLDivElement>({
     onAction: handleInteraction,

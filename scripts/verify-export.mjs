@@ -452,6 +452,7 @@ const persistentBestSource = readFileSync(join(process.cwd(), "lib", "usePersist
 const browserStorageSource = readFileSync(join(process.cwd(), "lib", "browserStorage.ts"), "utf8");
 const managedTimeoutSource = readFileSync(join(process.cwd(), "lib", "useManagedTimeout.ts"), "utf8");
 const intentionalPointerSource = readFileSync(join(process.cwd(), "lib", "useIntentionalPointerAction.ts"), "utf8");
+const reactionTrialGuardSource = readFileSync(join(process.cwd(), "lib", "useReactionTrialGuard.ts"), "utf8");
 const exactCountdownSource = readFileSync(join(process.cwd(), "lib", "useExactCountdown.ts"), "utf8");
 const keyboardChordSource = readFileSync(join(process.cwd(), "lib", "useKeyboardChordMeasurement.ts"), "utf8");
 const typingRuntimeSource = readFileSync(join(process.cwd(), "lib", "typingRuntime.ts"), "utf8");
@@ -1222,9 +1223,7 @@ if (
   !reactionClientSource.includes('usePersistentBestNumber("reactionBestScore", "min")') ||
   !reactionClientSource.includes("isInteractiveKeyboardTarget(event.target)") ||
   !reactionClientSource.includes("event.repeat") ||
-  !reactionClientSource.includes('window.addEventListener("blur", cancelInterruptedTrial)') ||
-  !reactionClientSource.includes('document.addEventListener("visibilitychange", handleVisibilityChange)') ||
-  !reactionClientSource.includes('current === "waiting" || current === "ready" ? "idle" : current') ||
+  !reactionClientSource.includes("useReactionTrialGuard") ||
   reactionClientSource.includes("pendingTouchRef") ||
   reactionClientSource.includes("localStorage.setItem") ||
   !reactionResultSource.includes("onClick={shareScore}")
@@ -1539,6 +1538,18 @@ if (
 }
 
 if (
+  !reactionTrialGuardSource.includes('window.addEventListener("blur", cancelInterruptedTrial)') ||
+  !reactionTrialGuardSource.includes('document.addEventListener("visibilitychange", handleVisibilityChange)') ||
+  !reactionTrialGuardSource.includes('current === "waiting" || current === "ready" ? "idle" : current') ||
+  !reactionTrialGuardSource.includes("startTimeRef.current = 0") ||
+  !reactionTrialGuardSource.includes("interruptRef.current?.()")
+) {
+  infrastructureErrors.push(
+    "Shared reaction-trial guard must invalidate hidden/blurred visual and audio reaction attempts"
+  );
+}
+
+if (
   !exactCountdownSource.includes("intervalMs = 100") ||
   !exactCountdownSource.includes("window.clearInterval(intervalRef.current)") ||
   !exactCountdownSource.includes("window.clearTimeout(endRef.current)") ||
@@ -1595,8 +1606,7 @@ if (
   !soundReactionClientSource.includes('usePersistentBestNumber("soundReactionBest", "min")') ||
   !soundReactionClientSource.includes("isInteractiveKeyboardTarget(event.target)") ||
   !soundReactionClientSource.includes("event.repeat") ||
-  !soundReactionClientSource.includes('window.addEventListener("blur", cancelInterruptedTrial)') ||
-  !soundReactionClientSource.includes('document.addEventListener("visibilitychange", handleVisibilityChange)') ||
+  !soundReactionClientSource.includes("useReactionTrialGuard") ||
   soundReactionClientSource.includes("pendingTouchRef") ||
   soundReactionClientSource.includes("handleInteraction(e as any)") ||
   soundReactionClientSource.includes("localStorage.setItem")
