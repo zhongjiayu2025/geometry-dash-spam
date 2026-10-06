@@ -55,6 +55,13 @@ export default function KeyboardGhostingPage() {
           but it does not prove the exact electrical cause inside the keyboard.
         </p>
       </section>
+      <section className="mx-auto mt-8 max-w-5xl rounded-2xl border border-amber-500/20 bg-amber-950/10 p-5 md:p-6">
+        <h2 className="mb-2 text-xl font-bold text-white">Ghosting vs key rollover</h2>
+        <p className="text-sm leading-6 text-slate-400">
+          Ghosting asks whether a specific key combination is lost or misreported. Rollover asks how many simultaneous keys remain visible at once.
+          Use the <a href="/key-rollover" className="font-semibold text-amber-300 hover:underline">Key Rollover Test</a> when the number of simultaneous registered keys is the main question.
+        </p>
+      </section>
       <InputToolGuide tool="keyboard-ghosting" />
       <RelatedTools currentTool="keyboardGhosting" />
     </>
