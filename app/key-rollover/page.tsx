@@ -1,4 +1,5 @@
 import KeyRolloverTest from "../../components/KeyRolloverTest";
+import RelatedTools from "../../components/RelatedTools";
 import InputToolGuide from "../../components/InputToolGuide";
 import { Metadata } from "next";
 
@@ -34,6 +35,7 @@ export default function KeyRolloverPage() {
       </div>
       <KeyRolloverTest />
       <InputToolGuide tool="key-rollover" />
-    </>
+          <RelatedTools currentTool="rollover" />
+</>
   );
 }
