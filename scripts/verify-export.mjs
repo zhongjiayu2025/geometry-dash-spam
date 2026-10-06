@@ -669,6 +669,17 @@ if (
 }
 
 if (
+  !waveSimulatorSource.includes("useEffect(() => {") ||
+  !waveSimulatorSource.includes("gd_spam_last_difficulty") ||
+  waveSimulatorSource.includes("useState<Difficulty>(() =>") ||
+  waveSimulatorSource.includes("useState<boolean>(() =>")
+) {
+  infrastructureErrors.push(
+    "WaveSimulator saved preferences must hydrate after mount instead of changing initial server/client state"
+  );
+}
+
+if (
   !gameCanvasSource.includes("useState<boolean>(true)") ||
   !gameCanvasSource.includes("savedMuted === null ? true") ||
   !gameCanvasSource.includes("import('../lib/waveAudio')") ||
