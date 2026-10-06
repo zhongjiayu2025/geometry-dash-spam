@@ -1,8 +1,6 @@
 "use client";
 
 import React, { useState, useEffect, useRef } from 'react';
-import dynamic from 'next/dynamic';
-const RelatedTools = dynamic(() => import('./RelatedTools'));
 
 import { Mouse, RotateCcw, Activity } from 'lucide-react';
 
@@ -134,8 +132,6 @@ export default function PollingRateTest() {
                     )}
                 </div>
             </div>
-            
-            <RelatedTools currentTool="pollingRate" />
-        </div>
+</div>
     );
 }
