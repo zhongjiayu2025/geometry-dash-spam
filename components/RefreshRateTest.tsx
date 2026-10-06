@@ -23,7 +23,7 @@ export default function RefreshRateTest() {
         const delta = timestamp - lastFrameRef.current;
 
         // Ignore long pauses caused by tab switching or browser throttling.
-        if (delta >= 2 && delta <= 100) {
+        if (delta >= 1 && delta <= 100) {
           intervalsRef.current.push(delta);
           if (intervalsRef.current.length > 240) {
             intervalsRef.current.shift();

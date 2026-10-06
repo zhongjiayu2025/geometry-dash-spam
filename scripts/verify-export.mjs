@@ -1721,6 +1721,15 @@ if (
 }
 
 if (
+  !refreshRateClientSource.includes("delta >= 1 && delta <= 100") ||
+  refreshRateClientSource.includes("delta >= 2 && delta <= 100")
+) {
+  infrastructureErrors.push(
+    "RefreshRateTest must retain high-refresh intervals down to 1ms while filtering long browser pauses"
+  );
+}
+
+if (
   !mouseAccelerationClientSource.includes("dynamic(() => import('./MouseAccelerationResult')") ||
   mouseAccelerationClientSource.includes("Cursor difference:") ||
   mouseAccelerationClientSource.includes("<AlertTriangle") ||
