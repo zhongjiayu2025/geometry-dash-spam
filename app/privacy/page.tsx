@@ -13,7 +13,7 @@ export const metadata: Metadata = {
     type: "website",
   },
   twitter: {
-    card: "summary",
+    card: "summary_large_image",
     title: "Privacy Policy",
     description: "Read how GeometryDashSpam.cc uses local browser storage, email information and third-party advertising services.",
   },
