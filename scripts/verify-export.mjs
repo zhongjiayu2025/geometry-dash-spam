@@ -456,6 +456,8 @@ const lazyClickSoundSource = readFileSync(join(process.cwd(), "lib", "useLazyCli
 const secondaryClickFinishedSource = readFileSync(join(process.cwd(), "components", "SecondaryClickFinishedActions.tsx"), "utf8");
 const dragClickResultSource = readFileSync(join(process.cwd(), "components", "DragClickResult.tsx"), "utf8");
 const dragClickStatsSource = readFileSync(join(process.cwd(), "lib", "dragClickStats.ts"), "utf8");
+const doubleClickHistorySource = readFileSync(join(process.cwd(), "components", "DoubleClickHistory.tsx"), "utf8");
+const keyboardLatencyHistorySource = readFileSync(join(process.cwd(), "components", "KeyboardLatencyHistory.tsx"), "utf8");
 const spacebarFinishedSource = readFileSync(join(process.cwd(), "components", "SpacebarFinishedActions.tsx"), "utf8");
 const mouseAccelerationResultSource = readFileSync(join(process.cwd(), "components", "MouseAccelerationResult.tsx"), "utf8");
 const reactionResultSource = readFileSync(join(process.cwd(), "components", "ReactionResult.tsx"), "utf8");
@@ -925,6 +927,17 @@ if (
   );
 }
 
+if (
+  !doubleClickClientSource.includes("dynamic(() => import(\"./DoubleClickHistory\")") ||
+  doubleClickClientSource.includes("history.map((item)") ||
+  !doubleClickHistorySource.includes("history.map((item)") ||
+  !doubleClickHistorySource.includes("export default memo(DoubleClickHistory)")
+) {
+  infrastructureErrors.push(
+    "DoubleClick interval history must stay in a memoized lazy chunk after the first measured interval"
+  );
+}
+
 const rightClickClientSource = supportClientSources.find(([file]) => file === "RightClickTest.tsx")?.[1] ?? "";
 const aimClientSource = supportClientSources.find(([file]) => file === "AimTrainer.tsx")?.[1] ?? "";
 const reactionClientSource = supportClientSources.find(([file]) => file === "ReactionTest.tsx")?.[1] ?? "";
@@ -977,6 +990,17 @@ if (
 ) {
   infrastructureErrors.push(
     "KeyboardLatencyTest must keep hold-duration results in one measurement state with an explicit missing-start guard"
+  );
+}
+
+if (
+  !keyboardTimingClientSource.includes("dynamic(() => import('./KeyboardLatencyHistory')") ||
+  keyboardTimingClientSource.includes("recentPresses.map((dur") ||
+  !keyboardLatencyHistorySource.includes("recentPresses.map((duration") ||
+  !keyboardLatencyHistorySource.includes("export default memo(KeyboardLatencyHistory)")
+) {
+  infrastructureErrors.push(
+    "KeyboardLatency recent-tap history must stay in a memoized lazy chunk after the first measurement"
   );
 }
 
@@ -1374,6 +1398,8 @@ const clientSourceBudgets = [
   ["PersonalStats.tsx", personalStatsSource, 5000],
   ["GeometryDashClicker.tsx", clickerSource, 9200],
   ["BpmTapper.tsx", bpmClientSource, 5000],
+  ["DoubleClickTest.tsx", doubleClickClientSource, 8000],
+  ["KeyboardLatencyTest.tsx", keyboardTimingClientSource, 8000],
   ["GameCanvas.tsx", gameCanvasSource, 30000],
 ];
 
