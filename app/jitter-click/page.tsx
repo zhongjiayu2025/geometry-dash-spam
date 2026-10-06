@@ -2,6 +2,7 @@
 import JitterClickTest from "../../components/JitterClickTest";
 import Breadcrumbs from "../../components/Breadcrumbs";
 import RelatedTools from "../../components/RelatedTools";
+import ClickTechniqueGuide from "../../components/ClickTechniqueGuide";
 import { Metadata } from "next";
 
 export const metadata: Metadata = {
@@ -47,6 +48,7 @@ export default function JitterClickPage() {
             />
             <Breadcrumbs items={[{ label: "Jitter Click", href: "/jitter-click", active: true }]} />
         <JitterClickTest />
+        <ClickTechniqueGuide variant="jitter" />
         <RelatedTools currentTool="jitter" />
         </>
     );
