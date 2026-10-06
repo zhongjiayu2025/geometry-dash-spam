@@ -1396,6 +1396,17 @@ if (
 }
 
 if (
+  !persistentBestSource.includes('window.addEventListener("storage", handleStorage)') ||
+  !persistentBestSource.includes("event.key === null || event.key === storageKey") ||
+  !persistentBestSource.includes("setBest(null)") ||
+  !persistentBestSource.includes('window.removeEventListener("storage", handleStorage)')
+) {
+  infrastructureErrors.push(
+    "Shared persistent best-score hook must sync cross-tab updates and clear removed records"
+  );
+}
+
+if (
   !persistentBestSource.includes('mode: "max" | "min" = "max"') ||
   !persistentBestSource.includes('mode === "min" ? value < previous : value > previous')
 ) {

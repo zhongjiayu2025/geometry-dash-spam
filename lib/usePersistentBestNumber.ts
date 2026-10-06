@@ -10,11 +10,24 @@ export function usePersistentBestNumber(
   const [best, setBest] = useState<number | null>(null);
 
   useEffect(() => {
-    const saved = readStorage(storageKey);
-    if (!saved) return;
+    const syncBest = () => {
+      const saved = readStorage(storageKey);
+      if (!saved) {
+        setBest(null);
+        return;
+      }
 
-    const parsed = Number(saved);
-    if (Number.isFinite(parsed) && parsed >= 0) setBest(parsed);
+      const parsed = Number(saved);
+      setBest(Number.isFinite(parsed) && parsed >= 0 ? parsed : null);
+    };
+
+    const handleStorage = (event: StorageEvent) => {
+      if (event.key === null || event.key === storageKey) syncBest();
+    };
+
+    syncBest();
+    window.addEventListener("storage", handleStorage);
+    return () => window.removeEventListener("storage", handleStorage);
   }, [storageKey]);
 
   const commitBest = useCallback((value: number) => {
