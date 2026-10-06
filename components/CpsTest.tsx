@@ -8,6 +8,7 @@ import { ClickTestSpeedPanel, ClickTestTimerCard } from './ClickTestPanels';
 import { useLazyClickSound } from '../lib/useLazyClickSound';
 import { useExactCountdown } from '../lib/useExactCountdown';
 import type { CpsRun } from '../lib/cpsRecords';
+import { readStorage, writeStorage } from '../lib/browserStorage';
 
 const CpsRunHistory = dynamic(() => import('./CpsRunHistory'), { ssr: false });
 const CpsFinishedActions = dynamic(() => import('./CpsFinishedActions'), { ssr: false });
@@ -31,7 +32,7 @@ const CpsTest: React.FC = () => {
   const pendingTouchRef = useRef<{ pointerId: number; x: number; y: number } | null>(null);
 
   useEffect(() => {
-    setSoundEnabled(localStorage.getItem('cpsSoundEnabled') === 'true');
+    setSoundEnabled(readStorage('cpsSoundEnabled') === 'true');
 
     let cancelled = false;
     void import('../lib/cpsRecords').then(({ loadCpsRecords }) => {
@@ -87,7 +88,7 @@ const CpsTest: React.FC = () => {
   const toggleSound = () => {
     const next = !soundEnabled;
     setSoundEnabled(next);
-    localStorage.setItem('cpsSoundEnabled', String(next));
+    writeStorage('cpsSoundEnabled', String(next));
 
     if (next) {
       void ensureClickSound();

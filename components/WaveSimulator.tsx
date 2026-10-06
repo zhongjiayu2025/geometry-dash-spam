@@ -7,6 +7,7 @@ import { Difficulty, GameStatus } from '../types';
 import { DIFFICULTY_CONFIGS } from '../constants';
 import DifficultySelector from './DifficultySelector';
 import { Infinity as InfinityIcon, Minimize2 } from 'lucide-react';
+import { readStorage, writeStorage } from '../lib/browserStorage';
 
 const WavePracticeDrill = dynamic(() => import('./WavePracticeDrill'), { ssr: false });
 
@@ -46,9 +47,9 @@ const WAVE_PRESETS: Array<{
 ];
 
 const persistWaveSettings = (difficulty: Difficulty, mini: boolean, endless: boolean) => {
-  localStorage.setItem('gd_spam_last_difficulty', difficulty);
-  localStorage.setItem('gd_spam_mini_mode', String(mini));
-  localStorage.setItem('gd_spam_endless_mode', String(endless));
+  writeStorage('gd_spam_last_difficulty', difficulty);
+  writeStorage('gd_spam_mini_mode', String(mini));
+  writeStorage('gd_spam_endless_mode', String(endless));
 };
 
 const WaveSimulator: React.FC<WaveSimulatorProps> = ({ variant = 'spam' }) => {
@@ -61,27 +62,27 @@ const WaveSimulator: React.FC<WaveSimulatorProps> = ({ variant = 'spam' }) => {
   const isWavePage = variant === 'wave';
 
   useEffect(() => {
-    const savedDifficulty = localStorage.getItem('gd_spam_last_difficulty');
+    const savedDifficulty = readStorage('gd_spam_last_difficulty');
     if (savedDifficulty && Object.values(Difficulty).includes(savedDifficulty as Difficulty)) {
       setDifficulty(savedDifficulty as Difficulty);
     }
 
-    setIsEndless(localStorage.getItem('gd_spam_endless_mode') === 'true');
-    setIsMini(localStorage.getItem('gd_spam_mini_mode') === 'true');
+    setIsEndless(readStorage('gd_spam_endless_mode') === 'true');
+    setIsMini(readStorage('gd_spam_mini_mode') === 'true');
   }, []);
 
   const handleDifficultySelect = useCallback((newDiff: Difficulty) => {
     setDifficulty(newDiff);
     setWavePreset('custom');
     setGameStatus(GameStatus.Idle);
-    localStorage.setItem('gd_spam_last_difficulty', newDiff);
+    writeStorage('gd_spam_last_difficulty', newDiff);
   }, []);
 
   const toggleEndless = () => {
     const newState = !isEndless;
     setIsEndless(newState);
     setWavePreset('custom');
-    localStorage.setItem('gd_spam_endless_mode', String(newState));
+    writeStorage('gd_spam_endless_mode', String(newState));
     setGameStatus(GameStatus.Idle);
   };
 
@@ -89,7 +90,7 @@ const WaveSimulator: React.FC<WaveSimulatorProps> = ({ variant = 'spam' }) => {
     const newState = !isMini;
     setIsMini(newState);
     setWavePreset('custom');
-    localStorage.setItem('gd_spam_mini_mode', String(newState));
+    writeStorage('gd_spam_mini_mode', String(newState));
     setGameStatus(GameStatus.Idle);
   };
 

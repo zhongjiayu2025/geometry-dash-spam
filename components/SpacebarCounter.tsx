@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useCallback, useEffect, useRef, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import dynamic from "next/dynamic";
 import { isInteractiveKeyboardTarget } from "../lib/inputTarget";
 import { Keyboard, Trophy, Volume2, VolumeX, Zap } from "lucide-react";
@@ -9,10 +9,11 @@ const SpacebarFinishedActions = dynamic(() => import("./SpacebarFinishedActions"
 import { useLazyClickSound } from "../lib/useLazyClickSound";
 import { useExactCountdown } from "../lib/useExactCountdown";
 import { usePersistentBestNumber } from "../lib/usePersistentBestNumber";
+import { readStorage, writeStorage } from "../lib/browserStorage";
 
 const TEST_MS = 10000;
 
-const SpacebarCounter: React.FC = () => {
+export default function SpacebarCounter() {
   const [active, setActive] = useState(false);
   const [finished, setFinished] = useState(false);
   const [count, setCount] = useState(0);
@@ -28,7 +29,7 @@ const SpacebarCounter: React.FC = () => {
   const finishedRef = useRef(false);
 
   useEffect(() => {
-    setSoundEnabled(localStorage.getItem("spacebarSoundEnabled") === "true");
+    setSoundEnabled(readStorage("spacebarSoundEnabled") === "true");
   }, []);
 
 
@@ -158,7 +159,7 @@ const SpacebarCounter: React.FC = () => {
   const toggleSound = () => {
     const next = !soundEnabled;
     setSoundEnabled(next);
-    localStorage.setItem("spacebarSoundEnabled", String(next));
+    writeStorage("spacebarSoundEnabled", String(next));
 
     if (next) {
       void ensureClickSound();
@@ -250,6 +251,4 @@ const SpacebarCounter: React.FC = () => {
       </div>
     </div>
   );
-};
-
-export default SpacebarCounter;
+}

@@ -1669,6 +1669,24 @@ if (
   );
 }
 
+for (const [file, source] of [
+  ["WaveSimulator.tsx", waveClientSource],
+  ["GameCanvas.tsx", gameCanvasSource],
+  ["CpsTest.tsx", cpsClientSource],
+  ["SecondaryClickTest.tsx", secondaryClickClientSource],
+  ["SpacebarCounter.tsx", spacebarClientSource],
+]) {
+  if (
+    source.includes("localStorage.") ||
+    !source.includes("readStorage") ||
+    !source.includes("writeStorage")
+  ) {
+    infrastructureErrors.push(
+      `${file}: user preferences must use safe browserStorage helpers`
+    );
+  }
+}
+
 const clientSourceBudgets = [
   ["WaveSimulator.tsx", waveClientSource, 11000],
   ["CpsTest.tsx", cpsClientSource, 11200],

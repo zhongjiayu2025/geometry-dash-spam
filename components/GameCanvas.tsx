@@ -8,6 +8,7 @@ import { WIN_TIME_MS } from '../constants';
 import type { WaveAudioEngine, WaveSound } from '../lib/waveAudio';
 import type { WaveRuntimeState } from '../lib/waveRuntime';
 import type { WaveRun } from '../lib/waveStorage';
+import { readStorage, writeStorage } from '../lib/browserStorage';
 
 type WaveRenderer = typeof import('../lib/waveRenderer').renderWaveFrame;
 type WaveRuntime = typeof import('../lib/waveRuntime');
@@ -49,12 +50,12 @@ const GameCanvas: React.FC<GameCanvasProps> = memo(({ difficulty, status, onStat
       window.matchMedia('(pointer: coarse)').matches ||
       window.matchMedia('(max-width: 640px)').matches;
 
-    const savedMuted = localStorage.getItem('gd_spam_muted');
+    const savedMuted = readStorage('gd_spam_muted');
     const muted = savedMuted === null ? true : savedMuted === 'true';
     mutedRef.current = muted;
     setIsMuted(muted);
 
-    const savedMotion = localStorage.getItem('gd_spam_reduce_motion');
+    const savedMotion = readStorage('gd_spam_reduce_motion');
     setReduceMotion(
       savedMotion === 'true' ||
       (savedMotion === null && window.matchMedia('(prefers-reduced-motion: reduce)').matches)
@@ -115,7 +116,7 @@ const GameCanvas: React.FC<GameCanvasProps> = memo(({ difficulty, status, onStat
       e.stopPropagation();
       const newValue = !reduceMotion;
       setReduceMotion(newValue);
-      localStorage.setItem('gd_spam_reduce_motion', String(newValue));
+      writeStorage('gd_spam_reduce_motion', String(newValue));
   }, [reduceMotion]);
 
   const saveHighScore = useCallback((time: number) => {
@@ -266,7 +267,7 @@ const GameCanvas: React.FC<GameCanvasProps> = memo(({ difficulty, status, onStat
       const nextMuted = !mutedRef.current;
       mutedRef.current = nextMuted;
       setIsMuted(nextMuted);
-      localStorage.setItem('gd_spam_muted', String(nextMuted));
+      writeStorage('gd_spam_muted', String(nextMuted));
 
       if (nextMuted) {
           audioEngineRef.current?.stopMusic();

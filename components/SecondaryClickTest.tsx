@@ -7,6 +7,7 @@ import type { ClickTone } from "../lib/clickSound";
 import { useLazyClickSound } from "../lib/useLazyClickSound";
 import { useExactCountdown } from "../lib/useExactCountdown";
 import { usePersistentBestNumber } from "../lib/usePersistentBestNumber";
+import { readStorage, writeStorage } from "../lib/browserStorage";
 
 const SecondaryClickFinishedActions = dynamic(
   () => import("./SecondaryClickFinishedActions"),
@@ -55,7 +56,7 @@ export default function SecondaryClickTest({
   const pendingTouchRef = useRef<{ pointerId: number; x: number; y: number } | null>(null);
 
   useEffect(() => {
-    setSoundEnabled(localStorage.getItem(config.soundKey) === "true");
+    setSoundEnabled(readStorage(config.soundKey) === "true");
   }, [config.soundKey]);
 
 
@@ -65,7 +66,7 @@ export default function SecondaryClickTest({
   const toggleSound = () => {
     const next = !soundEnabled;
     setSoundEnabled(next);
-    localStorage.setItem(config.soundKey, String(next));
+    writeStorage(config.soundKey, String(next));
 
     if (next) {
       void ensureClickSound();
