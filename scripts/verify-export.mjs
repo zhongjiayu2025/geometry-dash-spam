@@ -442,6 +442,8 @@ const waveRendererSource = readFileSync(join(process.cwd(), "lib", "waveRenderer
 const waveRuntimeSource = readFileSync(join(process.cwd(), "lib", "waveRuntime.ts"), "utf8");
 const waveRunOverlaysSource = readFileSync(join(process.cwd(), "components", "WaveRunOverlays.tsx"), "utf8");
 const clickSoundSource = readFileSync(join(process.cwd(), "lib", "clickSound.ts"), "utf8");
+const cpsRecordsSource = readFileSync(join(process.cwd(), "lib", "cpsRecords.ts"), "utf8");
+const persistentBestSource = readFileSync(join(process.cwd(), "lib", "usePersistentBestNumber.ts"), "utf8");
 const lazyClickSoundSource = readFileSync(join(process.cwd(), "lib", "useLazyClickSound.ts"), "utf8");
 const secondaryClickFinishedSource = readFileSync(join(process.cwd(), "components", "SecondaryClickFinishedActions.tsx"), "utf8");
 const dragClickResultSource = readFileSync(join(process.cwd(), "components", "DragClickResult.tsx"), "utf8");
@@ -1026,6 +1028,34 @@ if (
   );
 }
 
+for (const [file, source, storageKey] of [
+  ["ChimpTest.tsx", chimpClientSource, "chimpBestScore"],
+  ["VisualMemoryTest.tsx", visualMemoryClientSource, "visualMemoryBest"],
+  ["TypingTest.tsx", typingClientSource, "typingTestBestWpm"],
+]) {
+  if (
+    !source.includes("usePersistentBestNumber") ||
+    source.includes(`localStorage.getItem('${storageKey}'`) ||
+    source.includes(`localStorage.setItem('${storageKey}'`) ||
+    source.includes(`localStorage.getItem("${storageKey}"`) ||
+    source.includes(`localStorage.setItem("${storageKey}"`)
+  ) {
+    infrastructureErrors.push(
+      `${file}: local best score persistence must use the shared usePersistentBestNumber hook`
+    );
+  }
+}
+
+if (
+  !persistentBestSource.includes("export function usePersistentBestNumber") ||
+  !persistentBestSource.includes("localStorage.getItem(storageKey)") ||
+  !persistentBestSource.includes("localStorage.setItem(storageKey")
+) {
+  infrastructureErrors.push(
+    "Shared persistent best-score hook must own localStorage read/write behavior"
+  );
+}
+
 if (
   !scrollClientSource.includes('dynamic(() => import("./ScrollResult")') ||
   !scrollClientSource.includes("window.setInterval(updateUi, 100)") ||
@@ -1095,12 +1125,12 @@ if (
 
 const clientSourceBudgets = [
   ["WaveSimulator.tsx", waveClientSource, 11000],
-  ["CpsTest.tsx", cpsClientSource, 15000],
+  ["CpsTest.tsx", cpsClientSource, 14200],
   ["AimTrainer.tsx", aimClientSource, 10500],
   ["ReactionTest.tsx", reactionClientSource, 6500],
-  ["VisualMemoryTest.tsx", visualMemoryClientSource, 11500],
-  ["ChimpTest.tsx", chimpClientSource, 11500],
-  ["TypingTest.tsx", typingClientSource, 10000],
+  ["VisualMemoryTest.tsx", visualMemoryClientSource, 10800],
+  ["ChimpTest.tsx", chimpClientSource, 10800],
+  ["TypingTest.tsx", typingClientSource, 9300],
   ["ScrollTest.tsx", scrollClientSource, 7500],
   ["RefreshRateTest.tsx", refreshRateClientSource, 4500],
   ["MouseAccelerationTest.tsx", mouseAccelerationClientSource, 5000],
@@ -1378,6 +1408,18 @@ if (
 ) {
   infrastructureErrors.push(
     "CPS recent-run cards must stay in the lazy-loaded history chunk"
+  );
+}
+
+if (
+  !cpsClientSource.includes("import('../lib/cpsRecords')") ||
+  cpsClientSource.includes("localStorage.setItem('cpsRunHistory'") ||
+  cpsClientSource.includes("localStorage.setItem('cpsBestScores'") ||
+  !cpsRecordsSource.includes("export function loadCpsRecords") ||
+  !cpsRecordsSource.includes("export function persistCpsRun")
+) {
+  infrastructureErrors.push(
+    "CPS history and best-score persistence must stay in the deferred cpsRecords module"
   );
 }
 
