@@ -74,7 +74,8 @@ export default function PollingRateTest() {
     const area = trackingAreaRef.current;
     if (!area) return;
 
-    const handlePointerMove = () => {
+    const handlePointerMove = (event: PointerEvent) => {
+      if (event.pointerType !== "mouse") return;
       eventCountRef.current += 1;
       totalEventsRef.current += 1;
     };
@@ -172,7 +173,7 @@ export default function PollingRateTest() {
                   Start Tracker
                 </button>
                 <p className="mx-auto mt-4 max-w-sm text-sm text-slate-500">
-                  Click Start and move your mouse continuously in circles inside this box for at least 3 seconds.
+                  Desktop mouse or trackpad only. Click Start and move continuously in circles inside this box for at least 3 seconds.
                 </p>
               </div>
             ) : (

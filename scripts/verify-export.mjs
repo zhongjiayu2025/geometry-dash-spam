@@ -1162,6 +1162,15 @@ if (
 }
 
 if (
+  !pollingClientSource.includes('event.pointerType !== "mouse"') ||
+  !pollingClientSource.includes("Desktop mouse or trackpad only")
+) {
+  infrastructureErrors.push(
+    "PollingRateTest must ignore touch/pen movement so browser event-rate estimates stay mouse/trackpad scoped"
+  );
+}
+
+if (
   !aimClientSource.includes('dynamic(() => import("./AimTrainerResult")') ||
   !aimClientSource.includes('useLazyClickSound') ||
   aimClientSource.includes('import("../lib/clickSound")') ||
