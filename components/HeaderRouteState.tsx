@@ -26,5 +26,33 @@ export default function HeaderRouteState() {
     });
   }, [pathname]);
 
+  useEffect(() => {
+    const closeMenus = (except?: Node | null) => {
+      document
+        .querySelectorAll<HTMLDetailsElement>("details[data-header-menu][open]")
+        .forEach((menu) => {
+          if (!except || !menu.contains(except)) menu.open = false;
+        });
+    };
+
+    const handlePointerDown = (event: PointerEvent) => {
+      closeMenus(event.target as Node | null);
+    };
+
+    const handleKeyDown = (event: KeyboardEvent) => {
+      if (event.key === "Escape") {
+        closeMenus();
+      }
+    };
+
+    document.addEventListener("pointerdown", handlePointerDown);
+    document.addEventListener("keydown", handleKeyDown);
+
+    return () => {
+      document.removeEventListener("pointerdown", handlePointerDown);
+      document.removeEventListener("keydown", handleKeyDown);
+    };
+  }, []);
+
   return null;
 }
