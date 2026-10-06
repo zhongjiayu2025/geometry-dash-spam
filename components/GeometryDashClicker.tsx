@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useEffect, useMemo, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import { RotateCcw, Sparkles, Zap } from "lucide-react";
 
 type SaveState = {
@@ -17,6 +17,8 @@ const INITIAL: SaveState = { orbs: 0, clickPower: 1, autoPower: 0, prestige: 0, 
 export default function GeometryDashClicker() {
   const [state, setState] = useState<SaveState>(INITIAL);
   const [loaded, setLoaded] = useState(false);
+  const stateRef = useRef(state);
+  const saveTimerRef = useRef<number | null>(null);
 
   useEffect(() => {
     try {
@@ -27,9 +29,42 @@ export default function GeometryDashClicker() {
   }, []);
 
   useEffect(() => {
+    stateRef.current = state;
     if (!loaded) return;
-    localStorage.setItem(STORAGE_KEY, JSON.stringify(state));
+
+    if (saveTimerRef.current) {
+      window.clearTimeout(saveTimerRef.current);
+    }
+
+    saveTimerRef.current = window.setTimeout(() => {
+      localStorage.setItem(STORAGE_KEY, JSON.stringify(stateRef.current));
+      saveTimerRef.current = null;
+    }, 500);
+
+    return () => {
+      if (saveTimerRef.current) {
+        window.clearTimeout(saveTimerRef.current);
+        saveTimerRef.current = null;
+      }
+    };
   }, [state, loaded]);
+
+  useEffect(() => {
+    if (!loaded) return;
+
+    const flushSave = () => {
+      localStorage.setItem(STORAGE_KEY, JSON.stringify(stateRef.current));
+    };
+
+    window.addEventListener("pagehide", flushSave);
+    document.addEventListener("visibilitychange", flushSave);
+
+    return () => {
+      window.removeEventListener("pagehide", flushSave);
+      document.removeEventListener("visibilitychange", flushSave);
+      flushSave();
+    };
+  }, [loaded]);
 
   useEffect(() => {
     if (state.autoPower <= 0) return;
@@ -39,8 +74,8 @@ export default function GeometryDashClicker() {
     return () => window.clearInterval(timer);
   }, [state.autoPower]);
 
-  const clickCost = useMemo(() => Math.floor(25 * Math.pow(1.65, state.clickPower - 1)), [state.clickPower]);
-  const autoCost = useMemo(() => Math.floor(80 * Math.pow(1.75, state.autoPower)), [state.autoPower]);
+  const clickCost = Math.floor(25 * Math.pow(1.65, state.clickPower - 1));
+  const autoCost = Math.floor(80 * Math.pow(1.75, state.autoPower));
   const prestigeCost = 10000 * (state.prestige + 1);
 
   const achievements = [
@@ -51,12 +86,14 @@ export default function GeometryDashClicker() {
   ];
 
   const clickCube = () => {
-    const gain = state.clickPower * (state.prestige + 1);
-    setState((prev) => ({
-      ...prev,
-      orbs: prev.orbs + gain,
-      totalClicks: prev.totalClicks + 1,
-    }));
+    setState((prev) => {
+      const gain = prev.clickPower * (prev.prestige + 1);
+      return {
+        ...prev,
+        orbs: prev.orbs + gain,
+        totalClicks: prev.totalClicks + 1,
+      };
+    });
   };
 
   const buyClick = () => {
