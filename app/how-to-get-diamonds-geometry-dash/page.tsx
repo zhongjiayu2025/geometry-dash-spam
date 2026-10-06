@@ -17,7 +17,7 @@ export const metadata: Metadata = {
     type: "website",
   },
   twitter: {
-    card: "summary",
+    card: "summary_large_image",
     title: "How to Get Diamonds in Geometry Dash | 6 Main Methods",
     description: "How to get diamonds in Geometry Dash: use daily chests, quests, Daily and Weekly levels, Treasure Room chests, Gauntlets and Paths.",
   },
