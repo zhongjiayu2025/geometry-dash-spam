@@ -1,4 +1,5 @@
 import KeyboardGhostingTest from "../../components/KeyboardGhostingTest";
+import Breadcrumbs from "../../components/Breadcrumbs";
 import ToolWebApplicationSchema from "../../components/ToolWebApplicationSchema";
 import RelatedTools from "../../components/RelatedTools";
 import InputToolGuide from "../../components/InputToolGuide";
@@ -31,6 +32,7 @@ export default function KeyboardGhostingPage() {
         path="/keyboard-ghosting"
         description="Visualize which simultaneous key presses your browser receives and inspect possible rollover or ghosting limitations."
       />
+      <Breadcrumbs items={[{ label: "Keyboard Ghosting", href: "/keyboard-ghosting", active: true }]} />
       <header className="mb-8 text-center">
         <div className="mb-6 inline-flex items-center justify-center rounded-2xl border border-amber-500/20 bg-amber-500/10 p-3">
           <KeyboardIcon className="h-10 w-10 text-amber-400" aria-hidden="true" />
