@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { memo } from 'react';
 import { Difficulty, DifficultyConfig } from '../types';
 import { DIFFICULTY_CONFIGS } from '../constants';
 
@@ -8,7 +8,7 @@ interface DifficultySelectorProps {
   disabled: boolean;
 }
 
-const DifficultySelector: React.FC<DifficultySelectorProps> = ({ currentDifficulty, onSelect, disabled }) => {
+const DifficultySelector: React.FC<DifficultySelectorProps> = memo(function DifficultySelector({ currentDifficulty, onSelect, disabled }) {
   const activeConfig = DIFFICULTY_CONFIGS[currentDifficulty];
 
   return (
@@ -62,6 +62,6 @@ const DifficultySelector: React.FC<DifficultySelectorProps> = ({ currentDifficul
       </div>
     </div>
   );
-};
+});
 
 export default DifficultySelector;
