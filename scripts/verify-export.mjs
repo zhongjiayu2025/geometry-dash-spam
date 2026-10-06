@@ -739,6 +739,17 @@ if (
   );
 }
 
+const gameLoopRafRefs = (gameCanvasSource.match(/requestAnimationFrame\(gameLoop\)/g) || []).length;
+if (
+  gameLoopRafRefs !== 3 ||
+  gameCanvasSource.includes("const frame = requestAnimationFrame(gameLoop);\n      return () => cancelAnimationFrame(frame);\n  }, [resetGame, gameLoop]);")
+) {
+  infrastructureErrors.push(
+    `Wave animation loop must have one owner plus self-scheduling/static redraw references; found ${gameLoopRafRefs} rAF calls`
+  );
+}
+
+
 if (
   !waveClientSource.includes("useEffect(() => {") ||
   !waveClientSource.includes("gd_spam_last_difficulty") ||
