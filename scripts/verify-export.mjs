@@ -1191,6 +1191,12 @@ for (const route of supportGuideRoutes) {
     );
   }
 
+  if (!html.includes("BreadcrumbList")) {
+    supportGuideErrors.push(
+      `${route}: indexable support page is missing BreadcrumbList structured data`
+    );
+  }
+
   for (const coreRoute of ["/geometry-dash-wave", "/cps-test"]) {
     if (!html.includes(`href="${coreRoute}"`)) {
       supportGuideErrors.push(
