@@ -70,7 +70,6 @@ for (const page of pages) {
       `${page.label}: page is not wired to the centralized related-search data entry.`
     );
   }
-}
 
   if (page.key === "breeze") {
     if (
