@@ -1234,6 +1234,15 @@ if (
 }
 
 if (
+  !chimpClientSource.includes("(gameState === 'showing' || gameState === 'playing' || gameState === 'failed')") ||
+  chimpClientSource.includes("(gameState === 'failed' && strikes < 3)) && (\n                            <ChimpBoard")
+) {
+  infrastructureErrors.push(
+    "ChimpTest must keep the failed board visible on the third strike before the delayed game-over transition"
+  );
+}
+
+if (
   !typingClientSource.includes('dynamic(() => import("./TypingResult")') ||
   !typingClientSource.includes("useExactCountdown") ||
   !typingClientSource.includes("durationMs: TEST_MS") ||

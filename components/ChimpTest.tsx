@@ -179,7 +179,7 @@ export default function ChimpTest() {
                             </div>
                         )}
 
-                        {(gameState === 'showing' || gameState === 'playing' || (gameState === 'failed' && strikes < 3)) && (
+                        {(gameState === 'showing' || gameState === 'playing' || gameState === 'failed') && (
                             <ChimpBoard
                                 gameState={gameState}
                                 numbers={numbers}
