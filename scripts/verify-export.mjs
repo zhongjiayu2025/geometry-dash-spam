@@ -927,6 +927,8 @@ const soundReactionClientSource = supportClientSources.find(([file]) => file ===
 const bpmClientSource = supportClientSources.find(([file]) => file === "BpmTapper.tsx")?.[1] ?? "";
 const refreshRateClientSource = supportClientSources.find(([file]) => file === "RefreshRateTest.tsx")?.[1] ?? "";
 const mouseAccelerationClientSource = supportClientSources.find(([file]) => file === "MouseAccelerationTest.tsx")?.[1] ?? "";
+const systemInfoClientSource = supportClientSources.find(([file]) => file === "SystemInfo.tsx")?.[1] ?? "";
+const systemInfoPageSource = readFileSync(join(process.cwd(), "app", "system-info", "page.tsx"), "utf8");
 const reactionPageSource = readFileSync(join(process.cwd(), "app", "reaction-test", "page.tsx"), "utf8");
 const refreshRatePageSource = readFileSync(join(process.cwd(), "app", "refresh-rate", "page.tsx"), "utf8");
 const mouseAccelerationPageSource = readFileSync(join(process.cwd(), "app", "mouse-acceleration", "page.tsx"), "utf8");
@@ -1358,6 +1360,23 @@ if (
   );
 }
 
+if (
+  systemInfoClientSource.includes("<h1") ||
+  systemInfoClientSource.includes("A quick diagnostic tool") ||
+  !systemInfoPageSource.includes("Browser & System Info") ||
+  !systemInfoClientSource.includes('/EdgA\\/|EdgiOS\\/|Edg\\//') ||
+  !systemInfoClientSource.includes('/Android/') ||
+  !systemInfoClientSource.includes('/iPhone|iPad|iPod/') ||
+  systemInfoClientSource.indexOf('/Android/') > systemInfoClientSource.indexOf('/Linux/') ||
+  systemInfoClientSource.indexOf('/iPhone|iPad|iPod/') > systemInfoClientSource.indexOf('/Macintosh|Mac OS X/') ||
+  !systemInfoClientSource.includes('window.addEventListener("online", syncOnlineStatus)') ||
+  !systemInfoClientSource.includes('window.addEventListener("offline", syncOnlineStatus)')
+) {
+  infrastructureErrors.push(
+    "SystemInfo must keep static hero server-rendered, correctly prioritize mobile OS/modern Edge detection, and update network status live"
+  );
+}
+
 const clientSourceBudgets = [
   ["WaveSimulator.tsx", waveClientSource, 11000],
   ["CpsTest.tsx", cpsClientSource, 11200],
@@ -1378,6 +1397,7 @@ const clientSourceBudgets = [
   ["BpmTapper.tsx", bpmClientSource, 5000],
   ["DoubleClickTest.tsx", doubleClickClientSource, 8000],
   ["KeyboardLatencyTest.tsx", keyboardTimingClientSource, 8000],
+  ["SystemInfo.tsx", systemInfoClientSource, 5000],
   ["KeyboardGhostingTest.tsx", ghostingClientSource, 5500],
   ["KeyRolloverTest.tsx", rolloverClientSource, 3500],
   ["GameCanvas.tsx", gameCanvasSource, 30000],
