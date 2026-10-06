@@ -51,6 +51,10 @@ The verification step checks core static routes, internal links, sitemap targets
 - Keep `CpsTest`, `WaveSimulator` and `GameCanvas` focused on interaction only; do not move static SEO copy back into those client bundles.
 - Wave movement must remain delta-time normalized so 60 Hz, 120 Hz and other displays do not change the intended practice speed.
 - Wave audio is opt-in on first visit. Do not initialize Web Audio while muted.
+- Jitter, Butterfly and Right Click audio also stays opt-in and lazy-loaded through the shared `lib/clickSound.ts` chunk.
+- Demon List rows stay server-rendered; only the small filter controller may hydrate and progressively hide/show rows.
+- Geometry Dash Clicker persistence is debounced and flushed on exit; do not synchronously write localStorage on every click.
+- Large 1200×630 social previews use `summary_large_image` on every sitemap-indexed page.
 - Lower-priority click-method utilities may exist as contextual links, but should not return to the global Header.
 - Long below-the-fold guides may use `content-visibility: auto`; their HTML must still be fully present in the static export.
 
