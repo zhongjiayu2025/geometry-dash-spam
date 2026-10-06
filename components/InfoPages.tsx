@@ -66,7 +66,7 @@ const SectionCard: React.FC<{
 );
 
 export const AboutPage = () => (
-  <InfoPageLayout title="About" icon={<Info className="w-10 h-10"/>} lastUpdated="October 5, 2026">
+  <InfoPageLayout title="About" icon={<Info className="w-10 h-10"/>} lastUpdated="October 7, 2026">
     <div className="space-y-8">
       <div className="text-lg md:text-xl text-slate-200 leading-relaxed border-l-4 border-blue-500 pl-6 py-2">
         <strong className="text-white">GeometryDashSpam.cc</strong> is a fan-made browser toolkit for practicing rapid input, wave control and click consistency.
@@ -119,6 +119,15 @@ export const AboutPage = () => (
         </p>
       </SectionCard>
 
+      <SectionCard title="Editorial and source policy" icon={<FileText className="w-5 h-5"/>}>
+        <p>
+          For changing factual claims, we prefer the source that owns the information: maintainer documentation, repositories and releases for community projects; Pointercrate for its Demon List positions; and the maintained Spam Challenge List for its own rankings and rules.
+        </p>
+        <p>
+          A verification date means the site checked the linked source on that date; it is not a promise that a live community ranking can never change. Browser-generated practice metrics are original measurements from events that reach the page and are kept separate from official-game or laboratory claims.
+        </p>
+      </SectionCard>
+
       <div className="mt-8 p-4 bg-slate-900 rounded-lg border border-white/5 text-xs text-slate-500 text-center font-mono">
         GeometryDashSpam.cc is a fan-made project and is not affiliated with RobTop Games.
       </div>
@@ -127,7 +136,7 @@ export const AboutPage = () => (
 );
 
 export const ContactPage = () => (
-  <InfoPageLayout title="Contact" icon={<Mail className="w-10 h-10"/>} lastUpdated="October 5, 2026">
+  <InfoPageLayout title="Contact" icon={<Mail className="w-10 h-10"/>} lastUpdated="October 7, 2026">
     <div className="space-y-8">
       <p className="text-lg text-slate-300">
         Send bug reports, correction requests, source updates or feature suggestions by email.
