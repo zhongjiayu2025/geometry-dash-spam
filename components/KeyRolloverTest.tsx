@@ -48,17 +48,20 @@ export default function KeyRolloverTest() {
     const clearPressed = () => {
       setMeasurement((previous) => ({ ...previous, activeKeys: new Set() }));
     };
+    const handleVisibilityChange = () => {
+      if (document.hidden) clearPressed();
+    };
 
     window.addEventListener("keydown", handleKeyDown, { passive: false });
     window.addEventListener("keyup", handleKeyUp);
     window.addEventListener("blur", clearPressed);
-    document.addEventListener("visibilitychange", clearPressed);
+    document.addEventListener("visibilitychange", handleVisibilityChange);
 
     return () => {
       window.removeEventListener("keydown", handleKeyDown);
       window.removeEventListener("keyup", handleKeyUp);
       window.removeEventListener("blur", clearPressed);
-      document.removeEventListener("visibilitychange", clearPressed);
+      document.removeEventListener("visibilitychange", handleVisibilityChange);
     };
   }, []);
 
