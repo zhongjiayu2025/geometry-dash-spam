@@ -444,6 +444,7 @@ const clickSoundSource = readFileSync(join(process.cwd(), "lib", "clickSound.ts"
 const secondaryClickFinishedSource = readFileSync(join(process.cwd(), "components", "SecondaryClickFinishedActions.tsx"), "utf8");
 const dragClickResultSource = readFileSync(join(process.cwd(), "components", "DragClickResult.tsx"), "utf8");
 const spacebarFinishedSource = readFileSync(join(process.cwd(), "components", "SpacebarFinishedActions.tsx"), "utf8");
+const mouseAccelerationResultSource = readFileSync(join(process.cwd(), "components", "MouseAccelerationResult.tsx"), "utf8");
 const demonListSource = readFileSync(join(process.cwd(), "components", "DemonListTable.tsx"), "utf8");
 const demonFilterSource = readFileSync(join(process.cwd(), "components", "DemonListFilterControls.tsx"), "utf8");
 const clickTestHeroSource = readFileSync(join(process.cwd(), "components", "ClickTestHero.tsx"), "utf8");
@@ -849,8 +850,10 @@ const typingClientSource = supportClientSources.find(([file]) => file === "Typin
 const scrollClientSource = supportClientSources.find(([file]) => file === "ScrollTest.tsx")?.[1] ?? "";
 const soundReactionClientSource = supportClientSources.find(([file]) => file === "SoundReactionTest.tsx")?.[1] ?? "";
 const refreshRateClientSource = supportClientSources.find(([file]) => file === "RefreshRateTest.tsx")?.[1] ?? "";
+const mouseAccelerationClientSource = supportClientSources.find(([file]) => file === "MouseAccelerationTest.tsx")?.[1] ?? "";
 const reactionPageSource = readFileSync(join(process.cwd(), "app", "reaction-test", "page.tsx"), "utf8");
 const refreshRatePageSource = readFileSync(join(process.cwd(), "app", "refresh-rate", "page.tsx"), "utf8");
+const mouseAccelerationPageSource = readFileSync(join(process.cwd(), "app", "mouse-acceleration", "page.tsx"), "utf8");
 if (
   rightClickClientSource.includes("Why Test Right Click CPS?") ||
   rightClickClientSource.includes("Minecraft Bridging") ||
@@ -1047,6 +1050,19 @@ if (
   );
 }
 
+if (
+  !mouseAccelerationClientSource.includes("dynamic(() => import('./MouseAccelerationResult')") ||
+  mouseAccelerationClientSource.includes("Cursor difference:") ||
+  mouseAccelerationClientSource.includes("<AlertTriangle") ||
+  mouseAccelerationClientSource.includes("<RotateCcw") ||
+  !mouseAccelerationPageSource.includes("Place your mouse against the left edge") ||
+  !mouseAccelerationResultSource.includes("Cursor difference:")
+) {
+  infrastructureErrors.push(
+    "MouseAccelerationTest instructions must stay server-rendered and result analysis must stay in the lazy result chunk"
+  );
+}
+
 const clientSourceBudgets = [
   ["WaveSimulator.tsx", waveClientSource, 11000],
   ["CpsTest.tsx", cpsClientSource, 16500],
@@ -1057,6 +1073,7 @@ const clientSourceBudgets = [
   ["TypingTest.tsx", typingClientSource, 10000],
   ["ScrollTest.tsx", scrollClientSource, 7500],
   ["RefreshRateTest.tsx", refreshRateClientSource, 4500],
+  ["MouseAccelerationTest.tsx", mouseAccelerationClientSource, 5000],
   ["SoundReactionTest.tsx", soundReactionClientSource, 10000],
   ["DragClickTest.tsx", dragClientSource, 10000],
   ["SpacebarCounter.tsx", spacebarClientSource, 12000],
