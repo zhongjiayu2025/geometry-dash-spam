@@ -11,7 +11,9 @@
     "sources": [
       "https://dashmetry.io/",
       "https://1games.io/challenge-rush"
-    ]
+    ],
+    "legacyName": "Dashmetry",
+    "currentName": "Challenge Rush"
   },
   "breeze": {
     "checkedAt": "2026-10-06",

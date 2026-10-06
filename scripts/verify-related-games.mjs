@@ -73,6 +73,35 @@ for (const page of pages) {
     );
   }
 
+  if (page.key === "dashmetry") {
+    if (
+      typeof config.legacyName !== "string" ||
+      !config.legacyName.trim() ||
+      typeof config.currentName !== "string" ||
+      !config.currentName.trim()
+    ) {
+      errors.push("Dashmetry: legacyName and currentName must be non-empty strings.");
+    }
+
+    for (const token of [
+      "relatedPageData.legacyName",
+      "relatedPageData.currentName",
+      "LEGACY_NAME",
+      "CURRENT_NAME",
+    ]) {
+      if (!source.includes(token)) {
+        errors.push(`Dashmetry: page must consume centralized ${token}.`);
+      }
+    }
+
+    if (
+      source.includes('const LEGACY_NAME = "Dashmetry"') ||
+      source.includes('const CURRENT_NAME = "Challenge Rush"')
+    ) {
+      errors.push("Dashmetry: entity names must not be hard-coded in the page.");
+    }
+  }
+
   if (page.key === "breeze") {
     if (
       typeof config.latestVersion !== "string" ||
