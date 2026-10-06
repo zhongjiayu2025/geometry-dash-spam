@@ -104,11 +104,7 @@ const GameCanvas: React.FC<GameCanvasProps> = memo(({ difficulty, status, onStat
   const timeDisplayRef = useRef<HTMLDivElement>(null);
   const progressRef = useRef<HTMLDivElement>(null);
   const runRecordedRef = useRef(false);
-  
-  // Share Modal State
-  const [showShareModal, setShowShareModal] = useState<boolean>(false);
-  const [shareText, setShareText] = useState<string>("");
-  const [copied, setCopied] = useState<boolean>(false);
+  const shareOpenRef = useRef(false);
   
   useEffect(() => {
     lowVisualsRef.current =
@@ -850,33 +846,6 @@ const GameCanvas: React.FC<GameCanvasProps> = memo(({ difficulty, status, onStat
       }
   };
   
-  const handleShareClick = (e: React.MouseEvent) => {
-    e.stopPropagation();
-    
-    const time = (gameState.current.runTime / 1000).toFixed(2);
-    const pct = !isEndless ? Math.min(100, (gameState.current.distanceTraveled / gameState.current.finishLineX) * 100).toFixed(0) + '%' : '∞';
-    
-    let text = `I just scored ${time}s on ${difficulty.label} mode!`;
-    if (status === GameStatus.Won) text = `I completed the ${difficulty.label} level in ${time}s on Geometry Dash Spam Test! 🏆`;
-    else if (isEndless) text = `I survived ${time}s on Endless ${difficulty.label} mode in Geometry Dash Spam Test! 🌊`;
-    else text = `I reached ${pct} on ${difficulty.label} mode in Geometry Dash Spam Test! 💀 ${time}s`;
-    
-    text += `\n\nTry to beat me here: https://geometrydashspam.cc`;
-    
-    setShareText(text);
-    setCopied(false);
-    setShowShareModal(true);
-  };
-
-  const copyToClipboard = async () => {
-      try {
-          await navigator.clipboard.writeText(shareText);
-          setCopied(true);
-          setTimeout(() => setCopied(false), 2000);
-      } catch (err) {
-          console.error("Failed to copy", err);
-      }
-  };
 
   const handleStart = useCallback((e?: any) => {
      // Check if the target is a button, interactive element, or inside the modal
@@ -886,8 +855,7 @@ const GameCanvas: React.FC<GameCanvasProps> = memo(({ difficulty, status, onStat
         }
      }
      
-     // Prevent starting if share modal is open
-     if (showShareModal) return;
+     if (shareOpenRef.current) return;
   
      if (status === GameStatus.Lost || status === GameStatus.Won) {
          resetGame();
@@ -914,10 +882,14 @@ const GameCanvas: React.FC<GameCanvasProps> = memo(({ difficulty, status, onStat
      gameState.current.clickCount += 1;
 
      playSound('click');
-  }, [status, resetGame, onStatusChange, playSound, showShareModal]);
+  }, [status, resetGame, onStatusChange, playSound]);
 
   const handleEnd = useCallback(() => {
      gameState.current.isHolding = false;
+  }, []);
+
+  const handleShareOpenChange = useCallback((open: boolean) => {
+      shareOpenRef.current = open;
   }, []);
 
   const focusGame = useCallback(() => {
@@ -989,13 +961,7 @@ const GameCanvas: React.FC<GameCanvasProps> = memo(({ difficulty, status, onStat
 
   useEffect(() => {
       const handleKeyDown = (e: KeyboardEvent) => {
-          if (showShareModal) {
-              if (e.key === 'Escape') {
-                  e.preventDefault();
-                  setShowShareModal(false);
-              }
-              return;
-          }
+          if (shareOpenRef.current) return;
 
           const target = e.target as HTMLElement | null;
           if (
@@ -1066,7 +1032,7 @@ const GameCanvas: React.FC<GameCanvasProps> = memo(({ difficulty, status, onStat
               container.removeEventListener('pointercancel', handlePointerUp);
           }
       };
-  }, [handleStart, handleEnd, showShareModal, status]);
+  }, [handleStart, handleEnd, status]);
 
   useEffect(() => {
       if (status === GameStatus.Playing) {
@@ -1240,7 +1206,7 @@ const GameCanvas: React.FC<GameCanvasProps> = memo(({ difficulty, status, onStat
         </div>
       )}
 
-      {(status === GameStatus.Lost || status === GameStatus.Won || showShareModal) && (
+      {(status === GameStatus.Lost || status === GameStatus.Won) && (
         <WaveRunOverlays
           status={status}
           isNewBest={isNewBest}
@@ -1248,9 +1214,13 @@ const GameCanvas: React.FC<GameCanvasProps> = memo(({ difficulty, status, onStat
           highScore={highScore}
           runStats={runStats}
           consistency={consistency}
-          showShareModal={showShareModal}
-          shareText={shareText}
-          copied={copied}
+          difficultyLabel={difficulty.label}
+          isEndless={isEndless}
+          progressPercent={
+            isEndless
+              ? 100
+              : Math.min(100, (gameState.current.distanceTraveled / gameState.current.finishLineX) * 100)
+          }
           onRetry={() => {
             resetGame();
             onStatusChange(GameStatus.Playing);
@@ -1260,9 +1230,7 @@ const GameCanvas: React.FC<GameCanvasProps> = memo(({ difficulty, status, onStat
             resetGame();
             onStatusChange(GameStatus.Idle);
           }}
-          onShare={handleShareClick}
-          onCloseShare={() => setShowShareModal(false)}
-          onCopyShare={copyToClipboard}
+          onShareOpenChange={handleShareOpenChange}
         />
       )}
 

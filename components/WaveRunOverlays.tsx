@@ -1,5 +1,6 @@
 "use client";
 
+import { useEffect, useState } from "react";
 import Link from "next/link";
 import {
   AlertTriangle,
@@ -29,14 +30,12 @@ type WaveRunOverlaysProps = {
   highScore: number;
   runStats: WaveRunStats;
   consistency: string;
-  showShareModal: boolean;
-  shareText: string;
-  copied: boolean;
+  difficultyLabel: string;
+  isEndless: boolean;
+  progressPercent: number;
   onRetry: () => void;
   onMenu: () => void;
-  onShare: (event: React.MouseEvent<HTMLButtonElement>) => void;
-  onCloseShare: () => void;
-  onCopyShare: () => void;
+  onShareOpenChange: (open: boolean) => void;
 };
 
 export default function WaveRunOverlays({
@@ -46,15 +45,59 @@ export default function WaveRunOverlays({
   highScore,
   runStats,
   consistency,
-  showShareModal,
-  shareText,
-  copied,
+  difficultyLabel,
+  isEndless,
+  progressPercent,
   onRetry,
   onMenu,
-  onShare,
-  onCloseShare,
-  onCopyShare,
+  onShareOpenChange,
 }: WaveRunOverlaysProps) {
+  const [showShareModal, setShowShareModal] = useState(false);
+  const [copied, setCopied] = useState(false);
+
+  const shareText =
+    status === GameStatus.Won
+      ? `I completed the ${difficultyLabel} level in ${runTimeSeconds.toFixed(2)}s on Geometry Dash Spam Test! 🏆\n\nTry to beat me here: https://geometrydashspam.cc`
+      : isEndless
+        ? `I survived ${runTimeSeconds.toFixed(2)}s on Endless ${difficultyLabel} mode in Geometry Dash Spam Test! 🌊\n\nTry to beat me here: https://geometrydashspam.cc`
+        : `I reached ${progressPercent.toFixed(0)}% on ${difficultyLabel} mode in Geometry Dash Spam Test! 💀 ${runTimeSeconds.toFixed(2)}s\n\nTry to beat me here: https://geometrydashspam.cc`;
+
+  const openShare = (event: React.MouseEvent<HTMLButtonElement>) => {
+    event.stopPropagation();
+    setCopied(false);
+    setShowShareModal(true);
+    onShareOpenChange(true);
+  };
+
+  const closeShare = () => {
+    setShowShareModal(false);
+    onShareOpenChange(false);
+  };
+
+  const copyShare = async () => {
+    try {
+      await navigator.clipboard.writeText(shareText);
+      setCopied(true);
+      window.setTimeout(() => setCopied(false), 2000);
+    } catch {}
+  };
+
+  useEffect(() => {
+    if (!showShareModal) return;
+
+    const handleKeyDown = (event: KeyboardEvent) => {
+      if (event.key === "Escape") {
+        event.preventDefault();
+        closeShare();
+      }
+    };
+
+    window.addEventListener("keydown", handleKeyDown);
+    return () => window.removeEventListener("keydown", handleKeyDown);
+  }, [showShareModal]);
+
+  useEffect(() => () => onShareOpenChange(false), [onShareOpenChange]);
+
   return (
     <>
       {status === GameStatus.Lost && (
@@ -95,7 +138,7 @@ export default function WaveRunOverlays({
                 CHECK CPS
               </Link>
               <button
-                onClick={onShare}
+                onClick={openShare}
                 className="flex items-center gap-2 rounded bg-blue-600 px-4 py-2.5 font-bold text-white shadow-lg transition-colors hover:bg-blue-500 sm:px-6 sm:py-3"
               >
                 <Share2 className="h-4 w-4" /> SHARE
@@ -154,7 +197,7 @@ export default function WaveRunOverlays({
                 CHECK CPS
               </Link>
               <button
-                onClick={onShare}
+                onClick={openShare}
                 className="flex items-center gap-2 rounded bg-blue-600 px-4 py-2.5 font-bold text-white shadow-lg transition-colors hover:bg-blue-500 sm:px-6 sm:py-3"
               >
                 <Share2 className="h-4 w-4" /> SHARE
@@ -174,7 +217,7 @@ export default function WaveRunOverlays({
       {showShareModal && (
         <div
           className="absolute inset-0 z-50 flex items-center justify-center bg-black/80 backdrop-blur-sm animate-in fade-in duration-200"
-          onClick={onCloseShare}
+          onClick={closeShare}
         >
           <div
             role="dialog"
@@ -185,7 +228,7 @@ export default function WaveRunOverlays({
           >
             <button
               aria-label="Close share dialog"
-              onClick={onCloseShare}
+              onClick={closeShare}
               className="absolute right-4 top-4 text-slate-400 hover:text-white"
             >
               <X className="h-5 w-5" />
@@ -202,7 +245,7 @@ export default function WaveRunOverlays({
             </div>
 
             <button
-              onClick={onCopyShare}
+              onClick={copyShare}
               className={`mb-4 flex w-full items-center justify-center gap-2 rounded py-3 font-bold transition-all ${copied ? "bg-green-600 text-white" : "bg-white text-black hover:bg-slate-200"}`}
             >
               {copied ? <Check className="h-4 w-4" /> : <Copy className="h-4 w-4" />}
