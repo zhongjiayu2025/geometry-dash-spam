@@ -567,22 +567,41 @@ if (
 }
 
 const secondaryWrappers = [
-  ["JitterClickTest.tsx", 'variant="jitter"'],
-  ["ButterflyClickTest.tsx", 'variant="butterfly"'],
-  ["RightClickTest.tsx", 'variant="rightClick"'],
+  ["JitterClickTest.tsx", 'variant="jitter"', "jitterClickBest", "START JITTERING"],
+  ["ButterflyClickTest.tsx", 'variant="butterfly"', "butterflyClickBest", "BUTTERFLY CLICK"],
+  ["RightClickTest.tsx", 'variant="rightClick"', "rightClickBest", "RIGHT CLICK HERE"],
 ];
 
-for (const [file, variantMarker] of secondaryWrappers) {
+for (const [file, variantMarker, bestKey, idleCopy] of secondaryWrappers) {
   const source = supportClientSources.find(([name]) => name === file)?.[1] ?? "";
   if (
-    !source.includes('import SecondaryClickTest from "./SecondaryClickTest"') ||
+    !source.includes('import SecondaryClickTest, { type SecondaryClickConfig } from "./SecondaryClickTest"') ||
     !source.includes(variantMarker) ||
-    source.length > 400
+    !source.includes(bestKey) ||
+    !source.includes(idleCopy) ||
+    !source.includes("const CONFIG: SecondaryClickConfig") ||
+    source.length > 1800
   ) {
     infrastructureErrors.push(
-      `${file}: secondary click route wrapper must stay tiny and delegate to SecondaryClickTest`
+      `${file}: secondary click route wrapper must own only its route-specific config and idle visual`
     );
   }
+}
+
+if (
+  secondaryClickClientSource.includes("jitterClickBest") ||
+  secondaryClickClientSource.includes("butterflyClickBest") ||
+  secondaryClickClientSource.includes("rightClickBest") ||
+  secondaryClickClientSource.includes("START JITTERING") ||
+  secondaryClickClientSource.includes("BUTTERFLY CLICK") ||
+  secondaryClickClientSource.includes("RIGHT CLICK HERE") ||
+  secondaryClickClientSource.includes('from "lucide-react"') ||
+  !secondaryClickClientSource.includes("config: SecondaryClickConfig") ||
+  !secondaryClickClientSource.includes("idleVisual: ReactNode")
+) {
+  infrastructureErrors.push(
+    "Shared SecondaryClickTest must not preload route-specific secondary-click config or idle visuals"
+  );
 }
 
 if (
@@ -1296,7 +1315,7 @@ const clientSourceBudgets = [
   ["RefreshRateTest.tsx", refreshRateClientSource, 4500],
   ["MouseAccelerationTest.tsx", mouseAccelerationClientSource, 5000],
   ["SoundReactionTest.tsx", soundReactionClientSource, 8000],
-  ["SecondaryClickTest.tsx", secondaryClickClientSource, 11600],
+  ["SecondaryClickTest.tsx", secondaryClickClientSource, 8000],
   ["DragClickTest.tsx", dragClientSource, 7800],
   ["SpacebarCounter.tsx", spacebarClientSource, 9300],
   ["PersonalStats.tsx", personalStatsSource, 5000],
