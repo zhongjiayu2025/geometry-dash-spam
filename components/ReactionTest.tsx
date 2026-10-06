@@ -71,7 +71,11 @@ export default function ReactionTest() {
   return (
     <div className="w-full max-w-4xl mx-auto animate-in slide-in-from-bottom-4 duration-500">
       <div
-        onPointerDown={handleInteraction}
+        onPointerDown={(event) => {
+          const target = event.target as Element;
+          if (target.closest("button")) return;
+          handleInteraction();
+        }}
         className={`
           touch-manipulation relative w-full h-[400px] rounded-2xl cursor-pointer transition-all duration-200 select-none flex flex-col items-center justify-center p-8 text-center shadow-2xl mb-12
           ${state === "idle" ? "bg-slate-800 hover:bg-slate-700 border-4 border-slate-600" : ""}

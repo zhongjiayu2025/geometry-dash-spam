@@ -930,6 +930,7 @@ const chimpClientSource = supportClientSources.find(([file]) => file === "ChimpT
 const typingClientSource = supportClientSources.find(([file]) => file === "TypingTest.tsx")?.[1] ?? "";
 const scrollClientSource = supportClientSources.find(([file]) => file === "ScrollTest.tsx")?.[1] ?? "";
 const soundReactionClientSource = supportClientSources.find(([file]) => file === "SoundReactionTest.tsx")?.[1] ?? "";
+const bpmClientSource = supportClientSources.find(([file]) => file === "BpmTapper.tsx")?.[1] ?? "";
 const refreshRateClientSource = supportClientSources.find(([file]) => file === "RefreshRateTest.tsx")?.[1] ?? "";
 const mouseAccelerationClientSource = supportClientSources.find(([file]) => file === "MouseAccelerationTest.tsx")?.[1] ?? "";
 const reactionPageSource = readFileSync(join(process.cwd(), "app", "reaction-test", "page.tsx"), "utf8");
@@ -1052,6 +1053,20 @@ if (
 ) {
   infrastructureErrors.push(
     "ReactionTest must keep result sharing lazy and static guidance server-rendered"
+  );
+}
+
+if (
+  !reactionClientSource.includes("useManagedTimeout") ||
+  !reactionClientSource.includes('usePersistentBestNumber("reactionBestScore")') ||
+  !reactionClientSource.includes("isInteractiveKeyboardTarget(event.target)") ||
+  !reactionClientSource.includes("event.repeat") ||
+  !reactionClientSource.includes('target.closest("button")') ||
+  reactionClientSource.includes("localStorage.setItem") ||
+  !reactionResultSource.includes("onPointerDown={shareScore}")
+) {
+  infrastructureErrors.push(
+    "ReactionTest must ignore repeated/interactive keyboard input, manage cue timers safely, and protect result actions from parent pointer restart"
   );
 }
 
@@ -1263,6 +1278,30 @@ if (
 }
 
 if (
+  !soundReactionClientSource.includes("useManagedTimeout") ||
+  !soundReactionClientSource.includes('usePersistentBestNumber("soundReactionBest")') ||
+  !soundReactionClientSource.includes("isInteractiveKeyboardTarget(event.target)") ||
+  !soundReactionClientSource.includes("event.repeat") ||
+  soundReactionClientSource.includes("handleInteraction(e as any)") ||
+  soundReactionClientSource.includes("localStorage.setItem")
+) {
+  infrastructureErrors.push(
+    "SoundReactionTest must suppress key repeat/interactive targets and share managed timeout plus persistent best-score logic"
+  );
+}
+
+if (
+  !bpmClientSource.includes("useManagedTimeout") ||
+  !bpmClientSource.includes("isInteractiveKeyboardTarget(event.target)") ||
+  !bpmClientSource.includes("event.repeat") ||
+  bpmClientSource.includes("resetTimeoutRef")
+) {
+  infrastructureErrors.push(
+    "BpmTapper must ignore key repeat/interactive controls and use the shared managed inactivity timeout"
+  );
+}
+
+if (
   !soundReactionClientSource.includes("dynamic(() => import('./SoundReactionResult')") ||
   soundReactionClientSource.includes("earlyClick") ||
   soundReactionClientSource.includes("Too Early!") ||
@@ -1307,19 +1346,20 @@ const clientSourceBudgets = [
   ["WaveSimulator.tsx", waveClientSource, 11000],
   ["CpsTest.tsx", cpsClientSource, 11200],
   ["AimTrainer.tsx", aimClientSource, 9300],
-  ["ReactionTest.tsx", reactionClientSource, 6500],
+  ["ReactionTest.tsx", reactionClientSource, 6100],
   ["VisualMemoryTest.tsx", visualMemoryClientSource, 9000],
   ["ChimpTest.tsx", chimpClientSource, 9500],
   ["TypingTest.tsx", typingClientSource, 7300],
   ["ScrollTest.tsx", scrollClientSource, 6500],
   ["RefreshRateTest.tsx", refreshRateClientSource, 4500],
   ["MouseAccelerationTest.tsx", mouseAccelerationClientSource, 5000],
-  ["SoundReactionTest.tsx", soundReactionClientSource, 8000],
+  ["SoundReactionTest.tsx", soundReactionClientSource, 6000],
   ["SecondaryClickTest.tsx", secondaryClickClientSource, 8000],
   ["DragClickTest.tsx", dragClientSource, 7800],
   ["SpacebarCounter.tsx", spacebarClientSource, 9300],
   ["PersonalStats.tsx", personalStatsSource, 5000],
   ["GeometryDashClicker.tsx", clickerSource, 9200],
+  ["BpmTapper.tsx", bpmClientSource, 5000],
   ["GameCanvas.tsx", gameCanvasSource, 32000],
 ];
 
