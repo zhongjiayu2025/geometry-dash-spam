@@ -1146,6 +1146,33 @@ for (const [route, expectedLinks] of intentClusterLinks) {
 
 const contentErrors = [];
 
+const webApplicationRoutes = [
+  "/",
+  "/geometry-dash-wave",
+  "/cps-test",
+  "/jitter-click",
+  "/butterfly-click",
+  "/right-click",
+  "/spacebar-counter",
+  "/keyboard-latency",
+  "/polling-rate",
+  "/keyboard-ghosting",
+  "/double-click",
+  "/drag-click",
+  "/key-rollover",
+  "/geometry-dash-clicker",
+];
+
+for (const route of webApplicationRoutes) {
+  const path = exportedPath(route);
+  if (!path) continue;
+
+  const html = readFileSync(path, "utf8");
+  if (!html.includes("WebApplication")) {
+    contentErrors.push(`${route}: interactive tool export is missing WebApplication structured data`);
+  }
+}
+
 const serverRenderedGuideExpectations = new Map([
   [
     "/jitter-click",
