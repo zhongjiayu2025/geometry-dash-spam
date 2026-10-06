@@ -763,17 +763,6 @@ const snippetQualityErrors = [];
 const semanticErrors = [];
 const sitemapTitleOwners = new Map();
 const sitemapDescriptionOwners = new Map();
-const largeCardRoutes = new Set([
-  "/",
-  "/geometry-dash-wave",
-  "/cps-test",
-  "/demon-list",
-  "/spam-challenge-list",
-  "/demon-list/wave-demons",
-  "/demon-list/spam-demons",
-  "/hardest-level",
-]);
-
 if (existsSync(sitemapPath)) {
   const sitemapXml = readFileSync(sitemapPath, "utf8");
   const sitemapRecords = [
@@ -938,7 +927,7 @@ if (existsSync(sitemapPath)) {
       );
     }
 
-    if (largeCardRoutes.has(route) && twitterCard !== "summary_large_image") {
+    if (twitterCard !== "summary_large_image") {
       sitemapMetadataErrors.push(
         `${route}: twitter:card is "${twitterCard ?? "missing"}", expected "summary_large_image"`
       );
