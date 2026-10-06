@@ -107,7 +107,9 @@ if (liveVersion !== latestVersion) {
   );
 }
 
-const levelMatch = readme.match(/currently consists of\s+(\d+)\s+levels/i);
+const levelMatch = readme.match(
+  /currently consists of\s+\*{0,2}(\d+)\s+levels\*{0,2}/i
+);
 const liveLevelCount = levelMatch ? Number(levelMatch[1]) : null;
 if (liveLevelCount !== levelCount) {
   throw new Error(
@@ -127,6 +129,7 @@ const livePlatforms = [
 ].map((match) =>
   match[1]
     .replace(/\[([^\]]+)\]\([^)]+\)/g, "$1")
+    .replace(/\*\*/g, "")
     .trim()
 );
 
