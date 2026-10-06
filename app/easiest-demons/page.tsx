@@ -16,7 +16,7 @@ export const metadata: Metadata = {
     type: "website",
   },
   twitter: {
-    card: "summary",
+    card: "summary_large_image",
     title: "Easiest Demons in Geometry Dash | 5 Beginner Picks",
     description: "Looking for the easiest demons in Geometry Dash? Compare five common beginner picks, their practice focus and a practical progression path.",
   },
