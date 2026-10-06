@@ -3363,7 +3363,7 @@ if (!existsSync(llmsPublicPath)) {
   ].map((match) => match[1] || "/");
 
   for (const rawRoute of [...new Set(llmsUrls)]) {
-    const route = rawRoute.split("#")[0].split("?")[0] || "/";
+    const route = (rawRoute.split("#")[0].split("?")[0] || "/").replace(/[.,;:!?]+$/, "");
     if (route === "/sitemap.xml") continue;
 
     if (!internalTargetExists(route)) {
