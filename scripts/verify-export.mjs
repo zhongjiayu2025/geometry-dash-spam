@@ -1152,7 +1152,14 @@ const htmlSitemapPriorityRoutes = [
   "/hardest-level",
   "/geometry-dash-breeze",
   "/dashmetry",
-  ...supportGuideRoutes,
+  "/drag-click",
+  "/right-click",
+  "/double-click",
+  "/spacebar-counter",
+  "/polling-rate",
+  "/keyboard-latency",
+  "/keyboard-ghosting",
+  "/key-rollover",
 ];
 
 if (htmlSitemapPath) {
