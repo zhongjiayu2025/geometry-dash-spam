@@ -2559,6 +2559,24 @@ if (
   );
 }
 
+for (const [file, source, path] of [
+  ["wave-demons", readFileSync(join(process.cwd(), "app", "demon-list", "wave-demons", "page.tsx"), "utf8"), "/demon-list/wave-demons"],
+  ["spam-demons", readFileSync(join(process.cwd(), "app", "demon-list", "spam-demons", "page.tsx"), "utf8"), "/demon-list/spam-demons"],
+]) {
+  if (
+    !source.includes('"@type": "CollectionPage"') ||
+    !source.includes('"@type": "ItemList"') ||
+    !source.includes("dateModified: DEMON_VERIFIED_AT") ||
+    !source.includes("isBasedOn: DEMON_SOURCE_URL") ||
+    !source.includes("numberOfItems: entries.length") ||
+    !source.includes(`url: "https://geometrydashspam.cc${path}"`)
+  ) {
+    infrastructureErrors.push(
+      `${file}: Demon specialty pages must expose dated Pointercrate-backed CollectionPage/ItemList schema`
+    );
+  }
+}
+
 const metadataErrors = [];
 
 for (const [route, expected] of Object.entries(metadataExpectations)) {

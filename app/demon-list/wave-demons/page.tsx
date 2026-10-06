@@ -51,6 +51,26 @@ export default function WaveDemonsPage() {
     demon: DEMONS.find((item) => item.level === reference.name),
   })).filter((item) => item.demon);
 
+  const collectionSchema = {
+    "@context": "https://schema.org",
+    "@type": "CollectionPage",
+    name: "Geometry Dash Wave Demons",
+    url: "https://geometrydashspam.cc/demon-list/wave-demons",
+    dateModified: DEMON_VERIFIED_AT,
+    isBasedOn: DEMON_SOURCE_URL,
+    isPartOf: { "@id": "https://geometrydashspam.cc/#website" },
+    publisher: { "@id": "https://geometrydashspam.cc/#organization" },
+    mainEntity: {
+      "@type": "ItemList",
+      numberOfItems: entries.length,
+      itemListElement: entries.map(({ demon }) => ({
+        "@type": "ListItem",
+        position: demon?.rank,
+        name: demon?.level,
+      })),
+    },
+  };
+
   const faqSchema = {
     "@context": "https://schema.org",
     "@type": "FAQPage",
@@ -64,6 +84,7 @@ export default function WaveDemonsPage() {
   return (
     <article className="mx-auto max-w-5xl">
       <Breadcrumbs items={[{ label: "Demon List", href: "/demon-list" }, { label: "Wave Demons", href: "/demon-list/wave-demons" }]} />
+      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(collectionSchema) }} />
       <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(faqSchema) }} />
 
       <header className="mb-8 max-w-4xl">
