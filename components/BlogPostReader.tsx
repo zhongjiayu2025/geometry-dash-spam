@@ -1,53 +1,18 @@
-"use client";
-
-import React, { useState } from 'react';
+import React from 'react';
 import Link from 'next/link';
 import Image from 'next/image';
 import { BlogPost } from '../data/blogContent';
-import { Calendar, Clock, Share2, Check, Zap, MousePointer2, List, ChevronRight, Home } from 'lucide-react';
+import { Calendar, Clock, Zap, MousePointer2, List, ChevronRight, Home } from 'lucide-react';
+import CopyLinkButton from './CopyLinkButton';
 
 interface BlogPostProps {
   post: BlogPost;
 }
 
 const BlogPostReader: React.FC<BlogPostProps> = ({ post }) => {
-  const [copied, setCopied] = useState(false);
-
-  const handleShare = (platform: 'twitter' | 'facebook' | 'linkedin') => {
-      const url = encodeURIComponent(window.location.href);
-      const title = encodeURIComponent(post.title);
-      let shareUrl = '';
-
-      switch (platform) {
-          case 'twitter':
-              shareUrl = `https://twitter.com/intent/tweet?url=${url}&text=${title}`;
-              break;
-          case 'facebook':
-              shareUrl = `https://www.facebook.com/sharer/sharer.php?u=${url}`;
-              break;
-          case 'linkedin':
-              shareUrl = `https://www.linkedin.com/sharing/share-offsite/?url=${url}`;
-              break;
-      }
-      window.open(shareUrl, '_blank', 'noopener,noreferrer');
-  };
-
-  const copyLink = async () => {
-      try {
-        await navigator.clipboard.writeText(window.location.href);
-        setCopied(true);
-        window.setTimeout(() => setCopied(false), 1800);
-      } catch {
-        setCopied(false);
-      }
-  };
-
-  const scrollToSection = (id: string) => {
-    const element = document.getElementById(id);
-    if (element) {
-        element.scrollIntoView({ behavior: 'smooth' });
-    }
-  };
+  const articleUrl = `https://geometrydashspam.cc/blog/${post.slug}`;
+  const encodedUrl = encodeURIComponent(articleUrl);
+  const encodedTitle = encodeURIComponent(post.title);
 
   return (
     <article className="w-full max-w-4xl mx-auto animate-in slide-in-from-bottom-8 duration-500">
@@ -93,7 +58,7 @@ const BlogPostReader: React.FC<BlogPostProps> = ({ post }) => {
             </div>
             
             <div className="flex gap-4">
-                <button onClick={copyLink} className="text-slate-400 hover:text-white transition-colors" title={copied ? "Copied" : "Copy link"} aria-label={copied ? "Link copied" : "Copy article link"}>{copied ? <Check className="w-5 h-5 text-green-400" /> : <Share2 className="w-5 h-5" />}</button>
+                <CopyLinkButton url={articleUrl} />
             </div>
         </div>
       </header>
@@ -125,12 +90,12 @@ const BlogPostReader: React.FC<BlogPostProps> = ({ post }) => {
                     <ul className="space-y-3">
                         {post.toc.map(item => (
                             <li key={item.id}>
-                                <button 
-                                    onClick={() => scrollToSection(item.id)} 
+                                <a
+                                    href={`#${item.id}`}
                                     className="text-slate-300 hover:text-blue-400 text-sm text-left transition-colors"
                                 >
                                     {item.title}
-                                </button>
+                                </a>
                             </li>
                         ))}
                     </ul>
@@ -153,12 +118,12 @@ const BlogPostReader: React.FC<BlogPostProps> = ({ post }) => {
                         <ul className="space-y-3 border-l border-white/10 ml-1">
                             {post.toc.map(item => (
                                 <li key={item.id} className="-ml-px">
-                                    <button 
-                                        onClick={() => scrollToSection(item.id)} 
+                                    <a
+                                        href={`#${item.id}`}
                                         className="pl-4 text-slate-400 hover:text-blue-400 hover:border-l-blue-400 border-l border-transparent text-sm text-left transition-all py-1 block w-full"
                                     >
                                         {item.title}
-                                    </button>
+                                    </a>
                                 </li>
                             ))}
                         </ul>
@@ -219,9 +184,33 @@ const BlogPostReader: React.FC<BlogPostProps> = ({ post }) => {
              <p className="text-slate-500 text-sm mt-1">Maintains the site&apos;s browser tools and source-checked training guides.</p>
          </div>
          <div className="flex gap-4">
-             <button onClick={() => handleShare('twitter')} className="p-3 bg-slate-800 rounded-full hover:bg-blue-600 transition-colors text-white" aria-label="Share on Twitter"><span className="text-xs font-bold">X</span></button>
-             <button onClick={() => handleShare('facebook')} className="p-3 bg-slate-800 rounded-full hover:bg-blue-700 transition-colors text-white" aria-label="Share on Facebook"><span className="text-xs font-bold">f</span></button>
-             <button onClick={() => handleShare('linkedin')} className="p-3 bg-slate-800 rounded-full hover:bg-blue-500 transition-colors text-white" aria-label="Share on LinkedIn"><span className="text-[10px] font-bold">in</span></button>
+             <a
+               href={`https://twitter.com/intent/tweet?url=${encodedUrl}&text=${encodedTitle}`}
+               target="_blank"
+               rel="noopener noreferrer"
+               className="p-3 bg-slate-800 rounded-full hover:bg-blue-600 transition-colors text-white"
+               aria-label="Share on X"
+             >
+               <span className="text-xs font-bold">X</span>
+             </a>
+             <a
+               href={`https://www.facebook.com/sharer/sharer.php?u=${encodedUrl}`}
+               target="_blank"
+               rel="noopener noreferrer"
+               className="p-3 bg-slate-800 rounded-full hover:bg-blue-700 transition-colors text-white"
+               aria-label="Share on Facebook"
+             >
+               <span className="text-xs font-bold">f</span>
+             </a>
+             <a
+               href={`https://www.linkedin.com/sharing/share-offsite/?url=${encodedUrl}`}
+               target="_blank"
+               rel="noopener noreferrer"
+               className="p-3 bg-slate-800 rounded-full hover:bg-blue-500 transition-colors text-white"
+               aria-label="Share on LinkedIn"
+             >
+               <span className="text-[10px] font-bold">in</span>
+             </a>
          </div>
       </div>
 
