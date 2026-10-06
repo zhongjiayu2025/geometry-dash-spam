@@ -1,4 +1,5 @@
 import PollingRateTest from "../../components/PollingRateTest";
+import ToolWebApplicationSchema from "../../components/ToolWebApplicationSchema";
 import RelatedTools from "../../components/RelatedTools";
 import InputToolGuide from "../../components/InputToolGuide";
 import { Metadata } from "next";
@@ -24,6 +25,11 @@ export const metadata: Metadata = {
 export default function PollingRatePage() {
   return (
     <>
+      <ToolWebApplicationSchema
+        name="Mouse Polling Rate Test"
+        path="/polling-rate"
+        description="Estimate mouse pointer report frequency from browser events. Results can vary with hardware, operating system and browser scheduling."
+      />
       <div className="mb-8 md:mb-12 text-center">
         <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-white/5 border border-white/10 text-xs font-mono text-slate-400 mb-4">
           BROWSER-OBSERVED REPORT RATE
