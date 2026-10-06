@@ -1,12 +1,12 @@
 "use client";
 
-import React, { useCallback, useRef, useState } from 'react';
+import React, { useCallback, useState } from 'react';
 import dynamic from 'next/dynamic';
 import { Brain, Play, Trophy } from 'lucide-react';
 import { usePersistentBestNumber } from '../lib/usePersistentBestNumber';
 import { useManagedTimeout } from '../lib/useManagedTimeout';
+import { useMemoryTestRuntime } from '../lib/useMemoryTestRuntime';
 
-type MemoryTestRuntime = typeof import('../lib/memoryTestRuntime');
 
 const VisualMemoryGameOver = dynamic(() => import('./VisualMemoryGameOver'), { ssr: false });
 const VisualMemoryGrid = dynamic(() => import('./VisualMemoryGrid'), { ssr: false });
@@ -22,22 +22,7 @@ export default function VisualMemoryTest() {
     const [clickedSquares, setClickedSquares] = useState<number[]>([]);
     const [missedSquares, setMissedSquares] = useState<number[]>([]); // To show red when wrong
     const { schedule: scheduleTimeout, clear: clearTimeout } = useManagedTimeout();
-    const runtimeRef = useRef<MemoryTestRuntime | null>(null);
-    const runtimeLoadRef = useRef<Promise<MemoryTestRuntime | null> | null>(null);
-
-    const ensureRuntime = useCallback(async () => {
-        if (runtimeRef.current) return runtimeRef.current;
-        if (!runtimeLoadRef.current) {
-            runtimeLoadRef.current = import('../lib/memoryTestRuntime').catch(() => null);
-        }
-        const runtime = await runtimeLoadRef.current;
-        if (runtime) runtimeRef.current = runtime;
-        return runtime;
-    }, []);
-
-    const preloadRuntime = useCallback(() => {
-        void ensureRuntime();
-    }, [ensureRuntime]);
+    const { ensureRuntime, preloadRuntime } = useMemoryTestRuntime();
 
     const startLevel = useCallback((currentLevel: number) => {
         void ensureRuntime().then((runtime) => {

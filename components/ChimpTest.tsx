@@ -1,13 +1,13 @@
 "use client";
 
-import React, { useCallback, useRef, useState } from 'react';
+import React, { useCallback, useState } from 'react';
 import dynamic from 'next/dynamic';
 import { BrainCircuit, Play, Trophy } from 'lucide-react';
 import { usePersistentBestNumber } from '../lib/usePersistentBestNumber';
 import { useManagedTimeout } from '../lib/useManagedTimeout';
+import { useMemoryTestRuntime } from '../lib/useMemoryTestRuntime';
 import type { ChimpNumber } from '../lib/memoryTestRuntime';
 
-type MemoryTestRuntime = typeof import('../lib/memoryTestRuntime');
 
 const ChimpGameOver = dynamic(() => import('./ChimpGameOver'), { ssr: false });
 const ChimpBoard = dynamic(() => import('./ChimpBoard'), { ssr: false });
@@ -20,22 +20,7 @@ export default function ChimpTest() {
     const [nextExpected, setNextExpected] = useState(1);
     const [strikes, setStrikes] = useState(0);
     const { schedule: scheduleTimeout, clear: clearTimeout } = useManagedTimeout();
-    const runtimeRef = useRef<MemoryTestRuntime | null>(null);
-    const runtimeLoadRef = useRef<Promise<MemoryTestRuntime | null> | null>(null);
-
-    const ensureRuntime = useCallback(async () => {
-        if (runtimeRef.current) return runtimeRef.current;
-        if (!runtimeLoadRef.current) {
-            runtimeLoadRef.current = import('../lib/memoryTestRuntime').catch(() => null);
-        }
-        const runtime = await runtimeLoadRef.current;
-        if (runtime) runtimeRef.current = runtime;
-        return runtime;
-    }, []);
-
-    const preloadRuntime = useCallback(() => {
-        void ensureRuntime();
-    }, [ensureRuntime]);
+    const { ensureRuntime, preloadRuntime } = useMemoryTestRuntime();
 
     const generateLevel = useCallback((currentLevel: number) => {
         if (currentLevel > 40) {

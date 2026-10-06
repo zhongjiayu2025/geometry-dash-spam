@@ -454,6 +454,7 @@ const exactCountdownSource = readFileSync(join(process.cwd(), "lib", "useExactCo
 const keyboardChordSource = readFileSync(join(process.cwd(), "lib", "useKeyboardChordMeasurement.ts"), "utf8");
 const typingRuntimeSource = readFileSync(join(process.cwd(), "lib", "typingRuntime.ts"), "utf8");
 const memoryTestRuntimeSource = readFileSync(join(process.cwd(), "lib", "memoryTestRuntime.ts"), "utf8");
+const memoryRuntimeHookSource = readFileSync(join(process.cwd(), "lib", "useMemoryTestRuntime.ts"), "utf8");
 const lazyClickSoundSource = readFileSync(join(process.cwd(), "lib", "useLazyClickSound.ts"), "utf8");
 const secondaryClickFinishedSource = readFileSync(join(process.cwd(), "components", "SecondaryClickFinishedActions.tsx"), "utf8");
 const dragClickResultSource = readFileSync(join(process.cwd(), "components", "DragClickResult.tsx"), "utf8");
@@ -1339,17 +1340,28 @@ for (const [file, source, generator] of [
   ["VisualMemoryTest.tsx", visualMemoryClientSource, "generateVisualLevel"],
 ]) {
   if (
-    !source.includes("import('../lib/memoryTestRuntime')") ||
+    !source.includes("useMemoryTestRuntime") ||
+    source.includes("import('../lib/memoryTestRuntime')") ||
     !source.includes("onPointerEnter={preloadRuntime}") ||
     !source.includes("onFocus={preloadRuntime}") ||
     !source.includes(generator) ||
-    source.includes("Math.random() * totalSquares") ||
+    source.includes("runtimeLoadRef") ||
     source.includes("availablePositions")
   ) {
     infrastructureErrors.push(
-      `${file}: memory level generation must stay in the shared deferred runtime with intent preloading`
+      `${file}: memory level generation must use the shared deferred runtime loader with intent preloading`
     );
   }
+}
+
+if (
+  !memoryRuntimeHookSource.includes('import("./memoryTestRuntime")') ||
+  !memoryRuntimeHookSource.includes("const ensureRuntime = useCallback") ||
+  !memoryRuntimeHookSource.includes("const preloadRuntime = useCallback")
+) {
+  infrastructureErrors.push(
+    "useMemoryTestRuntime must own the shared lazy loader and intent-preload bridge"
+  );
 }
 
 if (
@@ -1533,8 +1545,8 @@ const clientSourceBudgets = [
   ["CpsTest.tsx", cpsClientSource, 11200],
   ["AimTrainer.tsx", aimClientSource, 9300],
   ["ReactionTest.tsx", reactionClientSource, 6100],
-  ["VisualMemoryTest.tsx", visualMemoryClientSource, 9000],
-  ["ChimpTest.tsx", chimpClientSource, 9500],
+  ["VisualMemoryTest.tsx", visualMemoryClientSource, 8000],
+  ["ChimpTest.tsx", chimpClientSource, 8800],
   ["TypingTest.tsx", typingClientSource, 7300],
   ["ScrollTest.tsx", scrollClientSource, 6500],
   ["RefreshRateTest.tsx", refreshRateClientSource, 4500],
