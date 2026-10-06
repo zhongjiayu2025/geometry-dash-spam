@@ -3332,9 +3332,10 @@ const serverRenderedGuideExpectations = new Map([
     "/jitter-click",
     [
       "How to Practice Jitter Clicking",
-      "Losing control while clicking faster?",
+      "Improve CPS without losing control",
       'href="/cps-test"',
       'href="/butterfly-click"',
+      'href="/blog/how-to-improve-cps-geometry-dash"',
     ],
   ],
   [
