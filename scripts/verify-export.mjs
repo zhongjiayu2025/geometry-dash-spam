@@ -1093,7 +1093,7 @@ const clientSourceBudgets = [
   ["DragClickTest.tsx", dragClientSource, 10000],
   ["SpacebarCounter.tsx", spacebarClientSource, 12000],
   ["PersonalStats.tsx", personalStatsSource, 5000],
-  ["GameCanvas.tsx", gameCanvasSource, 33000],
+  ["GameCanvas.tsx", gameCanvasSource, 32500],
 ];
 
 for (const [file, source, maxBytes] of clientSourceBudgets) {
@@ -1160,6 +1160,21 @@ if (
 ) {
   infrastructureErrors.push(
     "Wave obstacle generation, effects, and run statistics must stay outside the initial GameCanvas chunk"
+  );
+}
+
+if (
+  gameCanvasSource.includes("const mulberry32") ||
+  gameCanvasSource.includes("const stringToSeed") ||
+  gameCanvasSource.includes("const initStars") ||
+  gameCanvasSource.includes("beatScale = 1.0 +") ||
+  !gameCanvasSource.includes("runtime.prepareWaveSeedAndStars") ||
+  !waveRuntimeSource.includes("export function prepareWaveSeedAndStars") ||
+  !waveRuntimeSource.includes("function mulberry32") ||
+  !waveRuntimeSource.includes("state.beatScale = 1 +")
+) {
+  infrastructureErrors.push(
+    "Wave seeded RNG, star setup, and beat decay must stay inside the lazy waveRuntime chunk"
   );
 }
 
