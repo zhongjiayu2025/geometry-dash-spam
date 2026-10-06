@@ -1222,6 +1222,9 @@ if (
   !reactionClientSource.includes('usePersistentBestNumber("reactionBestScore", "min")') ||
   !reactionClientSource.includes("isInteractiveKeyboardTarget(event.target)") ||
   !reactionClientSource.includes("event.repeat") ||
+  !reactionClientSource.includes('window.addEventListener("blur", cancelInterruptedTrial)') ||
+  !reactionClientSource.includes('document.addEventListener("visibilitychange", handleVisibilityChange)') ||
+  !reactionClientSource.includes('current === "waiting" || current === "ready" ? "idle" : current') ||
   reactionClientSource.includes("pendingTouchRef") ||
   reactionClientSource.includes("localStorage.setItem") ||
   !reactionResultSource.includes("onClick={shareScore}")
@@ -1318,6 +1321,8 @@ if (
   !typingClientSource.includes('dynamic(() => import("./TypingResult")') ||
   !typingClientSource.includes("useExactCountdown") ||
   !typingClientSource.includes("durationMs: TEST_MS") ||
+  !typingClientSource.includes("requestAnimationFrame(() => inputRef.current?.focus())") ||
+  typingClientSource.includes("window.setTimeout(() => inputRef.current?.focus()") ||
   typingClientSource.includes("timerRef") ||
   typingClientSource.includes("endTimerRef") ||
   typingClientSource.includes("navigator.share") ||
@@ -1590,6 +1595,8 @@ if (
   !soundReactionClientSource.includes('usePersistentBestNumber("soundReactionBest", "min")') ||
   !soundReactionClientSource.includes("isInteractiveKeyboardTarget(event.target)") ||
   !soundReactionClientSource.includes("event.repeat") ||
+  !soundReactionClientSource.includes('window.addEventListener("blur", cancelInterruptedTrial)') ||
+  !soundReactionClientSource.includes('document.addEventListener("visibilitychange", handleVisibilityChange)') ||
   soundReactionClientSource.includes("pendingTouchRef") ||
   soundReactionClientSource.includes("handleInteraction(e as any)") ||
   soundReactionClientSource.includes("localStorage.setItem")

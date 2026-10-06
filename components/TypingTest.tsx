@@ -144,7 +144,7 @@ export default function TypingTest() {
     setWpm(0);
     setAccuracy(100);
 
-    window.setTimeout(() => inputRef.current?.focus(), 0);
+    requestAnimationFrame(() => inputRef.current?.focus());
   };
 
 

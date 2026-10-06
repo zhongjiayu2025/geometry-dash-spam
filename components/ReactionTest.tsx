@@ -69,6 +69,27 @@ export default function ReactionTest() {
     return () => window.removeEventListener("keydown", handleKeyDown);
   }, [handleInteraction]);
 
+  useEffect(() => {
+    const cancelInterruptedTrial = () => {
+      clearTimeout();
+      startTimeRef.current = 0;
+      setState((current) =>
+        current === "waiting" || current === "ready" ? "idle" : current
+      );
+    };
+
+    const handleVisibilityChange = () => {
+      if (document.hidden) cancelInterruptedTrial();
+    };
+
+    window.addEventListener("blur", cancelInterruptedTrial);
+    document.addEventListener("visibilitychange", handleVisibilityChange);
+    return () => {
+      window.removeEventListener("blur", cancelInterruptedTrial);
+      document.removeEventListener("visibilitychange", handleVisibilityChange);
+    };
+  }, [clearTimeout]);
+
   const pointerAction = useIntentionalPointerAction<HTMLDivElement>({
     onAction: handleInteraction,
     deferTouch: state === "idle" || state === "result" || state === "early",
