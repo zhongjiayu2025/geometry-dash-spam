@@ -60,6 +60,12 @@ The verification step checks core static routes, internal links, sitemap targets
 
 The CI export verifier protects these boundaries in addition to metadata, sitemap, redirect, data freshness, internal-link and indexability checks.
 
+## SEO / GEO standard
+
+This project follows the owner baseline in [chenmu2024/Website-Starter-Standard](https://github.com/chenmu2024/Website-Starter-Standard), with the project-specific rules in `SEO-GEO.md` and the public drift baseline in `SEO-GEO-BASELINE.md`.
+
+The public repository intentionally does not store private Search Console or analytics performance data.
+
 ## SEO and content policy
 
 - Preserve established URLs such as `/cps-test`.
@@ -67,6 +73,8 @@ The CI export verifier protects these boundaries in addition to metadata, sitema
 - Do not publish fabricated ratings, player counts, interviews or precision claims.
 - Time-sensitive Demon List claims must show a source and a verification date.
 - Sitemap entries must resolve to real indexable pages.
+- Keep `llms.txt` limited to canonical, indexable public pages and treat it as optional interoperability metadata, not a ranking signal.
+- Keep About/Contact entity and correction-path schema aligned with visible site policy.
 
 ## Deployment
 
