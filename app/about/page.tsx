@@ -13,7 +13,7 @@ export const metadata: Metadata = {
     type: "website",
   },
   twitter: {
-    card: "summary",
+    card: "summary_large_image",
     title: "About Geometry Dash Spam",
     description: "Learn what GeometryDashSpam.cc is, how its browser training tools work and how practice metrics and sourced ranking data are handled.",
   },
