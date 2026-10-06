@@ -42,6 +42,51 @@ export interface WaveRuntimeState {
   rng: () => number;
 }
 
+function mulberry32(seed: number) {
+  return function random() {
+    let value = seed += 0x6D2B79F5;
+    value = Math.imul(value ^ value >>> 15, value | 1);
+    value ^= value + Math.imul(value ^ value >>> 7, value | 61);
+    return ((value ^ value >>> 14) >>> 0) / 4294967296;
+  };
+}
+
+function stringToSeed(value: string) {
+  let hash = 0;
+  for (let index = 0; index < value.length; index += 1) {
+    hash = (hash << 5) - hash + value.charCodeAt(index);
+    hash |= 0;
+  }
+  return hash + 2147483648;
+}
+
+export function prepareWaveSeedAndStars(
+  state: WaveRuntimeState,
+  options: {
+    width: number;
+    height: number;
+    deterministic: boolean;
+    seedKey: string;
+    lowVisuals: boolean;
+  }
+) {
+  const { width, height, deterministic, seedKey, lowVisuals } = options;
+  state.rng = deterministic ? mulberry32(stringToSeed(seedKey)) : Math.random;
+  state.stars = [];
+
+  const random = state.rng;
+  const starCount = lowVisuals ? 20 : 40;
+  for (let index = 0; index < starCount; index += 1) {
+    state.stars.push({
+      x: random() * width,
+      y: random() * height,
+      size: random() * 2 + 0.5,
+      speed: random() * 2 + 0.2,
+      opacity: random() * 0.5 + 0.1,
+    });
+  }
+}
+
 interface AdvanceWaveOptions {
   now: number;
   canvasWidth: number;

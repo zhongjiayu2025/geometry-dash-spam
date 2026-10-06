@@ -33,26 +33,6 @@ interface WaveRun {
   mode: string;
 }
 
-// --- SEEDED RNG UTILS ---
-const mulberry32 = (a: number) => {
-    return function() {
-      var t = a += 0x6D2B79F5;
-      t = Math.imul(t ^ t >>> 15, t | 1);
-      t ^= t + Math.imul(t ^ t >>> 7, t | 61);
-      return ((t ^ t >>> 14) >>> 0) / 4294967296;
-    }
-}
-
-const stringToSeed = (str: string): number => {
-    let hash = 0;
-    for (let i = 0; i < str.length; i++) {
-        const char = str.charCodeAt(i);
-        hash = (hash << 5) - hash + char;
-        hash |= 0; // Convert to 32bit integer
-    }
-    return hash + 2147483647 + 1; // Ensure positive
-}
-
 const GameCanvas: React.FC<GameCanvasProps> = memo(({ difficulty, status, onStatusChange, isEndless = false, isMini = false }) => {
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const containerRef = useRef<HTMLDivElement>(null);
@@ -224,6 +204,7 @@ const GameCanvas: React.FC<GameCanvasProps> = memo(({ difficulty, status, onStat
 
   const requestRef = useRef<number | undefined>(undefined);
   const lowVisualsRef = useRef(false);
+  const seedPreparedRef = useRef(false);
 
   // --- LAZY AUDIO BRIDGE ---
   const triggerBeat = useCallback(() => {
@@ -330,34 +311,12 @@ const GameCanvas: React.FC<GameCanvasProps> = memo(({ difficulty, status, onStat
     runRecordedRef.current = true;
   };
 
-  const initStars = (width: number, height: number) => {
-      gameState.current.stars = [];
-      const random = gameState.current.rng;
-      const starCount = lowVisualsRef.current ? 20 : 40;
-      for(let i=0; i<starCount; i++) {
-          gameState.current.stars.push({
-              x: random() * width,
-              y: random() * height,
-              size: random() * 2 + 0.5,
-              speed: random() * 2 + 0.2, 
-              opacity: random() * 0.5 + 0.1
-          });
-      }
-  };
-
   const resetGame = useCallback(() => {
     if (!canvasRef.current) return;
     const width = canvasRef.current.width;
     const height = canvasRef.current.height;
     const totalDistance = difficulty.speed * 60 * (WIN_TIME_MS / 1000);
     
-    let rngFunc = Math.random;
-    if (!isEndless) {
-        const seedString = `${difficulty.id}-${isMini ? 'mini' : 'normal'}`;
-        const seedValue = stringToSeed(seedString);
-        rngFunc = mulberry32(seedValue);
-    }
-
     gameState.current = {
       ...gameState.current,
       playerY: height / 2,
@@ -384,9 +343,22 @@ const GameCanvas: React.FC<GameCanvasProps> = memo(({ difficulty, status, onStat
       lastClickTime: 0,
       finishLineX: totalDistance + 600,
       baseColor: difficulty.color,
-      rng: rngFunc 
+      rng: Math.random
     };
-    initStars(width, height);
+
+    seedPreparedRef.current = false;
+    const runtime = runtimeRef.current;
+    if (runtime) {
+      runtime.prepareWaveSeedAndStars(gameState.current, {
+        width,
+        height,
+        deterministic: !isEndless,
+        seedKey: `${difficulty.id}-${isMini ? "mini" : "normal"}`,
+        lowVisuals: lowVisualsRef.current,
+      });
+      seedPreparedRef.current = true;
+    }
+
     setConsistency('100%');
     setIsNewBest(false);
     runRecordedRef.current = false;
@@ -400,8 +372,6 @@ const GameCanvas: React.FC<GameCanvasProps> = memo(({ difficulty, status, onStat
     const ctx = canvas.getContext('2d');
     if (!ctx) return;
 
-    gameState.current.beatScale = 1.0 + (gameState.current.beatScale - 1.0) * 0.9;
-
     if (status === GameStatus.Playing) {
         const runtime = runtimeRef.current;
         if (!runtime) {
@@ -412,6 +382,17 @@ const GameCanvas: React.FC<GameCanvasProps> = memo(({ difficulty, status, onStat
                 }
             });
             return;
+        }
+
+        if (!seedPreparedRef.current) {
+            runtime.prepareWaveSeedAndStars(gameState.current, {
+                width: canvas.width,
+                height: canvas.height,
+                deterministic: !isEndless,
+                seedKey: `${difficulty.id}-${isMini ? "mini" : "normal"}`,
+                lowVisuals: lowVisualsRef.current,
+            });
+            seedPreparedRef.current = true;
         }
 
         const step = runtime.advanceWaveFrame(gameState.current, {
