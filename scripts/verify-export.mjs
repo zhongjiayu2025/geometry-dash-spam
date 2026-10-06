@@ -408,6 +408,8 @@ const waveClientSource = readFileSync(join(process.cwd(), "components", "WaveSim
 const gameCanvasSource = readFileSync(join(process.cwd(), "components", "GameCanvas.tsx"), "utf8");
 const waveAudioSource = readFileSync(join(process.cwd(), "lib", "waveAudio.ts"), "utf8");
 const demonListSource = readFileSync(join(process.cwd(), "components", "DemonListTable.tsx"), "utf8");
+const demonFilterSource = readFileSync(join(process.cwd(), "components", "DemonListFilterControls.tsx"), "utf8");
+const clickTestHeroSource = readFileSync(join(process.cwd(), "components", "ClickTestHero.tsx"), "utf8");
 const homeSource = readFileSync(join(process.cwd(), "app", "page.tsx"), "utf8");
 const supportClientPaths = [
   "SpacebarCounter.tsx",
@@ -586,11 +588,39 @@ if (
   infrastructureErrors.push("CPS mobile input must allow scrolling before a test and lock touch only while active");
 }
 
-const demonFilteredRenderCount = (demonListSource.match(/filtered\.map\(/g) || []).length;
-if (demonFilteredRenderCount !== 1) {
+if (
+  demonListSource.includes('"use client"') ||
+  demonListSource.includes("useState") ||
+  demonListSource.includes("useMemo") ||
+  !demonListSource.includes("DEMONS.map((item)") ||
+  !demonListSource.includes("<DemonListFilterControls")
+) {
   infrastructureErrors.push(
-    `Demon List should render filtered results once across breakpoints, found ${demonFilteredRenderCount} filtered maps`
+    "Demon List rows must stay server-rendered with only the filter controls hydrated"
   );
+}
+
+if (
+  !demonFilterSource.includes('"use client"') ||
+  !demonFilterSource.includes('querySelectorAll<HTMLElement>("[data-demon-row]")') ||
+  !demonFilterSource.includes("aria-rowcount")
+) {
+  infrastructureErrors.push(
+    "DemonListFilterControls must remain the small client-only progressive filter"
+  );
+}
+
+for (const file of ["JitterClickTest.tsx", "ButterflyClickTest.tsx", "RightClickTest.tsx"]) {
+  const source = supportClientSources.find(([name]) => name === file)?.[1] ?? "";
+  if (source.includes("<h1")) {
+    infrastructureErrors.push(`${file}: static H1 hero must stay outside the client test component`);
+  }
+}
+
+for (const heading of ["Jitter Click Test", "Butterfly Click Test", "Right Click CPS Test"]) {
+  if (!clickTestHeroSource.includes(heading)) {
+    infrastructureErrors.push(`ClickTestHero is missing server-rendered heading: ${heading}`);
+  }
 }
 
 const metadataErrors = [];
