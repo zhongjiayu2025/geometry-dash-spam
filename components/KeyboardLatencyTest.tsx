@@ -4,11 +4,23 @@ import React, { useState, useEffect, useRef } from 'react';
 
 import { Keyboard, RotateCcw } from 'lucide-react';
 
+type TimingState = {
+    shortestPress: number | null;
+    averagePress: number | null;
+    recentPresses: number[];
+    activeKey: string | null;
+};
+
+const EMPTY_TIMING: TimingState = {
+    shortestPress: null,
+    averagePress: null,
+    recentPresses: [],
+    activeKey: null,
+};
+
 export default function KeyboardLatencyTest() {
-    const [shortestPress, setShortestPress] = useState<number | null>(null);
-    const [averagePress, setAveragePress] = useState<number | null>(null);
-    const [recentPresses, setRecentPresses] = useState<number[]>([]);
-    const [activeKey, setActiveKey] = useState<string | null>(null);
+    const [timing, setTiming] = useState<TimingState>(EMPTY_TIMING);
+    const { shortestPress, averagePress, recentPresses, activeKey } = timing;
 
     const pressTimes = useRef<Map<string, number>>(new Map());
     const allPressDurations = useRef<number[]>([]);
@@ -22,41 +34,43 @@ export default function KeyboardLatencyTest() {
                 e.preventDefault();
             }
 
-            setActiveKey(e.key);
+            setTiming((current) => ({ ...current, activeKey: e.key }));
             pressTimes.current.set(e.code, performance.now());
         };
 
         const handleKeyUp = (e: KeyboardEvent) => {
-            setActiveKey(null);
             const startTime = pressTimes.current.get(e.code);
-            if (startTime) {
-                const duration = Math.round(performance.now() - startTime);
-                
-                allPressDurations.current.push(duration);
-                // Keep last 100 for average
-                if (allPressDurations.current.length > 100) {
-                    allPressDurations.current.shift();
-                }
 
-                setShortestPress(prev => {
-                    if (prev === null) return duration;
-                    return Math.min(prev, duration);
-                });
-
-                const sum = allPressDurations.current.reduce((a, b) => a + b, 0);
-                setAveragePress(Math.round(sum / allPressDurations.current.length));
-
-                setRecentPresses(prev => {
-                    const newRecent = [duration, ...prev];
-                    return newRecent.slice(0, 15);
-                });
-
-                pressTimes.current.delete(e.code);
+            if (startTime === undefined) {
+                setTiming((current) => ({ ...current, activeKey: null }));
+                return;
             }
+
+            const duration = Math.round(performance.now() - startTime);
+
+            allPressDurations.current.push(duration);
+            if (allPressDurations.current.length > 100) {
+                allPressDurations.current.shift();
+            }
+
+            const sum = allPressDurations.current.reduce((a, b) => a + b, 0);
+            const average = Math.round(sum / allPressDurations.current.length);
+
+            setTiming((current) => ({
+                activeKey: null,
+                shortestPress:
+                    current.shortestPress === null
+                        ? duration
+                        : Math.min(current.shortestPress, duration),
+                averagePress: average,
+                recentPresses: [duration, ...current.recentPresses].slice(0, 15),
+            }));
+
+            pressTimes.current.delete(e.code);
         };
 
         const clearInterruptedPress = () => {
-            setActiveKey(null);
+            setTiming((current) => ({ ...current, activeKey: null }));
             pressTimes.current.clear();
         };
 
@@ -78,9 +92,7 @@ export default function KeyboardLatencyTest() {
     }, []);
 
     const resetTest = () => {
-        setShortestPress(null);
-        setAveragePress(null);
-        setRecentPresses([]);
+        setTiming(EMPTY_TIMING);
         allPressDurations.current = [];
         pressTimes.current.clear();
     };
