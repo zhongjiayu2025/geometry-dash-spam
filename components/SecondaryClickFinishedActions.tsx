@@ -1,5 +1,6 @@
 "use client";
 
+import { useState } from "react";
 import { Check, RotateCcw, Share2 } from "lucide-react";
 
 type Variant = "jitter" | "butterfly" | "rightClick";
@@ -18,17 +19,36 @@ const STYLES: Record<Variant, { reset: string }> = {
 
 export default function SecondaryClickFinishedActions({
   variant,
-  copied,
   onReset,
-  onShare,
+  shareTitle,
+  shareText,
+  shareUrl,
   withTopMargin = false,
 }: {
   variant: Variant;
-  copied: boolean;
   onReset: () => void;
-  onShare: (event: React.MouseEvent<HTMLButtonElement>) => void;
+  shareTitle: string;
+  shareText: string;
+  shareUrl: string;
   withTopMargin?: boolean;
 }) {
+  const [copied, setCopied] = useState(false);
+
+  const shareScore = async () => {
+    if (navigator.share) {
+      try {
+        await navigator.share({ title: shareTitle, text: shareText, url: shareUrl });
+        return;
+      } catch {
+        return;
+      }
+    }
+
+    await navigator.clipboard.writeText(`${shareText} ${shareUrl}`);
+    setCopied(true);
+    window.setTimeout(() => setCopied(false), 2000);
+  };
+
   return (
     <div
       className={`${withTopMargin ? "mt-8 " : ""}relative z-10 flex gap-2 animate-in fade-in zoom-in duration-300`}
@@ -43,7 +63,7 @@ export default function SecondaryClickFinishedActions({
       </button>
       <button
         type="button"
-        onClick={onShare}
+        onClick={shareScore}
         className="flex items-center justify-center rounded-lg border border-white/10 bg-slate-800 p-3 text-white transition-colors hover:bg-slate-700"
         title="Share your score"
         aria-label={copied ? "Score copied" : "Share your score"}
