@@ -111,19 +111,27 @@ const SpacebarCounter: React.FC = () => {
   }, [finishTest, playClickSound, setVisualPressed, soundEnabled, startTest]);
 
   const handleKeyUp = useCallback((event: KeyboardEvent) => {
-    if (isInteractiveKeyboardTarget(event.target)) return;
     if (event.code === "Space") setVisualPressed(false);
   }, [setVisualPressed]);
 
   useEffect(() => {
+    const releaseVisualKey = () => setVisualPressed(false);
+    const handleVisibilityChange = () => {
+      if (document.hidden) releaseVisualKey();
+    };
+
     window.addEventListener("keydown", handleKeyDown);
     window.addEventListener("keyup", handleKeyUp);
+    window.addEventListener("blur", releaseVisualKey);
+    document.addEventListener("visibilitychange", handleVisibilityChange);
 
     return () => {
       window.removeEventListener("keydown", handleKeyDown);
       window.removeEventListener("keyup", handleKeyUp);
+      window.removeEventListener("blur", releaseVisualKey);
+      document.removeEventListener("visibilitychange", handleVisibilityChange);
     };
-  }, [handleKeyDown, handleKeyUp]);
+  }, [handleKeyDown, handleKeyUp, setVisualPressed]);
 
   const cancelCountdown = useExactCountdown({
     running: active && !finished,

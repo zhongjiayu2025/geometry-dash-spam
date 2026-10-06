@@ -753,7 +753,32 @@ if (
   spacebarClientSource.includes("isInteractiveKeyboardTarget(e.target)")
 ) {
   infrastructureErrors.push(
-    "SpacebarCounter must use the current KeyboardEvent when skipping interactive controls"
+    "SpacebarCounter keydown must use the current KeyboardEvent when skipping interactive controls"
+  );
+}
+
+const spacebarKeyUpStart = spacebarClientSource.indexOf("const handleKeyUp");
+const spacebarKeyUpEnd = spacebarClientSource.indexOf("useEffect(() => {", spacebarKeyUpStart);
+const spacebarKeyUpSource = spacebarKeyUpStart >= 0 && spacebarKeyUpEnd > spacebarKeyUpStart
+  ? spacebarClientSource.slice(spacebarKeyUpStart, spacebarKeyUpEnd)
+  : "";
+if (
+  !spacebarKeyUpSource ||
+  spacebarKeyUpSource.includes("isInteractiveKeyboardTarget") ||
+  !spacebarKeyUpSource.includes('event.code === "Space"')
+) {
+  infrastructureErrors.push(
+    "SpacebarCounter keyup must always release visual state even if focus moved to an interactive control"
+  );
+}
+
+if (
+  !spacebarClientSource.includes('window.addEventListener("blur", releaseVisualKey)') ||
+  !spacebarClientSource.includes('document.addEventListener("visibilitychange", handleVisibilityChange)') ||
+  !spacebarClientSource.includes("if (document.hidden) releaseVisualKey()")
+) {
+  infrastructureErrors.push(
+    "SpacebarCounter must release its pressed visual on blur or backgrounding"
   );
 }
 
