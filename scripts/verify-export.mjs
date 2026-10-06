@@ -410,6 +410,7 @@ const waveAudioSource = readFileSync(join(process.cwd(), "lib", "waveAudio.ts"),
 const demonListSource = readFileSync(join(process.cwd(), "components", "DemonListTable.tsx"), "utf8");
 const demonFilterSource = readFileSync(join(process.cwd(), "components", "DemonListFilterControls.tsx"), "utf8");
 const clickTestHeroSource = readFileSync(join(process.cwd(), "components", "ClickTestHero.tsx"), "utf8");
+const clickerSource = readFileSync(join(process.cwd(), "components", "GeometryDashClicker.tsx"), "utf8");
 const homeSource = readFileSync(join(process.cwd(), "app", "page.tsx"), "utf8");
 const supportClientPaths = [
   "SpacebarCounter.tsx",
@@ -621,6 +622,25 @@ for (const heading of ["Jitter Click Test", "Butterfly Click Test", "Right Click
   if (!clickTestHeroSource.includes(heading)) {
     infrastructureErrors.push(`ClickTestHero is missing server-rendered heading: ${heading}`);
   }
+}
+
+if (
+  !clickerSource.includes("saveTimerRef") ||
+  !clickerSource.includes("500") ||
+  !clickerSource.includes('addEventListener("pagehide", flushSave)') ||
+  !clickerSource.includes("stateRef.current = next")
+) {
+  infrastructureErrors.push(
+    "Geometry Dash Clicker must debounce localStorage writes and flush current state on exit"
+  );
+}
+
+if (
+  clickerSource.includes("localStorage.setItem(STORAGE_KEY, JSON.stringify(state));")
+) {
+  infrastructureErrors.push(
+    "Geometry Dash Clicker must not synchronously persist on every state update"
+  );
 }
 
 const metadataErrors = [];
