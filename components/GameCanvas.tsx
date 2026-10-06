@@ -171,6 +171,10 @@ const GameCanvas: React.FC<GameCanvasProps> = memo(({ difficulty, status, onStat
       return runtime;
   }, []);
 
+  const preloadGameplay = useCallback(() => {
+      void Promise.all([ensureRuntime(), ensureRenderer()]);
+  }, [ensureRenderer, ensureRuntime]);
+
   // Game State Ref
   const gameState = useRef<WaveRuntimeState>({
     playerY: 250,
@@ -827,8 +831,11 @@ const GameCanvas: React.FC<GameCanvasProps> = memo(({ difficulty, status, onStat
               </div>
               
               <button
+                onPointerEnter={preloadGameplay}
+                onPointerDown={preloadGameplay}
+                onFocus={preloadGameplay}
                 onClick={() => {
-                               onStatusChange(GameStatus.Playing);
+                    onStatusChange(GameStatus.Playing);
                     focusGame();
                 }}
                 className="group relative w-full py-3 sm:py-4 bg-white text-black font-display font-black text-lg sm:text-xl rounded hover:scale-[1.02] transition-transform overflow-hidden"
