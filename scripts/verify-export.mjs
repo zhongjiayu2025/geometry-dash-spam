@@ -745,6 +745,18 @@ if (
   );
 }
 
+if (
+  !pollingClientSource.includes('addEventListener("pointermove"') ||
+  !pollingClientSource.includes("performance.now()") ||
+  !pollingClientSource.includes("sampleElapsedSeconds") ||
+  pollingClientSource.includes("onMouseMove=") ||
+  pollingClientSource.includes("trackingSecondsRef")
+) {
+  infrastructureErrors.push(
+    "PollingRateTest must use native pointer events and real elapsed time instead of React mouse events or interval-count timing"
+  );
+}
+
 if (cpsClientSource.includes("RelatedTools") || cpsClientSource.includes("How is CPS Calculated?")) {
   infrastructureErrors.push("CPS static guide content must stay outside the client test component");
 }
