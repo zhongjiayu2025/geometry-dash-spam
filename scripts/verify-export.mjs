@@ -1582,7 +1582,8 @@ if (
   !reactionTrialGuardSource.includes('document.addEventListener("visibilitychange", handleVisibilityChange)') ||
   !reactionTrialGuardSource.includes('current === "waiting" || current === "ready" ? "idle" : current') ||
   !reactionTrialGuardSource.includes("startTimeRef.current = 0") ||
-  !reactionTrialGuardSource.includes("interruptRef.current?.()")
+  reactionTrialGuardSource.includes("onInterrupt") ||
+  reactionTrialGuardSource.includes("interruptRef")
 ) {
   infrastructureErrors.push(
     "Shared reaction-trial guard must invalidate hidden/blurred visual and audio reaction attempts"
@@ -1657,6 +1658,7 @@ if (
   !soundReactionClientSource.includes("isInteractiveKeyboardTarget(event.target)") ||
   !soundReactionClientSource.includes("event.repeat") ||
   !soundReactionClientSource.includes("useReactionTrialGuard") ||
+  soundReactionClientSource.includes("onInterrupt:") ||
   soundReactionClientSource.includes("pendingTouchRef") ||
   soundReactionClientSource.includes("handleInteraction(e as any)") ||
   soundReactionClientSource.includes("localStorage.setItem")

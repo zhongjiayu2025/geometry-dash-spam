@@ -1,26 +1,20 @@
 "use client";
 
-import { useEffect, useRef, type Dispatch, type MutableRefObject, type SetStateAction } from "react";
+import { useEffect, type Dispatch, type MutableRefObject, type SetStateAction } from "react";
 
 export function useReactionTrialGuard<State extends string>({
   clearTimeout,
   startTimeRef,
   setState,
-  onInterrupt,
 }: {
   clearTimeout: () => void;
   startTimeRef: MutableRefObject<number>;
   setState: Dispatch<SetStateAction<State>>;
-  onInterrupt?: () => void;
 }) {
-  const interruptRef = useRef(onInterrupt);
-  interruptRef.current = onInterrupt;
-
   useEffect(() => {
     const cancelInterruptedTrial = () => {
       clearTimeout();
       startTimeRef.current = 0;
-      interruptRef.current?.();
       setState((current) =>
         (current === "waiting" || current === "ready" ? "idle" : current) as State
       );

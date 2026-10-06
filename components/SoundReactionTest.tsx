@@ -69,7 +69,7 @@ export default function SoundReactionTest() {
     return () => window.removeEventListener("keydown", handleKeyDown);
   }, [handleInteraction]);
 
-  useReactionTrialGuard({ clearTimeout, startTimeRef, setState: setGameState, onInterrupt: () => setReactionTime(null) });
+  useReactionTrialGuard({ clearTimeout, startTimeRef, setState: setGameState });
 
   const pointerAction = useIntentionalPointerAction<HTMLDivElement>({ onAction: handleInteraction, deferTouch: gameState === "idle" || gameState === "result" });
 
