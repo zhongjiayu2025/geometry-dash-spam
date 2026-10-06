@@ -2680,6 +2680,26 @@ if (existsSync(sitemapPath)) {
 
   const sitemapRoutes = sitemapRecords.map((record) => record.route);
 
+  const indexableCanonicalRoutes = new Set();
+  for (const htmlPath of htmlFiles) {
+    const html = readFileSync(htmlPath, "utf8");
+    const robots = metaContent(html, "name", "robots")?.toLowerCase() ?? "";
+    const canonical = canonicalHref(html);
+    if (!canonical || robots.includes("noindex")) continue;
+    if (!canonical.startsWith("https://geometrydashspam.cc")) continue;
+
+    const route = canonical.slice("https://geometrydashspam.cc".length) || "/";
+    indexableCanonicalRoutes.add(route);
+  }
+
+  for (const route of indexableCanonicalRoutes) {
+    if (!sitemapRoutes.includes(route)) {
+      sitemapPolicyErrors.push(
+        `${route}: indexable canonical route missing from sitemap.xml`
+      );
+    }
+  }
+
   const expectedFreshness = new Map([
     ["/demon-list", demonDate],
     ["/demon-list/wave-demons", demonDate],
@@ -3348,5 +3368,5 @@ if (
 }
 
 console.log(
-  `Static export verified: ${requiredRoutes.length} core routes, metadata checks, ads/robots/manifest checks, permanent legacy redirects, search-snippet length checks, H1/title/description uniqueness checks, sitemap freshness checks, noindex utility policy, core-page authority leakage checks, HTML sitemap priority-link checks, indexable support-page guide checks, search-intent cluster checks, Demon data-to-page checks, Wraith data-to-page checks, ${htmlFiles.length} HTML files with internal-link checks, sitemap URL/canonical/title/description/OpenGraph/indexability integrity, sitemap.xml and robots.txt.`
+  `Static export verified: ${requiredRoutes.length} core routes, metadata checks, ads/robots/manifest checks, permanent legacy redirects, search-snippet length checks, H1/title/description uniqueness checks, sitemap freshness checks, noindex utility policy, core-page authority leakage checks, HTML sitemap priority-link checks, indexable support-page guide checks, search-intent cluster checks, Demon data-to-page checks, Wraith data-to-page checks, ${htmlFiles.length} HTML files with internal-link checks, bidirectional sitemap/indexability coverage, sitemap URL/canonical/title/description/OpenGraph integrity, sitemap.xml and robots.txt.`
 );
