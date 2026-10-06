@@ -122,7 +122,6 @@ const ButterflyClickTest: React.FC = () => {
       }
       clicksRef.current += 1;
       setClicks(clicksRef.current);
-    };
   };
 
   const handlePointerDown = (e: React.PointerEvent<HTMLButtonElement>) => {
