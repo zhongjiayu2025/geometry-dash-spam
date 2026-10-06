@@ -407,6 +407,7 @@ const cpsClientSource = readFileSync(join(process.cwd(), "components", "CpsTest.
 const waveClientSource = readFileSync(join(process.cwd(), "components", "WaveSimulator.tsx"), "utf8");
 const gameCanvasSource = readFileSync(join(process.cwd(), "components", "GameCanvas.tsx"), "utf8");
 const waveAudioSource = readFileSync(join(process.cwd(), "lib", "waveAudio.ts"), "utf8");
+const clickSoundSource = readFileSync(join(process.cwd(), "lib", "clickSound.ts"), "utf8");
 const demonListSource = readFileSync(join(process.cwd(), "components", "DemonListTable.tsx"), "utf8");
 const demonFilterSource = readFileSync(join(process.cwd(), "components", "DemonListFilterControls.tsx"), "utf8");
 const clickTestHeroSource = readFileSync(join(process.cwd(), "components", "ClickTestHero.tsx"), "utf8");
@@ -496,6 +497,24 @@ for (const file of ["JitterClickTest.tsx", "ButterflyClickTest.tsx", "RightClick
       `${file}: 10-second click tests must keep opt-in audio and exact cutoff timing`
     );
   }
+}
+
+for (const file of ["JitterClickTest.tsx", "ButterflyClickTest.tsx", "RightClickTest.tsx"]) {
+  const source = supportClientSources.find(([name]) => name === file)?.[1] ?? "";
+  if (
+    !source.includes("import('../lib/clickSound')") ||
+    source.includes("AudioContext") ||
+    source.includes("createOscillator") ||
+    source.includes("createGain")
+  ) {
+    infrastructureErrors.push(
+      `${file}: click audio must stay in the shared lazy-loaded clickSound chunk`
+    );
+  }
+}
+
+if (!clickSoundSource.includes("createClickSoundEngine")) {
+  infrastructureErrors.push("Shared clickSound engine is missing its lazy factory");
 }
 
 for (const file of ["JitterClickTest.tsx", "ButterflyClickTest.tsx"]) {
