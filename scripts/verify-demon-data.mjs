@@ -1,7 +1,9 @@
 import { readFileSync } from "node:fs";
 
 const DATA_PATH = new URL("../data/demons.ts", import.meta.url);
+const UPDATE_PATH = new URL("./update-demon-list.mjs", import.meta.url);
 const source = readFileSync(DATA_PATH, "utf8");
+const updaterSource = readFileSync(UPDATE_PATH, "utf8");
 
 const dateMatch = source.match(/DEMON_VERIFIED_AT = "([^"]+)"/);
 const verifiedAt = dateMatch?.[1] ?? null;
@@ -17,6 +19,18 @@ const entries = [
 }));
 
 const errors = [];
+
+if (
+  !updaterSource.includes("async function fetchFromPage()") ||
+  !updaterSource.includes("Pointercrate page fallback yielded") ||
+  !updaterSource.includes("Loaded Demon List from Pointercrate page fallback.") ||
+  !updaterSource.includes("[\\u2066-\\u2069]") ||
+  !updaterSource.includes("items.length !== 50")
+) {
+  errors.push(
+    "Demon List updater must retain the validated Pointercrate page fallback when the API is unavailable."
+  );
+}
 
 if (!verifiedAt || !/^\d{4}-\d{2}-\d{2}$/.test(verifiedAt)) {
   errors.push("DEMON_VERIFIED_AT must be a YYYY-MM-DD date.");

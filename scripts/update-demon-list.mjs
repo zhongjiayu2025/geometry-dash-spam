@@ -42,6 +42,61 @@ async function fetchFromApi() {
   return data;
 }
 
+function decodeHtml(value) {
+  const named = {
+    amp: "&",
+    quot: '"',
+    apos: "'",
+    lt: "<",
+    gt: ">",
+    nbsp: " ",
+  };
+
+  return value
+    .replace(/<[^>]*>/g, "")
+    .replace(/&#x([0-9a-f]+);/gi, (_, hex) =>
+      String.fromCodePoint(Number.parseInt(hex, 16))
+    )
+    .replace(/&#(\d+);/g, (_, decimal) =>
+      String.fromCodePoint(Number.parseInt(decimal, 10))
+    )
+    .replace(/&([a-z]+);/gi, (entity, name) => named[name.toLowerCase()] ?? entity)
+    .replace(/[\u2066-\u2069]/g, "")
+    .replace(/\s+/g, " ")
+    .trim();
+}
+
+async function fetchFromPage() {
+  const response = await fetchWithTimeout(PAGE_URL, {
+    Accept: "text/html",
+  });
+
+  if (!response.ok) {
+    throw new Error(`Pointercrate page returned HTTP ${response.status}`);
+  }
+
+  const html = await response.text();
+  const matches = [
+    ...html.matchAll(
+      /<h2[^>]*>\s*#(\d+)\s*[–-]\s*([\s\S]*?)<\/h2>\s*<h3[^>]*>\s*published by\s*([\s\S]*?)<\/h3>/gi
+    ),
+  ];
+
+  const items = matches
+    .map((match) => ({
+      position: Number(match[1]),
+      name: decodeHtml(match[2]),
+      publisher: { name: decodeHtml(match[3]) },
+    }))
+    .filter((item) => item.position >= 1 && item.position <= 50);
+
+  if (items.length !== 50) {
+    throw new Error(`Pointercrate page fallback yielded ${items.length} top-50 rows`);
+  }
+
+  return items;
+}
+
 async function fetchRankedDemons() {
   try {
     const data = await fetchFromApi();
@@ -49,6 +104,14 @@ async function fetchRankedDemons() {
     return data;
   } catch (apiError) {
     console.warn(`Pointercrate API unavailable: ${apiError.message}`);
+  }
+
+  try {
+    const data = await fetchFromPage();
+    console.log("Loaded Demon List from Pointercrate page fallback.");
+    return data;
+  } catch (pageError) {
+    console.warn(`Pointercrate page fallback unavailable: ${pageError.message}`);
     return null;
   }
 }
