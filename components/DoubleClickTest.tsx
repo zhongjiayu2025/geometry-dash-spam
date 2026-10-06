@@ -1,10 +1,8 @@
 "use client";
 
 import React, { useRef, useState } from "react";
-import dynamic from "next/dynamic";
 import { MousePointer2, RotateCcw } from "lucide-react";
 
-const RelatedTools = dynamic(() => import("./RelatedTools"));
 
 type HistoryItem = {
   id: number;
@@ -176,8 +174,6 @@ export default function DoubleClickTest() {
         Very short intervals can come from intentional fast clicking, switch bounce, software behavior or the input stack.
         This browser page can flag rapid registered events, but it cannot diagnose a mouse switch by itself.
       </div>
-
-      <RelatedTools currentTool="doubleClick" />
-    </div>
+</div>
   );
 }
