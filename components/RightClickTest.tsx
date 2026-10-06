@@ -191,7 +191,7 @@ const RightClickTest: React.FC = () => {
           <button
             onContextMenu={handleContextMenu}
             className={`
-              w-full h-full rounded-2xl border-2 flex flex-col items-center justify-center transition-all duration-100 active:scale-[0.99] select-none touch-none
+              w-full h-full rounded-2xl border-2 flex flex-col items-center justify-center transition-all duration-100 active:scale-[0.99] select-none touch-pan-y
               ${finished 
                 ? 'bg-slate-900 border-slate-700 cursor-default opacity-50' 
                 : 'bg-gradient-to-br from-emerald-600 to-teal-800 border-emerald-500 shadow-[0_0_40px_rgba(16,185,129,0.3)] hover:shadow-[0_0_60px_rgba(16,185,129,0.5)] cursor-context-menu'
