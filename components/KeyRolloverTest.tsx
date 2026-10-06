@@ -1,7 +1,7 @@
 "use client";
 
 import React, { useEffect, useState } from "react";
-import { AlertCircle, Keyboard as KeyboardIcon } from "lucide-react";
+import { Keyboard as KeyboardIcon } from "lucide-react";
 
 
 type RolloverState = {
@@ -114,16 +114,6 @@ export default function KeyRolloverTest() {
                 ))}
               </div>
             )}
-          </div>
-
-          <div className="mt-8 w-full bg-slate-900/40 border border-amber-500/20 rounded-xl p-5 flex gap-4 items-start text-sm text-slate-300">
-            <AlertCircle className="w-5 h-5 text-amber-500 flex-shrink-0 mt-0.5" />
-            <div className="leading-6">
-              <strong className="text-white block mb-1">What this result means</strong>
-              The page counts simultaneous key events delivered to the browser. If a key you are physically holding never appears,
-              that can indicate a rollover limitation somewhere in the input path. It does not identify the keyboard&apos;s electrical
-              matrix or certify an NKRO specification by itself.
-            </div>
           </div>
 
           {maxKeys > 0 && (
