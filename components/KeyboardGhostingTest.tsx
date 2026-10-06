@@ -80,18 +80,23 @@ export default function KeyboardGhostingTest() {
       });
     };
 
-    const handleBlur = () => {
+    const clearPressed = () => {
       setMeasurement((previous) => ({ ...previous, pressedKeys: new Set() }));
+    };
+    const handleVisibilityChange = () => {
+      if (document.hidden) clearPressed();
     };
 
     window.addEventListener("keydown", handleKeyDown, { passive: false });
     window.addEventListener("keyup", handleKeyUp);
-    window.addEventListener("blur", handleBlur);
+    window.addEventListener("blur", clearPressed);
+    document.addEventListener("visibilitychange", handleVisibilityChange);
 
     return () => {
       window.removeEventListener("keydown", handleKeyDown);
       window.removeEventListener("keyup", handleKeyUp);
-      window.removeEventListener("blur", handleBlur);
+      window.removeEventListener("blur", clearPressed);
+      document.removeEventListener("visibilitychange", handleVisibilityChange);
     };
   }, []);
 
