@@ -883,6 +883,12 @@ if (
   );
 }
 
+if ((dragClientSource.match(/\.catch\(\(\) => \{\}\)/g) ?? []).length < 2) {
+  infrastructureErrors.push(
+    "DragClickTest must absorb both preload and finish-analysis chunk failures"
+  );
+}
+
 if (
   !dragClientSource.includes("analysisVersionRef") ||
   !dragClientSource.includes("const analysisVersion = ++analysisVersionRef.current") ||

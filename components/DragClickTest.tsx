@@ -43,13 +43,15 @@ export default function DragClickTest() {
     setTimeLeft(0);
     setClicks(finalClicks);
 
-    void import("../lib/dragClickStats").then(({ getDragPeakOneSecondCps, getDragBuckets }) => {
-      if (analysisVersion !== analysisVersionRef.current) return;
-      const peak = getDragPeakOneSecondCps(times);
-      setPeakCps(peak);
-      setBuckets(getDragBuckets(times, startTime));
-      commitBestPeakCps(peak);
-    });
+    void import("../lib/dragClickStats")
+      .then(({ getDragPeakOneSecondCps, getDragBuckets }) => {
+        if (analysisVersion !== analysisVersionRef.current) return;
+        const peak = getDragPeakOneSecondCps(times);
+        setPeakCps(peak);
+        setBuckets(getDragBuckets(times, startTime));
+        commitBestPeakCps(peak);
+      })
+      .catch(() => {});
   }, [commitBestPeakCps]);
 
   const startTest = useCallback((now: number) => {
@@ -61,7 +63,7 @@ export default function DragClickTest() {
     setIsActive(true);
     setIsFinished(false);
     setTimeLeft(10);
-    void import("../lib/dragClickStats");
+    void import("../lib/dragClickStats").catch(() => {});
   }, []);
 
   const cancelCountdown = useExactCountdown({
