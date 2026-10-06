@@ -58,11 +58,7 @@ jobs:
 
           for attempt in {1..24}; do
             body="$(curl -fsS --connect-timeout 10 --max-time 20 -H 'Cache-Control: no-cache' "${endpoint}?commit=${EXPECTED_SHA}&attempt=${attempt}" || true)"
-            live_sha="$(printf '%s' "$body" | python3 -c 'import json,sys
-try:
-    print(json.load(sys.stdin).get("commit", ""))
-except Exception:
-    print("")' 2>/dev/null || true)"
+            live_sha="$(printf '%s' "$body" | python3 -c 'import json,sys; print(json.load(sys.stdin).get("commit", ""))' 2>/dev/null || true)"
 
             if [[ "$live_sha" == "$EXPECTED_SHA" ]]; then
               echo "Production is serving expected commit $EXPECTED_SHA"
