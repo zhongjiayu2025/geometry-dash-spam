@@ -2451,13 +2451,20 @@ if (
   );
 }
 
+const clickerUpdateStart = clickerSource.indexOf("const updateState =");
+const clickerUpdateEnd = clickerSource.indexOf("useEffect(() => {", clickerUpdateStart);
+const clickerUpdateSource =
+  clickerUpdateStart >= 0 && clickerUpdateEnd > clickerUpdateStart
+    ? clickerSource.slice(clickerUpdateStart, clickerUpdateEnd)
+    : "";
 if (
-  !clickerSource.includes("const previous = stateRef.current") ||
-  !clickerSource.includes("const next = updater(previous)") ||
-  !clickerSource.includes("stateRef.current = next") ||
-  !clickerSource.includes("dirtyRef.current = true") ||
-  !clickerSource.includes("setState(next)") ||
-  clickerSource.includes("setState((prev) =>")
+  !clickerUpdateSource.includes("const previous = stateRef.current") ||
+  !clickerUpdateSource.includes("const updated = updater(previous)") ||
+  !clickerUpdateSource.includes("const next = normalizeClickerState(updated)") ||
+  !clickerUpdateSource.includes("stateRef.current = next") ||
+  !clickerUpdateSource.includes("dirtyRef.current = true") ||
+  !clickerUpdateSource.includes("setState(next)") ||
+  clickerUpdateSource.includes("setState((prev) =>")
 ) {
   infrastructureErrors.push(
     "Geometry Dash Clicker mutations must use stateRef as the synchronous transaction baseline without React updater side effects"
