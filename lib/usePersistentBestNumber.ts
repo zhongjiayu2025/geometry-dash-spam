@@ -1,6 +1,7 @@
 "use client";
 
 import { useCallback, useEffect, useState } from "react";
+import { readStorage, writeStorage } from "./browserStorage";
 
 export function usePersistentBestNumber(
   storageKey: string,
@@ -9,7 +10,7 @@ export function usePersistentBestNumber(
   const [best, setBest] = useState<number | null>(null);
 
   useEffect(() => {
-    const saved = localStorage.getItem(storageKey);
+    const saved = readStorage(storageKey);
     if (!saved) return;
 
     const parsed = Number(saved);
@@ -24,7 +25,7 @@ export function usePersistentBestNumber(
         if (!improves) return previous;
       }
 
-      localStorage.setItem(storageKey, String(value));
+      writeStorage(storageKey, String(value));
       return value;
     });
   }, [mode, storageKey]);

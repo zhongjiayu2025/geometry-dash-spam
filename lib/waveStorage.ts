@@ -1,3 +1,5 @@
+import { readStorage, writeStorage } from "./browserStorage";
+
 export interface WaveRun {
   time: number;
   averageCps: number;
@@ -64,10 +66,10 @@ function runsKey(scope: WaveStorageScope) {
 }
 
 export function loadWaveRecords(scope: WaveStorageScope) {
-  const savedBest = Number.parseFloat(localStorage.getItem(bestKey(scope)) || "0");
+  const savedBest = Number.parseFloat(readStorage(bestKey(scope)) || "0");
   let recentRuns: WaveRun[] = [];
 
-  const savedRuns = localStorage.getItem(runsKey(scope));
+  const savedRuns = readStorage(runsKey(scope));
   if (savedRuns) {
     try {
       recentRuns = normalizeWaveRuns(JSON.parse(savedRuns));
@@ -81,9 +83,9 @@ export function loadWaveRecords(scope: WaveStorageScope) {
 }
 
 export function persistWaveHighScore(scope: WaveStorageScope, time: number) {
-  localStorage.setItem(bestKey(scope), String(time));
+  writeStorage(bestKey(scope), String(time));
 }
 
 export function persistWaveRuns(scope: WaveStorageScope, runs: WaveRun[]) {
-  localStorage.setItem(runsKey(scope), JSON.stringify(normalizeWaveRuns(runs)));
+  writeStorage(runsKey(scope), JSON.stringify(normalizeWaveRuns(runs)));
 }

@@ -448,6 +448,7 @@ const waveShareModalSource = readFileSync(join(process.cwd(), "components", "Wav
 const clickSoundSource = readFileSync(join(process.cwd(), "lib", "clickSound.ts"), "utf8");
 const cpsRecordsSource = readFileSync(join(process.cwd(), "lib", "cpsRecords.ts"), "utf8");
 const persistentBestSource = readFileSync(join(process.cwd(), "lib", "usePersistentBestNumber.ts"), "utf8");
+const browserStorageSource = readFileSync(join(process.cwd(), "lib", "browserStorage.ts"), "utf8");
 const managedTimeoutSource = readFileSync(join(process.cwd(), "lib", "useManagedTimeout.ts"), "utf8");
 const intentionalPointerSource = readFileSync(join(process.cwd(), "lib", "useIntentionalPointerAction.ts"), "utf8");
 const exactCountdownSource = readFileSync(join(process.cwd(), "lib", "useExactCountdown.ts"), "utf8");
@@ -1377,11 +1378,11 @@ for (const [file, source, storageKey] of [
 
 if (
   !persistentBestSource.includes("export function usePersistentBestNumber") ||
-  !persistentBestSource.includes("localStorage.getItem(storageKey)") ||
-  !persistentBestSource.includes("localStorage.setItem(storageKey")
+  !persistentBestSource.includes("readStorage(storageKey)") ||
+  !persistentBestSource.includes("writeStorage(storageKey")
 ) {
   infrastructureErrors.push(
-    "Shared persistent best-score hook must own localStorage read/write behavior"
+    "Shared persistent best-score hook must own safe browser-storage read/write behavior"
   );
 }
 
@@ -1642,6 +1643,29 @@ if (
 ) {
   infrastructureErrors.push(
     "SystemInfo must keep static hero server-rendered, correctly prioritize mobile OS/modern Edge detection, and update network status live"
+  );
+}
+
+if (
+  !browserStorageSource.includes("export function readStorage") ||
+  !browserStorageSource.includes("export function writeStorage") ||
+  !browserStorageSource.includes("export function removeStorage") ||
+  !browserStorageSource.includes("export function listStorageKeys") ||
+  !browserStorageSource.includes("try {") ||
+  !browserStorageSource.includes("catch {")
+) {
+  infrastructureErrors.push(
+    "Shared browserStorage helpers must guard localStorage reads, writes, removals and key enumeration"
+  );
+}
+
+if (
+  cpsRecordsSource.includes("localStorage.") ||
+  waveStorageSource.includes("localStorage.") ||
+  persistentBestSource.includes("localStorage.")
+) {
+  infrastructureErrors.push(
+    "Core score/history persistence modules must use safe browserStorage helpers instead of direct localStorage access"
   );
 }
 
@@ -1999,9 +2023,13 @@ if (
 if (
   !personalStatsSource.includes("normalizeCpsBestScores") ||
   !personalStatsSource.includes("normalizeWaveRuns") ||
+  !personalStatsSource.includes("listStorageKeys") ||
+  !personalStatsSource.includes("readStorage") ||
+  !personalStatsSource.includes("removeStorage") ||
   !personalStatsSource.includes('cpsTests: normalizeCpsBestScores(loadJson("cpsBestScores"))') ||
   !personalStatsSource.includes("parsed >= 0") ||
-  personalStatsSource.includes('loadObject("cpsBestScores")')
+  personalStatsSource.includes('loadObject("cpsBestScores")') ||
+  personalStatsSource.includes("localStorage.")
 ) {
   infrastructureErrors.push(
     "Dashboard local-record loader must reuse CPS/Wave sanitizers and reject invalid scalar stats"
@@ -2159,6 +2187,7 @@ if (
   !clickerSource.includes('addEventListener("pagehide", flushSave)') ||
   !clickerSource.includes("stateRef.current = next") ||
   !clickerSource.includes("if (!dirtyRef.current) return;") ||
+  !clickerSource.includes("if (writeStorage(STORAGE_KEY, JSON.stringify(stateRef.current)))") ||
   !clickerSource.includes("dirtyRef.current = true") ||
   !clickerSource.includes("elapsedSeconds") ||
   !clickerSource.includes("prev.autoPower * elapsedSeconds")

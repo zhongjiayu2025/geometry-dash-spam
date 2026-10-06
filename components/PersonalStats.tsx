@@ -3,6 +3,7 @@
 import { useEffect, useState } from "react";
 import dynamic from "next/dynamic";
 import { normalizeCpsBestScores } from "../lib/cpsRecords";
+import { listStorageKeys, readStorage, removeStorage } from "../lib/browserStorage";
 import { normalizeWaveRuns, type WaveRun } from "../lib/waveStorage";
 
 const PersonalStatsContent = dynamic(() => import("./PersonalStatsContent"), { ssr: false });
@@ -40,7 +41,7 @@ const EMPTY_STATS: UserStats = {
 };
 
 function loadJson(key: string): unknown {
-  const value = localStorage.getItem(key);
+  const value = readStorage(key);
   if (!value) return null;
   try {
     return JSON.parse(value);
@@ -50,15 +51,14 @@ function loadJson(key: string): unknown {
 }
 
 function loadStat(key: string) {
-  const parsed = Number.parseFloat(localStorage.getItem(key) || "");
+  const parsed = Number.parseFloat(readStorage(key) || "");
   return Number.isFinite(parsed) && parsed >= 0 ? parsed : null;
 }
 
 function loadStats(): UserStats {
   const waveRuns: WaveRun[] = [];
-  for (let index = 0; index < localStorage.length; index += 1) {
-    const key = localStorage.key(index);
-    if (!key?.startsWith("gd_spam_runs_")) continue;
+  for (const key of listStorageKeys()) {
+    if (!key.startsWith("gd_spam_runs_")) continue;
 
     const suffix = key.slice("gd_spam_runs_".length);
     const parts = suffix.split("_");
@@ -114,17 +114,14 @@ export default function PersonalStats() {
       "chimpBestScore",
       "visualMemoryBest",
     ]) {
-      localStorage.removeItem(key);
+      removeStorage(key);
     }
 
-    const dynamicKeys: string[] = [];
-    for (let index = 0; index < localStorage.length; index += 1) {
-      const key = localStorage.key(index);
-      if (key?.startsWith("gd_spam_runs_") || key?.startsWith("gd_spam_best_")) {
-        dynamicKeys.push(key);
+    for (const key of listStorageKeys()) {
+      if (key.startsWith("gd_spam_runs_") || key.startsWith("gd_spam_best_")) {
+        removeStorage(key);
       }
     }
-    for (const key of dynamicKeys) localStorage.removeItem(key);
 
     setStats(EMPTY_STATS);
   };

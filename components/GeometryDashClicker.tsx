@@ -4,6 +4,7 @@ import React, { useEffect, useRef, useState } from "react";
 import { RotateCcw, Sparkles, Zap } from "lucide-react";
 import ClickerAchievements from "./ClickerAchievements";
 import { useIntentionalPointerAction } from "../lib/useIntentionalPointerAction";
+import { readStorage, removeStorage, writeStorage } from "../lib/browserStorage";
 import {
   INITIAL_CLICKER_STATE,
   autoCostFor,
@@ -27,7 +28,7 @@ export default function GeometryDashClicker() {
 
   useEffect(() => {
     try {
-      const saved = localStorage.getItem(STORAGE_KEY);
+      const saved = readStorage(STORAGE_KEY);
       if (saved) {
         const next = normalizeClickerState(JSON.parse(saved));
         stateRef.current = next;
@@ -46,8 +47,9 @@ export default function GeometryDashClicker() {
 
     const flushSave = () => {
       if (!dirtyRef.current) return;
-      localStorage.setItem(STORAGE_KEY, JSON.stringify(stateRef.current));
-      dirtyRef.current = false;
+      if (writeStorage(STORAGE_KEY, JSON.stringify(stateRef.current))) {
+        dirtyRef.current = false;
+      }
     };
     const saveInterval = window.setInterval(flushSave, 5000);
 
@@ -125,7 +127,7 @@ export default function GeometryDashClicker() {
     stateRef.current = INITIAL_CLICKER_STATE;
     dirtyRef.current = false;
     setState(INITIAL_CLICKER_STATE);
-    localStorage.removeItem(STORAGE_KEY);
+    removeStorage(STORAGE_KEY);
   };
 
   return (

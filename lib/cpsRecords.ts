@@ -1,3 +1,5 @@
+import { readStorage, writeStorage } from "./browserStorage";
+
 export interface CpsRun {
   duration: number;
   clicks: number;
@@ -62,7 +64,7 @@ export function normalizeCpsRuns(value: unknown): CpsRun[] {
 }
 
 function readJson(key: string): unknown {
-  const saved = localStorage.getItem(key);
+  const saved = readStorage(key);
   if (!saved) return null;
   try {
     return JSON.parse(saved);
@@ -96,12 +98,12 @@ export function persistCpsRun(duration: number, clicks: number): CpsRecords {
   };
 
   const runHistory = [nextRun, ...readRunHistory()].slice(0, 20);
-  localStorage.setItem(HISTORY_KEY, JSON.stringify(runHistory));
+  writeStorage(HISTORY_KEY, JSON.stringify(runHistory));
 
   const bestScores = readBestScores();
   if (!bestScores[duration] || cps > bestScores[duration]) {
     bestScores[duration] = cps;
-    localStorage.setItem(BEST_KEY, JSON.stringify(bestScores));
+    writeStorage(BEST_KEY, JSON.stringify(bestScores));
   }
 
   return { bestScores, runHistory };
