@@ -443,6 +443,7 @@ const waveRendererSource = readFileSync(join(process.cwd(), "lib", "waveRenderer
 const waveRuntimeSource = readFileSync(join(process.cwd(), "lib", "waveRuntime.ts"), "utf8");
 const waveStorageSource = readFileSync(join(process.cwd(), "lib", "waveStorage.ts"), "utf8");
 const waveRunOverlaysSource = readFileSync(join(process.cwd(), "components", "WaveRunOverlays.tsx"), "utf8");
+const waveCanvasHudSource = readFileSync(join(process.cwd(), "components", "WaveCanvasHud.tsx"), "utf8");
 const clickSoundSource = readFileSync(join(process.cwd(), "lib", "clickSound.ts"), "utf8");
 const cpsRecordsSource = readFileSync(join(process.cwd(), "lib", "cpsRecords.ts"), "utf8");
 const persistentBestSource = readFileSync(join(process.cwd(), "lib", "usePersistentBestNumber.ts"), "utf8");
@@ -1372,7 +1373,7 @@ const clientSourceBudgets = [
   ["PersonalStats.tsx", personalStatsSource, 5000],
   ["GeometryDashClicker.tsx", clickerSource, 9200],
   ["BpmTapper.tsx", bpmClientSource, 5000],
-  ["GameCanvas.tsx", gameCanvasSource, 32000],
+  ["GameCanvas.tsx", gameCanvasSource, 30000],
 ];
 
 for (const [file, source, maxBytes] of clientSourceBudgets) {
@@ -1599,6 +1600,22 @@ if (
 ) {
   infrastructureErrors.push(
     "Wave result and share overlays must stay outside the initial GameCanvas chunk"
+  );
+}
+
+if (
+  !gameCanvasSource.includes("dynamic(() => import('./WaveCanvasHud')") ||
+  gameCanvasSource.includes("Hold = rise · release = fall") ||
+  gameCanvasSource.includes("<Crown") ||
+  gameCanvasSource.includes("<Volume2") ||
+  gameCanvasSource.includes("<ZapOff") ||
+  !waveCanvasHudSource.includes("Hold = rise · release = fall") ||
+  !waveCanvasHudSource.includes("timeDisplayRef") ||
+  !waveCanvasHudSource.includes("progressRef") ||
+  !waveCanvasHudSource.includes("<Volume2")
+) {
+  infrastructureErrors.push(
+    "Wave HUD and settings controls must stay outside the GameCanvas main chunk while preserving direct HUD refs"
   );
 }
 
