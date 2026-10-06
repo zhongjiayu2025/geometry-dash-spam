@@ -140,6 +140,20 @@ const BlogPostReader: React.FC<BlogPostProps> = ({ post }) => {
 
              <div className="prose prose-lg prose-invert max-w-none prose-headings:font-display prose-headings:font-bold prose-a:text-blue-400 prose-a:no-underline hover:prose-a:underline prose-img:rounded-xl prose-headings:scroll-mt-24">
                 {post.content}
+
+                {post.faqs && post.faqs.length > 0 && (
+                  <section className="mt-12">
+                    <h2 className="mb-5 text-2xl font-display font-bold text-white">Frequently asked questions</h2>
+                    <div className="space-y-4">
+                      {post.faqs.map((item) => (
+                        <div key={item.q} className="rounded-xl border border-white/10 bg-slate-900/30 p-5">
+                          <h3 className="mb-2 font-bold text-white">{item.q}</h3>
+                          <p className="text-sm leading-6 text-slate-400">{item.a}</p>
+                        </div>
+                      ))}
+                    </div>
+                  </section>
+                )}
              </div>
           </div>
 
