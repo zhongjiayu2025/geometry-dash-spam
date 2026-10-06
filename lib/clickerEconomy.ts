@@ -15,7 +15,9 @@ export const INITIAL_CLICKER_STATE: ClickerState = {
 };
 
 function safeNumber(value: unknown, fallback: number) {
-  const number = typeof value === "number" ? value : Number(value);
+  if (typeof value !== "number" && typeof value !== "string") return fallback;
+  if (typeof value === "string" && !value.trim()) return fallback;
+  const number = Number(value);
   if (!Number.isFinite(number) || number < 0) return fallback;
   return Math.min(number, Number.MAX_SAFE_INTEGER);
 }

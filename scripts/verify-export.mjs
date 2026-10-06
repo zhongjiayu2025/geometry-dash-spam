@@ -1792,6 +1792,8 @@ if (
 
 if (
   !waveStorageSource.includes("export function normalizeWaveRuns") ||
+  !waveStorageSource.includes('typeof value !== "number" && typeof value !== "string"') ||
+  !waveStorageSource.includes('typeof value === "string" && !value.trim()') ||
   !waveStorageSource.includes("Number.isFinite(number) && number >= 0") ||
   !waveStorageSource.includes('typeof record.mode === "string"') ||
   !waveStorageSource.includes("normalizeWaveRuns(JSON.parse(savedRuns))") ||
@@ -2054,6 +2056,8 @@ if (
 if (
   !cpsRecordsSource.includes("export function normalizeCpsBestScores") ||
   !cpsRecordsSource.includes("export function normalizeCpsRuns") ||
+  !cpsRecordsSource.includes('typeof value !== "number" && typeof value !== "string"') ||
+  !cpsRecordsSource.includes('typeof value === "string" && !value.trim()') ||
   !cpsRecordsSource.includes("Number.isFinite(number) && number >= 0") ||
   !cpsRecordsSource.includes("duration > 0") ||
   !cpsRecordsSource.includes("Math.floor(clicks)")
@@ -2195,6 +2199,8 @@ if (
   !clickerSource.includes("normalizeClickerState(JSON.parse(saved))") ||
   clickerSource.includes("{ ...INITIAL_CLICKER_STATE, ...JSON.parse(saved) }") ||
   !clickerEconomySource.includes("export function normalizeClickerState") ||
+  !clickerEconomySource.includes('typeof value !== "number" && typeof value !== "string"') ||
+  !clickerEconomySource.includes('typeof value === "string" && !value.trim()') ||
   !clickerEconomySource.includes("Number.isFinite(number)") ||
   !clickerEconomySource.includes("Number.MAX_SAFE_INTEGER")
 ) {
