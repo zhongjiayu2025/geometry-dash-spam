@@ -1,10 +1,18 @@
-"use client";
-
-import React, { useState } from "react";
 import Link from "next/link";
 import Image from "next/image";
-import { usePathname } from "next/navigation";
-import { Activity, BookOpen, ChevronDown, Gamepad2, KeyRound, Keyboard, Menu, MousePointer2, Trophy, X } from "lucide-react";
+import {
+  Activity,
+  BookOpen,
+  ChevronDown,
+  Gamepad2,
+  KeyRound,
+  Keyboard,
+  Menu,
+  MousePointer2,
+  Trophy,
+  X,
+} from "lucide-react";
+import HeaderRouteState from "./HeaderRouteState";
 
 const coreItems = [
   { href: "/", label: "Spam Test", icon: Gamepad2 },
@@ -29,84 +37,131 @@ const moreItems = [
   ["/geometry-dash-clicker", "Geometry Dash Clicker"],
 ] as const;
 
-
+const routeLinkClass =
+  "nav-route-link rounded-lg text-slate-400 transition-colors hover:bg-white/5 hover:text-white";
 
 export default function Header() {
-  const pathname = usePathname();
-  const [mobileOpen, setMobileOpen] = useState(false);
-  const [moreOpen, setMoreOpen] = useState(false);
-
-  const isActive = (href: string) =>
-    href === "/" ? pathname === "/" : pathname.startsWith(href);
-
   return (
-    <header className="fixed top-0 left-0 right-0 z-50 h-16 md:h-20 border-b border-white/5 bg-[#020617]/90 backdrop-blur-xl">
-      <div className="max-w-7xl mx-auto px-4 h-full flex items-center justify-between gap-4">
-        <Link href="/" className="flex items-center gap-3 shrink-0" onClick={() => setMobileOpen(false)} aria-label="Geometry Dash Spam home">
-          <Image src="/logo.svg" alt="Geometry Dash Spam logo" width={40} height={40} className="w-9 h-9 rounded-lg" priority />
+    <header className="fixed inset-x-0 top-0 z-50 h-16 border-b border-white/5 bg-[#020617]/90 backdrop-blur-xl md:h-20">
+      <HeaderRouteState />
+
+      <div className="mx-auto flex h-full max-w-7xl items-center justify-between gap-4 px-4">
+        <Link href="/" className="flex shrink-0 items-center gap-3" aria-label="Geometry Dash Spam home">
+          <Image
+            src="/logo.svg"
+            alt="Geometry Dash Spam logo"
+            width={40}
+            height={40}
+            className="h-9 w-9 rounded-lg"
+            priority
+          />
           <div className="hidden sm:block">
-            <div className="font-display font-bold text-white tracking-tight uppercase">Geometry Dash Spam</div>
-            <div className="text-[10px] text-blue-400 font-mono tracking-widest uppercase">Spam · Wave · CPS</div>
+            <div className="font-display font-bold uppercase tracking-tight text-white">Geometry Dash Spam</div>
+            <div className="font-mono text-[10px] uppercase tracking-widest text-blue-400">Spam · Wave · CPS</div>
           </div>
         </Link>
 
-        <nav className="hidden lg:flex items-center gap-1">
+        <nav className="hidden items-center gap-1 lg:flex" aria-label="Primary navigation">
           {coreItems.map(({ href, label, icon: Icon }) => (
-            <Link key={href} href={href} aria-current={isActive(href) ? "page" : undefined} className={`flex items-center gap-1.5 px-3 py-2 rounded-lg text-sm transition-colors ${isActive(href) ? "bg-white/10 text-white" : "text-slate-400 hover:text-white hover:bg-white/5"}`}>
-              <Icon className="w-4 h-4" />
+            <Link
+              key={href}
+              href={href}
+              data-nav-href={href}
+              className={`${routeLinkClass} flex items-center gap-1.5 px-3 py-2 text-sm`}
+            >
+              <Icon className="h-4 w-4" aria-hidden="true" />
               {label}
             </Link>
           ))}
 
-          <div className="relative" onMouseEnter={() => setMoreOpen(true)} onMouseLeave={() => setMoreOpen(false)}>
-            <button onClick={() => setMoreOpen((v) => !v)} className="flex items-center gap-1.5 px-3 py-2 rounded-lg text-sm text-slate-400 hover:text-white hover:bg-white/5" aria-haspopup="true" aria-expanded={moreOpen} aria-controls="more-gd-menu">
-              <Keyboard className="w-4 h-4" />
+          <details data-header-menu className="group relative">
+            <summary
+              className="flex cursor-pointer list-none items-center gap-1.5 rounded-lg px-3 py-2 text-sm text-slate-400 transition-colors hover:bg-white/5 hover:text-white [&::-webkit-details-marker]:hidden"
+              aria-label="More Geometry Dash pages"
+            >
+              <Keyboard className="h-4 w-4" aria-hidden="true" />
               More GD
-              <ChevronDown className="w-3 h-3" />
-            </button>
-            {moreOpen && (
-              <div id="more-gd-menu" className="absolute right-0 top-full pt-2 w-56">
-                <div className="grid max-h-[70vh] overflow-y-auto bg-[#0b1021] border border-white/10 rounded-xl p-2 shadow-2xl">
-                  {moreItems.map(([href, label]) => (
-                    <Link key={href} href={href} aria-current={isActive(href) ? "page" : undefined} className="px-3 py-2 rounded-lg text-sm text-slate-300 hover:text-white hover:bg-white/5">{label}</Link>
-                  ))}
-                </div>
+              <ChevronDown className="h-3 w-3 transition-transform group-open:rotate-180" aria-hidden="true" />
+            </summary>
+            <div className="absolute right-0 top-full w-56 pt-2">
+              <div className="grid max-h-[70vh] overflow-y-auto rounded-xl border border-white/10 bg-[#0b1021] p-2 shadow-2xl">
+                {moreItems.map(([href, label]) => (
+                  <Link
+                    key={href}
+                    href={href}
+                    data-nav-href={href}
+                    className={`${routeLinkClass} px-3 py-2 text-sm text-slate-300`}
+                  >
+                    {label}
+                  </Link>
+                ))}
               </div>
-            )}
-          </div>
+            </div>
+          </details>
         </nav>
 
-        <button className="lg:hidden p-2 text-slate-300" onClick={() => setMobileOpen((v) => !v)} aria-label={mobileOpen ? "Close menu" : "Open menu"} aria-expanded={mobileOpen} aria-controls="mobile-navigation">
-          {mobileOpen ? <X /> : <Menu />}
-        </button>
-      </div>
+        <details data-header-menu className="group lg:hidden">
+          <summary
+            className="cursor-pointer list-none rounded-lg p-2 text-slate-300 transition-colors hover:bg-white/5 hover:text-white [&::-webkit-details-marker]:hidden"
+            aria-label="Toggle navigation menu"
+          >
+            <Menu className="h-6 w-6 group-open:hidden" aria-hidden="true" />
+            <X className="hidden h-6 w-6 group-open:block" aria-hidden="true" />
+          </summary>
 
-      {mobileOpen && (
-        <div id="mobile-navigation" className="lg:hidden absolute top-full inset-x-0 max-h-[82vh] overflow-y-auto border-b border-white/10 bg-[#0b1021] p-4 shadow-2xl">
-          <div className="grid gap-1">
-            {coreItems.map(({ href, label, icon: Icon }) => (
-              <Link key={href} href={href} aria-current={isActive(href) ? "page" : undefined} onClick={() => setMobileOpen(false)} className={`flex items-center gap-3 px-4 py-3 rounded-lg ${isActive(href) ? "bg-white/10 text-white" : "text-slate-300 hover:bg-white/5"}`}>
-                <Icon className="w-4 h-4" />
-                {label}
-              </Link>
-            ))}
-            <div className="mt-3 pt-3 border-t border-white/10">
-              <p className="px-4 mb-2 text-xs uppercase tracking-widest text-slate-500">More GD</p>
-              {moreItems.map(([href, label]) => (
-                <Link key={href} href={href} aria-current={isActive(href) ? "page" : undefined} onClick={() => setMobileOpen(false)} className="block px-4 py-2.5 rounded-lg text-slate-400 hover:text-white hover:bg-white/5">{label}</Link>
+          <div
+            id="mobile-navigation"
+            className="absolute inset-x-0 top-full max-h-[82vh] overflow-y-auto border-b border-white/10 bg-[#0b1021] p-4 shadow-2xl"
+          >
+            <nav className="grid gap-1" aria-label="Mobile navigation">
+              {coreItems.map(({ href, label, icon: Icon }) => (
+                <Link
+                  key={href}
+                  href={href}
+                  data-nav-href={href}
+                  className={`${routeLinkClass} flex items-center gap-3 px-4 py-3 text-slate-300`}
+                >
+                  <Icon className="h-4 w-4" aria-hidden="true" />
+                  {label}
+                </Link>
               ))}
-              <Link href="/sitemap" onClick={() => setMobileOpen(false)} className="mt-1 block px-4 py-2.5 rounded-lg font-semibold text-blue-400 hover:text-blue-300 hover:bg-white/5">
-                All tools & guides →
-              </Link>
-            </div>
-            <div className="mt-3 pt-3 border-t border-white/10 grid grid-cols-3 gap-2">
-              <Link href="/about" onClick={() => setMobileOpen(false)} className="text-center p-2 text-sm text-slate-500 hover:text-white">About</Link>
-              <Link href="/contact" onClick={() => setMobileOpen(false)} className="text-center p-2 text-sm text-slate-500 hover:text-white">Contact</Link>
-              <Link href="/sitemap" onClick={() => setMobileOpen(false)} className="text-center p-2 text-sm text-slate-500 hover:text-white">Sitemap</Link>
-            </div>
+
+              <div className="mt-3 border-t border-white/10 pt-3">
+                <p className="mb-2 px-4 text-xs uppercase tracking-widest text-slate-500">More GD</p>
+                {moreItems.map(([href, label]) => (
+                  <Link
+                    key={href}
+                    href={href}
+                    data-nav-href={href}
+                    className={`${routeLinkClass} block px-4 py-2.5`}
+                  >
+                    {label}
+                  </Link>
+                ))}
+                <Link
+                  href="/sitemap"
+                  data-nav-href="/sitemap"
+                  className="nav-route-link mt-1 block rounded-lg px-4 py-2.5 font-semibold text-blue-400 hover:bg-white/5 hover:text-blue-300"
+                >
+                  All tools & guides →
+                </Link>
+              </div>
+
+              <div className="mt-3 grid grid-cols-3 gap-2 border-t border-white/10 pt-3">
+                <Link href="/about" data-nav-href="/about" className="nav-route-link p-2 text-center text-sm text-slate-500 hover:text-white">
+                  About
+                </Link>
+                <Link href="/contact" data-nav-href="/contact" className="nav-route-link p-2 text-center text-sm text-slate-500 hover:text-white">
+                  Contact
+                </Link>
+                <Link href="/sitemap" data-nav-href="/sitemap" className="nav-route-link p-2 text-center text-sm text-slate-500 hover:text-white">
+                  Sitemap
+                </Link>
+              </div>
+            </nav>
           </div>
-        </div>
-      )}
+        </details>
+      </div>
     </header>
   );
 }
