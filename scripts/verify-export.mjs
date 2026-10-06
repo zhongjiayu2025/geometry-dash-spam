@@ -637,6 +637,12 @@ if (
   );
 }
 
+if (dragClientSource.includes("This page measures browser-registered inputs")) {
+  infrastructureErrors.push(
+    "DragClickTest measurement limits must stay in the server-rendered InputToolGuide"
+  );
+}
+
 const ghostingClientSource = supportClientSources.find(([file]) => file === "KeyboardGhostingTest.tsx")?.[1] ?? "";
 if (
   ghostingClientSource.includes("<h1") ||
@@ -699,6 +705,15 @@ if (!rolloverClientSource.includes("if (event.repeat) return;")) {
   );
 }
 
+if (
+  rolloverClientSource.includes("What this result means") ||
+  rolloverClientSource.includes("AlertCircle")
+) {
+  infrastructureErrors.push(
+    "KeyRolloverTest explanatory limits must stay in the server-rendered InputToolGuide"
+  );
+}
+
 const doubleClickClientSource = supportClientSources.find(([file]) => file === "DoubleClickTest.tsx")?.[1] ?? "";
 if (
   !doubleClickClientSource.includes("pendingTouchRef") ||
@@ -721,6 +736,12 @@ if (
 ) {
   infrastructureErrors.push(
     "DoubleClickTest must merge per-input measurement updates into one React state transition"
+  );
+}
+
+if (doubleClickClientSource.includes("Very short intervals can come from intentional fast clicking")) {
+  infrastructureErrors.push(
+    "DoubleClickTest measurement limits must stay in the server-rendered InputToolGuide"
   );
 }
 
