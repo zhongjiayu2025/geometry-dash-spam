@@ -385,6 +385,7 @@ if (existsSync(llmsPath)) {
 
 const layoutSource = readFileSync(join(process.cwd(), "app", "layout.tsx"), "utf8");
 const headerSource = readFileSync(join(process.cwd(), "components", "Header.tsx"), "utf8");
+const headerRouteStateSource = readFileSync(join(process.cwd(), "components", "HeaderRouteState.tsx"), "utf8");
 const cpsClientSource = readFileSync(join(process.cwd(), "components", "CpsTest.tsx"), "utf8");
 const waveClientSource = readFileSync(join(process.cwd(), "components", "WaveSimulator.tsx"), "utf8");
 const gameCanvasSource = readFileSync(join(process.cwd(), "components", "GameCanvas.tsx"), "utf8");
@@ -413,6 +414,21 @@ for (const utilityRoute of ["/jitter-click", "/butterfly-click", "/drag-click"])
       `Global Header should not promote lower-priority utility route ${utilityRoute}`
     );
   }
+}
+
+if (headerSource.includes('"use client"')) {
+  infrastructureErrors.push("Global Header must stay server-rendered; isolate navigation state in HeaderRouteState");
+}
+
+if (!headerSource.includes("<details") || !headerSource.includes("HeaderRouteState")) {
+  infrastructureErrors.push("Global Header must use native details menus plus the tiny route-state helper");
+}
+
+if (
+  !headerRouteStateSource.includes("usePathname") ||
+  !headerRouteStateSource.includes("data-nav-href")
+) {
+  infrastructureErrors.push("HeaderRouteState must own active-route state without hydrating the full Header");
 }
 
 if (cpsClientSource.includes("RelatedTools") || cpsClientSource.includes("How is CPS Calculated?")) {
