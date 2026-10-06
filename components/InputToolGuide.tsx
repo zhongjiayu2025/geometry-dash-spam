@@ -99,7 +99,7 @@ export default function InputToolGuide({ tool }: { tool: InputToolGuideKey }) {
   return (
     <section
       data-support-guide={tool}
-      className="mx-auto mt-10 w-full max-w-5xl space-y-6"
+      className="defer-render mx-auto mt-10 w-full max-w-5xl space-y-6"
       aria-labelledby={`${tool}-guide-heading`}
     >
       <div className="rounded-2xl border border-white/10 bg-slate-900/30 p-6 md:p-8">
