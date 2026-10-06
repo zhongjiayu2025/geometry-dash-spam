@@ -1,5 +1,6 @@
 import ButterflyClickTest from "../../components/ButterflyClickTest";
 import RelatedTools from "../../components/RelatedTools";
+import ClickTechniqueGuide from "../../components/ClickTechniqueGuide";
 import { Metadata } from "next";
 
 export const metadata: Metadata = {
@@ -24,6 +25,7 @@ export default function ButterflyClickPage() {
   return (
     <>
       <ButterflyClickTest />
+      <ClickTechniqueGuide variant="butterfly" />
       <RelatedTools currentTool="butterfly" />
     </>
   );
