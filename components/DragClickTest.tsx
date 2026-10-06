@@ -1,10 +1,8 @@
 "use client";
 
 import React, { useEffect, useRef, useState } from "react";
-import dynamic from "next/dynamic";
 import { Check, MousePointer2, RotateCcw, Share2, Trophy } from "lucide-react";
 
-const RelatedTools = dynamic(() => import("./RelatedTools"));
 
 const TEST_MS = 10000;
 
@@ -285,8 +283,6 @@ export default function DragClickTest() {
       <div className="mt-8 rounded-xl border border-white/10 bg-slate-900/25 p-5 text-sm leading-6 text-slate-400">
         This page measures browser-registered inputs, not the electrical behavior of a mouse switch. Use repeated runs on the same setup when comparing technique changes.
       </div>
-
-      <RelatedTools currentTool="dragClick" />
-    </div>
+</div>
   );
 }
