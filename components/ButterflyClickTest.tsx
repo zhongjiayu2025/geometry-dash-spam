@@ -1,7 +1,7 @@
 "use client";
 
 import React, { useState, useEffect, useRef, useCallback } from 'react';
-import { MousePointer2, RotateCcw, Timer, Fingerprint, Mouse, ShieldCheck, Zap, Activity, Trophy, Volume2, VolumeX, Share2, Check } from 'lucide-react';
+import { MousePointer2, RotateCcw, Timer, Fingerprint, Trophy, Volume2, VolumeX, Share2, Check } from 'lucide-react';
 
 const playClickSound = (audioCtx: AudioContext | null) => {
   if (!audioCtx) return;
@@ -286,59 +286,6 @@ const ButterflyClickTest: React.FC = () => {
         </div>
       </div>
 
-      {/* SEO Content / Tutorial - EXPANDED */}
-      <section className="space-y-8">
-         <div className="bg-slate-900/40 border border-white/5 rounded-2xl p-8 md:p-12">
-            <h2 className="text-3xl font-display font-bold text-white mb-6">What is Butterfly Clicking?</h2>
-            <div className="prose prose-invert prose-lg max-w-none text-slate-300">
-                <p>
-                    <strong>Butterfly clicking</strong> involves using two fingers (usually the index and middle finger) to hit the mouse button in an alternating rhythm. Alternating two fingers can change how quickly and consistently repeated clicks are produced, but results vary by player and mouse.
-                </p>
-                
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-8 mt-8">
-                    <div>
-                        <h3 className="text-xl font-bold text-white mb-3 flex items-center gap-2">
-                             <Zap className="w-5 h-5 text-pink-400" /> Technique Guide
-                        </h3>
-                        <ul className="list-disc pl-5 space-y-2 text-sm">
-                            <li><strong>Positioning:</strong> Place both fingers on the Left Mouse Button (LMB). Lift one while the other strikes.</li>
-                            <li><strong>Rhythm:</strong> Think of it like a drum roll. Left-Right-Left-Right.</li>
-                            <li><strong>Double Clicking:</strong> Some mice may register unintended bounce or double clicks. Treat that as device behavior rather than a skill requirement.</li>
-                        </ul>
-                    </div>
-                    <div>
-                         <h3 className="text-xl font-bold text-white mb-3 flex items-center gap-2">
-                             <Mouse className="w-5 h-5 text-blue-400" /> Best Mice for Butterfly
-                        </h3>
-                         <ul className="list-disc pl-5 space-y-2 text-sm">
-                            <li><strong>Glorious Model O:</strong> A commonly discussed shape for butterfly clicking; verify current switch and debounce behavior for the exact model.</li>
-                            <li><strong>Razer Viper Mini:</strong> Optical-switch behavior differs from mechanical debounce designs; compare your own results rather than assuming a fixed CPS cap.</li>
-                            <li><strong>Logitech G Pro:</strong> Button shape and click feel may suit some grips better than others.</li>
-                        </ul>
-                    </div>
-                </div>
-            </div>
-        </div>
-
-        {/* Why use it in GD? */}
-        <div className="bg-gradient-to-r from-purple-900/20 to-pink-900/20 border border-pink-500/20 rounded-2xl p-8">
-             <h3 className="text-2xl font-bold text-white mb-4">Why use Butterfly Clicking in Geometry Dash?</h3>
-             <p className="text-slate-300 leading-relaxed">
-                Butterfly clicking splits repeated inputs between two fingers, which may feel more sustainable or controllable for some players during longer rapid-input sections. That does not make it universally better for Geometry Dash: compare it with your normal method using the same device, test length and wave difficulty, then keep the technique that produces the most repeatable control.
-             </p>
-        </div>
-
-        <div className="flex flex-col md:flex-row gap-4">
-             <div className="flex-1 bg-slate-950/50 p-6 rounded-xl border border-white/5">
-                 <h4 className="font-bold text-white mb-2 flex items-center gap-2"><ShieldCheck className="w-4 h-4 text-green-400"/> Is it Cheating?</h4>
-                 <p className="text-xs text-slate-400">Rules can vary by leaderboard or community. Check the rules of the specific competition or list before using modified input behavior.</p>
-             </div>
-             <div className="flex-1 bg-slate-950/50 p-6 rounded-xl border border-white/5">
-                 <h4 className="font-bold text-white mb-2 flex items-center gap-2"><Activity className="w-4 h-4 text-orange-400"/> Health Check</h4>
-                 <p className="text-xs text-slate-400">Any repetitive clicking technique can become uncomfortable. Use a relaxed posture, take breaks and stop if you feel pain or numbness.</p>
-             </div>
-        </div>
-      </section>
     </div>
   );
 };
