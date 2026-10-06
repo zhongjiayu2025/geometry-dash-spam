@@ -1,6 +1,7 @@
 "use client";
 
 import React, { useState, useEffect, useRef } from 'react';
+import { isInteractiveKeyboardTarget } from "../lib/inputTarget";
 
 import { Keyboard, RotateCcw } from 'lucide-react';
 
@@ -27,6 +28,7 @@ export default function KeyboardLatencyTest() {
 
     useEffect(() => {
         const handleKeyDown = (e: KeyboardEvent) => {
+            if (isInteractiveKeyboardTarget(e.target)) return;
             if (e.repeat) return; // Ignore hold repetition
             
             // Prevent scrolling
@@ -39,6 +41,7 @@ export default function KeyboardLatencyTest() {
         };
 
         const handleKeyUp = (e: KeyboardEvent) => {
+            if (isInteractiveKeyboardTarget(e.target)) return;
             const startTime = pressTimes.current.get(e.code);
 
             if (startTime === undefined) {
