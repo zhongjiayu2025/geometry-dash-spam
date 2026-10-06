@@ -24,6 +24,20 @@ export const metadata: Metadata = {
 };
 
 export default function ButterflyClickPage() {
+  const schema = {
+    "@context": "https://schema.org",
+    "@type": "WebApplication",
+    name: "Butterfly Click Test",
+    url: "https://geometrydashspam.cc/butterfly-click",
+    description: "Practice butterfly clicking and compare two-finger click speed and consistency in your browser.",
+    applicationCategory: "UtilityApplication",
+    operatingSystem: "Any",
+    isAccessibleForFree: true,
+    isPartOf: { "@id": "https://geometrydashspam.cc/#website" },
+    publisher: { "@id": "https://geometrydashspam.cc/#organization" },
+    offers: { "@type": "Offer", price: "0", priceCurrency: "USD" },
+  };
+
   return (
     <>
             <Breadcrumbs items={[{ label: "Butterfly Click", href: "/butterfly-click", active: true }]} />
