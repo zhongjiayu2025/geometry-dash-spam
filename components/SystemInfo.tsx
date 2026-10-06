@@ -132,7 +132,7 @@ export default function SystemInfo() {
           icon={Maximize}
           title="Screen Size (CSS px)"
           value={`${info.screenWidth} x ${info.screenHeight}`}
-          detail={`CSS pixels · devicePixelRatio: ${info.pixelRatio}x`}
+          detail={`CSS px · DPR: ${info.pixelRatio}x`}
         />
         <InfoCard icon={Cpu} title="CPU Threads" value={info.hardwareConcurrency} detail="Logical cores available" />
         <InfoCard icon={Eye} title="Color Depth" value={`${info.colorDepth}-bit`} detail="Display output" />

@@ -1728,7 +1728,7 @@ if (
 
 if (
   !systemInfoClientSource.includes('title="Screen Size (CSS px)"') ||
-  !systemInfoClientSource.includes("CSS pixels · devicePixelRatio:")
+  !systemInfoClientSource.includes("CSS px · DPR:")
 ) {
   infrastructureErrors.push(
     "SystemInfo must describe Screen API dimensions as CSS pixels rather than claiming native panel resolution"
