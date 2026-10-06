@@ -1,4 +1,5 @@
 import DoubleClickTest from "../../components/DoubleClickTest";
+import Breadcrumbs from "../../components/Breadcrumbs";
 import ToolWebApplicationSchema from "../../components/ToolWebApplicationSchema";
 import RelatedTools from "../../components/RelatedTools";
 import InputToolGuide from "../../components/InputToolGuide";
@@ -30,6 +31,7 @@ export default function DoubleClickPage() {
         path="/double-click"
         description="Check for unusually rapid repeated mouse clicks and inspect time intervals between registered clicks in your browser."
       />
+      <Breadcrumbs items={[{ label: "Double Click", href: "/double-click", active: true }]} />
       <div className="mb-8 md:mb-12 text-center">
         <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-white/5 border border-white/10 text-xs font-mono text-slate-400 mb-4">
           CLICK INTERVAL CHECK
