@@ -5,6 +5,8 @@ import dynamic from "next/dynamic";
 import { Mouse, MousePointer2, Timer, Trophy, Volume2, VolumeX, Zap } from "lucide-react";
 import type { ClickTone } from "../lib/clickSound";
 import { useLazyClickSound } from "../lib/useLazyClickSound";
+import { useExactCountdown } from "../lib/useExactCountdown";
+import { usePersistentBestNumber } from "../lib/usePersistentBestNumber";
 
 const SecondaryClickFinishedActions = dynamic(
   () => import("./SecondaryClickFinishedActions"),
@@ -94,23 +96,16 @@ export default function SecondaryClickTest({ variant }: { variant: SecondaryClic
   const [finished, setFinished] = useState(false);
   const [clicks, setClicks] = useState(0);
   const [timeLeft, setTimeLeft] = useState(10);
-  const [bestCps, setBestCps] = useState<number | null>(null);
+  const [bestCps, commitBestCps] = usePersistentBestNumber(config.bestKey);
   const [soundEnabled, setSoundEnabled] = useState(false);
 
-  const timerRef = useRef<number | null>(null);
-  const endTimerRef = useRef<number | null>(null);
   const clicksRef = useRef(0);
   const startTimeRef = useRef(0);
   const pendingTouchRef = useRef<{ pointerId: number; x: number; y: number } | null>(null);
 
   useEffect(() => {
     setSoundEnabled(localStorage.getItem(config.soundKey) === "true");
-    const saved = localStorage.getItem(config.bestKey);
-    if (saved) {
-      const parsed = Number.parseFloat(saved);
-      if (Number.isFinite(parsed)) setBestCps(parsed);
-    }
-  }, [config.bestKey, config.soundKey]);
+  }, [config.soundKey]);
 
 
 
@@ -137,14 +132,8 @@ export default function SecondaryClickTest({ variant }: { variant: SecondaryClic
     setClicks(finalClicks);
     setFinished(true);
     setActive(false);
-    setBestCps((previous) => {
-      if (previous === null || finalCps > previous) {
-        localStorage.setItem(config.bestKey, finalCps.toString());
-        return finalCps;
-      }
-      return previous;
-    });
-  }, [config.bestKey]);
+    commitBestCps(finalCps);
+  }, [commitBestCps]);
 
   const startTest = () => {
     const now = performance.now();
@@ -208,8 +197,17 @@ export default function SecondaryClickTest({ variant }: { variant: SecondaryClic
     registerInput();
   };
 
+  const cancelCountdown = useExactCountdown({
+    running: active && !finished,
+    durationMs: 10000,
+    startTimeRef,
+    onTick: (remainingMs) => setTimeLeft(remainingMs / 1000),
+    onFinish: finishTest,
+  });
+
   const reset = (event?: React.MouseEvent) => {
     event?.stopPropagation();
+    cancelCountdown();
     setActive(false);
     setFinished(false);
     clicksRef.current = 0;
@@ -217,32 +215,7 @@ export default function SecondaryClickTest({ variant }: { variant: SecondaryClic
     setClicks(0);
     setTimeLeft(10);
     pendingTouchRef.current = null;
-    if (timerRef.current) window.clearInterval(timerRef.current);
-    if (endTimerRef.current) window.clearTimeout(endTimerRef.current);
   };
-
-  useEffect(() => {
-    if (!active || finished) return;
-
-    const updateTimer = () => {
-      const elapsed = (performance.now() - startTimeRef.current) / 1000;
-      setTimeLeft(Math.max(0, 10 - elapsed));
-    };
-
-    updateTimer();
-    timerRef.current = window.setInterval(updateTimer, 100);
-
-    const elapsedMs = performance.now() - startTimeRef.current;
-    endTimerRef.current = window.setTimeout(
-      finishTest,
-      Math.max(0, 10000 - elapsedMs)
-    );
-
-    return () => {
-      if (timerRef.current) window.clearInterval(timerRef.current);
-      if (endTimerRef.current) window.clearTimeout(endTimerRef.current);
-    };
-  }, [active, finished, finishTest]);
 
   const renderedClicks = active ? clicksRef.current : clicks;
   const cps = finished

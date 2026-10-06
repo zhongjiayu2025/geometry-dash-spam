@@ -5,6 +5,7 @@ import React, { useState, useEffect, useRef, useCallback } from 'react';
 import dynamic from 'next/dynamic';
 import { MousePointer2, Timer, Clock, Trophy, Volume2, VolumeX } from 'lucide-react';
 import { useLazyClickSound } from '../lib/useLazyClickSound';
+import { useExactCountdown } from '../lib/useExactCountdown';
 import type { CpsRun } from '../lib/cpsRecords';
 
 const CpsRunHistory = dynamic(() => import('./CpsRunHistory'), { ssr: false });
@@ -23,8 +24,6 @@ const CpsTest: React.FC = () => {
   const [bestScores, setBestScores] = useState<Record<number, number>>({});
   const [runHistory, setRunHistory] = useState<CpsRun[]>([]);
   
-  const timerRef = useRef<number | null>(null);
-  const endTimerRef = useRef<number | null>(null);
   const clicksRef = useRef(0);
   const testStartRef = useRef(0);
   const clickTimesRef = useRef<number[]>([]);
@@ -140,20 +139,6 @@ const CpsTest: React.FC = () => {
     registerInput();
   };
 
-  const reset = (e?: React.MouseEvent) => {
-    e?.stopPropagation();
-    setActive(false);
-    setFinished(false);
-    clicksRef.current = 0;
-    clickTimesRef.current = [];
-    testStartRef.current = 0;
-    setClicks(0);
-    setTimeLeft(selectedDuration);
-    if (timerRef.current) clearInterval(timerRef.current);
-    if (endTimerRef.current) clearTimeout(endTimerRef.current);
-  };
-
-
   const finishTest = useCallback(() => {
     const finalClicks = clicksRef.current;
     const finalCps = finalClicks / selectedDuration;
@@ -170,28 +155,25 @@ const CpsTest: React.FC = () => {
     });
   }, [selectedDuration]);
 
-  useEffect(() => {
-    if (active && !finished) {
-      const updateTimer = () => {
-        const elapsed = (performance.now() - testStartRef.current) / 1000;
-        setTimeLeft(Math.max(0, selectedDuration - elapsed));
-      };
+  const cancelCountdown = useExactCountdown({
+    running: active && !finished,
+    durationMs: selectedDuration * 1000,
+    startTimeRef: testStartRef,
+    onTick: (remainingMs) => setTimeLeft(remainingMs / 1000),
+    onFinish: finishTest,
+  });
 
-      updateTimer();
-      timerRef.current = window.setInterval(updateTimer, 100);
-
-      const elapsedMs = performance.now() - testStartRef.current;
-      endTimerRef.current = window.setTimeout(
-        finishTest,
-        Math.max(0, selectedDuration * 1000 - elapsedMs)
-      );
-    }
-
-    return () => {
-      if (timerRef.current) clearInterval(timerRef.current);
-      if (endTimerRef.current) clearTimeout(endTimerRef.current);
-    };
-  }, [active, finished, selectedDuration, finishTest]);
+  const reset = (e?: React.MouseEvent) => {
+    e?.stopPropagation();
+    cancelCountdown();
+    setActive(false);
+    setFinished(false);
+    clicksRef.current = 0;
+    clickTimesRef.current = [];
+    testStartRef.current = 0;
+    setClicks(0);
+    setTimeLeft(selectedDuration);
+  };
 
   const renderedClicks = active ? clicksRef.current : clicks;
   const cps = finished
