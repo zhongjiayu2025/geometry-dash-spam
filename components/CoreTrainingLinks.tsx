@@ -74,7 +74,7 @@ export default function CoreTrainingLinks({ variant }: { variant: "spam" | "wave
   };
 
   return (
-    <nav className="mx-auto mt-8 mb-8 w-full max-w-5xl" aria-label={isWave ? "Continue wave training" : "Continue spam training"}>
+    <nav className="defer-render mx-auto mt-8 mb-8 w-full max-w-5xl" aria-label={isWave ? "Continue wave training" : "Continue spam training"}>
       <h2 className="mb-4 border-l-4 border-blue-500 px-2 text-xl font-display font-bold text-white">
         {isWave ? "Continue Wave Training" : "Continue Geometry Dash Spam Training"}
       </h2>
