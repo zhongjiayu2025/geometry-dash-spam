@@ -3,11 +3,11 @@
 
 import React, { useState, useEffect, useRef, useCallback } from 'react';
 import dynamic from 'next/dynamic';
-import { MousePointer2, RotateCcw, Timer, Check, Clock, Trophy, Share2, ArrowRight, Volume2, VolumeX } from 'lucide-react';
-import Link from 'next/link';
+import { MousePointer2, Timer, Clock, Trophy, Volume2, VolumeX } from 'lucide-react';
 import type { ClickSoundEngine } from '../lib/clickSound';
 
 const CpsRunHistory = dynamic(() => import('./CpsRunHistory'), { ssr: false });
+const CpsFinishedActions = dynamic(() => import('./CpsFinishedActions'), { ssr: false });
 
 interface CpsRun {
   duration: number;
@@ -442,55 +442,13 @@ const CpsTest: React.FC = () => {
                )}
 
                {finished && (
-                 <div className="grid grid-cols-3 gap-1.5 sm:gap-2 w-full mb-5 sm:mb-6 relative z-10">
-                   <div className="bg-black/25 rounded-lg p-2 sm:p-3">
-                     <div className="text-[10px] uppercase tracking-wider text-slate-500">Peak 1s CPS</div>
-                     <div className="font-mono font-bold text-white">{timingStats.peakCps.toFixed(2)}</div>
-                   </div>
-                   <div className="bg-black/25 rounded-lg p-2 sm:p-3">
-                     <div className="text-[10px] uppercase tracking-wider text-slate-500">Consistency</div>
-                     <div className="font-mono font-bold text-white">
-                       {timingStats.consistency === null ? 'N/A' : `${timingStats.consistency.toFixed(0)}%`}
-                     </div>
-                   </div>
-                   <div className="bg-black/25 rounded-lg p-2 sm:p-3">
-                     <div className="text-[10px] uppercase tracking-wider text-slate-500">Avg Interval</div>
-                     <div className="font-mono font-bold text-white">
-                       {timingStats.averageInterval === null ? 'N/A' : `${timingStats.averageInterval.toFixed(0)}ms`}
-                     </div>
-                   </div>
-                 </div>
+                 <CpsFinishedActions
+                   timingStats={timingStats}
+                   copied={copied}
+                   onReset={() => reset()}
+                   onShare={shareScore}
+                 />
                )}
-
-               {finished && (
-                 <p className="mb-5 max-w-md text-xs leading-5 text-slate-500 relative z-10">
-                   Consistency is a site-defined browser diagnostic based on variation between registered click intervals.
-                   It is not an official Geometry Dash metric or a laboratory hardware measurement.
-                 </p>
-               )}
-
-               {finished && (
-                 <div className="animate-in fade-in duration-300 relative z-10 flex flex-wrap justify-center gap-2 sm:gap-3">
-                   <button 
-                    onClick={reset}
-                    className="px-4 py-2.5 sm:px-6 sm:py-3 bg-white text-blue-900 font-bold rounded-lg flex items-center gap-2 hover:bg-blue-50 transition-colors shadow-lg"
-                   >
-                     <RotateCcw className="w-5 h-5" /> TRY AGAIN
-                   </button>
-                   <Link
-                    href="/geometry-dash-wave"
-                    className="px-4 py-2.5 sm:px-5 sm:py-3 bg-slate-800 text-white font-bold rounded-lg flex items-center gap-2 hover:bg-slate-700 transition-colors border border-white/10"
-                   >
-                     Train Wave Control <ArrowRight className="w-4 h-4" />
-                   </Link>
-                   <button 
-                    onClick={shareScore}
-                    aria-label="Share Score"
-                    className={`px-4 py-3 bg-blue-600 text-white font-bold rounded-lg flex items-center gap-2 hover:bg-blue-500 transition-colors shadow-lg ${copied ? 'bg-green-500' : ''}`}
-                   >
-                     {copied ? <Check className="w-5 h-5" /> : <Share2 className="w-5 h-5" />}
-                   </button>
-                 </div>
                )}
            </div>
         </div>
