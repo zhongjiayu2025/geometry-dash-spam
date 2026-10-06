@@ -439,6 +439,7 @@ const difficultySelectorSource = readFileSync(join(process.cwd(), "components", 
 const gameCanvasSource = readFileSync(join(process.cwd(), "components", "GameCanvas.tsx"), "utf8");
 const waveAudioSource = readFileSync(join(process.cwd(), "lib", "waveAudio.ts"), "utf8");
 const waveRendererSource = readFileSync(join(process.cwd(), "lib", "waveRenderer.ts"), "utf8");
+const waveRuntimeSource = readFileSync(join(process.cwd(), "lib", "waveRuntime.ts"), "utf8");
 const waveRunOverlaysSource = readFileSync(join(process.cwd(), "components", "WaveRunOverlays.tsx"), "utf8");
 const clickSoundSource = readFileSync(join(process.cwd(), "lib", "clickSound.ts"), "utf8");
 const secondaryClickFinishedSource = readFileSync(join(process.cwd(), "components", "SecondaryClickFinishedActions.tsx"), "utf8");
@@ -1090,7 +1091,7 @@ const clientSourceBudgets = [
   ["DragClickTest.tsx", dragClientSource, 10000],
   ["SpacebarCounter.tsx", spacebarClientSource, 12000],
   ["PersonalStats.tsx", personalStatsSource, 13500],
-  ["GameCanvas.tsx", gameCanvasSource, 41000],
+  ["GameCanvas.tsx", gameCanvasSource, 33000],
 ];
 
 for (const [file, source, maxBytes] of clientSourceBudgets) {
@@ -1129,12 +1130,35 @@ if (
 }
 
 if (
-  !gameCanvasSource.includes("frameDeltaMs") ||
-  !gameCanvasSource.includes("difficulty.speed * frameFactor") ||
-  !gameCanvasSource.includes("playerY += gameState.current.velocityY * frameFactor") ||
-  gameCanvasSource.includes("runTime = now - gameState.current.startTime")
+  !gameCanvasSource.includes("import('../lib/waveRuntime')") ||
+  !gameCanvasSource.includes("runtime.advanceWaveFrame") ||
+  gameCanvasSource.includes("difficulty.speed * frameFactor") ||
+  gameCanvasSource.includes("playerY += gameState.current.velocityY * frameFactor") ||
+  !waveRuntimeSource.includes("frameDeltaMs") ||
+  !waveRuntimeSource.includes("difficultySpeed * frameFactor") ||
+  !waveRuntimeSource.includes("state.playerY += state.velocityY * frameFactor") ||
+  waveRuntimeSource.includes("runTime = now - state.startTime")
 ) {
-  infrastructureErrors.push("Wave physics must remain delta-time normalized instead of frame-rate dependent");
+  infrastructureErrors.push(
+    "Wave delta-time physics must stay in the first-run lazy waveRuntime chunk"
+  );
+}
+
+if (
+  gameCanvasSource.includes("const spawnObstacle") ||
+  gameCanvasSource.includes("const createExplosion") ||
+  gameCanvasSource.includes("const calculateConsistency") ||
+  gameCanvasSource.includes("const getRunStats") ||
+  gameCanvasSource.includes("particles = gameState.current.particles.filter") ||
+  !waveRuntimeSource.includes("function spawnWaveObstacle") ||
+  !waveRuntimeSource.includes("export function createWaveExplosion") ||
+  !waveRuntimeSource.includes("export function calculateWaveConsistency") ||
+  !waveRuntimeSource.includes("export function getWaveRunStats") ||
+  !waveRuntimeSource.includes("state.particles = state.particles.filter")
+) {
+  infrastructureErrors.push(
+    "Wave obstacle generation, effects, and run statistics must stay outside the initial GameCanvas chunk"
+  );
 }
 
 if (
