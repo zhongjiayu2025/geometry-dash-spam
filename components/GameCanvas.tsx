@@ -49,6 +49,11 @@ const GameCanvas: React.FC<GameCanvasProps> = memo(({ difficulty, status, onStat
       window.matchMedia('(pointer: coarse)').matches ||
       window.matchMedia('(max-width: 640px)').matches;
 
+    highScoreRef.current = 0;
+    setHighScore(0);
+    setRecentRuns([]);
+    setIsNewBest(false);
+
     const savedMuted = localStorage.getItem('gd_spam_muted');
     const muted = savedMuted === null ? true : savedMuted === 'true';
     mutedRef.current = muted;
