@@ -92,7 +92,7 @@ const GameCanvas: React.FC<GameCanvasProps> = memo(({ difficulty, status, onStat
   const containerRef = useRef<HTMLDivElement>(null);
   
   // Settings State
-  const [isMuted, setIsMuted] = useState<boolean>(false);
+  const [isMuted, setIsMuted] = useState<boolean>(true);
   const [isFullscreen, setIsFullscreen] = useState<boolean>(false);
   const [reduceMotion, setReduceMotion] = useState<boolean>(false);
 
@@ -113,7 +113,8 @@ const GameCanvas: React.FC<GameCanvasProps> = memo(({ difficulty, status, onStat
       window.matchMedia('(pointer: coarse)').matches ||
       window.matchMedia('(max-width: 640px)').matches;
 
-    setIsMuted(localStorage.getItem('gd_spam_muted') === 'true');
+    const savedMuted = localStorage.getItem('gd_spam_muted');
+    setIsMuted(savedMuted === null ? true : savedMuted === 'true');
     const savedMotion = localStorage.getItem('gd_spam_reduce_motion');
     setReduceMotion(
       savedMotion === 'true' ||
@@ -402,6 +403,22 @@ const GameCanvas: React.FC<GameCanvasProps> = memo(({ difficulty, status, onStat
         musicSchedulerRef.current = null;
     }
   }, []);
+
+  const toggleMute = useCallback((e: React.MouseEvent) => {
+      e.stopPropagation();
+      const nextMuted = !isMuted;
+      setIsMuted(nextMuted);
+      localStorage.setItem('gd_spam_muted', String(nextMuted));
+
+      if (nextMuted) {
+          stopMusic();
+          if (audioCtxRef.current?.state === 'running') {
+              void audioCtxRef.current.suspend();
+          }
+      } else {
+          initAudio();
+      }
+  }, [initAudio, isMuted, stopMusic]);
 
   const playSound = useCallback((type: 'crash' | 'win' | 'click' | 'newBest') => {
       if (isMuted || !audioCtxRef.current || !masterGainRef.current) return;
@@ -1034,7 +1051,7 @@ const GameCanvas: React.FC<GameCanvasProps> = memo(({ difficulty, status, onStat
      if (status === GameStatus.Lost || status === GameStatus.Won) {
          resetGame();
          onStatusChange(GameStatus.Playing);
-         initAudio();
+         if (!isMuted) initAudio();
          gameState.current.isHolding = true; 
          playSound('click');
          return;
@@ -1042,7 +1059,7 @@ const GameCanvas: React.FC<GameCanvasProps> = memo(({ difficulty, status, onStat
      
      if (status === GameStatus.Idle) {
          onStatusChange(GameStatus.Playing);
-         initAudio();
+         if (!isMuted) initAudio();
      }
      
      gameState.current.isHolding = true;
@@ -1058,7 +1075,7 @@ const GameCanvas: React.FC<GameCanvasProps> = memo(({ difficulty, status, onStat
      gameState.current.clickCount += 1;
 
      playSound('click');
-  }, [status, resetGame, onStatusChange, initAudio, playSound, showShareModal]);
+  }, [status, resetGame, onStatusChange, initAudio, isMuted, playSound, showShareModal]);
 
   const handleEnd = useCallback(() => {
      gameState.current.isHolding = false;
@@ -1287,7 +1304,7 @@ const GameCanvas: React.FC<GameCanvasProps> = memo(({ difficulty, status, onStat
               <button 
                   aria-label={isMuted ? "Unmute" : "Mute"}
                   aria-pressed={isMuted}
-                  onClick={(e) => { e.stopPropagation(); setIsMuted(!isMuted); localStorage.setItem('gd_spam_muted', String(!isMuted)); }} 
+                  onClick={toggleMute} 
                   className="p-2 bg-black/40 hover:bg-black/60 rounded-full text-white/70 hover:text-white backdrop-blur-md transition-colors"
               >
                   {isMuted ? <VolumeX className="w-5 h-5"/> : <Volume2 className="w-5 h-5"/>}
@@ -1322,7 +1339,7 @@ const GameCanvas: React.FC<GameCanvasProps> = memo(({ difficulty, status, onStat
               
               <button
                 onClick={() => {
-                    initAudio();
+                    if (!isMuted) initAudio();
                     onStatusChange(GameStatus.Playing);
                     focusGame();
                 }}
