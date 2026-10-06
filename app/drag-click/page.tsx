@@ -15,7 +15,7 @@ export const metadata: Metadata = {
     type: "website",
   },
   twitter: {
-    card: "summary",
+    card: "summary_large_image",
     title: "Drag Click Test | Friction Clicking Practice",
     description: "Practice drag clicking and measure registered click speed in a browser-based test.",
   },
