@@ -858,7 +858,6 @@ if (
   );
 }
 
-const rightClickClientSource = supportClientSources.find(([file]) => file === "RightClickTest.tsx")?.[1] ?? "";
 if (
   !rightClickClientSource.includes("touch-pan-y") ||
   rightClickClientSource.includes("select-none touch-none")
