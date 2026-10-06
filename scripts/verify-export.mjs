@@ -1727,6 +1727,15 @@ if (
 }
 
 if (
+  !systemInfoClientSource.includes('title="Screen Size (CSS px)"') ||
+  !systemInfoClientSource.includes("CSS pixels · devicePixelRatio:")
+) {
+  infrastructureErrors.push(
+    "SystemInfo must describe Screen API dimensions as CSS pixels rather than claiming native panel resolution"
+  );
+}
+
+if (
   !browserStorageSource.includes("export function readStorage") ||
   !browserStorageSource.includes("export function writeStorage") ||
   !browserStorageSource.includes("export function removeStorage") ||
