@@ -1046,7 +1046,7 @@ if (
 }
 
 if (
-  !reactionClientSource.includes("dynamic(() => import('./ReactionResult')") ||
+  !reactionClientSource.includes('import("./ReactionResult")') ||
   reactionClientSource.includes("navigator.share") ||
   reactionClientSource.includes("How to use this reaction test") ||
   !reactionPageSource.includes("How to use this reaction test")
@@ -1267,7 +1267,8 @@ if (
 if (
   !soundReactionClientSource.includes("useLazyClickSound") ||
   soundReactionClientSource.includes("import('../lib/clickSound')") ||
-  !soundReactionClientSource.includes("'soundReaction'") ||
+  soundReactionClientSource.includes('import("../lib/clickSound")') ||
+  !soundReactionClientSource.includes("soundReaction") ||
   soundReactionClientSource.includes("AudioContext") ||
   soundReactionClientSource.includes("createOscillator") ||
   soundReactionClientSource.includes("createGain")
@@ -1302,7 +1303,7 @@ if (
 }
 
 if (
-  !soundReactionClientSource.includes("dynamic(() => import('./SoundReactionResult')") ||
+  !soundReactionClientSource.includes('import("./SoundReactionResult")') ||
   soundReactionClientSource.includes("earlyClick") ||
   soundReactionClientSource.includes("Too Early!") ||
   !soundReactionResultSource.includes("Too Early!")
