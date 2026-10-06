@@ -19,10 +19,9 @@ export default function DoubleClickTest() {
 
   const lastClickTime = useRef(0);
   const clickIdRef = useRef(0);
+  const pendingTouchRef = useRef<{ pointerId: number; x: number; y: number } | null>(null);
 
-  const handlePointerDown = (event: React.PointerEvent<HTMLButtonElement>) => {
-    event.preventDefault();
-
+  const registerClick = () => {
     const now = performance.now();
     const previous = lastClickTime.current;
     lastClickTime.current = now;
@@ -48,6 +47,33 @@ export default function DoubleClickTest() {
         ...items,
       ].slice(0, 50)
     );
+  };
+
+  const handlePointerDown = (event: React.PointerEvent<HTMLButtonElement>) => {
+    if (event.pointerType === "touch") {
+      pendingTouchRef.current = {
+        pointerId: event.pointerId,
+        x: event.clientX,
+        y: event.clientY,
+      };
+      return;
+    }
+
+    event.preventDefault();
+    registerClick();
+  };
+
+  const handlePointerUp = (event: React.PointerEvent<HTMLButtonElement>) => {
+    const pending = pendingTouchRef.current;
+    if (!pending || pending.pointerId !== event.pointerId) return;
+
+    pendingTouchRef.current = null;
+    const moved = Math.hypot(event.clientX - pending.x, event.clientY - pending.y);
+    if (moved <= 12) registerClick();
+  };
+
+  const handlePointerCancel = () => {
+    pendingTouchRef.current = null;
   };
 
   const resetTest = () => {
@@ -115,7 +141,9 @@ export default function DoubleClickTest() {
             <button
               type="button"
               onPointerDown={handlePointerDown}
-              className="touch-none w-full h-64 rounded-3xl border-2 flex flex-col items-center justify-center gap-4 transition-all duration-75 group select-none bg-fuchsia-900/10 border-fuchsia-500/20 hover:bg-fuchsia-800/20 hover:border-fuchsia-500/30 active:scale-[0.99]"
+              onPointerUp={handlePointerUp}
+              onPointerCancel={handlePointerCancel}
+              className="touch-pan-y w-full h-64 rounded-3xl border-2 flex flex-col items-center justify-center gap-4 transition-all duration-75 group select-none bg-fuchsia-900/10 border-fuchsia-500/20 hover:bg-fuchsia-800/20 hover:border-fuchsia-500/30 active:scale-[0.99]"
             >
               <MousePointer2 className="w-16 h-16 text-fuchsia-500/50 group-hover:text-fuchsia-400 transition-colors" />
               <div className="text-center">
