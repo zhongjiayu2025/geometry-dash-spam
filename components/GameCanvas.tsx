@@ -4,7 +4,7 @@
 import React, { useRef, useEffect, useCallback, useState, memo } from 'react';
 import Link from 'next/link';
 import { DifficultyConfig, GameStatus } from '../types';
-import { WIN_TIME_MS, WAVE_SPEED_Y, GRAVITY } from '../constants';
+import { WIN_TIME_MS, WAVE_SPEED_Y } from '../constants';
 import { Trophy, AlertTriangle, Crown, Volume2, VolumeX, Maximize, Minimize, Activity, ZapOff, Share2, Check, RotateCcw, Menu, Zap, X, Copy } from 'lucide-react';
 
 interface GameCanvasProps {
@@ -20,8 +20,6 @@ interface Obstacle {
   width: number;
   topHeight: number;
   bottomY: number;
-  passed: boolean;
-  type: 'normal' | 'spike'; 
 }
 
 // Improved Particle for Shatter Effect
@@ -31,7 +29,6 @@ interface Particle {
   vx: number;
   vy: number;
   life: number;
-  maxLife: number;
   color: string;
   size: number;
   rotation: number;
@@ -193,7 +190,6 @@ const GameCanvas: React.FC<GameCanvasProps> = memo(({ difficulty, status, onStat
   // Audio Refs
   const audioCtxRef = useRef<AudioContext | null>(null);
   const masterGainRef = useRef<GainNode | null>(null);
-  const delayNodeRef = useRef<DelayNode | null>(null); // For echo/space
   const hiHatBufferRef = useRef<AudioBuffer | null>(null);
   
   const musicSchedulerRef = useRef<number | null>(null);
@@ -218,11 +214,8 @@ const GameCanvas: React.FC<GameCanvasProps> = memo(({ difficulty, status, onStat
     currentPattern: 'random' as PatternType,
     patternStep: 0,
     lastCenterY: 225, 
-    bgOffset: 0,
-    groundOffset: 0,
     shakeIntensity: 0,
     beatScale: 1.0, // For audio-visual sync
-    lastBeatTime: 0, // Track when the kick hit
     trailAccumulator: 0,
     clickIntervals: [] as number[],
     clickTimes: [] as number[],
@@ -273,7 +266,6 @@ const GameCanvas: React.FC<GameCanvasProps> = memo(({ difficulty, status, onStat
           feedback.connect(delay); // Loop back
           delayFilter.connect(ctx.destination); // Wet signal output
           
-          delayNodeRef.current = delay;
       }
     }
     if (audioCtxRef.current?.state === 'suspended') audioCtxRef.current.resume();
@@ -283,7 +275,6 @@ const GameCanvas: React.FC<GameCanvasProps> = memo(({ difficulty, status, onStat
   const triggerBeat = useCallback(() => {
      if (reduceMotion) return;
      gameState.current.beatScale = 1.015; 
-     gameState.current.lastBeatTime = Date.now();
   }, [reduceMotion]);
 
   const playKick = useCallback((time: number) => {
@@ -530,8 +521,6 @@ const GameCanvas: React.FC<GameCanvasProps> = memo(({ difficulty, status, onStat
       width: obstacleWidth,
       topHeight: topHeight,
       bottomY: bottomY,
-      passed: false,
-      type: 'normal'
     });
 
     gameState.current.lastObstacleX += obstacleWidth;
@@ -549,7 +538,6 @@ const GameCanvas: React.FC<GameCanvasProps> = memo(({ difficulty, status, onStat
         vx: Math.cos(angle) * speed,
         vy: Math.sin(angle) * speed,
         life: 1.0,
-        maxLife: 1.0,
         color: color,
         size: random() * 8 + 4,
         rotation: random() * Math.PI * 2,
@@ -666,11 +654,8 @@ const GameCanvas: React.FC<GameCanvasProps> = memo(({ difficulty, status, onStat
       lastCenterY: height / 2,
       patternStep: 0,
       currentPattern: 'random',
-      bgOffset: 0,
-      groundOffset: 0,
       shakeIntensity: 0,
       beatScale: 1.0,
-      lastBeatTime: 0,
       trailAccumulator: 0,
       clickIntervals: [],
       clickTimes: [],
@@ -723,7 +708,6 @@ const GameCanvas: React.FC<GameCanvasProps> = memo(({ difficulty, status, onStat
 
         const moveSpeed = difficulty.speed * frameFactor;
         gameState.current.distanceTraveled += moveSpeed;
-        gameState.current.bgOffset = (gameState.current.bgOffset + moveSpeed * 0.2) % canvas.width;
         
         gameState.current.stars.forEach(star => {
             star.x -= star.speed * (moveSpeed / 3);
