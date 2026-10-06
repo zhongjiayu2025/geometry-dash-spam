@@ -14,7 +14,15 @@ if (config.sources.length < 3) {
 }
 
 const [currentSource, legacySource, hubSource] = config.sources;
+const expectedVersion = config.currentVersion;
 const TIMEOUT_MS = 30000;
+
+if (
+  typeof expectedVersion !== "string" ||
+  !/^v\d+\.\d+\.\d+$/.test(expectedVersion)
+) {
+  throw new Error("Spam Challenge List currentVersion must be a semantic vX.Y.Z string.");
+}
 
 async function fetchText(url) {
   let lastError;
@@ -72,6 +80,13 @@ const currentText = textContent(currentHtml).toLowerCase();
 const legacyText = textContent(legacyHtml).toLowerCase();
 const hubText = textContent(hubHtml).toLowerCase();
 const currentHost = new URL(currentSource).hostname.toLowerCase();
+const liveVersion = currentText.match(/\bv\d+\.\d+\.\d+\b/)?.[0];
+
+if (liveVersion !== expectedVersion) {
+  throw new Error(
+    `Spam Challenge List version is stale: data has ${expectedVersion}, live app has ${liveVersion ?? "no detectable version"}.`
+  );
+}
 
 if (
   !currentText.includes("scl") ||
@@ -99,5 +114,5 @@ if (
 }
 
 console.log(
-  `Spam Challenge List live sources verified: current host ${currentHost}, legacy migration note and list hub agree.`
+  `Spam Challenge List live sources verified: ${expectedVersion}, current host ${currentHost}, legacy migration note and list hub agree.`
 );

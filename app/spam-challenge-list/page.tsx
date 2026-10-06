@@ -5,6 +5,7 @@ import relatedSearchData from "../../data/relatedSearch.json";
 
 const relatedPageData = relatedSearchData.spamChallengeList;
 const CHECKED_AT = relatedPageData.checkedAt;
+const CURRENT_VERSION = relatedPageData.currentVersion;
 const [CURRENT_LIST_SOURCE, LEGACY_LIST_SOURCE, LIST_HUB_SOURCE] = relatedPageData.sources;
 
 export const metadata: Metadata = {
@@ -77,7 +78,7 @@ export default function SpamChallengeListPage() {
       <article className="mx-auto max-w-5xl">
         <header className="mb-8 max-w-4xl">
           <p className="mb-2 text-xs font-bold uppercase tracking-[0.2em] text-fuchsia-400">
-            Community challenge list · source checked {CHECKED_AT}
+            Community challenge list · {CURRENT_VERSION} · source checked {CHECKED_AT}
           </p>
           <h1 className="mb-4 text-3xl font-display font-bold text-white md:text-5xl">
             Geometry Dash Spam Challenge List
@@ -93,7 +94,7 @@ export default function SpamChallengeListPage() {
           <div className="mb-2 text-xs font-bold uppercase tracking-[0.18em] text-fuchsia-300">Quick answer</div>
           <p className="leading-7 text-slate-300">
             If you want the <strong className="text-white">current Spam Challenge List rankings, rules or submission information</strong>,
-            open the live SCL app below. The older Google Sites page now identifies itself as the old list and points players
+            open the live SCL app below (currently <strong className="text-white">{CURRENT_VERSION}</strong>). The older Google Sites page now identifies itself as the old list and points players
             toward the newer list, while the GeometryDashLists hub also lists the Spam Challenge List separately.
             We intentionally do not copy the live ranking here because placements and rules can change.
           </p>

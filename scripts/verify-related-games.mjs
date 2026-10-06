@@ -77,6 +77,23 @@ for (const page of pages) {
 
   if (page.key === "spamChallengeList") {
     if (
+      typeof config.currentVersion !== "string" ||
+      !/^v\d+\.\d+\.\d+$/.test(config.currentVersion)
+    ) {
+      errors.push("Spam Challenge List: currentVersion must be a semantic vX.Y.Z string.");
+    }
+
+    if (
+      !source.includes("relatedPageData.currentVersion") ||
+      !source.includes("CURRENT_VERSION") ||
+      /const CURRENT_VERSION = "v\d+\.\d+\.\d+"/.test(source)
+    ) {
+      errors.push(
+        "Spam Challenge List: current version must be centralized in relatedSearch.json."
+      );
+    }
+
+    if (
       config.sources.length < 3 ||
       config.sources[0] !== "https://thespamchallengelist.pages.dev/" ||
       config.sources[1] !== "https://sites.google.com/view/gdspamchallengeslist/main-list" ||
@@ -288,6 +305,20 @@ if (
 ) {
   errors.push(
     "Related-game refresh workflow must live-check the current Spam Challenge List and migration sources."
+  );
+}
+
+const spamChallengeLiveSource = readFileSync(
+  new URL("./verify-spam-challenge-live.mjs", import.meta.url),
+  "utf8"
+);
+if (
+  !spamChallengeLiveSource.includes("expectedVersion") ||
+  !spamChallengeLiveSource.includes("liveVersion") ||
+  !spamChallengeLiveSource.includes("version is stale")
+) {
+  errors.push(
+    "Spam Challenge List live verifier must protect the centralized current app version."
   );
 }
 
