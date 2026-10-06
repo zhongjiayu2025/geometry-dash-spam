@@ -1,8 +1,7 @@
 "use client";
 
-import { useCallback, useEffect, useRef, useState } from "react";
+import { useCallback, useEffect, useRef, useState, type ReactNode } from "react";
 import dynamic from "next/dynamic";
-import { Mouse, MousePointer2, Zap } from "lucide-react";
 import { ClickTestSpeedPanel, ClickTestTimerCard } from "./ClickTestPanels";
 import type { ClickTone } from "../lib/clickSound";
 import { useLazyClickSound } from "../lib/useLazyClickSound";
@@ -16,81 +15,32 @@ const SecondaryClickFinishedActions = dynamic(
 
 export type SecondaryClickVariant = "jitter" | "butterfly" | "rightClick";
 
-const CONFIG: Record<
-  SecondaryClickVariant,
-  {
-    bestKey: string;
-    soundKey: string;
-    tone: ClickTone;
-    idleTitle: string;
-    activeLabel: string;
-    speedLabel: string;
-    shareTitle: string;
-    shareUrl: string;
-    shareName: string;
-    accentText: string;
-    timerText: string;
-    soundOn: string;
-    clickArea: string;
-    activeCount: string;
-    withTopMargin: boolean;
-  }
-> = {
-  jitter: {
-    bestKey: "jitterClickBest",
-    soundKey: "jitterClickSoundEnabled",
-    tone: "jitter",
-    idleTitle: "START JITTERING",
-    activeLabel: "Clicks",
-    speedLabel: "Your Jitter Speed",
-    shareTitle: "Jitter Click Test",
-    shareUrl: "https://geometrydashspam.cc/jitter-click",
-    shareName: "Geometry Dash Jitter Click Test",
-    accentText: "text-orange-400",
-    timerText: "text-orange-400",
-    soundOn: "bg-orange-600/20 border-orange-500/50 text-orange-400 hover:bg-orange-600/30",
-    clickArea: "bg-gradient-to-br from-orange-600 to-red-800 border-orange-500 shadow-[0_0_40px_rgba(234,88,12,0.3)] hover:shadow-[0_0_60px_rgba(234,88,12,0.5)] cursor-pointer",
-    activeCount: "shake-constant shake-little",
-    withTopMargin: false,
-  },
-  butterfly: {
-    bestKey: "butterflyClickBest",
-    soundKey: "butterflyClickSoundEnabled",
-    tone: "butterfly",
-    idleTitle: "BUTTERFLY CLICK",
-    activeLabel: "Clicks",
-    speedLabel: "Your Butterfly Speed",
-    shareTitle: "Butterfly Click Test",
-    shareUrl: "https://geometrydashspam.cc/butterfly-click",
-    shareName: "Geometry Dash Butterfly Click Test",
-    accentText: "text-pink-400",
-    timerText: "text-pink-400",
-    soundOn: "bg-pink-600/20 border-pink-500/50 text-pink-400 hover:bg-pink-600/30",
-    clickArea: "bg-gradient-to-br from-pink-600 to-purple-800 border-pink-500 shadow-[0_0_40px_rgba(236,72,153,0.3)] hover:shadow-[0_0_60px_rgba(236,72,153,0.5)] cursor-pointer",
-    activeCount: "",
-    withTopMargin: true,
-  },
-  rightClick: {
-    bestKey: "rightClickBest",
-    soundKey: "rightClickSoundEnabled",
-    tone: "rightClick",
-    idleTitle: "RIGHT CLICK HERE",
-    activeLabel: "RMB Clicks",
-    speedLabel: "Right Click Speed",
-    shareTitle: "Right Click Test",
-    shareUrl: "https://geometrydashspam.cc/right-click",
-    shareName: "Geometry Dash Right Click Test",
-    accentText: "text-emerald-400",
-    timerText: "text-emerald-400",
-    soundOn: "bg-emerald-600/20 border-emerald-500/50 text-emerald-400 hover:bg-emerald-600/30",
-    clickArea: "bg-gradient-to-br from-emerald-600 to-teal-800 border-emerald-500 shadow-[0_0_40px_rgba(16,185,129,0.3)] hover:shadow-[0_0_60px_rgba(16,185,129,0.5)] cursor-context-menu",
-    activeCount: "",
-    withTopMargin: false,
-  },
-};
+export interface SecondaryClickConfig {
+  bestKey: string;
+  soundKey: string;
+  tone: ClickTone;
+  activeLabel: string;
+  speedLabel: string;
+  shareTitle: string;
+  shareUrl: string;
+  shareName: string;
+  accentText: string;
+  timerText: string;
+  soundOn: string;
+  clickArea: string;
+  activeCount: string;
+  withTopMargin: boolean;
+}
 
-export default function SecondaryClickTest({ variant }: { variant: SecondaryClickVariant }) {
-  const config = CONFIG[variant];
+export default function SecondaryClickTest({
+  variant,
+  config,
+  idleVisual,
+}: {
+  variant: SecondaryClickVariant;
+  config: SecondaryClickConfig;
+  idleVisual: ReactNode;
+}) {
   const isRightClick = variant === "rightClick";
 
   const [active, setActive] = useState(false);
@@ -242,7 +192,7 @@ export default function SecondaryClickTest({ variant }: { variant: SecondaryClic
             onContextMenu={isRightClick ? handleContextMenu : undefined}
             className={`w-full h-full rounded-2xl border-2 flex flex-col items-center justify-center transition-all duration-100 active:scale-[0.99] select-none ${isRightClick ? "touch-pan-y" : active ? "touch-none" : "touch-pan-y"} ${finished ? "bg-slate-900 border-slate-700 cursor-default opacity-50" : config.clickArea}`}
           >
-            {!active && !finished && <IdleVisual variant={variant} title={config.idleTitle} />}
+            {!active && !finished && idleVisual}
 
             {active && (
               <>
@@ -290,41 +240,5 @@ export default function SecondaryClickTest({ variant }: { variant: SecondaryClic
         </div>
       </div>
     </div>
-  );
-}
-
-function IdleVisual({ variant, title }: { variant: SecondaryClickVariant; title: string }) {
-  if (variant === "jitter") {
-    return (
-      <>
-        <Zap className="w-16 h-16 text-white mb-4 animate-pulse" />
-        <span className="text-3xl font-display font-bold text-white tracking-widest">{title}</span>
-        <span className="text-orange-200 mt-2 font-mono text-sm">10 SECOND TEST</span>
-      </>
-    );
-  }
-
-  if (variant === "butterfly") {
-    return (
-      <>
-        <div className="flex gap-2 mb-4">
-          <MousePointer2 className="w-12 h-12 text-white animate-bounce" />
-          <MousePointer2 className="w-12 h-12 text-pink-200 animate-bounce [animation-delay:100ms]" />
-        </div>
-        <span className="text-3xl font-display font-bold text-white tracking-widest">{title}</span>
-        <span className="text-pink-200 mt-2 font-mono text-sm">10 SECOND TEST</span>
-      </>
-    );
-  }
-
-  return (
-    <>
-      <div className="relative mb-4">
-        <Mouse className="w-16 h-16 text-white" />
-        <div className="absolute top-0 right-0 w-8 h-8 bg-emerald-400 rounded-full animate-ping opacity-75" />
-      </div>
-      <span className="text-3xl font-display font-bold text-white tracking-widest">{title}</span>
-      <span className="text-emerald-200 mt-2 font-mono text-sm">10 SECOND TEST</span>
-    </>
   );
 }
