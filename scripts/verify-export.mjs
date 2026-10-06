@@ -433,6 +433,7 @@ const cpsClientSource = readFileSync(join(process.cwd(), "components", "CpsTest.
 const waveClientSource = readFileSync(join(process.cwd(), "components", "WaveSimulator.tsx"), "utf8");
 const gameCanvasSource = readFileSync(join(process.cwd(), "components", "GameCanvas.tsx"), "utf8");
 const waveAudioSource = readFileSync(join(process.cwd(), "lib", "waveAudio.ts"), "utf8");
+const waveRunOverlaysSource = readFileSync(join(process.cwd(), "components", "WaveRunOverlays.tsx"), "utf8");
 const clickSoundSource = readFileSync(join(process.cwd(), "lib", "clickSound.ts"), "utf8");
 const demonListSource = readFileSync(join(process.cwd(), "components", "DemonListTable.tsx"), "utf8");
 const demonFilterSource = readFileSync(join(process.cwd(), "components", "DemonListFilterControls.tsx"), "utf8");
@@ -687,10 +688,34 @@ if (
 }
 
 if (
+  !gameCanvasSource.includes("dynamic(() => import('./WaveRunOverlays')") ||
+  gameCanvasSource.includes("CRASHED") ||
+  gameCanvasSource.includes("COMPLETE!") ||
+  gameCanvasSource.includes("Share Result") ||
+  !waveRunOverlaysSource.includes("CRASHED") ||
+  !waveRunOverlaysSource.includes("Share Result")
+) {
+  infrastructureErrors.push(
+    "Wave result and share overlays must stay outside the initial GameCanvas chunk"
+  );
+}
+
+if (
   !cpsClientSource.includes("const timingStats = finished") ||
   cpsClientSource.includes("const timingStats = getTimingStats();")
 ) {
   infrastructureErrors.push("CPS timing statistics must only run after the test finishes");
+}
+
+if (
+  !cpsClientSource.includes("import('../lib/clickSound')") ||
+  cpsClientSource.includes("AudioContext") ||
+  cpsClientSource.includes("createOscillator") ||
+  cpsClientSource.includes("createGain")
+) {
+  infrastructureErrors.push(
+    "CPS click audio must stay in the shared lazy-loaded clickSound chunk"
+  );
 }
 
 if (
