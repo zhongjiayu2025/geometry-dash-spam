@@ -418,6 +418,8 @@ const supportClientPaths = [
   "DragClickTest.tsx",
   "KeyRolloverTest.tsx",
   "JitterClickTest.tsx",
+  "ButterflyClickTest.tsx",
+  "RightClickTest.tsx",
 ];
 const supportClientSources = supportClientPaths.map((file) => [
   file,
@@ -476,6 +478,21 @@ for (const [file, source] of supportClientSources) {
 const jitterClientSource = supportClientSources.find(([file]) => file === "JitterClickTest.tsx")?.[1] ?? "";
 if (jitterClientSource.includes("Breadcrumbs") || jitterClientSource.includes("next/dynamic")) {
   infrastructureErrors.push("Jitter breadcrumbs must stay server-rendered outside the client test component");
+}
+
+for (const file of ["JitterClickTest.tsx", "ButterflyClickTest.tsx", "RightClickTest.tsx"]) {
+  const source = supportClientSources.find(([name]) => name === file)?.[1] ?? "";
+  if (
+    !source.includes("useState(false)") ||
+    !source.includes("10000 - elapsedMs") ||
+    !source.includes("setInterval(updateTimer, 100)") ||
+    !source.includes("performance.now() - startTimeRef.current >= 10000") ||
+    source.includes("}, 33)")
+  ) {
+    infrastructureErrors.push(
+      `${file}: 10-second click tests must keep opt-in audio and exact cutoff timing`
+    );
+  }
 }
 
 if (cpsClientSource.includes("RelatedTools") || cpsClientSource.includes("How is CPS Calculated?")) {
