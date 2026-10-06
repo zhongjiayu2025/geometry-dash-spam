@@ -74,6 +74,21 @@ export default function RootLayout({
         "@id": "https://geometrydashspam.cc/#organization",
         name: "Geometry Dash Spam",
         url: "https://geometrydashspam.cc",
+        description:
+          "Fan-made browser tools and sourced guides for Geometry Dash spam practice, wave control, CPS and Demon List discovery.",
+        email: "info@geometrydashspam.cc",
+        contactPoint: {
+          "@type": "ContactPoint",
+          contactType: "site support and corrections",
+          email: "info@geometrydashspam.cc",
+          url: "https://geometrydashspam.cc/contact",
+        },
+        knowsAbout: [
+          "Geometry Dash spam practice",
+          "Geometry Dash wave practice",
+          "clicks per second testing",
+          "Geometry Dash Demon List references",
+        ],
         logo: {
           "@type": "ImageObject",
           url: "https://geometrydashspam.cc/logo.svg",
@@ -89,6 +104,11 @@ export default function RootLayout({
         publisher: {
           "@id": "https://geometrydashspam.cc/#organization",
         },
+        about: [
+          { "@type": "Thing", name: "Geometry Dash spam practice" },
+          { "@type": "Thing", name: "Geometry Dash wave practice" },
+          { "@type": "Thing", name: "clicks per second testing" },
+        ],
         inLanguage: "en",
       },
     ],
