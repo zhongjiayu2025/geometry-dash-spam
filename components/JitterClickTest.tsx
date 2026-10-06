@@ -19,7 +19,6 @@ const JitterClickTest: React.FC = () => {
   const [timeLeft, setTimeLeft] = useState(10.00);
   const [bestCps, setBestCps] = useState<number | null>(null);
   const [soundEnabled, setSoundEnabled] = useState(false);
-  const [copied, setCopied] = useState(false);
   
   const timerRef = useRef<number | null>(null);
   const endTimerRef = useRef<number | null>(null);
@@ -202,21 +201,6 @@ const JitterClickTest: React.FC = () => {
   const renderedClicks = active ? clicksRef.current : clicks;
   const cps = finished ? (clicks / 10).toFixed(2) : (active ? (clicksRef.current / Math.max(0.05, 10 - timeLeft)).toFixed(1) : "0.00");
 
-  const shareScore = async (e: React.MouseEvent) => {
-    e.stopPropagation();
-    const text = `I got ${cps} CPS on the Geometry Dash Jitter Click Test! Can you beat me?`;
-    const url = `https://geometrydashspam.cc/jitter-click`;
-    if (typeof navigator !== 'undefined' && navigator.share) {
-        try {
-            await navigator.share({ title: 'Jitter Click Test', text, url });
-        } catch(e) { console.log(e); }
-    } else {
-        navigator.clipboard.writeText(`${text} ${url}`);
-        setCopied(true);
-        setTimeout(() => setCopied(false), 2000);
-    }
-  };
-
   return (
     <div className="w-full max-w-4xl mx-auto animate-in slide-in-from-bottom-4 duration-500">
       <p className="sr-only" role="status" aria-live="polite" aria-atomic="true">
@@ -301,9 +285,10 @@ const JitterClickTest: React.FC = () => {
                {finished && (
                  <SecondaryClickFinishedActions
                    variant="jitter"
-                   copied={copied}
                    onReset={reset}
-                   onShare={shareScore}
+                   shareTitle="Jitter Click Test"
+                   shareText={`I got ${cps} CPS on the Geometry Dash Jitter Click Test! Can you beat me?`}
+                   shareUrl="https://geometrydashspam.cc/jitter-click"
                    withTopMargin={false}
                  />
                )}
