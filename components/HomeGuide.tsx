@@ -42,7 +42,7 @@ export default function HomeGuide() {
   };
 
   return (
-    <section className="defer-render w-full max-w-5xl mx-auto pt-10 pb-16 space-y-14 text-slate-300 leading-relaxed">
+    <section className="defer-render-long w-full max-w-5xl mx-auto pt-10 pb-16 space-y-14 text-slate-300 leading-relaxed">
       <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(faqSchema) }} />
 
       <div className="rounded-2xl border border-white/10 bg-slate-900/40 p-6 md:p-8">
