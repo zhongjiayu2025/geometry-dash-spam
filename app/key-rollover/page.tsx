@@ -15,7 +15,7 @@ export const metadata: Metadata = {
     type: "website",
   },
   twitter: {
-    card: "summary",
+    card: "summary_large_image",
     title: "Key Rollover Test | Keyboard Multi-Key Input Check",
     description: "Check how many simultaneous key presses your browser receives and inspect keyboard rollover behavior.",
   },
