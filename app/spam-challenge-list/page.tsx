@@ -98,6 +98,14 @@ export default function SpamChallengeListPage() {
             toward the newer list, while the GeometryDashLists hub also lists the Spam Challenge List separately.
             We intentionally do not copy the live ranking here because placements and rules can change.
           </p>
+          <a
+            href={CURRENT_LIST_SOURCE}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="mt-4 inline-flex rounded-lg bg-fuchsia-600 px-4 py-2 text-sm font-bold text-white hover:bg-fuchsia-500"
+          >
+            Open live SCL rankings & rules →
+          </a>
         </section>
 
         <section className="mb-10 grid gap-4 md:grid-cols-3">
