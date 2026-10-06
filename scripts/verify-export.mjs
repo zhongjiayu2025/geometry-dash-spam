@@ -1565,6 +1565,15 @@ if (
 }
 
 if (
+  gameCanvasSource.includes("onStatusChange(GameStatus.Playing);\n         gameState.current.isHolding = true; \n         playSound('click');\n         return;") ||
+  !gameCanvasSource.includes("gameState.current.clickCount += 1")
+) {
+  infrastructureErrors.push(
+    "Wave restart control input must flow through the shared input accounting path instead of skipping the first click"
+  );
+}
+
+if (
   !gameCanvasSource.includes("import('../lib/waveRenderer')") ||
   !gameCanvasSource.includes("renderer(ctx, canvas") ||
   gameCanvasSource.includes("ctx.createLinearGradient") ||
