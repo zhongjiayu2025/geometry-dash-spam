@@ -447,6 +447,7 @@ const cpsRecordsSource = readFileSync(join(process.cwd(), "lib", "cpsRecords.ts"
 const persistentBestSource = readFileSync(join(process.cwd(), "lib", "usePersistentBestNumber.ts"), "utf8");
 const managedTimeoutSource = readFileSync(join(process.cwd(), "lib", "useManagedTimeout.ts"), "utf8");
 const typingRuntimeSource = readFileSync(join(process.cwd(), "lib", "typingRuntime.ts"), "utf8");
+const memoryTestRuntimeSource = readFileSync(join(process.cwd(), "lib", "memoryTestRuntime.ts"), "utf8");
 const lazyClickSoundSource = readFileSync(join(process.cwd(), "lib", "useLazyClickSound.ts"), "utf8");
 const secondaryClickFinishedSource = readFileSync(join(process.cwd(), "components", "SecondaryClickFinishedActions.tsx"), "utf8");
 const dragClickResultSource = readFileSync(join(process.cwd(), "components", "DragClickResult.tsx"), "utf8");
@@ -1085,6 +1086,34 @@ for (const [file, source] of [
       `${file}: delayed level transitions must use the shared managed-timeout hook`
     );
   }
+}
+
+for (const [file, source, generator] of [
+  ["ChimpTest.tsx", chimpClientSource, "generateChimpLevel"],
+  ["VisualMemoryTest.tsx", visualMemoryClientSource, "generateVisualLevel"],
+]) {
+  if (
+    !source.includes("import('../lib/memoryTestRuntime')") ||
+    !source.includes("onPointerEnter={preloadRuntime}") ||
+    !source.includes("onFocus={preloadRuntime}") ||
+    !source.includes(generator) ||
+    source.includes("Math.random() * totalSquares") ||
+    source.includes("availablePositions")
+  ) {
+    infrastructureErrors.push(
+      `${file}: memory level generation must stay in the shared deferred runtime with intent preloading`
+    );
+  }
+}
+
+if (
+  !memoryTestRuntimeSource.includes("export function generateChimpLevel") ||
+  !memoryTestRuntimeSource.includes("export function generateVisualLevel") ||
+  !memoryTestRuntimeSource.includes("Math.random()")
+) {
+  infrastructureErrors.push(
+    "Shared memoryTestRuntime must own randomized Chimp and Visual Memory level generation"
+  );
 }
 
 if (
