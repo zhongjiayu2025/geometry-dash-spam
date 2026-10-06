@@ -1,7 +1,7 @@
 "use client";
 
-import React, { useEffect, useState } from "react";
-import { isInteractiveKeyboardTarget } from "../lib/inputTarget";
+import React from "react";
+import { useKeyboardChordMeasurement } from "../lib/useKeyboardChordMeasurement";
 import { RotateCcw } from "lucide-react";
 
 
@@ -43,73 +43,8 @@ const getKeyWidthClass = (code: string) => {
   }
 };
 
-type GhostingState = {
-  pressedKeys: Set<string>;
-  maxKeys: number;
-};
-
-const EMPTY_GHOSTING: GhostingState = {
-  pressedKeys: new Set(),
-  maxKeys: 0,
-};
-
 export default function KeyboardGhostingTest() {
-  const [measurement, setMeasurement] = useState<GhostingState>(EMPTY_GHOSTING);
-  const { pressedKeys, maxKeys } = measurement;
-
-  useEffect(() => {
-    const handleKeyDown = (event: KeyboardEvent) => {
-    if (isInteractiveKeyboardTarget(event.target)) return;
-      if (
-        ["Space", "ArrowUp", "ArrowDown", "PageUp", "PageDown"].includes(event.code) &&
-        !(event.ctrlKey || event.metaKey)
-      ) {
-        event.preventDefault();
-      }
-      if (event.repeat) return;
-
-      setMeasurement((previous) => {
-        const pressedKeys = new Set(previous.pressedKeys);
-        pressedKeys.add(event.code);
-        return {
-          pressedKeys,
-          maxKeys: Math.max(previous.maxKeys, pressedKeys.size),
-        };
-      });
-    };
-
-    const handleKeyUp = (event: KeyboardEvent) => {
-    if (isInteractiveKeyboardTarget(event.target)) return;
-      setMeasurement((previous) => {
-        const pressedKeys = new Set(previous.pressedKeys);
-        pressedKeys.delete(event.code);
-        return { ...previous, pressedKeys };
-      });
-    };
-
-    const clearPressed = () => {
-      setMeasurement((previous) => ({ ...previous, pressedKeys: new Set() }));
-    };
-    const handleVisibilityChange = () => {
-      if (document.hidden) clearPressed();
-    };
-
-    window.addEventListener("keydown", handleKeyDown, { passive: false });
-    window.addEventListener("keyup", handleKeyUp);
-    window.addEventListener("blur", clearPressed);
-    document.addEventListener("visibilitychange", handleVisibilityChange);
-
-    return () => {
-      window.removeEventListener("keydown", handleKeyDown);
-      window.removeEventListener("keyup", handleKeyUp);
-      window.removeEventListener("blur", clearPressed);
-      document.removeEventListener("visibilitychange", handleVisibilityChange);
-    };
-  }, []);
-
-  const reset = () => {
-    setMeasurement({ pressedKeys: new Set(), maxKeys: 0 });
-  };
+  const { activeKeys: pressedKeys, maxKeys, resetAll: reset } = useKeyboardChordMeasurement();
 
   return (
     <div className="w-full max-w-5xl mx-auto px-4 md:px-0">

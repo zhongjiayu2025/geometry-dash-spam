@@ -1,73 +1,12 @@
 "use client";
 
-import React, { useEffect, useState } from "react";
-import { isInteractiveKeyboardTarget } from "../lib/inputTarget";
+import React from "react";
+import { useKeyboardChordMeasurement } from "../lib/useKeyboardChordMeasurement";
 import { Keyboard as KeyboardIcon } from "lucide-react";
 
 
-type RolloverState = {
-  activeKeys: Set<string>;
-  maxKeys: number;
-};
-
-const EMPTY_ROLLOVER: RolloverState = {
-  activeKeys: new Set(),
-  maxKeys: 0,
-};
-
 export default function KeyRolloverTest() {
-  const [measurement, setMeasurement] = useState<RolloverState>(EMPTY_ROLLOVER);
-  const { activeKeys, maxKeys } = measurement;
-
-  useEffect(() => {
-    const handleKeyDown = (event: KeyboardEvent) => {
-    if (isInteractiveKeyboardTarget(event.target)) return;
-      if (
-        [" ", "ArrowUp", "ArrowDown", "PageUp", "PageDown"].includes(event.key) &&
-        !(event.ctrlKey || event.metaKey)
-      ) {
-        event.preventDefault();
-      }
-      if (event.repeat) return;
-
-      setMeasurement((previous) => {
-        const activeKeys = new Set(previous.activeKeys);
-        activeKeys.add(event.code);
-        return {
-          activeKeys,
-          maxKeys: Math.max(previous.maxKeys, activeKeys.size),
-        };
-      });
-    };
-
-    const handleKeyUp = (event: KeyboardEvent) => {
-    if (isInteractiveKeyboardTarget(event.target)) return;
-      setMeasurement((previous) => {
-        const activeKeys = new Set(previous.activeKeys);
-        activeKeys.delete(event.code);
-        return { ...previous, activeKeys };
-      });
-    };
-
-    const clearPressed = () => {
-      setMeasurement((previous) => ({ ...previous, activeKeys: new Set() }));
-    };
-    const handleVisibilityChange = () => {
-      if (document.hidden) clearPressed();
-    };
-
-    window.addEventListener("keydown", handleKeyDown, { passive: false });
-    window.addEventListener("keyup", handleKeyUp);
-    window.addEventListener("blur", clearPressed);
-    document.addEventListener("visibilitychange", handleVisibilityChange);
-
-    return () => {
-      window.removeEventListener("keydown", handleKeyDown);
-      window.removeEventListener("keyup", handleKeyUp);
-      window.removeEventListener("blur", clearPressed);
-      document.removeEventListener("visibilitychange", handleVisibilityChange);
-    };
-  }, []);
+  const { activeKeys, maxKeys, resetMax } = useKeyboardChordMeasurement();
 
   return (
     <div className="w-full max-w-4xl mx-auto px-4 md:px-0">
@@ -121,7 +60,7 @@ export default function KeyRolloverTest() {
 
           {maxKeys > 0 && (
             <button
-              onClick={() => setMeasurement((previous) => ({ ...previous, maxKeys: 0 }))}
+              onClick={resetMax}
               className="mt-6 px-6 py-2 bg-white/5 hover:bg-white/10 text-slate-300 font-medium rounded-lg transition-colors text-sm"
             >
               Reset Max Record
