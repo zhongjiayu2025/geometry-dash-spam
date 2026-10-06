@@ -112,20 +112,28 @@ export default function PollingRateTest() {
                         )}
                     </div>
                     
-                    {maxHz > 0 && (
+                    {(maxHz > 0 || isTracking) && (
                         <div className="mt-8 w-full bg-emerald-900/20 border border-emerald-500/20 rounded-xl p-6 flex flex-col items-center text-center animate-in zoom-in-95">
-                            <span className="text-emerald-200 font-medium mb-1">Observed event-rate band:</span>
-                            <span className="text-2xl font-display font-bold text-white">{observedBand}</span>
-                            <p className="mt-3 max-w-xl text-sm text-slate-400">
-                              Browser pointer events can be coalesced or scheduled differently from the device&apos;s USB polling cycle, so this is a browser-side estimate rather than a hardware certification.
-                            </p>
-                            
+                            {maxHz > 0 ? (
+                              <>
+                                <span className="text-emerald-200 font-medium mb-1">Observed event-rate band:</span>
+                                <span className="text-2xl font-display font-bold text-white">{observedBand}</span>
+                                <p className="mt-3 max-w-xl text-sm text-slate-400">
+                                  Browser pointer events can be coalesced or scheduled differently from the device&apos;s USB polling cycle, so this is a browser-side estimate rather than a hardware certification.
+                                </p>
+                              </>
+                            ) : (
+                              <p className="max-w-xl text-sm text-slate-400">
+                                Tracking is active. Move the pointer inside the test area to record browser pointer events.
+                              </p>
+                            )}
+
                             {isTracking && (
                                 <button
                                     onClick={stopTracking}
                                     className="mt-6 px-6 py-2 bg-white/5 hover:bg-white/10 text-slate-300 font-medium rounded-lg transition-colors flex items-center gap-2"
                                 >
-                                    Stop & Reset
+                                    Stop tracking
                                 </button>
                             )}
                         </div>
