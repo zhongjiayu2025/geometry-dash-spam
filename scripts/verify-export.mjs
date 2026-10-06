@@ -530,6 +530,8 @@ const clickerSource = readFileSync(join(process.cwd(), "components", "GeometryDa
 const clickerAchievementsSource = readFileSync(join(process.cwd(), "components", "ClickerAchievements.tsx"), "utf8");
 const clickerEconomySource = readFileSync(join(process.cwd(), "lib", "clickerEconomy.ts"), "utf8");
 const homeSource = readFileSync(join(process.cwd(), "app", "page.tsx"), "utf8");
+const headerSource = readFileSync(join(process.cwd(), "components", "Header.tsx"), "utf8");
+const footerSource = readFileSync(join(process.cwd(), "components", "Footer.tsx"), "utf8");
 const personalStatsSource = readFileSync(join(process.cwd(), "components", "PersonalStats.tsx"), "utf8");
 const personalStatsContentSource = readFileSync(join(process.cwd(), "components", "PersonalStatsContent.tsx"), "utf8");
 const dashboardWaveHistorySource = readFileSync(join(process.cwd(), "components", "DashboardWaveHistory.tsx"), "utf8");
@@ -2622,6 +2624,20 @@ for (const [file, source, path] of [
   ) {
     infrastructureErrors.push(
       `${file}: Demon specialty pages must expose dated Pointercrate-backed CollectionPage/ItemList schema`
+    );
+  }
+}
+
+for (const [route, label] of [
+  ["/dashmetry", "Dashmetry / Challenge Rush"],
+  ["/geometry-dash-breeze", "Geometry Dash Breeze"],
+]) {
+  if (
+    !headerSource.includes(`["${route}", "${label}"]`) ||
+    !footerSource.includes(`href="${route}"`)
+  ) {
+    infrastructureErrors.push(
+      `${route}: high-demand Geometry Dash page must remain linked from global navigation and footer`
     );
   }
 }
