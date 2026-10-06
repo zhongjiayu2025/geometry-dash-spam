@@ -1,4 +1,4 @@
-export type ClickTone = "jitter" | "butterfly" | "rightClick" | "spacebar";
+export type ClickTone = "jitter" | "butterfly" | "rightClick" | "spacebar" | "cps";
 
 export interface ClickSoundEngine {
   resume(): Promise<void>;
@@ -12,6 +12,7 @@ const TONE_FREQUENCIES: Record<ClickTone, number> = {
   butterfly: 850,
   rightClick: 700,
   spacebar: 400,
+  cps: 800,
 };
 
 class BrowserClickSoundEngine implements ClickSoundEngine {
