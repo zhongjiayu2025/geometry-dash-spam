@@ -587,7 +587,7 @@ if (
 }
 
 if (
-  !secondaryClickClientSource.includes('dynamic(() => import("./SecondaryClickFinishedActions")') ||
+  !secondaryClickClientSource.includes('import("./SecondaryClickFinishedActions")') ||
   secondaryClickClientSource.includes("navigator.share") ||
   secondaryClickClientSource.includes("navigator.clipboard") ||
   secondaryClickClientSource.includes("<RotateCcw") ||
