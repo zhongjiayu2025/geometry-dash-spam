@@ -446,6 +446,7 @@ const clickSoundSource = readFileSync(join(process.cwd(), "lib", "clickSound.ts"
 const cpsRecordsSource = readFileSync(join(process.cwd(), "lib", "cpsRecords.ts"), "utf8");
 const persistentBestSource = readFileSync(join(process.cwd(), "lib", "usePersistentBestNumber.ts"), "utf8");
 const managedTimeoutSource = readFileSync(join(process.cwd(), "lib", "useManagedTimeout.ts"), "utf8");
+const typingRuntimeSource = readFileSync(join(process.cwd(), "lib", "typingRuntime.ts"), "utf8");
 const lazyClickSoundSource = readFileSync(join(process.cwd(), "lib", "useLazyClickSound.ts"), "utf8");
 const secondaryClickFinishedSource = readFileSync(join(process.cwd(), "components", "SecondaryClickFinishedActions.tsx"), "utf8");
 const dragClickResultSource = readFileSync(join(process.cwd(), "components", "DragClickResult.tsx"), "utf8");
@@ -1030,6 +1031,20 @@ if (
   );
 }
 
+if (
+  !typingClientSource.includes('import("../lib/typingRuntime")') ||
+  typingClientSource.includes("const WORDS = [") ||
+  typingClientSource.includes("function scoreTyping") ||
+  !typingClientSource.includes("runtime.generateTypingText") ||
+  !typingClientSource.includes("runtime.scoreTyping") ||
+  !typingRuntimeSource.includes("export function generateTypingText") ||
+  !typingRuntimeSource.includes("export function scoreTyping")
+) {
+  infrastructureErrors.push(
+    "Typing corpus generation and scoring must stay in the deferred typingRuntime chunk"
+  );
+}
+
 for (const [file, source, storageKey] of [
   ["ChimpTest.tsx", chimpClientSource, "chimpBestScore"],
   ["VisualMemoryTest.tsx", visualMemoryClientSource, "visualMemoryBest"],
@@ -1156,7 +1171,7 @@ const clientSourceBudgets = [
   ["ReactionTest.tsx", reactionClientSource, 6500],
   ["VisualMemoryTest.tsx", visualMemoryClientSource, 10700],
   ["ChimpTest.tsx", chimpClientSource, 10800],
-  ["TypingTest.tsx", typingClientSource, 9300],
+  ["TypingTest.tsx", typingClientSource, 8000],
   ["ScrollTest.tsx", scrollClientSource, 7500],
   ["RefreshRateTest.tsx", refreshRateClientSource, 4500],
   ["MouseAccelerationTest.tsx", mouseAccelerationClientSource, 5000],
