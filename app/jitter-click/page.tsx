@@ -1,5 +1,6 @@
 
 import JitterClickTest from "../../components/JitterClickTest";
+import ClickTestHero from "../../components/ClickTestHero";
 import Breadcrumbs from "../../components/Breadcrumbs";
 import RelatedTools from "../../components/RelatedTools";
 import ClickTechniqueGuide from "../../components/ClickTechniqueGuide";
@@ -47,7 +48,8 @@ export default function JitterClickPage() {
                 dangerouslySetInnerHTML={{ __html: JSON.stringify(webAppSchema) }}
             />
             <Breadcrumbs items={[{ label: "Jitter Click", href: "/jitter-click", active: true }]} />
-        <JitterClickTest />
+              <ClickTestHero variant="jitter" />
+      <JitterClickTest />
         <ClickTechniqueGuide variant="jitter" />
         <RelatedTools currentTool="jitter" />
         </>
