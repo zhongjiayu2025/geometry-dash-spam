@@ -3,6 +3,7 @@
 import React, { useRef, useState } from "react";
 import dynamic from "next/dynamic";
 import { MousePointer2, RotateCcw } from "lucide-react";
+import { useIntentionalPointerAction } from "../lib/useIntentionalPointerAction";
 
 
 const DoubleClickHistory = dynamic(() => import("./DoubleClickHistory"), { ssr: false });
@@ -37,7 +38,6 @@ export default function DoubleClickTest() {
 
   const lastClickTime = useRef(0);
   const clickIdRef = useRef(0);
-  const pendingTouchRef = useRef<{ pointerId: number; x: number; y: number } | null>(null);
 
   const registerClick = () => {
     const now = performance.now();
@@ -77,32 +77,10 @@ export default function DoubleClickTest() {
     }));
   };
 
-  const handlePointerDown = (event: React.PointerEvent<HTMLButtonElement>) => {
-    if (event.pointerType === "touch") {
-      pendingTouchRef.current = {
-        pointerId: event.pointerId,
-        x: event.clientX,
-        y: event.clientY,
-      };
-      return;
-    }
-
-    event.preventDefault();
-    registerClick();
-  };
-
-  const handlePointerUp = (event: React.PointerEvent<HTMLButtonElement>) => {
-    const pending = pendingTouchRef.current;
-    if (!pending || pending.pointerId !== event.pointerId) return;
-
-    pendingTouchRef.current = null;
-    const moved = Math.hypot(event.clientX - pending.x, event.clientY - pending.y);
-    if (moved <= 12) registerClick();
-  };
-
-  const handlePointerCancel = () => {
-    pendingTouchRef.current = null;
-  };
+  const pointerAction = useIntentionalPointerAction<HTMLButtonElement>({
+    onAction: registerClick,
+    deferTouch: true,
+  });
 
   const resetTest = () => {
     setMeasurement(EMPTY_MEASUREMENT);
@@ -164,9 +142,7 @@ export default function DoubleClickTest() {
 
             <button
               type="button"
-              onPointerDown={handlePointerDown}
-              onPointerUp={handlePointerUp}
-              onPointerCancel={handlePointerCancel}
+              {...pointerAction}
               className="touch-pan-y w-full h-64 rounded-3xl border-2 flex flex-col items-center justify-center gap-4 transition-all duration-75 group select-none bg-fuchsia-900/10 border-fuchsia-500/20 hover:bg-fuchsia-800/20 hover:border-fuchsia-500/30 active:scale-[0.99]"
             >
               <MousePointer2 className="w-16 h-16 text-fuchsia-500/50 group-hover:text-fuchsia-400 transition-colors" />

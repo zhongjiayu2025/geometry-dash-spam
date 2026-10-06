@@ -894,13 +894,14 @@ if (
 
 const doubleClickClientSource = supportClientSources.find(([file]) => file === "DoubleClickTest.tsx")?.[1] ?? "";
 if (
-  !doubleClickClientSource.includes("pendingTouchRef") ||
+  !doubleClickClientSource.includes("useIntentionalPointerAction") ||
+  !doubleClickClientSource.includes("deferTouch: true") ||
   !doubleClickClientSource.includes("touch-pan-y") ||
-  !doubleClickClientSource.includes("onPointerUp={handlePointerUp}") ||
+  doubleClickClientSource.includes("pendingTouchRef") ||
   doubleClickClientSource.includes('className="touch-none')
 ) {
   infrastructureErrors.push(
-    "DoubleClickTest must allow vertical mobile scrolling and count only intentional taps"
+    "DoubleClickTest must share intentional-touch filtering while allowing vertical mobile scrolling"
   );
 }
 
@@ -1509,7 +1510,7 @@ const clientSourceBudgets = [
   ["PersonalStats.tsx", personalStatsSource, 5000],
   ["GeometryDashClicker.tsx", clickerSource, 9200],
   ["BpmTapper.tsx", bpmClientSource, 5000],
-  ["DoubleClickTest.tsx", doubleClickClientSource, 8000],
+  ["DoubleClickTest.tsx", doubleClickClientSource, 7200],
   ["PollingRateTest.tsx", pollingClientSource, 8500],
   ["KeyboardLatencyTest.tsx", keyboardTimingClientSource, 8000],
   ["SystemInfo.tsx", systemInfoClientSource, 5000],
