@@ -1,4 +1,5 @@
 import KeyboardGhostingTest from "../../components/KeyboardGhostingTest";
+import RelatedTools from "../../components/RelatedTools";
 import InputToolGuide from "../../components/InputToolGuide";
 import { Metadata } from "next";
 
@@ -25,6 +26,7 @@ export default function KeyboardGhostingPage() {
     <>
       <KeyboardGhostingTest />
       <InputToolGuide tool="keyboard-ghosting" />
-    </>
+          <RelatedTools currentTool="keyboardGhosting" />
+</>
   );
 }
