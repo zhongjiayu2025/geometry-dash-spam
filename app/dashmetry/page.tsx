@@ -165,6 +165,25 @@ export default function DashmetryPage() {
           </div>
         </section>
 
+        <section className="mb-8 grid gap-3 sm:grid-cols-2 lg:grid-cols-4" aria-label="Related Geometry Dash pages">
+          <Link href="/" className="rounded-xl border border-blue-500/20 bg-blue-950/10 p-4 hover:border-blue-400/40">
+            <strong className="block text-white">Geometry Dash Spam Test</strong>
+            <span className="mt-1 block text-xs leading-5 text-slate-500">Practice rapid repeated input in the browser trainer.</span>
+          </Link>
+          <Link href="/geometry-dash-wave" className="rounded-xl border border-blue-500/20 bg-blue-950/10 p-4 hover:border-blue-400/40">
+            <strong className="block text-white">Geometry Dash Wave</strong>
+            <span className="mt-1 block text-xs leading-5 text-slate-500">Train wave timing and controlled spam separately from Challenge Rush.</span>
+          </Link>
+          <Link href="/cps-test" className="rounded-xl border border-white/10 bg-slate-900/30 p-4 hover:border-blue-500/40">
+            <strong className="block text-white">Geometry Dash CPS Test</strong>
+            <span className="mt-1 block text-xs leading-5 text-slate-500">Measure raw repeated-input speed before practicing control.</span>
+          </Link>
+          <Link href="/geometry-dash-breeze" className="rounded-xl border border-sky-500/20 bg-sky-950/10 p-4 hover:border-sky-400/40">
+            <strong className="block text-white">Geometry Dash Breeze</strong>
+            <span className="mt-1 block text-xs leading-5 text-slate-500">See another community-made Geometry Dash-related project.</span>
+          </Link>
+        </section>
+
         <div className="flex flex-wrap gap-3">
           <a href={CURRENT_GAME_SOURCE} target="_blank" rel="noopener noreferrer" className="rounded-lg bg-white px-4 py-2 text-sm font-bold text-black">
             Open current Challenge Rush
@@ -172,9 +191,6 @@ export default function DashmetryPage() {
           <a href={REBRAND_SOURCE} target="_blank" rel="noopener noreferrer" className="rounded-lg border border-white/10 px-4 py-2 text-sm font-bold text-white">
             Dashmetry rebrand source
           </a>
-          <Link href="/geometry-dash-wave" className="rounded-lg border border-blue-500/20 px-4 py-2 text-sm font-bold text-blue-300">
-            Practice Wave Timing
-          </Link>
         </div>
       </article>
     </>

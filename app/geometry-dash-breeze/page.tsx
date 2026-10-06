@@ -167,6 +167,25 @@ export default function GeometryDashBreezePage() {
           </div>
         </section>
 
+        <section className="mb-8 grid gap-3 sm:grid-cols-2 lg:grid-cols-4" aria-label="Related Geometry Dash pages">
+          <Link href="/" className="rounded-xl border border-blue-500/20 bg-blue-950/10 p-4 hover:border-blue-400/40">
+            <strong className="block text-white">Geometry Dash Spam Test</strong>
+            <span className="mt-1 block text-xs leading-5 text-slate-500">Practice repeated input in the main browser trainer.</span>
+          </Link>
+          <Link href="/geometry-dash-wave" className="rounded-xl border border-blue-500/20 bg-blue-950/10 p-4 hover:border-blue-400/40">
+            <strong className="block text-white">Geometry Dash Wave</strong>
+            <span className="mt-1 block text-xs leading-5 text-slate-500">Train wave control without leaving the browser.</span>
+          </Link>
+          <Link href="/demon-list" className="rounded-xl border border-purple-500/20 bg-purple-950/10 p-4 hover:border-purple-400/40">
+            <strong className="block text-white">Geometry Dash Demon List</strong>
+            <span className="mt-1 block text-xs leading-5 text-slate-500">Check the current Pointercrate top-50 snapshot.</span>
+          </Link>
+          <Link href="/dashmetry" className="rounded-xl border border-cyan-500/20 bg-cyan-950/10 p-4 hover:border-cyan-400/40">
+            <strong className="block text-white">Dashmetry / Challenge Rush</strong>
+            <span className="mt-1 block text-xs leading-5 text-slate-500">See the current home of the former Dashmetry project.</span>
+          </Link>
+        </section>
+
         <div className="flex flex-wrap gap-3">
           <a href={RELEASE_SOURCE} target="_blank" rel="noopener noreferrer" className="rounded-lg bg-white px-4 py-2 text-sm font-bold text-black">
             Open GitHub Releases
@@ -174,12 +193,6 @@ export default function GeometryDashBreezePage() {
           <a href={REPO_SOURCE} target="_blank" rel="noopener noreferrer" className="rounded-lg border border-white/10 px-4 py-2 text-sm font-bold text-white">
             Project repository
           </a>
-          <Link href="/geometry-dash-wave" className="rounded-lg border border-blue-500/20 px-4 py-2 text-sm font-bold text-blue-300">
-            Geometry Dash Wave Trainer
-          </Link>
-          <Link href="/demon-list" className="rounded-lg border border-white/10 px-4 py-2 text-sm font-bold text-white">
-            Demon List
-          </Link>
         </div>
       </article>
     </>

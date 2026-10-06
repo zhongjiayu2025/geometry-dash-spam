@@ -2642,6 +2642,20 @@ for (const [route, label] of [
   }
 }
 
+for (const [route, requiredLinks] of [
+  ["/dashmetry", ["/", "/geometry-dash-wave", "/cps-test", "/geometry-dash-breeze"]],
+  ["/geometry-dash-breeze", ["/", "/geometry-dash-wave", "/demon-list", "/dashmetry"]],
+]) {
+  const path = exportedPath(route);
+  if (!path) continue;
+  const html = readFileSync(path, "utf8");
+  for (const href of requiredLinks) {
+    if (!html.includes(`href="${href}"`)) {
+      infrastructureErrors.push(`${route}: missing related internal link to ${href}`);
+    }
+  }
+}
+
 const metadataErrors = [];
 
 for (const [route, expected] of Object.entries(metadataExpectations)) {
