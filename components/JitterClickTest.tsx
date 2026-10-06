@@ -2,7 +2,7 @@
 "use client";
 
 import React, { useState, useEffect, useRef, useCallback } from 'react';
-import { MousePointer2, RotateCcw, Timer, Zap, Trophy, Volume2, VolumeX, Share2, Check } from 'lucide-react';
+import { RotateCcw, Timer, Zap, Trophy, Volume2, VolumeX, Share2, Check } from 'lucide-react';
 
 
 const playClickSound = (audioCtx: AudioContext | null) => {
@@ -212,19 +212,7 @@ const JitterClickTest: React.FC = () => {
       <p className="sr-only" role="status" aria-live="polite" aria-atomic="true">
         {finished ? `Test complete. ${cps} clicks per second over 10 seconds.` : ""}
       </p>
-<div className="text-center mb-8">
-         <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-orange-500/10 border border-orange-500/20 text-xs font-mono text-orange-400 mb-4">
-            <Zap className="w-3 h-3" /> CLICKING TECHNIQUE
-         </div>
-         <h1 className="text-4xl md:text-6xl font-display font-black text-white mb-4 drop-shadow-2xl uppercase">
-            Jitter Click Test
-         </h1>
-         <p className="text-slate-400 max-w-2xl mx-auto">
-            Practice jitter clicking and compare a repeatable 10-second browser-registered CPS result.
-         </p>
-      </div>
-
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-8 items-stretch mb-12">
+<div className="grid grid-cols-1 md:grid-cols-2 gap-8 items-stretch mb-12">
         {/* Click Area */}
         <div className="relative aspect-square md:aspect-auto md:h-[400px]">
           <button
