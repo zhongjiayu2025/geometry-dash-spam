@@ -971,15 +971,16 @@ if (
   !aimClientSource.includes('dynamic(() => import("./AimTrainerResult")') ||
   !aimClientSource.includes('useLazyClickSound') ||
   aimClientSource.includes('import("../lib/clickSound")') ||
-  !aimClientSource.includes("window.setInterval(updateTimer, 100)") ||
-  !aimClientSource.includes("window.setTimeout(endGame, 30000)") ||
+  !aimClientSource.includes("useExactCountdown") ||
+  !aimClientSource.includes("durationMs: 30000") ||
+  !aimClientSource.includes('usePersistentBestNumber("aimTrainerBest")') ||
   aimClientSource.includes("AudioContext") ||
   aimClientSource.includes("createOscillator") ||
   aimClientSource.includes("navigator.share") ||
   aimClientSource.includes("}, 33)")
 ) {
   infrastructureErrors.push(
-    "AimTrainer must lazy-load audio/results and keep its live timer on the 100ms UI boundary with an exact end timer"
+    "AimTrainer must lazy-load audio/results and use shared exact countdown plus persistent best-score state"
   );
 }
 
@@ -1062,15 +1063,17 @@ if (
 
 if (
   !typingClientSource.includes('dynamic(() => import("./TypingResult")') ||
-  !typingClientSource.includes("window.setInterval(updateTimer, 100)") ||
-  !typingClientSource.includes("endTimerRef") ||
+  !typingClientSource.includes("useExactCountdown") ||
+  !typingClientSource.includes("durationMs: TEST_MS") ||
+  typingClientSource.includes("timerRef") ||
+  typingClientSource.includes("endTimerRef") ||
   typingClientSource.includes("navigator.share") ||
   typingClientSource.includes("<Share2") ||
   typingClientSource.includes("<RotateCcw") ||
   typingClientSource.includes("}, 50)")
 ) {
   infrastructureErrors.push(
-    "TypingTest must lazy-load finished controls and keep its live timer on the 100ms UI boundary with an exact end timer"
+    "TypingTest must lazy-load finished controls and use the shared exact countdown runtime"
   );
 }
 
@@ -1089,6 +1092,7 @@ if (
 }
 
 for (const [file, source, storageKey] of [
+  ["AimTrainer.tsx", aimClientSource, "aimTrainerBest"],
   ["ChimpTest.tsx", chimpClientSource, "chimpBestScore"],
   ["VisualMemoryTest.tsx", visualMemoryClientSource, "visualMemoryBest"],
   ["TypingTest.tsx", typingClientSource, "typingTestBestWpm"],
@@ -1181,14 +1185,16 @@ if (
 
 if (
   !scrollClientSource.includes('dynamic(() => import("./ScrollResult")') ||
-  !scrollClientSource.includes("window.setInterval(updateUi, 100)") ||
-  !scrollClientSource.includes("window.setTimeout(finishTest, TEST_MS)") ||
+  !scrollClientSource.includes("useExactCountdown") ||
+  !scrollClientSource.includes("durationMs: TEST_MS") ||
+  !scrollClientSource.includes("setDistance(distanceRef.current)") ||
+  !scrollClientSource.includes("setEvents(eventsRef.current)") ||
   !scrollClientSource.includes("patternRef.current.style.backgroundPositionY") ||
   scrollClientSource.includes("setScrollY") ||
-  scrollClientSource.includes("setDistance(distanceRef.current);\n      setEvents(eventsRef.current);\n      setScrollY")
+  scrollClientSource.includes("window.setInterval(updateUi, 100)")
 ) {
   infrastructureErrors.push(
-    "ScrollTest wheel hot path must stay ref-based with 100ms UI sampling and exact cutoff timing"
+    "ScrollTest wheel hot path must stay ref-based while shared exact countdown samples UI at 100ms"
   );
 }
 
@@ -1249,12 +1255,12 @@ if (
 const clientSourceBudgets = [
   ["WaveSimulator.tsx", waveClientSource, 11000],
   ["CpsTest.tsx", cpsClientSource, 13600],
-  ["AimTrainer.tsx", aimClientSource, 10500],
+  ["AimTrainer.tsx", aimClientSource, 9300],
   ["ReactionTest.tsx", reactionClientSource, 6500],
   ["VisualMemoryTest.tsx", visualMemoryClientSource, 9000],
   ["ChimpTest.tsx", chimpClientSource, 9500],
-  ["TypingTest.tsx", typingClientSource, 8000],
-  ["ScrollTest.tsx", scrollClientSource, 7500],
+  ["TypingTest.tsx", typingClientSource, 7300],
+  ["ScrollTest.tsx", scrollClientSource, 6500],
   ["RefreshRateTest.tsx", refreshRateClientSource, 4500],
   ["MouseAccelerationTest.tsx", mouseAccelerationClientSource, 5000],
   ["SoundReactionTest.tsx", soundReactionClientSource, 8000],
