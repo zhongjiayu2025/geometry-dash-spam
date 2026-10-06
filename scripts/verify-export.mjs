@@ -1464,13 +1464,16 @@ for (const heading of ["Jitter Click Test", "Butterfly Click Test", "Right Click
 }
 
 if (
-  !clickerSource.includes("saveTimerRef") ||
-  !clickerSource.includes("500") ||
+  clickerSource.includes("saveTimerRef") ||
+  clickerSource.includes("setTimeout(() => {\n      localStorage.setItem(STORAGE_KEY") ||
+  !clickerSource.includes("setInterval(flushSave, 5000)") ||
   !clickerSource.includes('addEventListener("pagehide", flushSave)') ||
-  !clickerSource.includes("stateRef.current = next")
+  !clickerSource.includes("stateRef.current = next") ||
+  !clickerSource.includes("elapsedSeconds") ||
+  !clickerSource.includes("prev.autoPower * elapsedSeconds")
 ) {
   infrastructureErrors.push(
-    "Geometry Dash Clicker must debounce localStorage writes and flush current state on exit"
+    "Geometry Dash Clicker must use low-frequency persistence and elapsed-time normalized auto gain"
   );
 }
 
