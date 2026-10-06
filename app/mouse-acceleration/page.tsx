@@ -33,6 +33,16 @@ export default function MouseAccelerationPage() {
           Compare pointer movement consistency in the browser. The page cannot directly inspect system acceleration settings.
         </p>
       </div>
+      <div className="mx-auto mb-8 w-full max-w-2xl rounded-2xl border border-white/5 bg-slate-900/50 p-6">
+        <ol className="list-inside list-decimal space-y-3 text-slate-300">
+          <li>Place your mouse against the left edge of your mousepad.</li>
+          <li><strong>Click inside the box below to set Point A.</strong></li>
+          <li>Move your mouse <strong>RAPIDLY</strong> to the right edge of your mousepad.</li>
+          <li><strong>Click again to set Point B.</strong></li>
+          <li>Move your mouse <strong>SLOWLY</strong> back to the left edge (starting physical position).</li>
+          <li><strong>Click a final time to set Point C.</strong></li>
+        </ol>
+      </div>
       <MouseAccelerationTest />
       <RelatedTools currentTool="mouseAcceleration" />
     </>

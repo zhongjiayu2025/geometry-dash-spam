@@ -1,18 +1,16 @@
 "use client";
 
-import React, { useState, useEffect, useRef } from 'react';
-import { MousePointer2, RotateCcw, AlertTriangle } from 'lucide-react';
+import React, { useState } from 'react';
+import dynamic from 'next/dynamic';
+import { MousePointer2 } from 'lucide-react';
+
+const MouseAccelerationResult = dynamic(() => import('./MouseAccelerationResult'), { ssr: false });
 
 export default function MouseAccelerationTest() {
     const [state, setState] = useState<'start' | 'moveRight' | 'moveLeft' | 'result'>('start');
     const [startX, setStartX] = useState<number | null>(null);
     const [endX, setEndX] = useState<number | null>(null);
     const [returnX, setReturnX] = useState<number | null>(null);
-    const [difference, setDifference] = useState<number>(0);
-    
-    // We use a physical object to measure "physical" vs "software" distance
-    // This is hard on the web, so we instruct the user explicitly.
-    
     const handleMouseClick = (e: React.MouseEvent) => {
         if (state === 'start') {
             setStartX(e.clientX);
@@ -22,8 +20,6 @@ export default function MouseAccelerationTest() {
             setState('moveLeft');
         } else if (state === 'moveLeft') {
             setReturnX(e.clientX);
-            const diff = Math.abs((startX || 0) - e.clientX);
-            setDifference(diff);
             setState('result');
         }
     };
@@ -33,10 +29,7 @@ export default function MouseAccelerationTest() {
         setStartX(null);
         setEndX(null);
         setReturnX(null);
-        setDifference(0);
     };
-
-    const hasLargeDifference = difference > 50;
 
     return (
         <div className="w-full max-w-4xl mx-auto px-4 md:px-0">
@@ -44,18 +37,6 @@ export default function MouseAccelerationTest() {
                 <div className="absolute top-0 right-0 w-64 h-64 bg-orange-500/10 rounded-full blur-[80px] -translate-y-1/2 translate-x-1/3"></div>
                 
                 <div className="relative z-10 flex flex-col items-center">
-                    
-                    <div className="mb-8 w-full max-w-2xl bg-slate-900/50 p-6 rounded-2xl border border-white/5">
-                        <ol className="list-decimal list-inside space-y-3 text-slate-300">
-                            <li>Place your mouse against the left edge of your mousepad.</li>
-                            <li><strong>Click inside the box below to set Point A.</strong></li>
-                            <li>Move your mouse <strong>RAPIDLY</strong> to the right edge of your mousepad.</li>
-                            <li><strong>Click again to set Point B.</strong></li>
-                            <li>Move your mouse <strong>SLOWLY</strong> back to the left edge (starting physical position).</li>
-                            <li><strong>Click a final time to set Point C.</strong></li>
-                        </ol>
-                    </div>
-
                     <div 
                         onClick={handleMouseClick}
                         className={`w-full min-h-80 rounded-3xl border-2 flex flex-col items-center justify-center p-8 transition-all duration-300 cursor-crosshair select-none relative
@@ -89,61 +70,13 @@ export default function MouseAccelerationTest() {
                             </div>
                         )}
 
-                        {state === 'result' && (
-                            <div className="text-center animate-in zoom-in-95 duration-300 w-full">
-                                <h3 className="text-3xl font-display font-bold text-white mb-6">Results</h3>
-                                
-                                <div className="grid grid-cols-3 gap-4 md:gap-8 mb-8">
-                                    <div className="bg-slate-800/50 p-4 rounded-xl">
-                                        <div className="text-xs text-slate-500 uppercase mb-1">Point A (Start)</div>
-                                        <div className="font-mono text-xl text-white">{startX}px</div>
-                                    </div>
-                                    <div className="bg-slate-800/50 p-4 rounded-xl">
-                                        <div className="text-xs text-slate-500 uppercase mb-1">Point B (Fast)</div>
-                                        <div className="font-mono text-xl text-white">{endX}px</div>
-                                    </div>
-                                    <div className="bg-slate-800/50 p-4 rounded-xl">
-                                        <div className="text-xs text-slate-500 uppercase mb-1">Point C (Slow Return)</div>
-                                        <div className="font-mono text-xl text-white">{returnX}px</div>
-                                    </div>
-                                </div>
-
-                                <div className={`p-6 rounded-2xl border ${hasLargeDifference ? 'bg-rose-900/20 border-rose-500/50' : 'bg-emerald-900/20 border-emerald-500/50'}`}>
-                                    <div className="flex items-center justify-center gap-3 mb-2">
-                                        {hasLargeDifference && <AlertTriangle className="w-6 h-6 text-rose-400" />}
-                                        <h4 className={`text-2xl font-display font-bold ${hasLargeDifference ? 'text-rose-400' : 'text-emerald-400'}`}>
-                                            {hasLargeDifference ? 'Large Return Difference' : 'Small Return Difference'}
-                                        </h4>
-                                    </div>
-                                    <p className="text-slate-300">
-                                        Cursor difference: <strong className="text-white">{difference}px</strong>
-                                    </p>
-                                    {hasLargeDifference ? (
-                                        <p className="text-sm text-rose-300/80 mt-2">
-                                            The cursor returned far from the starting screen position. Acceleration is one possible cause, but browser pointer behavior, hand path and display scaling can also affect this result.
-                                        </p>
-                                    ) : (
-                                        <p className="text-sm text-emerald-300/80 mt-2">
-                                            The cursor returned close to the starting screen position. This does not prove that operating-system mouse acceleration is disabled.
-                                        </p>
-                                    )}
-                                </div>
-
-                                <button
-                                    onClick={(e) => { e.stopPropagation(); resetTest(); }}
-                                    className="mt-8 px-6 py-2 bg-white/10 hover:bg-white/20 text-white font-medium rounded-lg transition-colors flex items-center gap-2 mx-auto"
-                                >
-                                    <RotateCcw className="w-4 h-4" /> Try Again
-                                </button>
-                            </div>
-                        )}
-                        
-                        {/* Visual markers */}
-                        {state === 'result' && startX !== null && (
-                            <div className="absolute top-0 bottom-0 w-px bg-orange-500/50" style={{ left: `${startX}px` }}></div>
-                        )}
-                        {state === 'result' && returnX !== null && (
-                            <div className="absolute top-0 bottom-0 w-px bg-green-500/50" style={{ left: `${returnX}px` }}></div>
+                        {state === 'result' && startX !== null && endX !== null && returnX !== null && (
+                            <MouseAccelerationResult
+                                startX={startX}
+                                endX={endX}
+                                returnX={returnX}
+                                onReset={resetTest}
+                            />
                         )}
                     </div>
                 </div>
