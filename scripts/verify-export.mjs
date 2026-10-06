@@ -466,6 +466,8 @@ const cpsRunHistorySource = readFileSync(join(process.cwd(), "components", "CpsR
 const cpsFinishedActionsSource = readFileSync(join(process.cwd(), "components", "CpsFinishedActions.tsx"), "utf8");
 const clickTestPanelsSource = readFileSync(join(process.cwd(), "components", "ClickTestPanels.tsx"), "utf8");
 const waveClientSource = readFileSync(join(process.cwd(), "components", "WaveSimulator.tsx"), "utf8");
+const wavePresetSource = readFileSync(join(process.cwd(), "data", "wavePresets.ts"), "utf8");
+const homeGuideSource = readFileSync(join(process.cwd(), "components", "HomeGuide.tsx"), "utf8");
 const wavePracticeDrillSource = readFileSync(join(process.cwd(), "components", "WavePracticeDrill.tsx"), "utf8");
 const difficultySelectorSource = readFileSync(join(process.cwd(), "components", "DifficultySelector.tsx"), "utf8");
 const gameCanvasSource = readFileSync(join(process.cwd(), "components", "GameCanvas.tsx"), "utf8");
@@ -1908,6 +1910,22 @@ if (waveClientSource.includes("Core next steps") || waveClientSource.includes("H
 
 if (homeSource.includes('next/dynamic') && homeSource.includes("HomeGuide")) {
   infrastructureErrors.push("HomeGuide should be server-rendered directly, not wrapped in next/dynamic");
+}
+
+if (
+  !waveClientSource.includes("from '../data/wavePresets'") ||
+  waveClientSource.includes("const WAVE_PRESETS") ||
+  !wavePresetSource.includes('id: "normal"') ||
+  !wavePresetSource.includes('id: "mini"') ||
+  !wavePresetSource.includes('id: "spam"') ||
+  !wavePresetSource.includes('id: "precision"') ||
+  !wavePresetSource.includes('id: "endless"') ||
+  !homeGuideSource.includes("Geometry Dash Spam Test Series: 5 drills in one trainer") ||
+  !homeGuideSource.includes("WAVE_PRESETS.map")
+) {
+  infrastructureErrors.push(
+    "Wave presets must stay centralized and the server-rendered home guide must expose the five-drill spam practice ladder"
+  );
 }
 
 if (

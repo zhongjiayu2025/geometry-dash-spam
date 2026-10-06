@@ -8,6 +8,7 @@ import { DIFFICULTY_CONFIGS } from '../constants';
 import DifficultySelector from './DifficultySelector';
 import { Infinity as InfinityIcon, Minimize2 } from 'lucide-react';
 import { readStorage, writeStorage } from '../lib/browserStorage';
+import { WAVE_PRESETS, type WavePreset, type WavePresetState } from '../data/wavePresets';
 
 const WavePracticeDrill = dynamic(() => import('./WavePracticeDrill'), { ssr: false });
 
@@ -27,24 +28,6 @@ const GameCanvas = dynamic(() => import('./GameCanvas'), {
 interface WaveSimulatorProps {
   variant?: 'spam' | 'wave';
 }
-
-type WavePreset = 'normal' | 'mini' | 'spam' | 'precision' | 'endless';
-type WavePresetState = WavePreset | 'custom';
-
-const WAVE_PRESETS: Array<{
-  id: WavePreset;
-  label: string;
-  description: string;
-  difficulty: Difficulty;
-  mini: boolean;
-  endless: boolean;
-}> = [
-  { id: 'normal', label: 'Normal Wave', description: 'Balanced wave control practice.', difficulty: Difficulty.Hard, mini: false, endless: false },
-  { id: 'mini', label: 'Mini Wave', description: 'Faster vertical movement with tighter corrections.', difficulty: Difficulty.Insane, mini: true, endless: false },
-  { id: 'spam', label: 'Wave Spam', description: 'Rapid repeated inputs with a demanding pace.', difficulty: Difficulty.EasyDemon, mini: true, endless: false },
-  { id: 'precision', label: 'Precision', description: 'Narrower high-difficulty control practice.', difficulty: Difficulty.ExtremeDemon, mini: false, endless: false },
-  { id: 'endless', label: 'Endless', description: 'Survive as long as possible and chase a local best.', difficulty: Difficulty.Hard, mini: false, endless: true },
-];
 
 const persistWaveSettings = (difficulty: Difficulty, mini: boolean, endless: boolean) => {
   writeStorage('gd_spam_last_difficulty', difficulty);

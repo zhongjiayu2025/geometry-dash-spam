@@ -1,6 +1,7 @@
 import React from "react";
 import Link from "next/link";
 import { Activity, BookOpen, MousePointer2, Trophy } from "lucide-react";
+import { WAVE_PRESETS } from "../data/wavePresets";
 
 const faqs = [
   {
@@ -74,6 +75,34 @@ export default function HomeGuide() {
             <p className="text-sm text-slate-400">See a sourced snapshot of the hardest listed demons and jump to focused level guides.</p>
           </Link>
         </div>
+      </div>
+
+      <div id="spam-test-series">
+        <h2 className="text-2xl md:text-3xl font-display font-bold text-white mb-3">
+          Geometry Dash Spam Test Series: 5 drills in one trainer
+        </h2>
+        <p className="mb-6 max-w-3xl text-sm leading-6 text-slate-500">
+          Instead of cloning dozens of numbered spam-test pages, the main trainer keeps five distinct practice presets in one place.
+          Start with control, add faster corrections, move into wave spam, tighten precision, then use Endless for repeatable endurance.
+        </p>
+        <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-5">
+          {WAVE_PRESETS.map((preset, index) => (
+            <a
+              key={preset.id}
+              href="#spam-test-tool"
+              className="rounded-xl border border-white/10 bg-slate-900/30 p-4 hover:border-blue-500/40"
+            >
+              <span className="text-[10px] font-bold uppercase tracking-[0.16em] text-blue-400">
+                Drill {index + 1}
+              </span>
+              <h3 className="mt-2 font-bold text-white">{preset.label}</h3>
+              <p className="mt-2 text-xs leading-5 text-slate-500">{preset.description}</p>
+            </a>
+          ))}
+        </div>
+        <p className="mt-4 text-xs leading-5 text-slate-500">
+          Every drill uses the same browser wave simulator, so your comparisons stay on one device and one input pipeline instead of mixing unrelated games.
+        </p>
       </div>
 
       <div className="grid md:grid-cols-2 gap-8">
