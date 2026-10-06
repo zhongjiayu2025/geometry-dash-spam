@@ -2830,6 +2830,7 @@ const sitemapPath = join(outDir, "sitemap.xml");
 const sitemapRouteErrors = [];
 const sitemapPolicyErrors = [];
 const sitemapMetadataErrors = [];
+const orphanRouteErrors = [];
 const snippetQualityErrors = [];
 const semanticErrors = [];
 const sitemapTitleOwners = new Map();
@@ -3051,6 +3052,37 @@ if (existsSync(sitemapPath)) {
   for (const noindexRoute of noindexRoutes) {
     if (sitemapRoutes.includes(noindexRoute)) {
       sitemapPolicyErrors.push(`${noindexRoute} should not be present in sitemap.xml`);
+    }
+  }
+
+  const sitemapRouteSet = new Set(sitemapRoutes);
+  const inboundFromContent = new Map(sitemapRoutes.map((route) => [route, new Set()]));
+
+  for (const sourceRoute of sitemapRoutes) {
+    if (sourceRoute === "/sitemap") continue;
+    const sourcePath = exportedPath(sourceRoute);
+    if (!sourcePath) continue;
+
+    const sourceHtml = readFileSync(sourcePath, "utf8");
+    for (const match of sourceHtml.matchAll(/href=["'](\/[^"'#?]*)/gi)) {
+      const rawHref = match[1];
+      const targetRoute = rawHref.length > 1 ? rawHref.replace(/\/$/, "") : rawHref;
+      if (
+        targetRoute !== sourceRoute &&
+        sitemapRouteSet.has(targetRoute)
+      ) {
+        inboundFromContent.get(targetRoute)?.add(sourceRoute);
+      }
+    }
+  }
+
+  const orphanAuditExemptions = new Set(["/"]);
+  for (const route of sitemapRoutes) {
+    if (orphanAuditExemptions.has(route)) continue;
+    if ((inboundFromContent.get(route)?.size ?? 0) === 0) {
+      orphanRouteErrors.push(
+        `${route}: sitemap page has no inbound link from another sitemap page outside /sitemap`
+      );
     }
   }
 
@@ -3289,6 +3321,17 @@ for (const [route, expectedLinks] of intentClusterLinks) {
 
 const contentErrors = [];
 
+const breezePageSource = readFileSync(join(process.cwd(), "app", "geometry-dash-breeze", "page.tsx"), "utf8");
+if (
+  breezePageSource.includes("called ${LATEST_MAIN_LEVEL}") ||
+  breezePageSource.includes("Android ${ANDROID_MIN}") ||
+  breezePageSource.includes("through ${ANDROID_MAX}")
+) {
+  contentErrors.push(
+    "Breeze visible copy must interpolate current release facts instead of rendering literal template placeholders"
+  );
+}
+
 const topSpamGuidePath = exportedPath("/blog/top-spam-levels-2026");
 if (topSpamGuidePath) {
   const topSpamHtml = readFileSync(topSpamGuidePath, "utf8");
@@ -3330,6 +3373,21 @@ for (const [route, snippets] of [
   for (const snippet of snippets) {
     if (!html.includes(snippet)) {
       contentErrors.push(`${route}: FAQPage is missing "${snippet}"`);
+    }
+  }
+}
+
+const rightClickFaqPath = exportedPath("/right-click");
+if (rightClickFaqPath) {
+  const rightClickHtml = readFileSync(rightClickFaqPath, "utf8");
+  for (const snippet of [
+    '"@type":"FAQPage"',
+    "What does the right click CPS test measure?",
+    "Is right click CPS the same as Geometry Dash performance?",
+    "Why can right-click CPS differ from left-click CPS?",
+  ]) {
+    if (!rightClickHtml.includes(snippet)) {
+      contentErrors.push(`/right-click: FAQPage is missing "${snippet}"`);
     }
   }
 }
@@ -3482,6 +3540,7 @@ if (
   sitemapRouteErrors.length ||
   sitemapPolicyErrors.length ||
   sitemapMetadataErrors.length ||
+  orphanRouteErrors.length ||
   snippetQualityErrors.length ||
   semanticErrors.length ||
   noindexErrors.length ||
@@ -3514,6 +3573,11 @@ if (
   if (semanticErrors.length) {
     console.error("Indexable-page semantic errors:");
     for (const error of semanticErrors) console.error(`- ${error}`);
+  }
+
+  if (orphanRouteErrors.length) {
+    console.error("Orphan sitemap-page errors:");
+    for (const error of orphanRouteErrors) console.error(`- ${error}`);
   }
 
   if (snippetQualityErrors.length) {
