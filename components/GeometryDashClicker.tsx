@@ -4,6 +4,7 @@ import React, { useEffect, useRef, useState } from "react";
 import { RotateCcw, Sparkles, Zap } from "lucide-react";
 import ClickerAchievements from "./ClickerAchievements";
 import { useIntentionalPointerAction } from "../lib/useIntentionalPointerAction";
+import { autoCostFor, clickCostFor, prestigeCostFor } from "../lib/clickerEconomy";
 
 type SaveState = {
   orbs: number;
@@ -94,9 +95,9 @@ export default function GeometryDashClicker() {
     return () => window.clearInterval(timer);
   }, [loaded, state.autoPower]);
 
-  const clickCost = Math.floor(25 * Math.pow(1.65, state.clickPower - 1));
-  const autoCost = Math.floor(80 * Math.pow(1.75, state.autoPower));
-  const prestigeCost = 10000 * (state.prestige + 1);
+  const clickCost = clickCostFor(state.clickPower);
+  const autoCost = autoCostFor(state.autoPower);
+  const prestigeCost = prestigeCostFor(state.prestige);
 
 
   const clickCube = () => {
@@ -117,7 +118,7 @@ export default function GeometryDashClicker() {
 
   const buyClick = () => {
     updateState((prev) => {
-      const cost = Math.floor(25 * Math.pow(1.65, prev.clickPower - 1));
+      const cost = clickCostFor(prev.clickPower);
       if (prev.orbs < cost) return prev;
       return { ...prev, orbs: prev.orbs - cost, clickPower: prev.clickPower + 1 };
     });
@@ -125,7 +126,7 @@ export default function GeometryDashClicker() {
 
   const buyAuto = () => {
     updateState((prev) => {
-      const cost = Math.floor(80 * Math.pow(1.75, prev.autoPower));
+      const cost = autoCostFor(prev.autoPower);
       if (prev.orbs < cost) return prev;
       return { ...prev, orbs: prev.orbs - cost, autoPower: prev.autoPower + 1 };
     });
@@ -133,7 +134,7 @@ export default function GeometryDashClicker() {
 
   const prestige = () => {
     updateState((prev) => {
-      const cost = 10000 * (prev.prestige + 1);
+      const cost = prestigeCostFor(prev.prestige);
       if (prev.orbs < cost) return prev;
       return {
         orbs: 0,

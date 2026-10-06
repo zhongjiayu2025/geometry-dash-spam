@@ -488,6 +488,7 @@ const demonFilterSource = readFileSync(join(process.cwd(), "components", "DemonL
 const clickTestHeroSource = readFileSync(join(process.cwd(), "components", "ClickTestHero.tsx"), "utf8");
 const clickerSource = readFileSync(join(process.cwd(), "components", "GeometryDashClicker.tsx"), "utf8");
 const clickerAchievementsSource = readFileSync(join(process.cwd(), "components", "ClickerAchievements.tsx"), "utf8");
+const clickerEconomySource = readFileSync(join(process.cwd(), "lib", "clickerEconomy.ts"), "utf8");
 const homeSource = readFileSync(join(process.cwd(), "app", "page.tsx"), "utf8");
 const personalStatsSource = readFileSync(join(process.cwd(), "components", "PersonalStats.tsx"), "utf8");
 const personalStatsContentSource = readFileSync(join(process.cwd(), "components", "PersonalStatsContent.tsx"), "utf8");
@@ -2126,6 +2127,19 @@ if (
 ) {
   infrastructureErrors.push(
     "Geometry Dash Clicker purchases must validate affordability inside the updater to prevent stale rapid-click overspending"
+  );
+}
+
+if (
+  !clickerSource.includes('from "../lib/clickerEconomy"') ||
+  clickerSource.includes("Math.pow(1.65") ||
+  clickerSource.includes("Math.pow(1.75") ||
+  !clickerEconomySource.includes("export const clickCostFor") ||
+  !clickerEconomySource.includes("export const autoCostFor") ||
+  !clickerEconomySource.includes("export const prestigeCostFor")
+) {
+  infrastructureErrors.push(
+    "Geometry Dash Clicker upgrade cost formulas must stay centralized in clickerEconomy"
   );
 }
 
