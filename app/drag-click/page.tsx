@@ -1,4 +1,5 @@
 import DragClickTest from "../../components/DragClickTest";
+import RelatedTools from "../../components/RelatedTools";
 import InputToolGuide from "../../components/InputToolGuide";
 import { Metadata } from "next";
 
@@ -34,6 +35,7 @@ export default function DragClickPage() {
       </div>
       <DragClickTest />
       <InputToolGuide tool="drag" />
-    </>
+          <RelatedTools currentTool="dragClick" />
+</>
   );
 }
