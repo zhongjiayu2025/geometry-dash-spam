@@ -1324,6 +1324,17 @@ if (
 }
 
 if (
+  !typingClientSource.includes("Math.floor(inputLength / 160) * 160 - 40") ||
+  !typingClientSource.includes("targetText.lastIndexOf") ||
+  !typingClientSource.includes("visibleStart + 650") ||
+  typingClientSource.includes('targetText.split("").map')
+) {
+  infrastructureErrors.push(
+    "TypingTest must render a bounded text window around the current input instead of remounting the full corpus on every keystroke"
+  );
+}
+
+if (
   !typingClientSource.includes('status === "running"') ||
   !typingClientSource.includes("performance.now() - startTimeRef.current >= TEST_MS") ||
   !typingClientSource.includes("finishTest(TEST_MS)")
