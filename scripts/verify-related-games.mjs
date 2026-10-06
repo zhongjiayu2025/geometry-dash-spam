@@ -2,7 +2,9 @@ import { readFileSync } from "node:fs";
 
 const dataPath = new URL("../data/relatedSearch.json", import.meta.url);
 const workflowPath = new URL("../.github/workflows/demon-list-refresh.yml", import.meta.url);
+const refreshDatesPath = new URL("./refresh-related-search-checks.mjs", import.meta.url);
 const workflowSource = readFileSync(workflowPath, "utf8");
+const refreshDatesSource = readFileSync(refreshDatesPath, "utf8");
 const relatedSearchData = JSON.parse(readFileSync(dataPath, "utf8"));
 
 const pages = [
@@ -208,6 +210,28 @@ if (
 ) {
   errors.push(
     "Related-game refresh workflow must live-check the current Spam Challenge List and migration sources."
+  );
+}
+
+if (
+  !workflowSource.includes('"scripts/refresh-related-search-checks.mjs"') ||
+  !workflowSource.includes("Refresh related search verification dates") ||
+  !workflowSource.includes("git diff --quiet -- data/demons.ts data/relatedSearch.json") ||
+  !workflowSource.includes("git add data/demons.ts data/relatedSearch.json")
+) {
+  errors.push(
+    "Related-game refresh workflow must periodically persist successful live verification dates together with other search data."
+  );
+}
+
+if (
+  !refreshDatesSource.includes('const REFRESH_KEYS = ["spamChallengeList", "dashmetry", "breeze"]') ||
+  !refreshDatesSource.includes("const MIN_REFRESH_DAYS = 7") ||
+  !refreshDatesSource.includes("entry.checkedAt = today") ||
+  !refreshDatesSource.includes("writeFileSync(DATA_PATH")
+) {
+  errors.push(
+    "Related search verification-date refresher must update all live-checked entries on a weekly cadence."
   );
 }
 

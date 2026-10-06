@@ -16,6 +16,7 @@ on:
       - "scripts/verify-related-games-live.mjs"
       - "scripts/verify-dashmetry-live.mjs"
       - "scripts/verify-spam-challenge-live.mjs"
+      - "scripts/refresh-related-search-checks.mjs"
       - "data/vaultCodes.ts"
       - "data/relatedSearch.json"
       - "app/spam-challenge-list/page.tsx"
@@ -71,17 +72,20 @@ jobs:
       - name: Validate current Spam Challenge List entry
         run: node scripts/verify-spam-challenge-live.mjs
 
+      - name: Refresh related search verification dates
+        run: node scripts/refresh-related-search-checks.mjs
+
       - name: Commit changes
         shell: bash
         run: |
-          if git diff --quiet -- data/demons.ts; then
-            echo "No Demon List changes to commit."
+          if git diff --quiet -- data/demons.ts data/relatedSearch.json; then
+            echo "No verified search-data changes to commit."
             exit 0
           fi
 
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-          git add data/demons.ts
-          git commit -m "data: refresh Pointercrate demon list"
+          git add data/demons.ts data/relatedSearch.json
+          git commit -m "data: refresh verified search sources"
           git pull --rebase origin main
           git push origin HEAD:main
