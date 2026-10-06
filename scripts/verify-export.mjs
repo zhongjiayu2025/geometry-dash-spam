@@ -2106,6 +2106,17 @@ if (
 }
 
 if (
+  (clickerSource.match(/if \(prev\.orbs < cost\) return prev;/g) ?? []).length < 3 ||
+  clickerSource.includes("if (state.orbs < clickCost) return;") ||
+  clickerSource.includes("if (state.orbs < autoCost) return;") ||
+  clickerSource.includes("if (state.orbs < prestigeCost) return;")
+) {
+  infrastructureErrors.push(
+    "Geometry Dash Clicker purchases must validate affordability inside the updater to prevent stale rapid-click overspending"
+  );
+}
+
+if (
   !clickerSource.includes("useIntentionalPointerAction") ||
   !clickerSource.includes("deferTouch: true") ||
   !clickerSource.includes("touch-pan-y") ||

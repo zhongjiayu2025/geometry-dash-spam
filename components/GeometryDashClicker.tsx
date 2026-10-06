@@ -116,24 +116,33 @@ export default function GeometryDashClicker() {
   });
 
   const buyClick = () => {
-    if (state.orbs < clickCost) return;
-    updateState((prev) => ({ ...prev, orbs: prev.orbs - clickCost, clickPower: prev.clickPower + 1 }));
+    updateState((prev) => {
+      const cost = Math.floor(25 * Math.pow(1.65, prev.clickPower - 1));
+      if (prev.orbs < cost) return prev;
+      return { ...prev, orbs: prev.orbs - cost, clickPower: prev.clickPower + 1 };
+    });
   };
 
   const buyAuto = () => {
-    if (state.orbs < autoCost) return;
-    updateState((prev) => ({ ...prev, orbs: prev.orbs - autoCost, autoPower: prev.autoPower + 1 }));
+    updateState((prev) => {
+      const cost = Math.floor(80 * Math.pow(1.75, prev.autoPower));
+      if (prev.orbs < cost) return prev;
+      return { ...prev, orbs: prev.orbs - cost, autoPower: prev.autoPower + 1 };
+    });
   };
 
   const prestige = () => {
-    if (state.orbs < prestigeCost) return;
-    updateState((prev) => ({
-      orbs: 0,
-      clickPower: 1,
-      autoPower: 0,
-      prestige: prev.prestige + 1,
-      totalClicks: prev.totalClicks,
-    }));
+    updateState((prev) => {
+      const cost = 10000 * (prev.prestige + 1);
+      if (prev.orbs < cost) return prev;
+      return {
+        orbs: 0,
+        clickPower: 1,
+        autoPower: 0,
+        prestige: prev.prestige + 1,
+        totalClicks: prev.totalClicks,
+      };
+    });
   };
 
   const reset = () => {
