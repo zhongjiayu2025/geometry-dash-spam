@@ -138,7 +138,7 @@ const SpacebarCounter: React.FC = () => {
   }, []);
 
   const handleKeyDown = useCallback((event: KeyboardEvent) => {
-    if (isInteractiveKeyboardTarget(e.target)) return;
+    if (isInteractiveKeyboardTarget(event.target)) return;
     if (event.code !== "Space") return;
 
     event.preventDefault();
@@ -172,7 +172,7 @@ const SpacebarCounter: React.FC = () => {
   }, [ensureAudio, finishTest, setVisualPressed, soundEnabled, startTest]);
 
   const handleKeyUp = useCallback((event: KeyboardEvent) => {
-    if (isInteractiveKeyboardTarget(e.target)) return;
+    if (isInteractiveKeyboardTarget(event.target)) return;
     if (event.code === "Space") setVisualPressed(false);
   }, [setVisualPressed]);
 
