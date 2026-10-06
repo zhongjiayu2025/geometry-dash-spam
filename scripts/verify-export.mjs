@@ -1030,6 +1030,16 @@ if (
 }
 
 if (
+  !pollingClientSource.includes('window.addEventListener("blur", stopInterruptedTracking)') ||
+  !pollingClientSource.includes('document.addEventListener("visibilitychange", handleVisibilityChange)') ||
+  !pollingClientSource.includes("if (document.hidden) stopInterruptedTracking()")
+) {
+  infrastructureErrors.push(
+    "PollingRateTest must stop on blur or backgrounding so hidden time cannot dilute measured event rates"
+  );
+}
+
+if (
   !secondaryClickClientSource.includes('isRightClick ? "touch-pan-y"') ||
   secondaryClickClientSource.includes('isRightClick ? "touch-none"')
 ) {

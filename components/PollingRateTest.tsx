@@ -85,6 +85,28 @@ export default function PollingRateTest() {
   }, [isTracking]);
 
   useEffect(() => {
+    if (!isTracking) return;
+
+    const stopInterruptedTracking = () => {
+      if (totalEventsRef.current > 0) sampleRates();
+      setIsTracking(false);
+      clearSampler();
+    };
+
+    const handleVisibilityChange = () => {
+      if (document.hidden) stopInterruptedTracking();
+    };
+
+    window.addEventListener("blur", stopInterruptedTracking);
+    document.addEventListener("visibilitychange", handleVisibilityChange);
+
+    return () => {
+      window.removeEventListener("blur", stopInterruptedTracking);
+      document.removeEventListener("visibilitychange", handleVisibilityChange);
+    };
+  }, [isTracking]);
+
+  useEffect(() => {
     return () => clearSampler();
   }, []);
 
