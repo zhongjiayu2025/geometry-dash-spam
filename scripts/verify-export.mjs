@@ -918,11 +918,14 @@ if (
 }
 
 if (
-  !doubleClickClientSource.includes("const intervalCount = history.length;") ||
-  doubleClickClientSource.includes("const intervalCount = Math.max(0, clicks - 1)")
+  !doubleClickClientSource.includes("measuredIntervals: number") ||
+  !doubleClickClientSource.includes("measuredIntervals: current.measuredIntervals + 1") ||
+  !doubleClickClientSource.includes("rapidIntervals / measuredIntervals") ||
+  doubleClickClientSource.includes("rapidIntervals / history.length") ||
+  doubleClickClientSource.includes("const intervalCount = history.length;")
 ) {
   infrastructureErrors.push(
-    "DoubleClick rapid rate must use only measured interval history so ignored long pauses do not dilute the result"
+    "DoubleClick rapid rate must use cumulative measured intervals while long pauses remain excluded"
   );
 }
 

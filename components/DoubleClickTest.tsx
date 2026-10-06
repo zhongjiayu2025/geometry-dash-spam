@@ -16,6 +16,7 @@ export type HistoryItem = {
 type MeasurementState = {
   clicks: number;
   rapidIntervals: number;
+  measuredIntervals: number;
   lastDelta: number | null;
   history: HistoryItem[];
 };
@@ -23,6 +24,7 @@ type MeasurementState = {
 const EMPTY_MEASUREMENT: MeasurementState = {
   clicks: 0,
   rapidIntervals: 0,
+  measuredIntervals: 0,
   lastDelta: null,
   history: [],
 };
@@ -31,7 +33,7 @@ export default function DoubleClickTest() {
   const [measurement, setMeasurement] = useState<MeasurementState>(EMPTY_MEASUREMENT);
   const [threshold, setThreshold] = useState(80);
 
-  const { clicks, rapidIntervals, lastDelta, history } = measurement;
+  const { clicks, rapidIntervals, measuredIntervals, lastDelta, history } = measurement;
 
   const lastClickTime = useRef(0);
   const clickIdRef = useRef(0);
@@ -66,6 +68,7 @@ export default function DoubleClickTest() {
     setMeasurement((current) => ({
       clicks: current.clicks + 1,
       rapidIntervals: current.rapidIntervals + (isRapid ? 1 : 0),
+      measuredIntervals: current.measuredIntervals + 1,
       lastDelta: rounded,
       history: [
         { id: clickIdRef.current, delta: rounded, isRapid },
@@ -107,10 +110,9 @@ export default function DoubleClickTest() {
     clickIdRef.current = 0;
   };
 
-  const intervalCount = history.length;
   const rapidRate =
-    intervalCount > 0
-      ? ((rapidIntervals / intervalCount) * 100).toFixed(1)
+    measuredIntervals > 0
+      ? ((rapidIntervals / measuredIntervals) * 100).toFixed(1)
       : "0.0";
 
   return (
