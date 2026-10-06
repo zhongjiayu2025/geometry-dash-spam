@@ -5,7 +5,7 @@ import { RotateCcw, Sparkles, Zap } from "lucide-react";
 import ClickerAchievements from "./ClickerAchievements";
 import { useIntentionalPointerAction } from "../lib/useIntentionalPointerAction";
 import {
-  INITIAL_CLICKER_STATE_CLICKER_STATE,
+  INITIAL_CLICKER_STATE,
   autoCostFor,
   buyAutoUpgrade,
   buyClickUpgrade,
