@@ -1,6 +1,8 @@
 import { readFileSync } from "node:fs";
 
 const dataPath = new URL("../data/relatedSearch.json", import.meta.url);
+const workflowPath = new URL("../.github/workflows/demon-list-refresh.yml", import.meta.url);
+const workflowSource = readFileSync(workflowPath, "utf8");
 const relatedSearchData = JSON.parse(readFileSync(dataPath, "utf8"));
 
 const pages = [
@@ -108,6 +110,16 @@ for (const page of pages) {
       errors.push("Geometry Dash Breeze: release facts must not be hard-coded in the page.");
     }
   }
+}
+
+if (
+  !workflowSource.includes('"scripts/verify-related-games-live.mjs"') ||
+  !workflowSource.includes("Validate Breeze latest release") ||
+  !workflowSource.includes("GITHUB_TOKEN: ${{ github.token }}")
+) {
+  errors.push(
+    "Related-game refresh workflow must run the live Breeze release verifier with the GitHub token."
+  );
 }
 
 if (errors.length) {

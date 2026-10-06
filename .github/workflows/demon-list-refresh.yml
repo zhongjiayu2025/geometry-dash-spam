@@ -13,6 +13,7 @@ on:
       - "components/DemonListFilterControls.tsx"
       - "scripts/verify-vault-data.mjs"
       - "scripts/verify-related-games.mjs"
+      - "scripts/verify-related-games-live.mjs"
       - "data/vaultCodes.ts"
       - "data/relatedSearch.json"
       - "app/spam-challenge-list/page.tsx"
@@ -56,6 +57,11 @@ jobs:
 
       - name: Validate related game source freshness
         run: node scripts/verify-related-games.mjs
+
+      - name: Validate Breeze latest release
+        env:
+          GITHUB_TOKEN: ${{ github.token }}
+        run: node scripts/verify-related-games-live.mjs
 
       - name: Commit changes
         shell: bash
