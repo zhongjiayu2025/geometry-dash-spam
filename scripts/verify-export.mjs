@@ -438,6 +438,7 @@ const wavePracticeDrillSource = readFileSync(join(process.cwd(), "components", "
 const difficultySelectorSource = readFileSync(join(process.cwd(), "components", "DifficultySelector.tsx"), "utf8");
 const gameCanvasSource = readFileSync(join(process.cwd(), "components", "GameCanvas.tsx"), "utf8");
 const waveAudioSource = readFileSync(join(process.cwd(), "lib", "waveAudio.ts"), "utf8");
+const waveRendererSource = readFileSync(join(process.cwd(), "lib", "waveRenderer.ts"), "utf8");
 const waveRunOverlaysSource = readFileSync(join(process.cwd(), "components", "WaveRunOverlays.tsx"), "utf8");
 const clickSoundSource = readFileSync(join(process.cwd(), "lib", "clickSound.ts"), "utf8");
 const secondaryClickFinishedSource = readFileSync(join(process.cwd(), "components", "SecondaryClickFinishedActions.tsx"), "utf8");
@@ -1060,7 +1061,7 @@ const clientSourceBudgets = [
   ["DragClickTest.tsx", dragClientSource, 10000],
   ["SpacebarCounter.tsx", spacebarClientSource, 12000],
   ["PersonalStats.tsx", personalStatsSource, 13500],
-  ["GameCanvas.tsx", gameCanvasSource, 46000],
+  ["GameCanvas.tsx", gameCanvasSource, 41000],
 ];
 
 for (const [file, source, maxBytes] of clientSourceBudgets) {
@@ -1105,6 +1106,19 @@ if (
   gameCanvasSource.includes("runTime = now - gameState.current.startTime")
 ) {
   infrastructureErrors.push("Wave physics must remain delta-time normalized instead of frame-rate dependent");
+}
+
+if (
+  !gameCanvasSource.includes("import('../lib/waveRenderer')") ||
+  !gameCanvasSource.includes("renderer(ctx, canvas") ||
+  gameCanvasSource.includes("ctx.createLinearGradient") ||
+  gameCanvasSource.includes("ctx.shadowBlur = 50") ||
+  !waveRendererSource.includes("export function renderWaveFrame") ||
+  !waveRendererSource.includes("ctx.createLinearGradient")
+) {
+  infrastructureErrors.push(
+    "Wave canvas drawing must stay in the first-run lazy waveRenderer chunk"
+  );
 }
 
 if (
