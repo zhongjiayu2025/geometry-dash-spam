@@ -6,7 +6,7 @@ import { isInteractiveKeyboardTarget } from "../lib/inputTarget";
 import { Keyboard, Trophy, Volume2, VolumeX, Zap } from "lucide-react";
 
 const SpacebarFinishedActions = dynamic(() => import("./SpacebarFinishedActions"), { ssr: false });
-import type { ClickSoundEngine } from "../lib/clickSound";
+import { useLazyClickSound } from "../lib/useLazyClickSound";
 
 const TEST_MS = 10000;
 
@@ -26,9 +26,6 @@ const SpacebarCounter: React.FC = () => {
   const countRef = useRef(0);
   const activeRef = useRef(false);
   const finishedRef = useRef(false);
-  const audioEngineRef = useRef<ClickSoundEngine | null>(null);
-  const audioLoadRef = useRef<Promise<ClickSoundEngine | null> | null>(null);
-  const audioDisposedRef = useRef(false);
 
   useEffect(() => {
     setSoundEnabled(localStorage.getItem("spacebarSoundEnabled") === "true");
@@ -40,41 +37,9 @@ const SpacebarCounter: React.FC = () => {
     }
   }, []);
 
-  useEffect(() => {
-    return () => {
-      audioDisposedRef.current = true;
-      const engine = audioEngineRef.current;
-      audioEngineRef.current = null;
-      if (engine) void engine.destroy();
-    };
-  }, []);
 
-  const ensureAudio = useCallback(async () => {
-    if (audioDisposedRef.current) return null;
 
-    if (audioEngineRef.current) {
-      await audioEngineRef.current.resume();
-      return audioEngineRef.current;
-    }
-
-    if (!audioLoadRef.current) {
-      audioLoadRef.current = import("../lib/clickSound")
-        .then(({ createClickSoundEngine }) => createClickSoundEngine())
-        .catch(() => null);
-    }
-
-    const engine = await audioLoadRef.current;
-    if (!engine) return null;
-
-    if (audioDisposedRef.current) {
-      await engine.destroy();
-      return null;
-    }
-
-    audioEngineRef.current = engine;
-    await engine.resume();
-    return engine;
-  }, []);
+  const { ensure: ensureClickSound, play: playClickSound, suspend: suspendClickSound } = useLazyClickSound();
 
   const setVisualPressed = useCallback((pressed: boolean) => {
     const key = visualKeyRef.current;
@@ -154,14 +119,7 @@ const SpacebarCounter: React.FC = () => {
       return;
     }
 
-    if (soundEnabled) {
-      const engine = audioEngineRef.current;
-      if (engine) {
-        engine.play("spacebar");
-      } else {
-        void ensureAudio().then((loadedEngine) => loadedEngine?.play("spacebar"));
-      }
-    }
+    if (soundEnabled) playClickSound("spacebar");
 
     setVisualPressed(true);
 
@@ -171,7 +129,7 @@ const SpacebarCounter: React.FC = () => {
     }
 
     countRef.current += 1;
-  }, [ensureAudio, finishTest, setVisualPressed, soundEnabled, startTest]);
+  }, [finishTest, playClickSound, setVisualPressed, soundEnabled, startTest]);
 
   const handleKeyUp = useCallback((event: KeyboardEvent) => {
     if (isInteractiveKeyboardTarget(event.target)) return;
@@ -241,9 +199,9 @@ const SpacebarCounter: React.FC = () => {
     localStorage.setItem("spacebarSoundEnabled", String(next));
 
     if (next) {
-      void ensureAudio();
-    } else if (audioEngineRef.current) {
-      void audioEngineRef.current.suspend();
+      void ensureClickSound();
+    } else {
+      void suspendClickSound();
     }
   };
 

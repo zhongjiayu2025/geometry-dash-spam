@@ -3,7 +3,8 @@
 import React, { useCallback, useEffect, useRef, useState } from "react";
 import dynamic from "next/dynamic";
 import { Target, Trophy, Volume2, VolumeX } from "lucide-react";
-import type { ClickSoundEngine, ClickTone } from "../lib/clickSound";
+import type { ClickTone } from "../lib/clickSound";
+import { useLazyClickSound } from "../lib/useLazyClickSound";
 
 const AimTrainerResult = dynamic(() => import("./AimTrainerResult"), { ssr: false });
 
@@ -21,9 +22,6 @@ export default function AimTrainer() {
   const lastClickTime = useRef(0);
   const timerRef = useRef<number | null>(null);
   const endTimerRef = useRef<number | null>(null);
-  const audioEngineRef = useRef<ClickSoundEngine | null>(null);
-  const audioLoadRef = useRef<Promise<ClickSoundEngine | null> | null>(null);
-  const audioDisposedRef = useRef(false);
   const startTimeRef = useRef(0);
 
   useEffect(() => {
@@ -34,63 +32,30 @@ export default function AimTrainer() {
     }
 
     return () => {
-      audioDisposedRef.current = true;
       if (timerRef.current) window.clearInterval(timerRef.current);
       if (endTimerRef.current) window.clearTimeout(endTimerRef.current);
-      const engine = audioEngineRef.current;
-      audioEngineRef.current = null;
-      if (engine) void engine.destroy();
     };
   }, []);
 
-  const ensureAudio = useCallback(async () => {
-    if (audioDisposedRef.current) return null;
 
-    if (audioEngineRef.current) {
-      await audioEngineRef.current.resume();
-      return audioEngineRef.current;
-    }
-
-    if (!audioLoadRef.current) {
-      audioLoadRef.current = import("../lib/clickSound")
-        .then(({ createClickSoundEngine }) => createClickSoundEngine())
-        .catch(() => null);
-    }
-
-    const engine = await audioLoadRef.current;
-    if (!engine) return null;
-
-    if (audioDisposedRef.current) {
-      await engine.destroy();
-      return null;
-    }
-
-    audioEngineRef.current = engine;
-    await engine.resume();
-    return engine;
-  }, []);
+  const { ensure: ensureClickSound, play: playClickSound, suspend: suspendClickSound } = useLazyClickSound();
 
   const playAimSound = useCallback((tone: ClickTone) => {
     if (!soundEnabled) return;
 
-    const engine = audioEngineRef.current;
-    if (engine) {
-      engine.play(tone);
-    } else {
-      void ensureAudio().then((loadedEngine) => loadedEngine?.play(tone));
-    }
-  }, [ensureAudio, soundEnabled]);
+    playClickSound(tone);
+  }, [playClickSound, soundEnabled]);
 
   const toggleSound = useCallback(() => {
     const next = !soundEnabled;
     setSoundEnabled(next);
 
     if (next) {
-      void ensureAudio();
-    } else if (audioEngineRef.current) {
-      void audioEngineRef.current.suspend();
+      void ensureClickSound();
+    } else {
+      void suspendClickSound();
     }
-  }, [ensureAudio, soundEnabled]);
+  }, [ensureClickSound, soundEnabled, suspendClickSound]);
 
   const generateTarget = () => {
     setTargetPos({
@@ -135,7 +100,7 @@ export default function AimTrainer() {
     startTimeRef.current = now;
     generateTarget();
 
-    if (soundEnabled) void ensureAudio();
+    if (soundEnabled) void ensureClickSound();
 
     const updateTimer = () => {
       const elapsed = performance.now() - startTimeRef.current;

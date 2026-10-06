@@ -4,7 +4,7 @@
 import React, { useState, useEffect, useRef, useCallback } from 'react';
 import dynamic from 'next/dynamic';
 import { MousePointer2, Timer, Clock, Trophy, Volume2, VolumeX } from 'lucide-react';
-import type { ClickSoundEngine } from '../lib/clickSound';
+import { useLazyClickSound } from '../lib/useLazyClickSound';
 
 const CpsRunHistory = dynamic(() => import('./CpsRunHistory'), { ssr: false });
 const CpsFinishedActions = dynamic(() => import('./CpsFinishedActions'), { ssr: false });
@@ -31,9 +31,6 @@ const CpsTest: React.FC = () => {
   
   const timerRef = useRef<number | null>(null);
   const endTimerRef = useRef<number | null>(null);
-  const audioEngineRef = useRef<ClickSoundEngine | null>(null);
-  const audioLoadRef = useRef<Promise<ClickSoundEngine | null> | null>(null);
-  const audioDisposedRef = useRef(false);
   const clicksRef = useRef(0);
   const testStartRef = useRef(0);
   const clickTimesRef = useRef<number[]>([]);
@@ -61,14 +58,6 @@ const CpsTest: React.FC = () => {
 
   }, []);
 
-  useEffect(() => {
-    return () => {
-      audioDisposedRef.current = true;
-      const engine = audioEngineRef.current;
-      audioEngineRef.current = null;
-      if (engine) void engine.destroy();
-    };
-  }, []);
 
   const startTest = () => {
     const now = performance.now();
@@ -104,32 +93,8 @@ const CpsTest: React.FC = () => {
     clickTimesRef.current.push(now);
   };
 
-  const ensureAudio = useCallback(async () => {
-    if (audioDisposedRef.current) return null;
 
-    if (audioEngineRef.current) {
-      await audioEngineRef.current.resume();
-      return audioEngineRef.current;
-    }
-
-    if (!audioLoadRef.current) {
-      audioLoadRef.current = import('../lib/clickSound')
-        .then(({ createClickSoundEngine }) => createClickSoundEngine())
-        .catch(() => null);
-    }
-
-    const engine = await audioLoadRef.current;
-    if (!engine) return null;
-
-    if (audioDisposedRef.current) {
-      await engine.destroy();
-      return null;
-    }
-
-    audioEngineRef.current = engine;
-    await engine.resume();
-    return engine;
-  }, []);
+  const { ensure: ensureClickSound, play: playClickSound, suspend: suspendClickSound } = useLazyClickSound();
 
   const toggleSound = () => {
     const next = !soundEnabled;
@@ -137,21 +102,16 @@ const CpsTest: React.FC = () => {
     localStorage.setItem('cpsSoundEnabled', String(next));
 
     if (next) {
-      void ensureAudio();
-    } else if (audioEngineRef.current) {
-      void audioEngineRef.current.suspend();
+      void ensureClickSound();
+    } else {
+      void suspendClickSound();
     }
   };
 
   const playInputSound = () => {
     if (!soundEnabled) return;
 
-    const engine = audioEngineRef.current;
-    if (engine) {
-      engine.play('cps');
-    } else {
-      void ensureAudio().then((loadedEngine) => loadedEngine?.play('cps'));
-    }
+    playClickSound('cps');
   };
 
   const handlePointerDown = (e: React.PointerEvent<HTMLButtonElement>) => {

@@ -3,7 +3,7 @@
 import React, { useCallback, useState, useRef, useEffect } from 'react';
 import dynamic from 'next/dynamic';
 import { Volume2, Ear } from 'lucide-react';
-import type { ClickSoundEngine } from '../lib/clickSound';
+import { useLazyClickSound } from '../lib/useLazyClickSound';
 
 const SoundReactionResult = dynamic(() => import('./SoundReactionResult'), { ssr: false });
 
@@ -14,9 +14,6 @@ export default function SoundReactionTest() {
 
     const startTimeRef = useRef<number>(0);
     const timeoutRef = useRef<number | null>(null);
-    const audioEngineRef = useRef<ClickSoundEngine | null>(null);
-    const audioLoadRef = useRef<Promise<ClickSoundEngine | null> | null>(null);
-    const audioDisposedRef = useRef(false);
 
     useEffect(() => {
         const saved = localStorage.getItem('soundReactionBest');
@@ -25,52 +22,18 @@ export default function SoundReactionTest() {
             if (Number.isFinite(parsed)) setBestTime(parsed);
         }
 
-        return () => {
-            audioDisposedRef.current = true;
-            const engine = audioEngineRef.current;
-            audioEngineRef.current = null;
-            if (engine) void engine.destroy();
-        };
+
     }, []);
 
-    const ensureAudio = useCallback(async () => {
-        if (audioDisposedRef.current) return null;
 
-        if (audioEngineRef.current) {
-            await audioEngineRef.current.resume();
-            return audioEngineRef.current;
-        }
-
-        if (!audioLoadRef.current) {
-            audioLoadRef.current = import('../lib/clickSound')
-                .then(({ createClickSoundEngine }) => createClickSoundEngine())
-                .catch(() => null);
-        }
-
-        const engine = await audioLoadRef.current;
-        if (!engine) return null;
-
-        if (audioDisposedRef.current) {
-            await engine.destroy();
-            return null;
-        }
-
-        audioEngineRef.current = engine;
-        await engine.resume();
-        return engine;
-    }, []);
+    const { ensure: ensureClickSound, play: playClickSound } = useLazyClickSound();
 
     const createBeep = useCallback(() => {
-        const engine = audioEngineRef.current;
-        if (engine) {
-            engine.play('soundReaction');
-        } else {
-            void ensureAudio().then((loadedEngine) => loadedEngine?.play('soundReaction'));
-        }
-    }, [ensureAudio]);
+        playClickSound('soundReaction');
+    }, [playClickSound]);
 
     const startTest = () => {
-        void ensureAudio();
+        void ensureClickSound();
         
         setGameState('waiting');
         setReactionTime(null);
