@@ -125,7 +125,7 @@ if (!availableMatch) {
 }
 
 const livePlatforms = [
-  ...availableMatch[1].matchAll(/^\s*\*\s+(.+)$/gm),
+  ...availableMatch[1].matchAll(/^\s*[-*]\s+(.+)$/gm),
 ].map((match) =>
   match[1]
     .replace(/\[([^\]]+)\]\([^)]+\)/g, "$1")

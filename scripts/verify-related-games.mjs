@@ -256,6 +256,9 @@ if (
     "currently consists of\\s+\\*{0,2}(\\d+)\\s+levels\\*{0,2}"
   ) ||
   !readFileSync(new URL("./verify-related-games-live.mjs", import.meta.url), "utf8").includes(
+    "/^\\\\s*[-*]\\\\s+(.+)$/gm"
+  ) ||
+  !readFileSync(new URL("./verify-related-games-live.mjs", import.meta.url), "utf8").includes(
     ".replace(/\\*\\*/g"
   ) ||
   !readFileSync(new URL("./verify-related-games-live.mjs", import.meta.url), "utf8").includes(
