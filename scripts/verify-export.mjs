@@ -453,6 +453,7 @@ const intentionalPointerSource = readFileSync(join(process.cwd(), "lib", "useInt
 const exactCountdownSource = readFileSync(join(process.cwd(), "lib", "useExactCountdown.ts"), "utf8");
 const keyboardChordSource = readFileSync(join(process.cwd(), "lib", "useKeyboardChordMeasurement.ts"), "utf8");
 const typingRuntimeSource = readFileSync(join(process.cwd(), "lib", "typingRuntime.ts"), "utf8");
+const typingTextWindowSource = readFileSync(join(process.cwd(), "components", "TypingTextWindow.tsx"), "utf8");
 const memoryTestRuntimeSource = readFileSync(join(process.cwd(), "lib", "memoryTestRuntime.ts"), "utf8");
 const memoryRuntimeHookSource = readFileSync(join(process.cwd(), "lib", "useMemoryTestRuntime.ts"), "utf8");
 const lazyClickSoundSource = readFileSync(join(process.cwd(), "lib", "useLazyClickSound.ts"), "utf8");
@@ -1324,13 +1325,15 @@ if (
 }
 
 if (
-  !typingClientSource.includes("Math.floor(inputLength / 160) * 160 - 40") ||
-  !typingClientSource.includes("targetText.lastIndexOf") ||
-  !typingClientSource.includes("visibleStart + 650") ||
-  typingClientSource.includes('targetText.split("").map')
+  !typingClientSource.includes('import TypingTextWindow from "./TypingTextWindow"') ||
+  typingClientSource.includes('targetText.split("").map') ||
+  !typingTextWindowSource.includes("Math.floor(inputLength / 160) * 160 - 40") ||
+  !typingTextWindowSource.includes("targetText.lastIndexOf") ||
+  !typingTextWindowSource.includes("visibleStart + 650") ||
+  !typingTextWindowSource.includes("export default memo(TypingTextWindow)")
 ) {
   infrastructureErrors.push(
-    "TypingTest must render a bounded text window around the current input instead of remounting the full corpus on every keystroke"
+    "Typing text must stay in a memoized bounded window so timer-only rerenders do not rebuild the full corpus"
   );
 }
 
