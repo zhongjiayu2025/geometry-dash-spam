@@ -440,6 +440,7 @@ const gameCanvasSource = readFileSync(join(process.cwd(), "components", "GameCan
 const waveAudioSource = readFileSync(join(process.cwd(), "lib", "waveAudio.ts"), "utf8");
 const waveRunOverlaysSource = readFileSync(join(process.cwd(), "components", "WaveRunOverlays.tsx"), "utf8");
 const clickSoundSource = readFileSync(join(process.cwd(), "lib", "clickSound.ts"), "utf8");
+const secondaryClickFinishedSource = readFileSync(join(process.cwd(), "components", "SecondaryClickFinishedActions.tsx"), "utf8");
 const demonListSource = readFileSync(join(process.cwd(), "components", "DemonListTable.tsx"), "utf8");
 const demonFilterSource = readFileSync(join(process.cwd(), "components", "DemonListFilterControls.tsx"), "utf8");
 const clickTestHeroSource = readFileSync(join(process.cwd(), "components", "ClickTestHero.tsx"), "utf8");
@@ -550,6 +551,32 @@ for (const file of ["JitterClickTest.tsx", "ButterflyClickTest.tsx", "RightClick
       `${file}: click hot path must accumulate in refs instead of re-rendering React on every input`
     );
   }
+}
+
+for (const file of ["JitterClickTest.tsx", "ButterflyClickTest.tsx", "RightClickTest.tsx"]) {
+  const source = supportClientSources.find(([name]) => name === file)?.[1] ?? "";
+  if (
+    !source.includes("import('./SecondaryClickFinishedActions')") ||
+    source.includes("navigator.share") ||
+    source.includes("navigator.clipboard") ||
+    source.includes("<RotateCcw") ||
+    source.includes("<Share2") ||
+    source.includes("<Check")
+  ) {
+    infrastructureErrors.push(
+      `${file}: finished actions and sharing must stay in the shared lazy result chunk`
+    );
+  }
+}
+
+if (
+  !secondaryClickFinishedSource.includes("navigator.share") ||
+  !secondaryClickFinishedSource.includes("navigator.clipboard") ||
+  !secondaryClickFinishedSource.includes("TRY AGAIN")
+) {
+  infrastructureErrors.push(
+    "SecondaryClickFinishedActions must own sharing and retry controls for secondary click tests"
+  );
 }
 
 for (const file of ["JitterClickTest.tsx", "ButterflyClickTest.tsx", "RightClickTest.tsx"]) {
@@ -736,6 +763,17 @@ if (
 ) {
   infrastructureErrors.push(
     "DoubleClickTest must merge per-input measurement updates into one React state transition"
+  );
+}
+
+const rightClickClientSource = supportClientSources.find(([file]) => file === "RightClickTest.tsx")?.[1] ?? "";
+if (
+  rightClickClientSource.includes("Why Test Right Click CPS?") ||
+  rightClickClientSource.includes("Minecraft Bridging") ||
+  rightClickClientSource.includes("MOBA Games")
+) {
+  infrastructureErrors.push(
+    "RightClickTest must not carry off-topic static gaming copy in the client bundle"
   );
 }
 
