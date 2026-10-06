@@ -91,11 +91,16 @@ export default function ChimpTest() {
                 setNextExpected(prev => prev + 1);
             }
         } else {
-            // Wrong click
-            setStrikes(prev => prev + 1);
+            const nextStrikes = strikes + 1;
+            setStrikes(nextStrikes);
             setGameState('failed');
-            // Unhide everything to show them what they missed
             setNumbers(prev => prev.map(n => ({...n, hidden: false})));
+
+            if (nextStrikes >= 3) {
+                scheduleTimeout(() => {
+                    setGameState('finished');
+                }, 900);
+            }
         }
     };
 
