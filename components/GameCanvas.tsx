@@ -148,7 +148,10 @@ const GameCanvas: React.FC<GameCanvasProps> = memo(({ difficulty, status, onStat
       if (!rendererLoadRef.current) {
           rendererLoadRef.current = import('../lib/waveRenderer')
               .then(({ renderWaveFrame }) => renderWaveFrame)
-              .catch(() => null);
+              .catch(() => {
+                  rendererLoadRef.current = null;
+                  return null;
+              });
       }
       const renderer = await rendererLoadRef.current;
       if (renderer) rendererRef.current = renderer;
@@ -158,7 +161,10 @@ const GameCanvas: React.FC<GameCanvasProps> = memo(({ difficulty, status, onStat
   const ensureRuntime = useCallback(async () => {
       if (runtimeRef.current) return runtimeRef.current;
       if (!runtimeLoadRef.current) {
-          runtimeLoadRef.current = import('../lib/waveRuntime').catch(() => null);
+          runtimeLoadRef.current = import('../lib/waveRuntime').catch(() => {
+              runtimeLoadRef.current = null;
+              return null;
+          });
       }
       const runtime = await runtimeLoadRef.current;
       if (runtime) runtimeRef.current = runtime;
@@ -221,7 +227,10 @@ const GameCanvas: React.FC<GameCanvasProps> = memo(({ difficulty, status, onStat
       if (!audioLoadRef.current) {
           audioLoadRef.current = import('../lib/waveAudio')
               .then(({ createWaveAudioEngine }) => createWaveAudioEngine())
-              .catch(() => null);
+              .catch(() => {
+                  audioLoadRef.current = null;
+                  return null;
+              });
       }
 
       const engine = await audioLoadRef.current;

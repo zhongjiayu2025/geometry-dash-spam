@@ -1712,6 +1712,16 @@ if (
 }
 
 if (
+  !gameCanvasSource.includes("rendererLoadRef.current = null") ||
+  !gameCanvasSource.includes("runtimeLoadRef.current = null") ||
+  !gameCanvasSource.includes("audioLoadRef.current = null")
+) {
+  infrastructureErrors.push(
+    "Wave lazy renderer/runtime/audio loaders must clear failed promises so later interaction can retry"
+  );
+}
+
+if (
   gameCanvasSource.includes("const spawnObstacle") ||
   gameCanvasSource.includes("const createExplosion") ||
   gameCanvasSource.includes("const calculateConsistency") ||
