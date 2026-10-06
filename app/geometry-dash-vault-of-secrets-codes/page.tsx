@@ -20,7 +20,7 @@ export const metadata: Metadata = {
     type: "website",
   },
   twitter: {
-    card: "summary",
+    card: "summary_large_image",
     title: "Geometry Dash Vault of Secrets Codes | All Codes",
     description: "Geometry Dash Vault of Secrets codes with brainpower, octocube, seven, glubfub, cod3breaker and The Challenge, plus the 50-diamond unlock steps.",
   },
