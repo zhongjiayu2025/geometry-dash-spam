@@ -461,6 +461,7 @@ const demonListSource = readFileSync(join(process.cwd(), "components", "DemonLis
 const demonFilterSource = readFileSync(join(process.cwd(), "components", "DemonListFilterControls.tsx"), "utf8");
 const clickTestHeroSource = readFileSync(join(process.cwd(), "components", "ClickTestHero.tsx"), "utf8");
 const clickerSource = readFileSync(join(process.cwd(), "components", "GeometryDashClicker.tsx"), "utf8");
+const clickerAchievementsSource = readFileSync(join(process.cwd(), "components", "ClickerAchievements.tsx"), "utf8");
 const homeSource = readFileSync(join(process.cwd(), "app", "page.tsx"), "utf8");
 const personalStatsSource = readFileSync(join(process.cwd(), "components", "PersonalStats.tsx"), "utf8");
 const personalStatsContentSource = readFileSync(join(process.cwd(), "components", "PersonalStatsContent.tsx"), "utf8");
@@ -1248,6 +1249,7 @@ const clientSourceBudgets = [
   ["DragClickTest.tsx", dragClientSource, 10000],
   ["SpacebarCounter.tsx", spacebarClientSource, 10500],
   ["PersonalStats.tsx", personalStatsSource, 5000],
+  ["GeometryDashClicker.tsx", clickerSource, 9200],
   ["GameCanvas.tsx", gameCanvasSource, 32200],
 ];
 
@@ -1655,6 +1657,18 @@ if (
 ) {
   infrastructureErrors.push(
     "Geometry Dash Clicker must allow vertical mobile scrolling and count only intentional taps"
+  );
+}
+
+if (
+  !clickerSource.includes('import ClickerAchievements from "./ClickerAchievements"') ||
+  clickerSource.includes("achievements.map") ||
+  clickerSource.includes("Wave badge unlock:") ||
+  !clickerAchievementsSource.includes("export default memo(ClickerAchievements)") ||
+  !clickerAchievementsSource.includes("totalClicks >= 500")
+) {
+  infrastructureErrors.push(
+    "Geometry Dash Clicker achievements must stay in a memoized child outside the auto-orb parent render"
   );
 }
 
