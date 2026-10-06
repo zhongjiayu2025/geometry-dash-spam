@@ -326,6 +326,22 @@ if (existsSync(adsPath)) {
   }
 }
 
+const headersPath = join(outDir, "_headers");
+if (existsSync(headersPath)) {
+  const headersTxt = readFileSync(headersPath, "utf8");
+
+  if (!headersTxt.includes("Content-Security-Policy: frame-ancestors 'self'")) {
+    infrastructureErrors.push("_headers missing frame-ancestors protection");
+  }
+
+  if (
+    !headersTxt.includes("/_next/static/*") ||
+    !headersTxt.includes("Cache-Control: public, max-age=31536000, immutable")
+  ) {
+    infrastructureErrors.push("_headers must immutable-cache hashed Next static assets");
+  }
+}
+
 const robotsPath = join(outDir, "robots.txt");
 if (existsSync(robotsPath)) {
   const robotsTxt = readFileSync(robotsPath, "utf8");
