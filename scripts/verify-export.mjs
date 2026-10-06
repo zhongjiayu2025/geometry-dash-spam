@@ -457,6 +457,17 @@ const supportClientPaths = [
   "JitterClickTest.tsx",
   "ButterflyClickTest.tsx",
   "RightClickTest.tsx",
+  "BpmTapper.tsx",
+  "AimTrainer.tsx",
+  "ChimpTest.tsx",
+  "ReactionTest.tsx",
+  "SoundReactionTest.tsx",
+  "VisualMemoryTest.tsx",
+  "TypingTest.tsx",
+  "MouseAccelerationTest.tsx",
+  "RefreshRateTest.tsx",
+  "ScrollTest.tsx",
+  "SystemInfo.tsx",
 ];
 const supportClientSources = supportClientPaths.map((file) => [
   file,
@@ -1059,6 +1070,17 @@ if (
 ) {
   infrastructureErrors.push(
     "CPS click hot path must accumulate in refs instead of triggering React state on every input"
+  );
+}
+
+if (
+  !cpsClientSource.includes("window.setInterval(updateTimer, 100)") ||
+  !cpsClientSource.includes("Math.max(0, selectedDuration * 1000 - elapsedMs)") ||
+  !cpsClientSource.includes("setClicks(finalClicks)") ||
+  cpsClientSource.includes("}, 33)")
+) {
+  infrastructureErrors.push(
+    "CPS live UI must refresh on the 100ms boundary while final results synchronously publish the exact ref count"
   );
 }
 
