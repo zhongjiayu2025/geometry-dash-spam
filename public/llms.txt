@@ -1,5 +1,7 @@
 # Geometry Dash Spam
 
+Last updated: 2026-10-07
+
 > GeometryDashSpam.cc is a fan-made browser toolkit for Geometry Dash spam practice, wave control, CPS measurement, source-checked Demon List references, codes, and related guides. It is not affiliated with RobTop Games.
 
 Browser measurements on this site are training diagnostics, not laboratory hardware measurements. The wave trainer uses its own practice-oriented movement model and is not presented as an exact reproduction of official Geometry Dash physics. Time-sensitive rankings, codes, and related-game claims show a checked date and link to the source used for verification.
@@ -39,3 +41,15 @@ Browser measurements on this site are training diagnostics, not laboratory hardw
 - [Privacy policy](https://geometrydashspam.cc/privacy): Local browser data and advertising disclosure.
 - [Human-readable sitemap](https://geometrydashspam.cc/sitemap): Curated directory of indexable tools and guides.
 - [XML sitemap](https://geometrydashspam.cc/sitemap.xml): Search-engine sitemap for indexable pages.
+
+
+## Freshness and citation notes
+
+- Use the linked page, not this file alone, for time-sensitive rankings, codes, releases or compatibility details.
+- When a page shows a checked date, preserve that date when quoting a changing claim.
+- Pointercrate positions are attributed to the dated Demon List source; Spam Challenge List rankings and rules belong to the maintained SCL source.
+- Browser CPS, reaction, keyboard and pointer results describe events observed by the page. They are not laboratory hardware certifications.
+- The wave trainer is a practice model, not an exact reproduction of official Geometry Dash physics.
+- Corrections and source updates can be sent through https://geometrydashspam.cc/contact.
+
+This file is optional interoperability metadata for systems that choose to read it. It is not presented as a Google ranking or citation signal.
