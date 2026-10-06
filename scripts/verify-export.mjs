@@ -1849,7 +1849,7 @@ if (
 if (
   !gameCanvasSource.includes("const syncMusic = useCallback") ||
   (gameCanvasSource.match(/document\.addEventListener\('visibilitychange'/g) ?? []).length !== 1 ||
-  (gameCanvasSource.match(/localStorage\.getItem\('gd_spam_muted'\)/g) ?? []).length !== 1 ||
+  (gameCanvasSource.match(/readStorage\('gd_spam_muted'\)/g) ?? []).length !== 1 ||
   !gameCanvasSource.includes("useEffect(() => {\n    lowVisualsRef.current") ||
   !gameCanvasSource.includes("useEffect(() => {\n    highScoreRef.current = 0")
 ) {
