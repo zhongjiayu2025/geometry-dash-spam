@@ -82,6 +82,7 @@ export default function ChimpTest() {
             setNumbers(prev => prev.map(n => ({...n, hidden: false})));
 
             if (nextStrikes >= 3) {
+                commitBestScore(level);
                 scheduleTimeout(() => {
                     setGameState('finished');
                 }, 900);

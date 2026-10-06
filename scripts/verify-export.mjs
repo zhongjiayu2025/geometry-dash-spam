@@ -1286,6 +1286,14 @@ if (
 }
 
 if (
+  !chimpClientSource.includes("if (nextStrikes >= 3) {\n                commitBestScore(level);")
+) {
+  infrastructureErrors.push(
+    "ChimpTest personal best must match the highest reached level shown by the game-over screen"
+  );
+}
+
+if (
   !chimpClientSource.includes("(gameState === 'showing' || gameState === 'playing' || gameState === 'failed')") ||
   chimpClientSource.includes("(gameState === 'failed' && strikes < 3)) && (\n                            <ChimpBoard")
 ) {
