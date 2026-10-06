@@ -52,6 +52,7 @@ export default function SecondaryClickTest({
   const [soundEnabled, setSoundEnabled] = useState(false);
 
   const clicksRef = useRef(0);
+  const finishedRef = useRef(false);
   const startTimeRef = useRef(0);
   const pendingTouchRef = useRef<{ pointerId: number; x: number; y: number } | null>(null);
 
@@ -76,6 +77,9 @@ export default function SecondaryClickTest({
   };
 
   const finishTest = useCallback(() => {
+    if (finishedRef.current) return;
+    finishedRef.current = true;
+
     const finalClicks = clicksRef.current;
     const finalCps = finalClicks / 10;
 
@@ -90,6 +94,7 @@ export default function SecondaryClickTest({
     const now = performance.now();
     setActive(true);
     setFinished(false);
+    finishedRef.current = false;
     clicksRef.current = 1;
     startTimeRef.current = now;
     setClicks(1);
@@ -164,6 +169,7 @@ export default function SecondaryClickTest({
     cancelCountdown();
     setActive(false);
     setFinished(false);
+    finishedRef.current = false;
     clicksRef.current = 0;
     startTimeRef.current = 0;
     setClicks(0);

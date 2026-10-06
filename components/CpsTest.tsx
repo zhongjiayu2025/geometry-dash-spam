@@ -26,6 +26,7 @@ const CpsTest: React.FC = () => {
   const { bestScores, runHistory, persistRun } = useCpsRecords();
   
   const clicksRef = useRef(0);
+  const finishedRef = useRef(false);
   const testStartRef = useRef(0);
   const clickTimesRef = useRef<number[]>([]);
   const pendingTouchRef = useRef<{ pointerId: number; x: number; y: number } | null>(null);
@@ -39,6 +40,7 @@ const CpsTest: React.FC = () => {
     const now = performance.now();
     setActive(true);
     setFinished(false);
+    finishedRef.current = false;
     clicksRef.current = 1;
     clickTimesRef.current = [now];
     testStartRef.current = now;
@@ -132,6 +134,9 @@ const CpsTest: React.FC = () => {
   };
 
   const finishTest = useCallback(() => {
+    if (finishedRef.current) return;
+    finishedRef.current = true;
+
     const finalClicks = clicksRef.current;
     const finalCps = finalClicks / selectedDuration;
 
@@ -156,6 +161,7 @@ const CpsTest: React.FC = () => {
     cancelCountdown();
     setActive(false);
     setFinished(false);
+    finishedRef.current = false;
     clicksRef.current = 0;
     clickTimesRef.current = [];
     testStartRef.current = 0;

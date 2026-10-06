@@ -640,6 +640,8 @@ if (
   !secondaryClickClientSource.includes("useExactCountdown") ||
   !secondaryClickClientSource.includes("durationMs: 10000") ||
   !secondaryClickClientSource.includes("performance.now() - startTimeRef.current >= 10000") ||
+  !secondaryClickClientSource.includes("if (finishedRef.current) return;") ||
+  !secondaryClickClientSource.includes("finishedRef.current = true") ||
   secondaryClickClientSource.includes("window.setInterval(updateTimer, 100)") ||
   secondaryClickClientSource.includes("setClicks(clicksRef.current)") ||
   !secondaryClickClientSource.includes("const renderedClicks = active ? clicksRef.current : clicks;") ||
@@ -2348,6 +2350,8 @@ if (
   !cpsClientSource.includes("useExactCountdown") ||
   !cpsClientSource.includes("durationMs: selectedDuration * 1000") ||
   !cpsClientSource.includes("setClicks(finalClicks)") ||
+  !cpsClientSource.includes("if (finishedRef.current) return;") ||
+  !cpsClientSource.includes("finishedRef.current = true") ||
   cpsClientSource.includes("window.setInterval(updateTimer, 100)") ||
   !exactCountdownSource.includes("window.setInterval(update, intervalMs)") ||
   !exactCountdownSource.includes("Math.max(0, durationMs - elapsedMs)") ||
