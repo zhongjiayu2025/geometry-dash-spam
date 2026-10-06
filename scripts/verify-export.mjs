@@ -1064,7 +1064,7 @@ if (
   !reactionClientSource.includes("event.repeat") ||
   !reactionClientSource.includes('target.closest("button")') ||
   reactionClientSource.includes("localStorage.setItem") ||
-  !reactionResultSource.includes("onPointerDown={shareScore}")
+  !reactionResultSource.includes("onClick={shareScore}")
 ) {
   infrastructureErrors.push(
     "ReactionTest must ignore repeated/interactive keyboard input, manage cue timers safely, and protect result actions from parent pointer restart"
