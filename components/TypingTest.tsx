@@ -28,6 +28,7 @@ export default function TypingTest() {
   const targetTextRef = useRef("");
   const runtimeRef = useRef<TypingRuntime | null>(null);
   const runtimeLoadRef = useRef<Promise<TypingRuntime | null> | null>(null);
+  const mountedRef = useRef(false);
 
   const ensureRuntime = useCallback(async () => {
     if (runtimeRef.current) return runtimeRef.current;
@@ -42,19 +43,29 @@ export default function TypingTest() {
     return runtime;
   }, []);
 
-  useEffect(() => {
-    let cancelled = false;
-    void ensureRuntime().then((runtime) => {
-      if (!runtime || cancelled) return;
+  const ensureTargetText = useCallback(async () => {
+    if (targetTextRef.current) return true;
+
+    const runtime = await ensureRuntime();
+    if (!runtime || !mountedRef.current) return false;
+
+    if (!targetTextRef.current) {
       const initialText = runtime.generateTypingText(200);
       targetTextRef.current = initialText;
       setTargetText(initialText);
-    });
+    }
+
+    return true;
+  }, [ensureRuntime]);
+
+  useEffect(() => {
+    mountedRef.current = true;
+    void ensureTargetText();
 
     return () => {
-      cancelled = true;
+      mountedRef.current = false;
     };
-  }, [ensureRuntime]);
+  }, [ensureTargetText]);
 
   const finishTest = (elapsedMs = TEST_MS) => {
     const runtime = runtimeRef.current;
@@ -170,7 +181,13 @@ export default function TypingTest() {
           ) : (
             <div
               className="w-full min-h-64 rounded-3xl border-2 bg-slate-900/40 border-white/10 p-6 md:p-8 relative cursor-text group"
-              onClick={() => inputRef.current?.focus()}
+              onPointerEnter={() => { void ensureTargetText(); }}
+              onPointerDown={() => { void ensureTargetText(); }}
+              onClick={() => {
+                void ensureTargetText().then((ready) => {
+                  if (ready) requestAnimationFrame(() => inputRef.current?.focus());
+                });
+              }}
             >
               {!userInput && status === "idle" && (
                 <div className="absolute top-0 right-0 p-4">
@@ -191,7 +208,6 @@ export default function TypingTest() {
                 autoCapitalize="off"
                 autoCorrect="off"
                 spellCheck={false}
-                autoFocus
                 disabled={!targetText}
               />
             </div>

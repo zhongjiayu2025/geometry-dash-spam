@@ -1447,6 +1447,19 @@ if (
 }
 
 if (
+  !typingClientSource.includes("const ensureTargetText = useCallback") ||
+  !typingClientSource.includes("mountedRef.current") ||
+  !typingClientSource.includes("onPointerEnter={() => { void ensureTargetText(); }}") ||
+  !typingClientSource.includes("onPointerDown={() => { void ensureTargetText(); }}") ||
+  !typingClientSource.includes("requestAnimationFrame(() => inputRef.current?.focus())") ||
+  typingClientSource.includes("autoFocus")
+) {
+  infrastructureErrors.push(
+    "TypingTest must retry failed corpus loading on user intent and focus only after text becomes available"
+  );
+}
+
+if (
   !memoryTestRuntimeSource.includes("export function generateChimpLevel") ||
   !memoryTestRuntimeSource.includes("export function generateVisualLevel") ||
   !memoryTestRuntimeSource.includes("Math.random()")
