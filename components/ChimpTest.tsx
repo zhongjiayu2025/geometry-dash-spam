@@ -1,35 +1,24 @@
 "use client";
 
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import dynamic from 'next/dynamic';
 import { BrainCircuit, Play, Trophy } from 'lucide-react';
+import { usePersistentBestNumber } from '../lib/usePersistentBestNumber';
 
 const ChimpGameOver = dynamic(() => import('./ChimpGameOver'), { ssr: false });
 
 export default function ChimpTest() {
     const [gameState, setGameState] = useState<'idle' | 'showing' | 'playing' | 'finished' | 'failed'>('idle');
     const [level, setLevel] = useState(4); // Starts at 4 numbers
-    const [bestScore, setBestScore] = useState<number | null>(null);
+    const [bestScore, commitBestScore] = usePersistentBestNumber('chimpBestScore');
     const [numbers, setNumbers] = useState<{ id: number, val: number, x: number, y: number, hidden: boolean, clicked: boolean }[]>([]);
     const [nextExpected, setNextExpected] = useState(1);
     const [strikes, setStrikes] = useState(0);
 
-    useEffect(() => {
-        const saved = localStorage.getItem('chimpBestScore');
-        if (saved) {
-            try { setBestScore(parseInt(saved, 10)); } catch(e) {}
-        }
-    }, []);
 
     const generateLevel = (currentLevel: number) => {
         if (currentLevel > 40) {
-            setBestScore(prev => {
-                if (prev === null || 40 > prev) {
-                    localStorage.setItem('chimpBestScore', '40');
-                    return 40;
-                }
-                return prev;
-            });
+            commitBestScore(40);
             setGameState('finished');
             return;
         }
@@ -86,11 +75,7 @@ export default function ChimpTest() {
             // Reached end of level
             if (val === level) {
                 // Update local storage best score
-                const currentBest = localStorage.getItem('chimpBestScore');
-                if (!currentBest || level > parseInt(currentBest, 10)) {
-                    localStorage.setItem('chimpBestScore', level.toString());
-                    setBestScore(level);
-                }
+                commitBestScore(level);
 
                 if (level >= 40) {
                     setGameState('finished');

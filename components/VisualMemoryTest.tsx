@@ -1,8 +1,9 @@
 "use client";
 
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import dynamic from 'next/dynamic';
 import { Brain, Play, Trophy } from 'lucide-react';
+import { usePersistentBestNumber } from '../lib/usePersistentBestNumber';
 
 const VisualMemoryGameOver = dynamic(() => import('./VisualMemoryGameOver'), { ssr: false });
 
@@ -10,7 +11,7 @@ const VisualMemoryGameOver = dynamic(() => import('./VisualMemoryGameOver'), { s
 export default function VisualMemoryTest() {
     const [gameState, setGameState] = useState<'idle' | 'showing' | 'playing' | 'finished' | 'failed'>('idle');
     const [level, setLevel] = useState(1);
-    const [bestScore, setBestScore] = useState<number | null>(null);
+    const [bestScore, commitBestScore] = usePersistentBestNumber('visualMemoryBest');
     const [strikes, setStrikes] = useState(0);
     const [gridSize, setGridSize] = useState(3); // 3x3 initially
     const [activeSquares, setActiveSquares] = useState<number[]>([]);
@@ -20,12 +21,6 @@ export default function VisualMemoryTest() {
     // Level formula: active squares = level + 2
     // Grid size increases gradually
     
-    useEffect(() => {
-        const saved = localStorage.getItem('visualMemoryBest');
-        if (saved) {
-            try { setBestScore(parseInt(saved, 10)); } catch(e) {}
-        }
-    }, []);
 
     const startLevel = (currentLevel: number) => {
         let currentGridSize = 3;
@@ -93,13 +88,7 @@ export default function VisualMemoryTest() {
                     // Game Over
                     setGameState('idle');
                     // Store best score
-                    setBestScore(prev => {
-                        if (prev === null || level > prev) {
-                            localStorage.setItem('visualMemoryBest', level.toString());
-                            return level;
-                        }
-                        return prev;
-                    });
+                    commitBestScore(level);
                 } else {
                     // Retry level
                     startLevel(level);

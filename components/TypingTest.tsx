@@ -3,6 +3,7 @@
 import React, { useEffect, useRef, useState } from "react";
 import dynamic from "next/dynamic";
 import { Keyboard } from "lucide-react";
+import { usePersistentBestNumber } from "../lib/usePersistentBestNumber";
 
 const TypingResult = dynamic(() => import("./TypingResult"), { ssr: false });
 
@@ -50,7 +51,7 @@ export default function TypingTest() {
   const [timeLeft, setTimeLeft] = useState(60);
   const [wpm, setWpm] = useState(0);
   const [accuracy, setAccuracy] = useState(100);
-  const [bestWpm, setBestWpm] = useState<number | null>(null);
+  const [bestWpm, commitBestWpm] = usePersistentBestNumber("typingTestBestWpm");
 
   const inputRef = useRef<HTMLTextAreaElement>(null);
   const timerRef = useRef<number | null>(null);
@@ -63,12 +64,6 @@ export default function TypingTest() {
     const initialText = generateText(200);
     targetTextRef.current = initialText;
     setTargetText(initialText);
-
-    const saved = localStorage.getItem("typingTestBestWpm");
-    if (saved) {
-      const parsed = Number(saved);
-      if (Number.isFinite(parsed)) setBestWpm(parsed);
-    }
 
     return () => {
       if (timerRef.current) clearInterval(timerRef.current);
@@ -97,13 +92,7 @@ export default function TypingTest() {
     setTimeLeft(0);
     setStatus("finished");
 
-    setBestWpm((previous) => {
-      if (previous === null || result.wpm > previous) {
-        localStorage.setItem("typingTestBestWpm", String(result.wpm));
-        return result.wpm;
-      }
-      return previous;
-    });
+    commitBestWpm(result.wpm);
   };
 
   const startGame = () => {

@@ -5,16 +5,10 @@ import React, { useState, useEffect, useRef, useCallback } from 'react';
 import dynamic from 'next/dynamic';
 import { MousePointer2, Timer, Clock, Trophy, Volume2, VolumeX } from 'lucide-react';
 import { useLazyClickSound } from '../lib/useLazyClickSound';
+import type { CpsRun } from '../lib/cpsRecords';
 
 const CpsRunHistory = dynamic(() => import('./CpsRunHistory'), { ssr: false });
 const CpsFinishedActions = dynamic(() => import('./CpsFinishedActions'), { ssr: false });
-
-interface CpsRun {
-  duration: number;
-  clicks: number;
-  cps: number;
-  timestamp: number;
-}
 
 const CpsTest: React.FC = () => {
   const [active, setActive] = useState(false);
@@ -37,25 +31,19 @@ const CpsTest: React.FC = () => {
   const pendingTouchRef = useRef<{ pointerId: number; x: number; y: number } | null>(null);
 
   useEffect(() => {
-    if (typeof window !== 'undefined') {
-      setSoundEnabled(localStorage.getItem('cpsSoundEnabled') === 'true');
+    setSoundEnabled(localStorage.getItem('cpsSoundEnabled') === 'true');
 
-      const saved = localStorage.getItem('cpsBestScores');
-      if (saved) {
-        try {
-          setBestScores(JSON.parse(saved));
-        } catch(e) {}
-      }
+    let cancelled = false;
+    void import('../lib/cpsRecords').then(({ loadCpsRecords }) => {
+      if (cancelled) return;
+      const records = loadCpsRecords();
+      setBestScores(records.bestScores);
+      setRunHistory(records.runHistory);
+    });
 
-      const savedHistory = localStorage.getItem('cpsRunHistory');
-      if (savedHistory) {
-        try {
-          const parsed = JSON.parse(savedHistory);
-          if (Array.isArray(parsed)) setRunHistory(parsed.slice(0, 20));
-        } catch(e) {}
-      }
-    }
-
+    return () => {
+      cancelled = true;
+    };
   }, []);
 
 
@@ -175,25 +163,10 @@ const CpsTest: React.FC = () => {
     setActive(false);
     setClicks(finalClicks);
 
-    setRunHistory(prev => {
-      const nextRun: CpsRun = {
-        duration: selectedDuration,
-        clicks: finalClicks,
-        cps: Number(finalCps.toFixed(2)),
-        timestamp: Date.now(),
-      };
-      const next = [nextRun, ...prev].slice(0, 20);
-      localStorage.setItem('cpsRunHistory', JSON.stringify(next));
-      return next;
-    });
-
-    setBestScores(prev => {
-      const newBests = { ...prev };
-      if (!newBests[selectedDuration] || finalCps > newBests[selectedDuration]) {
-        newBests[selectedDuration] = finalCps;
-        localStorage.setItem('cpsBestScores', JSON.stringify(newBests));
-      }
-      return newBests;
+    void import('../lib/cpsRecords').then(({ persistCpsRun }) => {
+      const records = persistCpsRun(selectedDuration, finalClicks);
+      setBestScores(records.bestScores);
+      setRunHistory(records.runHistory);
     });
   }, [selectedDuration]);
 
