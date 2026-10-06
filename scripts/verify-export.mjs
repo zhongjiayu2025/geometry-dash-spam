@@ -1361,11 +1361,16 @@ if (
   mouseAccelerationClientSource.includes("Cursor difference:") ||
   mouseAccelerationClientSource.includes("<AlertTriangle") ||
   mouseAccelerationClientSource.includes("<RotateCcw") ||
+  !mouseAccelerationClientSource.includes("getBoundingClientRect()") ||
+  !mouseAccelerationClientSource.includes("e.clientX - bounds.left") ||
   !mouseAccelerationPageSource.includes("Place your mouse against the left edge") ||
-  !mouseAccelerationResultSource.includes("Cursor difference:")
+  !mouseAccelerationResultSource.includes("Cursor difference:") ||
+  !mouseAccelerationResultSource.includes("outboundDistance >= 100") ||
+  !mouseAccelerationResultSource.includes("returnDistance >= 100") ||
+  !mouseAccelerationResultSource.includes("Movement Too Short")
 ) {
   infrastructureErrors.push(
-    "MouseAccelerationTest instructions must stay server-rendered and result analysis must stay in the lazy result chunk"
+    "MouseAccelerationTest must use container-relative coordinates, reject too-short movement, and keep result analysis lazy"
   );
 }
 

@@ -14,7 +14,10 @@ export default function MouseAccelerationResult({
   onReset: () => void;
 }) {
   const difference = Math.abs(startX - returnX);
-  const hasLargeDifference = difference > 50;
+  const outboundDistance = endX - startX;
+  const returnDistance = endX - returnX;
+  const validMovement = outboundDistance >= 100 && returnDistance >= 100;
+  const hasLargeDifference = validMovement && difference > 50;
 
   return (
     <>
@@ -26,22 +29,34 @@ export default function MouseAccelerationResult({
           <Point label="Point C (Slow Return)" value={returnX} />
         </div>
 
-        <div className={`rounded-2xl border p-6 ${hasLargeDifference ? "border-rose-500/50 bg-rose-900/20" : "border-emerald-500/50 bg-emerald-900/20"}`}>
-          <div className="mb-2 flex items-center justify-center gap-3">
-            {hasLargeDifference && <AlertTriangle className="h-6 w-6 text-rose-400" />}
-            <h4 className={`text-2xl font-display font-bold ${hasLargeDifference ? "text-rose-400" : "text-emerald-400"}`}>
-              {hasLargeDifference ? "Large Return Difference" : "Small Return Difference"}
-            </h4>
+        {!validMovement ? (
+          <div className="rounded-2xl border border-amber-500/50 bg-amber-900/20 p-6">
+            <div className="mb-2 flex items-center justify-center gap-3">
+              <AlertTriangle className="h-6 w-6 text-amber-400" />
+              <h4 className="text-2xl font-display font-bold text-amber-400">Movement Too Short</h4>
+            </div>
+            <p className="text-sm leading-6 text-amber-200/80">
+              Move at least 100px to the right, then at least 100px back toward Point A. This trial is not long enough to interpret.
+            </p>
           </div>
-          <p className="text-slate-300">
-            Cursor difference: <strong className="text-white">{difference}px</strong>
-          </p>
-          <p className={`mt-2 text-sm ${hasLargeDifference ? "text-rose-300/80" : "text-emerald-300/80"}`}>
-            {hasLargeDifference
-              ? "The cursor returned far from the starting screen position. Acceleration is one possible cause, but browser pointer behavior, hand path and display scaling can also affect this result."
-              : "The cursor returned close to the starting screen position. This does not prove that operating-system mouse acceleration is disabled."}
-          </p>
-        </div>
+        ) : (
+          <div className={`rounded-2xl border p-6 ${hasLargeDifference ? "border-rose-500/50 bg-rose-900/20" : "border-emerald-500/50 bg-emerald-900/20"}`}>
+            <div className="mb-2 flex items-center justify-center gap-3">
+              {hasLargeDifference && <AlertTriangle className="h-6 w-6 text-rose-400" />}
+              <h4 className={`text-2xl font-display font-bold ${hasLargeDifference ? "text-rose-400" : "text-emerald-400"}`}>
+                {hasLargeDifference ? "Large Return Difference" : "Small Return Difference"}
+              </h4>
+            </div>
+            <p className="text-slate-300">
+              Cursor difference: <strong className="text-white">{difference}px</strong>
+            </p>
+            <p className={`mt-2 text-sm ${hasLargeDifference ? "text-rose-300/80" : "text-emerald-300/80"}`}>
+              {hasLargeDifference
+                ? "The cursor returned far from the starting screen position. Acceleration is one possible cause, but browser pointer behavior, hand path and display scaling can also affect this result."
+                : "The cursor returned close to the starting screen position. This does not prove that operating-system mouse acceleration is disabled."}
+            </p>
+          </div>
+        )}
 
         <button
           type="button"

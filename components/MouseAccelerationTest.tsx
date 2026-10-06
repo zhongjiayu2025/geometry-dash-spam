@@ -11,15 +11,18 @@ export default function MouseAccelerationTest() {
     const [startX, setStartX] = useState<number | null>(null);
     const [endX, setEndX] = useState<number | null>(null);
     const [returnX, setReturnX] = useState<number | null>(null);
-    const handleMouseClick = (e: React.MouseEvent) => {
+    const handleMouseClick = (e: React.MouseEvent<HTMLDivElement>) => {
+        const bounds = e.currentTarget.getBoundingClientRect();
+        const relativeX = Math.round(e.clientX - bounds.left);
+
         if (state === 'start') {
-            setStartX(e.clientX);
+            setStartX(relativeX);
             setState('moveRight');
         } else if (state === 'moveRight') {
-            setEndX(e.clientX);
+            setEndX(relativeX);
             setState('moveLeft');
         } else if (state === 'moveLeft') {
-            setReturnX(e.clientX);
+            setReturnX(relativeX);
             setState('result');
         }
     };
