@@ -13,28 +13,68 @@ export interface CpsRecords {
 const BEST_KEY = "cpsBestScores";
 const HISTORY_KEY = "cpsRunHistory";
 
-function readBestScores(): Record<number, number> {
-  const saved = localStorage.getItem(BEST_KEY);
-  if (!saved) return {};
+function nonNegative(value: unknown) {
+  const number = typeof value === "number" ? value : Number(value);
+  return Number.isFinite(number) && number >= 0 ? number : null;
+}
 
+export function normalizeCpsBestScores(value: unknown): Record<number, number> {
+  if (!value || typeof value !== "object" || Array.isArray(value)) return {};
+
+  const bestScores: Record<number, number> = {};
+  for (const [key, rawScore] of Object.entries(value)) {
+    const duration = Number(key);
+    const score = nonNegative(rawScore);
+    if (Number.isFinite(duration) && duration > 0 && score !== null) {
+      bestScores[duration] = score;
+    }
+  }
+  return bestScores;
+}
+
+export function normalizeCpsRuns(value: unknown): CpsRun[] {
+  if (!Array.isArray(value)) return [];
+
+  const runs: CpsRun[] = [];
+  for (const raw of value) {
+    if (!raw || typeof raw !== "object" || Array.isArray(raw)) continue;
+
+    const record = raw as Record<string, unknown>;
+    const duration = nonNegative(record.duration);
+    const clicks = nonNegative(record.clicks);
+    if (duration === null || duration <= 0 || clicks === null) continue;
+
+    const normalizedClicks = Math.floor(clicks);
+    const storedCps = nonNegative(record.cps);
+    const timestamp = nonNegative(record.timestamp) ?? 0;
+    runs.push({
+      duration,
+      clicks: normalizedClicks,
+      cps: storedCps ?? Number((normalizedClicks / duration).toFixed(2)),
+      timestamp,
+    });
+
+    if (runs.length >= 20) break;
+  }
+  return runs;
+}
+
+function readJson(key: string): unknown {
+  const saved = localStorage.getItem(key);
+  if (!saved) return null;
   try {
-    const parsed = JSON.parse(saved);
-    return parsed && typeof parsed === "object" ? parsed : {};
+    return JSON.parse(saved);
   } catch {
-    return {};
+    return null;
   }
 }
 
-function readRunHistory(): CpsRun[] {
-  const saved = localStorage.getItem(HISTORY_KEY);
-  if (!saved) return [];
+function readBestScores() {
+  return normalizeCpsBestScores(readJson(BEST_KEY));
+}
 
-  try {
-    const parsed = JSON.parse(saved);
-    return Array.isArray(parsed) ? parsed.slice(0, 20) : [];
-  } catch {
-    return [];
-  }
+function readRunHistory() {
+  return normalizeCpsRuns(readJson(HISTORY_KEY));
 }
 
 export function loadCpsRecords(): CpsRecords {

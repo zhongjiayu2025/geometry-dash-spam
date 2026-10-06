@@ -2,22 +2,13 @@
 
 import { useEffect, useState } from "react";
 import dynamic from "next/dynamic";
+import { normalizeCpsBestScores } from "../lib/cpsRecords";
+import { normalizeWaveRuns, type WaveRun } from "../lib/waveStorage";
 
 const PersonalStatsContent = dynamic(() => import("./PersonalStatsContent"), { ssr: false });
 
-export interface WaveRun {
-  time: number;
-  averageCps: number;
-  peakCps: number;
-  timingSd: number;
-  clicks: number;
-  result: "won" | "lost";
-  timestamp: number;
-  mode: string;
-}
-
 export interface UserStats {
-  cpsTests: Record<string, number>;
+  cpsTests: Record<number, number>;
   waveRuns: WaveRun[];
   jitterCps: number | null;
   butterflyCps: number | null;
@@ -48,55 +39,41 @@ const EMPTY_STATS: UserStats = {
   visualMemoryScore: null,
 };
 
+function loadJson(key: string): unknown {
+  const value = localStorage.getItem(key);
+  if (!value) return null;
+  try {
+    return JSON.parse(value);
+  } catch {
+    return null;
+  }
+}
+
+function loadStat(key: string) {
+  const parsed = Number.parseFloat(localStorage.getItem(key) || "");
+  return Number.isFinite(parsed) && parsed >= 0 ? parsed : null;
+}
+
 function loadStats(): UserStats {
-  const loadStat = (key: string) => {
-    const value = localStorage.getItem(key);
-    if (!value) return null;
-    const parsed = Number.parseFloat(value);
-    return Number.isFinite(parsed) ? parsed : null;
-  };
-
-  const loadObject = (key: string) => {
-    const value = localStorage.getItem(key);
-    try {
-      return value ? JSON.parse(value) : {};
-    } catch {
-      return {};
-    }
-  };
-
   const waveRuns: WaveRun[] = [];
   for (let index = 0; index < localStorage.length; index += 1) {
     const key = localStorage.key(index);
     if (!key?.startsWith("gd_spam_runs_")) continue;
-
-    const stored = loadObject(key);
-    if (!Array.isArray(stored)) continue;
 
     const suffix = key.slice("gd_spam_runs_".length);
     const parts = suffix.split("_");
     const inputMode = parts.at(-1) === "mini" ? "Mini" : "Normal";
     const runMode = parts.at(-2) === "endless" ? "Endless" : "15s";
     const difficulty = parts.slice(0, -2).join("_") || "Unknown";
+    const fallbackMode = `${difficulty} · ${inputMode} · ${runMode}`;
 
-    waveRuns.push(
-      ...stored.map((run: Partial<WaveRun>) => ({
-        time: Number(run.time || 0),
-        averageCps: Number(run.averageCps || 0),
-        peakCps: Number(run.peakCps || 0),
-        timingSd: Number(run.timingSd || 0),
-        clicks: Number(run.clicks || 0),
-        result: (run.result === "won" ? "won" : "lost") as WaveRun["result"],
-        timestamp: Number(run.timestamp || 0),
-        mode: run.mode || `${difficulty} · ${inputMode} · ${runMode}`,
-      }))
-    );
+    waveRuns.push(...normalizeWaveRuns(loadJson(key), fallbackMode));
   }
 
   waveRuns.sort((a, b) => b.timestamp - a.timestamp);
 
   return {
-    cpsTests: loadObject("cpsBestScores"),
+    cpsTests: normalizeCpsBestScores(loadJson("cpsBestScores")),
     waveRuns,
     jitterCps: loadStat("jitterClickBest"),
     butterflyCps: loadStat("butterflyClickBest"),

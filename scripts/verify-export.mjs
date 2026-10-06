@@ -1782,6 +1782,18 @@ if (
 }
 
 if (
+  !waveStorageSource.includes("export function normalizeWaveRuns") ||
+  !waveStorageSource.includes("Number.isFinite(number) && number >= 0") ||
+  !waveStorageSource.includes('typeof record.mode === "string"') ||
+  !waveStorageSource.includes("normalizeWaveRuns(JSON.parse(savedRuns))") ||
+  !waveStorageSource.includes("savedBest >= 0")
+) {
+  infrastructureErrors.push(
+    "Wave storage must sanitize legacy/corrupt local records before they reach UI code"
+  );
+}
+
+if (
   !gameCanvasSource.includes("const syncMusic = useCallback") ||
   (gameCanvasSource.match(/document\.addEventListener\('visibilitychange'/g) ?? []).length !== 1 ||
   (gameCanvasSource.match(/localStorage\.getItem\('gd_spam_muted'\)/g) ?? []).length !== 1 ||
@@ -1974,6 +1986,18 @@ if (
 }
 
 if (
+  !personalStatsSource.includes("normalizeCpsBestScores") ||
+  !personalStatsSource.includes("normalizeWaveRuns") ||
+  !personalStatsSource.includes('cpsTests: normalizeCpsBestScores(loadJson("cpsBestScores"))') ||
+  !personalStatsSource.includes("parsed >= 0") ||
+  personalStatsSource.includes('loadObject("cpsBestScores")')
+) {
+  infrastructureErrors.push(
+    "Dashboard local-record loader must reuse CPS/Wave sanitizers and reject invalid scalar stats"
+  );
+}
+
+if (
   cpsClientSource.includes("const getTimingStats") ||
   cpsClientSource.includes("navigator.share") ||
   !cpsFinishedActionsSource.includes("function getTimingStats") ||
@@ -2015,6 +2039,18 @@ if (
 ) {
   infrastructureErrors.push(
     "CPS history and best-score persistence must stay in the deferred cpsRecords module"
+  );
+}
+
+if (
+  !cpsRecordsSource.includes("export function normalizeCpsBestScores") ||
+  !cpsRecordsSource.includes("export function normalizeCpsRuns") ||
+  !cpsRecordsSource.includes("Number.isFinite(number) && number >= 0") ||
+  !cpsRecordsSource.includes("duration > 0") ||
+  !cpsRecordsSource.includes("Math.floor(clicks)")
+) {
+  infrastructureErrors.push(
+    "CPS records must sanitize legacy/corrupt local best scores and run history"
   );
 }
 

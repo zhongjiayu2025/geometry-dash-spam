@@ -15,6 +15,44 @@ export interface WaveStorageScope {
   isMini: boolean;
 }
 
+function nonNegative(value: unknown) {
+  const number = typeof value === "number" ? value : Number(value);
+  return Number.isFinite(number) && number >= 0 ? number : null;
+}
+
+export function normalizeWaveRuns(value: unknown, fallbackMode = "Unknown"): WaveRun[] {
+  if (!Array.isArray(value)) return [];
+
+  const runs: WaveRun[] = [];
+  for (const raw of value) {
+    if (!raw || typeof raw !== "object" || Array.isArray(raw)) continue;
+
+    const record = raw as Record<string, unknown>;
+    const time = nonNegative(record.time);
+    if (time === null) continue;
+
+    const mode =
+      typeof record.mode === "string" && record.mode.trim()
+        ? record.mode
+        : fallbackMode;
+
+    runs.push({
+      time,
+      averageCps: nonNegative(record.averageCps) ?? 0,
+      peakCps: nonNegative(record.peakCps) ?? 0,
+      timingSd: nonNegative(record.timingSd) ?? 0,
+      clicks: Math.floor(nonNegative(record.clicks) ?? 0),
+      result: record.result === "won" ? "won" : "lost",
+      timestamp: nonNegative(record.timestamp) ?? 0,
+      mode,
+    });
+
+    if (runs.length >= 10) break;
+  }
+
+  return runs;
+}
+
 function bestKey(scope: WaveStorageScope) {
   return `gd_spam_best_${scope.difficultyId}_${scope.isEndless ? "endless" : "timed"}_${scope.isMini ? "mini" : "normal"}`;
 }
@@ -30,13 +68,12 @@ export function loadWaveRecords(scope: WaveStorageScope) {
   const savedRuns = localStorage.getItem(runsKey(scope));
   if (savedRuns) {
     try {
-      const parsed = JSON.parse(savedRuns);
-      if (Array.isArray(parsed)) recentRuns = parsed.slice(0, 10);
+      recentRuns = normalizeWaveRuns(JSON.parse(savedRuns));
     } catch {}
   }
 
   return {
-    highScore: Number.isFinite(savedBest) ? savedBest : 0,
+    highScore: Number.isFinite(savedBest) && savedBest >= 0 ? savedBest : 0,
     recentRuns,
   };
 }
@@ -46,5 +83,5 @@ export function persistWaveHighScore(scope: WaveStorageScope, time: number) {
 }
 
 export function persistWaveRuns(scope: WaveStorageScope, runs: WaveRun[]) {
-  localStorage.setItem(runsKey(scope), JSON.stringify(runs.slice(0, 10)));
+  localStorage.setItem(runsKey(scope), JSON.stringify(normalizeWaveRuns(runs)));
 }
