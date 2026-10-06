@@ -59,8 +59,11 @@ export default function KeyboardGhostingTest() {
 
   useEffect(() => {
     const handleKeyDown = (event: KeyboardEvent) => {
-    if (isInteractiveKeyboardTarget(e.target)) return;
-      if (!["F5", "F11", "F12"].includes(event.code) && !(event.ctrlKey || event.metaKey)) {
+    if (isInteractiveKeyboardTarget(event.target)) return;
+      if (
+        ["Space", "ArrowUp", "ArrowDown", "PageUp", "PageDown"].includes(event.code) &&
+        !(event.ctrlKey || event.metaKey)
+      ) {
         event.preventDefault();
       }
       if (event.repeat) return;
@@ -76,7 +79,7 @@ export default function KeyboardGhostingTest() {
     };
 
     const handleKeyUp = (event: KeyboardEvent) => {
-    if (isInteractiveKeyboardTarget(e.target)) return;
+    if (isInteractiveKeyboardTarget(event.target)) return;
       setMeasurement((previous) => {
         const pressedKeys = new Set(previous.pressedKeys);
         pressedKeys.delete(event.code);
