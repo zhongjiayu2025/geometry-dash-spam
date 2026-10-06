@@ -86,5 +86,10 @@ a {
 /* Keep long below-the-fold content in the HTML while deferring offscreen layout/paint. */
 .defer-render {
   content-visibility: auto;
-  contain-intrinsic-size: auto 800px;
+  contain-intrinsic-size: auto 700px;
+}
+
+.defer-render-long {
+  content-visibility: auto;
+  contain-intrinsic-size: auto 1800px;
 }
