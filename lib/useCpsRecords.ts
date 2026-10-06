@@ -9,12 +9,14 @@ export function useCpsRecords() {
   const mountedRef = useRef(false);
 
   const syncRecords = useCallback(() => {
-    void import("./cpsRecords").then(({ loadCpsRecords }) => {
-      if (!mountedRef.current) return;
-      const records = loadCpsRecords();
-      setBestScores(records.bestScores);
-      setRunHistory(records.runHistory);
-    });
+    void import("./cpsRecords")
+      .then(({ loadCpsRecords }) => {
+        if (!mountedRef.current) return;
+        const records = loadCpsRecords();
+        setBestScores(records.bestScores);
+        setRunHistory(records.runHistory);
+      })
+      .catch(() => {});
   }, []);
 
   useEffect(() => {
@@ -39,12 +41,14 @@ export function useCpsRecords() {
   }, [syncRecords]);
 
   const persistRun = useCallback((duration: number, clicks: number) => {
-    void import("./cpsRecords").then(({ persistCpsRun }) => {
-      const records = persistCpsRun(duration, clicks);
-      if (!mountedRef.current) return;
-      setBestScores(records.bestScores);
-      setRunHistory(records.runHistory);
-    });
+    void import("./cpsRecords")
+      .then(({ persistCpsRun }) => {
+        const records = persistCpsRun(duration, clicks);
+        if (!mountedRef.current) return;
+        setBestScores(records.bestScores);
+        setRunHistory(records.runHistory);
+      })
+      .catch(() => {});
   }, []);
 
   return { bestScores, runHistory, persistRun };

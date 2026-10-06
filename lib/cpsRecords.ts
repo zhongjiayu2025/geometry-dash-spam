@@ -49,12 +49,11 @@ export function normalizeCpsRuns(value: unknown): CpsRun[] {
     if (duration === null || duration <= 0 || clicks === null) continue;
 
     const normalizedClicks = Math.floor(clicks);
-    const storedCps = nonNegative(record.cps);
     const timestamp = nonNegative(record.timestamp) ?? 0;
     runs.push({
       duration,
       clicks: normalizedClicks,
-      cps: storedCps ?? Number((normalizedClicks / duration).toFixed(2)),
+      cps: Number((normalizedClicks / duration).toFixed(2)),
       timestamp,
     });
 
@@ -89,10 +88,20 @@ export function loadCpsRecords(): CpsRecords {
 }
 
 export function persistCpsRun(duration: number, clicks: number): CpsRecords {
-  const cps = clicks / duration;
+  if (
+    !Number.isFinite(duration) ||
+    duration <= 0 ||
+    !Number.isFinite(clicks) ||
+    clicks < 0
+  ) {
+    return loadCpsRecords();
+  }
+
+  const safeClicks = Math.floor(clicks);
+  const cps = safeClicks / duration;
   const nextRun: CpsRun = {
     duration,
-    clicks,
+    clicks: safeClicks,
     cps: Number(cps.toFixed(2)),
     timestamp: Date.now(),
   };

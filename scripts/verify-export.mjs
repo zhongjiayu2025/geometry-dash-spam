@@ -2266,6 +2266,18 @@ if (
 }
 
 if (
+  cpsRecordsSource.includes("storedCps") ||
+  !cpsRecordsSource.includes("Number((normalizedClicks / duration).toFixed(2))") ||
+  !cpsRecordsSource.includes("!Number.isFinite(duration)") ||
+  !cpsRecordsSource.includes("!Number.isFinite(clicks)") ||
+  !cpsRecordsSource.includes("const safeClicks = Math.floor(clicks)")
+) {
+  infrastructureErrors.push(
+    "CPS records must derive CPS from sanitized clicks/duration and reject invalid persistence inputs"
+  );
+}
+
+if (
   !cpsClientSource.includes("useCpsRecords") ||
   cpsClientSource.includes("import('../lib/cpsRecords')") ||
   !cpsRecordsHookSource.includes('window.addEventListener("storage", handleStorage)') ||
@@ -2274,6 +2286,12 @@ if (
 ) {
   infrastructureErrors.push(
     "CPS records must stay deferred behind useCpsRecords and resync cross-tab best/history updates"
+  );
+}
+
+if ((cpsRecordsHookSource.match(/\.catch\(\(\) => \{\}\)/g) ?? []).length < 2) {
+  infrastructureErrors.push(
+    "useCpsRecords must absorb lazy chunk failures for both reads and writes instead of creating unhandled rejections"
   );
 }
 
