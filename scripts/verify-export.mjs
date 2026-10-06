@@ -1152,6 +1152,7 @@ const htmlSitemapPriorityRoutes = [
   "/hardest-level",
   "/geometry-dash-breeze",
   "/dashmetry",
+  ...supportGuideRoutes,
 ];
 
 if (htmlSitemapPath) {
