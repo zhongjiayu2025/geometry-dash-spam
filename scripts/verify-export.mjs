@@ -455,6 +455,7 @@ const dragClickResultSource = readFileSync(join(process.cwd(), "components", "Dr
 const spacebarFinishedSource = readFileSync(join(process.cwd(), "components", "SpacebarFinishedActions.tsx"), "utf8");
 const mouseAccelerationResultSource = readFileSync(join(process.cwd(), "components", "MouseAccelerationResult.tsx"), "utf8");
 const soundReactionResultSource = readFileSync(join(process.cwd(), "components", "SoundReactionResult.tsx"), "utf8");
+const visualMemoryGridSource = readFileSync(join(process.cwd(), "components", "VisualMemoryGrid.tsx"), "utf8");
 const demonListSource = readFileSync(join(process.cwd(), "components", "DemonListTable.tsx"), "utf8");
 const demonFilterSource = readFileSync(join(process.cwd(), "components", "DemonListFilterControls.tsx"), "utf8");
 const clickTestHeroSource = readFileSync(join(process.cwd(), "components", "ClickTestHero.tsx"), "utf8");
@@ -1009,6 +1010,19 @@ if (
 }
 
 if (
+  !visualMemoryClientSource.includes("dynamic(() => import('./VisualMemoryGrid')") ||
+  visualMemoryClientSource.includes("gridTemplateColumns") ||
+  visualMemoryClientSource.includes("Memory square") ||
+  !visualMemoryGridSource.includes('type="button"') ||
+  !visualMemoryGridSource.includes("disabled={gameState !== \"playing\"}") ||
+  !visualMemoryGridSource.includes("focus-visible:outline-fuchsia-400")
+) {
+  infrastructureErrors.push(
+    "Visual Memory interactive grid must stay lazy-loaded and keyboard-operable"
+  );
+}
+
+if (
   !chimpClientSource.includes("dynamic(() => import('./ChimpGameOver')") ||
   chimpClientSource.includes("navigator.share") ||
   chimpClientSource.includes("<Share2") ||
@@ -1210,7 +1224,7 @@ const clientSourceBudgets = [
   ["CpsTest.tsx", cpsClientSource, 13600],
   ["AimTrainer.tsx", aimClientSource, 10500],
   ["ReactionTest.tsx", reactionClientSource, 6500],
-  ["VisualMemoryTest.tsx", visualMemoryClientSource, 10700],
+  ["VisualMemoryTest.tsx", visualMemoryClientSource, 9000],
   ["ChimpTest.tsx", chimpClientSource, 10800],
   ["TypingTest.tsx", typingClientSource, 8000],
   ["ScrollTest.tsx", scrollClientSource, 7500],
