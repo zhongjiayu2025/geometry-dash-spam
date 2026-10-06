@@ -2120,13 +2120,13 @@ if (
 }
 
 if (
-  (clickerSource.match(/if \(prev\.orbs < cost\) return prev;/g) ?? []).length < 3 ||
-  clickerSource.includes("if (state.orbs < clickCost) return;") ||
-  clickerSource.includes("if (state.orbs < autoCost) return;") ||
-  clickerSource.includes("if (state.orbs < prestigeCost) return;")
+  !clickerSource.includes("updateState(buyClickUpgrade)") ||
+  !clickerSource.includes("updateState(buyAutoUpgrade)") ||
+  !clickerSource.includes("updateState(buyPrestigeUpgrade)") ||
+  (clickerEconomySource.match(/if \(state\.orbs < cost\) return state;/g) ?? []).length < 3
 ) {
   infrastructureErrors.push(
-    "Geometry Dash Clicker purchases must validate affordability inside the updater to prevent stale rapid-click overspending"
+    "Geometry Dash Clicker purchases must stay atomic inside clickerEconomy transactions"
   );
 }
 
@@ -2136,10 +2136,13 @@ if (
   clickerSource.includes("Math.pow(1.75") ||
   !clickerEconomySource.includes("export const clickCostFor") ||
   !clickerEconomySource.includes("export const autoCostFor") ||
-  !clickerEconomySource.includes("export const prestigeCostFor")
+  !clickerEconomySource.includes("export const prestigeCostFor") ||
+  !clickerEconomySource.includes("export function buyClickUpgrade") ||
+  !clickerEconomySource.includes("export function buyAutoUpgrade") ||
+  !clickerEconomySource.includes("export function buyPrestigeUpgrade")
 ) {
   infrastructureErrors.push(
-    "Geometry Dash Clicker upgrade cost formulas must stay centralized in clickerEconomy"
+    "Geometry Dash Clicker pricing and purchase transactions must stay centralized in clickerEconomy"
   );
 }
 

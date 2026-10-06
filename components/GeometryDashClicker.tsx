@@ -4,21 +4,21 @@ import React, { useEffect, useRef, useState } from "react";
 import { RotateCcw, Sparkles, Zap } from "lucide-react";
 import ClickerAchievements from "./ClickerAchievements";
 import { useIntentionalPointerAction } from "../lib/useIntentionalPointerAction";
-import { autoCostFor, clickCostFor, prestigeCostFor } from "../lib/clickerEconomy";
-
-type SaveState = {
-  orbs: number;
-  clickPower: number;
-  autoPower: number;
-  prestige: number;
-  totalClicks: number;
-};
+import {
+  INITIAL_CLICKER_STATE_CLICKER_STATE,
+  autoCostFor,
+  buyAutoUpgrade,
+  buyClickUpgrade,
+  buyPrestigeUpgrade,
+  clickCostFor,
+  prestigeCostFor,
+  type ClickerState,
+} from "../lib/clickerEconomy";
 
 const STORAGE_KEY = "gd_clicker_v1";
-const INITIAL: SaveState = { orbs: 0, clickPower: 1, autoPower: 0, prestige: 0, totalClicks: 0 };
 
 export default function GeometryDashClicker() {
-  const [state, setState] = useState<SaveState>(INITIAL);
+  const [state, setState] = useState<ClickerState>(INITIAL_CLICKER_STATE);
   const [loaded, setLoaded] = useState(false);
   const stateRef = useRef(state);
   const dirtyRef = useRef(false);
@@ -28,7 +28,7 @@ export default function GeometryDashClicker() {
     try {
       const saved = localStorage.getItem(STORAGE_KEY);
       if (saved) {
-        const next = { ...INITIAL, ...JSON.parse(saved) };
+        const next = { ...INITIAL_CLICKER_STATE, ...JSON.parse(saved) };
         stateRef.current = next;
         setState(next);
       }
@@ -65,7 +65,7 @@ export default function GeometryDashClicker() {
     };
   }, [loaded]);
 
-  const updateState = (updater: (prev: SaveState) => SaveState) => {
+  const updateState = (updater: (prev: ClickerState) => ClickerState) => {
     setState((prev) => {
       const next = updater(prev);
       stateRef.current = next;
@@ -116,40 +116,14 @@ export default function GeometryDashClicker() {
     deferTouch: true,
   });
 
-  const buyClick = () => {
-    updateState((prev) => {
-      const cost = clickCostFor(prev.clickPower);
-      if (prev.orbs < cost) return prev;
-      return { ...prev, orbs: prev.orbs - cost, clickPower: prev.clickPower + 1 };
-    });
-  };
-
-  const buyAuto = () => {
-    updateState((prev) => {
-      const cost = autoCostFor(prev.autoPower);
-      if (prev.orbs < cost) return prev;
-      return { ...prev, orbs: prev.orbs - cost, autoPower: prev.autoPower + 1 };
-    });
-  };
-
-  const prestige = () => {
-    updateState((prev) => {
-      const cost = prestigeCostFor(prev.prestige);
-      if (prev.orbs < cost) return prev;
-      return {
-        orbs: 0,
-        clickPower: 1,
-        autoPower: 0,
-        prestige: prev.prestige + 1,
-        totalClicks: prev.totalClicks,
-      };
-    });
-  };
+  const buyClick = () => updateState(buyClickUpgrade);
+  const buyAuto = () => updateState(buyAutoUpgrade);
+  const prestige = () => updateState(buyPrestigeUpgrade);
 
   const reset = () => {
-    stateRef.current = INITIAL;
+    stateRef.current = INITIAL_CLICKER_STATE;
     dirtyRef.current = false;
-    setState(INITIAL);
+    setState(INITIAL_CLICKER_STATE);
     localStorage.removeItem(STORAGE_KEY);
   };
 
