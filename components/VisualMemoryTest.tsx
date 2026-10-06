@@ -57,11 +57,10 @@ export default function VisualMemoryTest() {
             setClickedSquares(newClicked);
             
             if (newClicked.length === activeSquares.length) {
-                // Level complete
+                const nextLevel = level + 1;
+                commitBestScore(nextLevel);
                 setGameState('finished'); // Temp intermediate state
                 scheduleTimeout(() => {
-                    const nextLevel = level + 1;
-                    commitBestScore(nextLevel);
                     setLevel(nextLevel);
                     startLevel(nextLevel);
                 }, 800);

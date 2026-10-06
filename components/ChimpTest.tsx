@@ -59,17 +59,15 @@ export default function ChimpTest() {
             
             // Reached end of level
             if (val === level) {
-                // Update local storage best score
-                commitBestScore(level);
-
                 if (level >= 40) {
+                    commitBestScore(40);
                     setGameState('finished');
                     return;
                 }
 
+                const nextLevel = level + 1;
+                commitBestScore(nextLevel);
                 scheduleTimeout(() => {
-                    const nextLevel = level + 1;
-                    commitBestScore(nextLevel);
                     setLevel(nextLevel);
                     generateLevel(nextLevel);
                 }, 500);

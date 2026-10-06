@@ -1308,11 +1308,11 @@ if (
 }
 
 if (
-  !chimpClientSource.includes("const nextLevel = level + 1;\n                    commitBestScore(nextLevel);") ||
-  !visualMemoryClientSource.includes("const nextLevel = level + 1;\n                    commitBestScore(nextLevel);")
+  !chimpClientSource.includes("const nextLevel = level + 1;\n                commitBestScore(nextLevel);\n                scheduleTimeout") ||
+  !visualMemoryClientSource.includes("const nextLevel = level + 1;\n                commitBestScore(nextLevel);\n                setGameState('finished')")
 ) {
   infrastructureErrors.push(
-    "Memory tests must persist a newly reached level immediately so navigation away cannot lose progress"
+    "Memory tests must persist the next reached level before delayed transitions so navigation away cannot lose progress"
   );
 }
 
