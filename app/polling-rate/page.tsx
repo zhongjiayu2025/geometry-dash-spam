@@ -15,7 +15,7 @@ export const metadata: Metadata = {
     type: "website",
   },
   twitter: {
-    card: "summary",
+    card: "summary_large_image",
     title: "Mouse Polling Rate Test | Browser Hz Estimate",
     description: "Estimate mouse pointer report frequency from browser events. Results can vary with hardware, operating system and browser scheduling.",
   },
