@@ -532,6 +532,7 @@ const clickerAchievementsSource = readFileSync(join(process.cwd(), "components",
 const clickerEconomySource = readFileSync(join(process.cwd(), "lib", "clickerEconomy.ts"), "utf8");
 const homeSource = readFileSync(join(process.cwd(), "app", "page.tsx"), "utf8");
 const footerSource = readFileSync(join(process.cwd(), "components", "Footer.tsx"), "utf8");
+const infoPagesSource = readFileSync(join(process.cwd(), "components", "InfoPages.tsx"), "utf8");
 const personalStatsSource = readFileSync(join(process.cwd(), "components", "PersonalStats.tsx"), "utf8");
 const personalStatsContentSource = readFileSync(join(process.cwd(), "components", "PersonalStatsContent.tsx"), "utf8");
 const dashboardWaveHistorySource = readFileSync(join(process.cwd(), "components", "DashboardWaveHistory.tsx"), "utf8");
@@ -2628,18 +2629,18 @@ for (const [file, source, path] of [
   }
 }
 
-for (const [route, label] of [
-  ["/dashmetry", "Dashmetry / Challenge Rush"],
-  ["/geometry-dash-breeze", "Geometry Dash Breeze"],
-]) {
-  if (
-    !headerSource.includes(`["${route}", "${label}"]`) ||
-    !footerSource.includes(`href="${route}"`)
-  ) {
-    infrastructureErrors.push(
-      `${route}: high-demand Geometry Dash page must remain linked from global navigation and footer`
-    );
-  }
+if (
+  !infoPagesSource.includes("Related Rhythm Games") ||
+  !infoPagesSource.includes('href="/dashmetry"') ||
+  !infoPagesSource.includes('href="/geometry-dash-breeze"') ||
+  headerSource.includes('["/dashmetry"') ||
+  headerSource.includes('["/geometry-dash-breeze"') ||
+  footerSource.includes('href="/dashmetry"') ||
+  footerSource.includes('href="/geometry-dash-breeze"')
+) {
+  infrastructureErrors.push(
+    "Related-game pages must stay discoverable from the Sitemap hub without leaking authority through global Header/Footer links"
+  );
 }
 
 for (const [route, requiredLinks] of [

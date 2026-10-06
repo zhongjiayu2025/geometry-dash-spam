@@ -34,8 +34,6 @@ const moreItems = [
   ["/how-to-get-diamonds-geometry-dash", "Get Diamonds"],
   ["/how-to-get-gold-keys-geometry-dash", "Get Gold Keys"],
   ["/geometry-dash-stuttering-high-end-pc", "PC Stutter Guide"],
-  ["/dashmetry", "Dashmetry / Challenge Rush"],
-  ["/geometry-dash-breeze", "Geometry Dash Breeze"],
   ["/geometry-dash-clicker", "Geometry Dash Clicker"],
 ] as const;
 
