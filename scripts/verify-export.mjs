@@ -1133,6 +1133,15 @@ if (
 }
 
 if (
+  !aimClientSource.includes('className="touch-none w-full h-80') ||
+  !aimClientSource.includes("event.preventDefault();\n    event.stopPropagation();")
+) {
+  infrastructureErrors.push(
+    "AimTrainer active field must suppress mobile panning while target presses stay isolated from background misses"
+  );
+}
+
+if (
   (aimClientSource.match(/performance\.now\(\) - startTimeRef\.current >= 30000/g) ?? []).length < 2
 ) {
   infrastructureErrors.push(

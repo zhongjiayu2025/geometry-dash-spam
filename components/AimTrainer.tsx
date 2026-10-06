@@ -88,6 +88,7 @@ export default function AimTrainer() {
   };
 
   const handleTargetClick = (event: React.PointerEvent<HTMLButtonElement>) => {
+    event.preventDefault();
     event.stopPropagation();
     if (!isActive || isFinished) return;
     if (performance.now() - startTimeRef.current >= 30000) {
@@ -202,7 +203,7 @@ export default function AimTrainer() {
             </button>
           ) : isActive ? (
             <div
-              className="w-full h-80 bg-slate-900/40 border border-white/5 rounded-3xl relative overflow-hidden cursor-crosshair"
+              className="touch-none w-full h-80 bg-slate-900/40 border border-white/5 rounded-3xl relative overflow-hidden cursor-crosshair"
               onPointerDown={handleBackgroundClick}
             >
               <button
