@@ -29,6 +29,9 @@
       "GD Lists",
       "Android",
       "Windows"
-    ]
+    ],
+    "latestMainLevel": "Ghost Retention",
+    "androidMin": 5,
+    "androidMax": 16
   }
 }

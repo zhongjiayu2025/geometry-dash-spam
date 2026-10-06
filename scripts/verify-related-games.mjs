@@ -158,6 +158,19 @@ for (const page of pages) {
       errors.push("Geometry Dash Breeze: levelCount must be a positive integer.");
     }
 
+    if (typeof config.latestMainLevel !== "string" || !config.latestMainLevel.trim()) {
+      errors.push("Geometry Dash Breeze: latestMainLevel must be a non-empty string.");
+    }
+
+    if (
+      !Number.isInteger(config.androidMin) ||
+      !Number.isInteger(config.androidMax) ||
+      config.androidMin <= 0 ||
+      config.androidMax < config.androidMin
+    ) {
+      errors.push("Geometry Dash Breeze: Android support range must be valid positive integers.");
+    }
+
     if (
       !Array.isArray(config.platforms) ||
       config.platforms.length < 1 ||
@@ -170,6 +183,9 @@ for (const page of pages) {
       "relatedPageData.latestVersion",
       "relatedPageData.levelCount",
       "relatedPageData.platforms",
+      "relatedPageData.latestMainLevel",
+      "relatedPageData.androidMin",
+      "relatedPageData.androidMax",
     ]) {
       if (!source.includes(token)) {
         errors.push(`Geometry Dash Breeze: page must consume centralized ${token}.`);
@@ -178,9 +194,12 @@ for (const page of pages) {
 
     if (
       /const LATEST_VERSION = "v\d+\.\d+\.\d+"/.test(source) ||
-      /const LEVEL_COUNT = \d+/.test(source)
+      /const LEVEL_COUNT = \d+/.test(source) ||
+      source.includes("marks v1.3.1 as the latest release") ||
+      source.includes("called Ghost Retention") ||
+      source.includes("target Android 5 and later")
     ) {
-      errors.push("Geometry Dash Breeze: release facts must not be hard-coded in the page.");
+      errors.push("Geometry Dash Breeze: mutable release facts must not be hard-coded in the page.");
     }
   }
 }
@@ -192,6 +211,25 @@ if (
 ) {
   errors.push(
     "Related-game refresh workflow must run the live Breeze release verifier with the GitHub token."
+  );
+}
+
+if (
+  !readFileSync(new URL("./verify-related-games-live.mjs", import.meta.url), "utf8").includes(
+    "application/vnd.github.raw+json"
+  ) ||
+  !readFileSync(new URL("./verify-related-games-live.mjs", import.meta.url), "utf8").includes(
+    "currently consists of\\s+(\\d+)\\s+levels"
+  ) ||
+  !readFileSync(new URL("./verify-related-games-live.mjs", import.meta.url), "utf8").includes(
+    "latestMainLevel"
+  ) ||
+  !readFileSync(new URL("./verify-related-games-live.mjs", import.meta.url), "utf8").includes(
+    "androidMin"
+  )
+) {
+  errors.push(
+    "Breeze live verifier must validate README level/platform/support facts in addition to the latest release tag."
   );
 }
 
