@@ -3,6 +3,7 @@
 import React, { useCallback, useEffect, useRef, useState } from "react";
 import dynamic from "next/dynamic";
 import { Activity } from "lucide-react";
+import { useExactCountdown } from "../lib/useExactCountdown";
 
 const ScrollResult = dynamic(() => import("./ScrollResult"), { ssr: false });
 const TEST_MS = 10000;
@@ -15,8 +16,6 @@ export default function ScrollTest() {
   const [isFinished, setIsFinished] = useState(false);
 
   const patternRef = useRef<HTMLDivElement>(null);
-  const timerRef = useRef<number | null>(null);
-  const endTimerRef = useRef<number | null>(null);
   const startTimeRef = useRef(0);
   const distanceRef = useRef(0);
   const eventsRef = useRef(0);
@@ -32,37 +31,15 @@ export default function ScrollTest() {
     setTimeLeft(0);
     setDistance(distanceRef.current);
     setEvents(eventsRef.current);
-
-    if (timerRef.current) {
-      window.clearInterval(timerRef.current);
-      timerRef.current = null;
-    }
-    if (endTimerRef.current) {
-      window.clearTimeout(endTimerRef.current);
-      endTimerRef.current = null;
-    }
   }, []);
 
   const startTest = useCallback(() => {
-    if (timerRef.current) window.clearInterval(timerRef.current);
-    if (endTimerRef.current) window.clearTimeout(endTimerRef.current);
-
     activeRef.current = true;
     finishedRef.current = false;
     startTimeRef.current = performance.now();
     setIsActive(true);
     setIsFinished(false);
-
-    const updateUi = () => {
-      const elapsed = performance.now() - startTimeRef.current;
-      setTimeLeft(Math.max(0, (TEST_MS - elapsed) / 1000));
-      setDistance(distanceRef.current);
-      setEvents(eventsRef.current);
-    };
-
-    timerRef.current = window.setInterval(updateUi, 100);
-    endTimerRef.current = window.setTimeout(finishTest, TEST_MS);
-  }, [finishTest]);
+  }, []);
 
   const handleScroll = useCallback((event: WheelEvent) => {
     if (finishedRef.current) return;
@@ -95,18 +72,21 @@ export default function ScrollTest() {
     return () => target.removeEventListener("wheel", handleScroll);
   }, [handleScroll]);
 
-  useEffect(() => {
-    return () => {
-      if (timerRef.current) window.clearInterval(timerRef.current);
-      if (endTimerRef.current) window.clearTimeout(endTimerRef.current);
-    };
-  }, []);
+
+  const cancelCountdown = useExactCountdown({
+    running: isActive && !isFinished,
+    durationMs: TEST_MS,
+    startTimeRef,
+    onTick: (remainingMs) => {
+      setTimeLeft(remainingMs / 1000);
+      setDistance(distanceRef.current);
+      setEvents(eventsRef.current);
+    },
+    onFinish: finishTest,
+  });
 
   const resetTest = () => {
-    if (timerRef.current) window.clearInterval(timerRef.current);
-    if (endTimerRef.current) window.clearTimeout(endTimerRef.current);
-    timerRef.current = null;
-    endTimerRef.current = null;
+    cancelCountdown();
     startTimeRef.current = 0;
     distanceRef.current = 0;
     eventsRef.current = 0;

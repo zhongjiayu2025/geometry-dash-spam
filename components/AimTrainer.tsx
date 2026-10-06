@@ -1,10 +1,12 @@
 "use client";
 
-import React, { useCallback, useEffect, useRef, useState } from "react";
+import React, { useCallback, useRef, useState } from "react";
 import dynamic from "next/dynamic";
 import { Target, Trophy, Volume2, VolumeX } from "lucide-react";
 import type { ClickTone } from "../lib/clickSound";
 import { useLazyClickSound } from "../lib/useLazyClickSound";
+import { useExactCountdown } from "../lib/useExactCountdown";
+import { usePersistentBestNumber } from "../lib/usePersistentBestNumber";
 
 const AimTrainerResult = dynamic(() => import("./AimTrainerResult"), { ssr: false });
 
@@ -15,27 +17,12 @@ export default function AimTrainer() {
   const [score, setScore] = useState(0);
   const [misses, setMisses] = useState(0);
   const [targetPos, setTargetPos] = useState({ x: 50, y: 50 });
-  const [bestScore, setBestScore] = useState<number | null>(null);
+  const [bestScore, commitBestScore] = usePersistentBestNumber("aimTrainerBest");
   const [soundEnabled, setSoundEnabled] = useState(true);
 
   const clickTimes = useRef<number[]>([]);
   const lastClickTime = useRef(0);
-  const timerRef = useRef<number | null>(null);
-  const endTimerRef = useRef<number | null>(null);
   const startTimeRef = useRef(0);
-
-  useEffect(() => {
-    const saved = localStorage.getItem("aimTrainerBest");
-    if (saved) {
-      const parsed = Number.parseInt(saved, 10);
-      if (Number.isFinite(parsed)) setBestScore(parsed);
-    }
-
-    return () => {
-      if (timerRef.current) window.clearInterval(timerRef.current);
-      if (endTimerRef.current) window.clearTimeout(endTimerRef.current);
-    };
-  }, []);
 
 
   const { ensure: ensureClickSound, play: playClickSound, suspend: suspendClickSound } = useLazyClickSound();
@@ -69,25 +56,22 @@ export default function AimTrainer() {
     setIsFinished(true);
     setTimeLeft(0);
 
-    if (timerRef.current) window.clearInterval(timerRef.current);
-    if (endTimerRef.current) window.clearTimeout(endTimerRef.current);
-
     setScore((currentScore) => {
-      setBestScore((previousBest) => {
-        if (previousBest === null || currentScore > previousBest) {
-          localStorage.setItem("aimTrainerBest", currentScore.toString());
-          return currentScore;
-        }
-        return previousBest;
-      });
+      commitBestScore(currentScore);
       return currentScore;
     });
-  }, []);
+  }, [commitBestScore]);
+
+  const cancelCountdown = useExactCountdown({
+    running: isActive && !isFinished,
+    durationMs: 30000,
+    startTimeRef,
+    onTick: (remainingMs) => setTimeLeft(remainingMs / 1000),
+    onFinish: endGame,
+  });
 
   const startGame = () => {
-    if (timerRef.current) window.clearInterval(timerRef.current);
-    if (endTimerRef.current) window.clearTimeout(endTimerRef.current);
-
+    cancelCountdown();
     setIsActive(true);
     setIsFinished(false);
     setScore(0);
@@ -101,14 +85,6 @@ export default function AimTrainer() {
     generateTarget();
 
     if (soundEnabled) void ensureClickSound();
-
-    const updateTimer = () => {
-      const elapsed = performance.now() - startTimeRef.current;
-      setTimeLeft(Math.max(0, (30000 - elapsed) / 1000));
-    };
-
-    timerRef.current = window.setInterval(updateTimer, 100);
-    endTimerRef.current = window.setTimeout(endGame, 30000);
   };
 
   const handleTargetClick = (event: React.PointerEvent<HTMLButtonElement>) => {
@@ -137,8 +113,7 @@ export default function AimTrainer() {
     setScore(0);
     setMisses(0);
     setTimeLeft(30);
-    if (timerRef.current) window.clearInterval(timerRef.current);
-    if (endTimerRef.current) window.clearTimeout(endTimerRef.current);
+    cancelCountdown();
   };
 
   const totalClicks = score + misses;

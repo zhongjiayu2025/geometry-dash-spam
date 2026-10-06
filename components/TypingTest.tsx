@@ -4,6 +4,7 @@ import React, { useCallback, useEffect, useRef, useState } from "react";
 import dynamic from "next/dynamic";
 import { Keyboard } from "lucide-react";
 import { usePersistentBestNumber } from "../lib/usePersistentBestNumber";
+import { useExactCountdown } from "../lib/useExactCountdown";
 
 const TypingResult = dynamic(() => import("./TypingResult"), { ssr: false });
 
@@ -21,8 +22,6 @@ export default function TypingTest() {
   const [bestWpm, commitBestWpm] = usePersistentBestNumber("typingTestBestWpm");
 
   const inputRef = useRef<HTMLTextAreaElement>(null);
-  const timerRef = useRef<number | null>(null);
-  const endTimerRef = useRef<number | null>(null);
   const startTimeRef = useRef(0);
   const userInputRef = useRef("");
   const targetTextRef = useRef("");
@@ -50,21 +49,10 @@ export default function TypingTest() {
 
     return () => {
       cancelled = true;
-      if (timerRef.current) clearInterval(timerRef.current);
-      if (endTimerRef.current) clearTimeout(endTimerRef.current);
     };
   }, [ensureRuntime]);
 
   const finishTest = (elapsedMs = TEST_MS) => {
-    if (timerRef.current) {
-      clearInterval(timerRef.current);
-      timerRef.current = null;
-    }
-    if (endTimerRef.current) {
-      clearTimeout(endTimerRef.current);
-      endTimerRef.current = null;
-    }
-
     const runtime = runtimeRef.current;
     if (!runtime) return;
 
@@ -82,17 +70,18 @@ export default function TypingTest() {
     commitBestWpm(result.wpm);
   };
 
+  const cancelCountdown = useExactCountdown({
+    running: status === "running",
+    durationMs: TEST_MS,
+    startTimeRef,
+    onTick: (remainingMs) => setTimeLeft(remainingMs / 1000),
+    onFinish: () => finishTest(TEST_MS),
+  });
+
   const startGame = () => {
+    cancelCountdown();
     startTimeRef.current = performance.now();
     setStatus("running");
-
-    const updateTimer = () => {
-      const elapsed = performance.now() - startTimeRef.current;
-      setTimeLeft(Math.max(0, (TEST_MS - elapsed) / 1000));
-    };
-
-    timerRef.current = window.setInterval(updateTimer, 100);
-    endTimerRef.current = window.setTimeout(() => finishTest(TEST_MS), TEST_MS);
   };
 
   const handleChange = (event: React.ChangeEvent<HTMLTextAreaElement>) => {
@@ -117,10 +106,7 @@ export default function TypingTest() {
   };
 
   const resetTest = () => {
-    if (timerRef.current) clearInterval(timerRef.current);
-    if (endTimerRef.current) clearTimeout(endTimerRef.current);
-    timerRef.current = null;
-    endTimerRef.current = null;
+    cancelCountdown();
     startTimeRef.current = 0;
     userInputRef.current = "";
 
