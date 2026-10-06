@@ -452,6 +452,7 @@ const memoryTestRuntimeSource = readFileSync(join(process.cwd(), "lib", "memoryT
 const lazyClickSoundSource = readFileSync(join(process.cwd(), "lib", "useLazyClickSound.ts"), "utf8");
 const secondaryClickFinishedSource = readFileSync(join(process.cwd(), "components", "SecondaryClickFinishedActions.tsx"), "utf8");
 const dragClickResultSource = readFileSync(join(process.cwd(), "components", "DragClickResult.tsx"), "utf8");
+const dragClickStatsSource = readFileSync(join(process.cwd(), "lib", "dragClickStats.ts"), "utf8");
 const spacebarFinishedSource = readFileSync(join(process.cwd(), "components", "SpacebarFinishedActions.tsx"), "utf8");
 const mouseAccelerationResultSource = readFileSync(join(process.cwd(), "components", "MouseAccelerationResult.tsx"), "utf8");
 const soundReactionResultSource = readFileSync(join(process.cwd(), "components", "SoundReactionResult.tsx"), "utf8");
@@ -746,6 +747,18 @@ if (
 ) {
   infrastructureErrors.push(
     "DragClickTest finished result and sharing must stay in the lazy result chunk"
+  );
+}
+
+if (
+  !dragClientSource.includes('import("../lib/dragClickStats")') ||
+  dragClientSource.includes("function getPeakOneSecondCps") ||
+  dragClientSource.includes("function getBuckets") ||
+  !dragClickStatsSource.includes("export function getDragPeakOneSecondCps") ||
+  !dragClickStatsSource.includes("export function getDragBuckets")
+) {
+  infrastructureErrors.push(
+    "Drag finish-only peak and bucket analysis must stay in the deferred dragClickStats module"
   );
 }
 
@@ -1265,11 +1278,11 @@ const clientSourceBudgets = [
   ["MouseAccelerationTest.tsx", mouseAccelerationClientSource, 5000],
   ["SoundReactionTest.tsx", soundReactionClientSource, 8000],
   ["SecondaryClickTest.tsx", secondaryClickClientSource, 13500],
-  ["DragClickTest.tsx", dragClientSource, 8200],
+  ["DragClickTest.tsx", dragClientSource, 7800],
   ["SpacebarCounter.tsx", spacebarClientSource, 9300],
   ["PersonalStats.tsx", personalStatsSource, 5000],
   ["GeometryDashClicker.tsx", clickerSource, 9200],
-  ["GameCanvas.tsx", gameCanvasSource, 32200],
+  ["GameCanvas.tsx", gameCanvasSource, 32000],
 ];
 
 for (const [file, source, maxBytes] of clientSourceBudgets) {
@@ -1377,6 +1390,18 @@ if (
 ) {
   infrastructureErrors.push(
     "Wave high-score and run-history persistence must stay in the deferred waveStorage module"
+  );
+}
+
+if (
+  !gameCanvasSource.includes("const syncMusic = useCallback") ||
+  (gameCanvasSource.match(/document\.addEventListener\('visibilitychange'/g) ?? []).length !== 1 ||
+  (gameCanvasSource.match(/localStorage\.getItem\('gd_spam_muted'\)/g) ?? []).length !== 1 ||
+  !gameCanvasSource.includes("useEffect(() => {\n    lowVisualsRef.current") ||
+  !gameCanvasSource.includes("useEffect(() => {\n    highScoreRef.current = 0")
+) {
+  infrastructureErrors.push(
+    "GameCanvas preferences, scoped records, and visibility/audio synchronization must stay separated with one visibility listener"
   );
 }
 
