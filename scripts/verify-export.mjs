@@ -557,6 +557,47 @@ for (const file of ["JitterClickTest.tsx", "ButterflyClickTest.tsx"]) {
   }
 }
 
+const spacebarClientSource = supportClientSources.find(([file]) => file === "SpacebarCounter.tsx")?.[1] ?? "";
+if (
+  !spacebarClientSource.includes("useState(false)") ||
+  !spacebarClientSource.includes('import("../lib/clickSound")') ||
+  !spacebarClientSource.includes("endTimerRef") ||
+  !spacebarClientSource.includes("window.setInterval(updateTimer, 100)") ||
+  !spacebarClientSource.includes("now - startTimeRef.current >= TEST_MS") ||
+  spacebarClientSource.includes("AudioContext") ||
+  spacebarClientSource.includes("createOscillator") ||
+  spacebarClientSource.includes("}, 33)") ||
+  spacebarClientSource.includes("Spacebar spam as a separate input skill")
+) {
+  infrastructureErrors.push(
+    "SpacebarCounter must keep opt-in lazy audio, exact cutoff timing and server-rendered static guidance"
+  );
+}
+
+const dragClientSource = supportClientSources.find(([file]) => file === "DragClickTest.tsx")?.[1] ?? "";
+if (
+  !dragClientSource.includes("endTimerRef") ||
+  !dragClientSource.includes("touch-pan-y") ||
+  !dragClientSource.includes("onPointerUp={handlePointerUp}") ||
+  !dragClientSource.includes("window.setInterval(updateTimer, 100)") ||
+  dragClientSource.includes("}, 33)")
+) {
+  infrastructureErrors.push(
+    "DragClickTest must keep exact cutoff timing and allow mobile scrolling before a run starts"
+  );
+}
+
+const ghostingClientSource = supportClientSources.find(([file]) => file === "KeyboardGhostingTest.tsx")?.[1] ?? "";
+if (
+  ghostingClientSource.includes("<h1") ||
+  ghostingClientSource.includes("How to test:") ||
+  ghostingClientSource.includes("KeyboardIcon")
+) {
+  infrastructureErrors.push(
+    "KeyboardGhostingTest static hero and instructions must stay server-rendered"
+  );
+}
+
 if (cpsClientSource.includes("RelatedTools") || cpsClientSource.includes("How is CPS Calculated?")) {
   infrastructureErrors.push("CPS static guide content must stay outside the client test component");
 }
@@ -1177,6 +1218,21 @@ for (const route of webApplicationRoutes) {
 }
 
 const serverRenderedGuideExpectations = new Map([
+  [
+    "/spacebar-counter",
+    [
+      "Spacebar spam as a separate input skill",
+      "Compare the same duration",
+      "Separate speed from hardware specs",
+    ],
+  ],
+  [
+    "/keyboard-ghosting",
+    [
+      "Keyboard Ghosting &amp; Key Rollover Test",
+      "How to test:",
+    ],
+  ],
   [
     "/jitter-click",
     [
