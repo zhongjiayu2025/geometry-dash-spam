@@ -447,6 +447,7 @@ const waveCanvasHudSource = readFileSync(join(process.cwd(), "components", "Wave
 const waveShareModalSource = readFileSync(join(process.cwd(), "components", "WaveShareModal.tsx"), "utf8");
 const clickSoundSource = readFileSync(join(process.cwd(), "lib", "clickSound.ts"), "utf8");
 const cpsRecordsSource = readFileSync(join(process.cwd(), "lib", "cpsRecords.ts"), "utf8");
+const cpsRecordsHookSource = readFileSync(join(process.cwd(), "lib", "useCpsRecords.ts"), "utf8");
 const persistentBestSource = readFileSync(join(process.cwd(), "lib", "usePersistentBestNumber.ts"), "utf8");
 const browserStorageSource = readFileSync(join(process.cwd(), "lib", "browserStorage.ts"), "utf8");
 const managedTimeoutSource = readFileSync(join(process.cwd(), "lib", "useManagedTimeout.ts"), "utf8");
@@ -1855,6 +1856,19 @@ if (
 }
 
 if (
+  !waveStorageSource.includes("Math.max(safeCurrent, time)") ||
+  !waveStorageSource.includes("...readWaveRuns(scope)") ||
+  !waveStorageSource.includes("const seen = new Set<string>()") ||
+  !waveStorageSource.includes("return merged") ||
+  !gameCanvasSource.includes("window.addEventListener('storage', handleStorage)") ||
+  !gameCanvasSource.includes("setRecentRuns(merged)")
+) {
+  infrastructureErrors.push(
+    "Wave records must merge cross-tab history, preserve monotonic best scores, and resync the active tool on storage updates"
+  );
+}
+
+if (
   !waveStorageSource.includes("export function normalizeWaveRuns") ||
   !waveStorageSource.includes('typeof value !== "number" && typeof value !== "string"') ||
   !waveStorageSource.includes('typeof value === "string" && !value.trim()') ||
@@ -2135,6 +2149,18 @@ if (
 ) {
   infrastructureErrors.push(
     "CPS records must sanitize legacy/corrupt local best scores and run history"
+  );
+}
+
+if (
+  !cpsClientSource.includes("useCpsRecords") ||
+  cpsClientSource.includes("import('../lib/cpsRecords')") ||
+  !cpsRecordsHookSource.includes('window.addEventListener("storage", handleStorage)') ||
+  !cpsRecordsHookSource.includes('event.key === "cpsBestScores"') ||
+  !cpsRecordsHookSource.includes('event.key === "cpsRunHistory"')
+) {
+  infrastructureErrors.push(
+    "CPS records must stay deferred behind useCpsRecords and resync cross-tab best/history updates"
   );
 }
 

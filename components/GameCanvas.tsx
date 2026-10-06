@@ -69,21 +69,28 @@ const GameCanvas: React.FC<GameCanvasProps> = memo(({ difficulty, status, onStat
     setIsNewBest(false);
 
     let cancelled = false;
-    void import('../lib/waveStorage').then(({ loadWaveRecords }) => {
-      if (cancelled) return;
-      const records = loadWaveRecords({
-        difficultyId: difficulty.id,
-        isEndless,
-        isMini,
+    const syncWaveRecords = () => {
+      void import('../lib/waveStorage').then(({ loadWaveRecords }) => {
+        if (cancelled) return;
+        const records = loadWaveRecords({
+          difficultyId: difficulty.id,
+          isEndless,
+          isMini,
+        });
+        highScoreRef.current = records.highScore;
+        setHighScore(records.highScore);
+        setRecentRuns(records.recentRuns);
+        setIsNewBest(false);
       });
-      highScoreRef.current = records.highScore;
-      setHighScore(records.highScore);
-      setRecentRuns(records.recentRuns);
-      setIsNewBest(false);
-    });
+    };
 
+    const handleStorage = () => syncWaveRecords();
+
+    syncWaveRecords();
+    window.addEventListener('storage', handleStorage);
     return () => {
       cancelled = true;
+      window.removeEventListener('storage', handleStorage);
     };
   }, [difficulty.id, isEndless, isMini]);
 
@@ -314,7 +321,11 @@ const GameCanvas: React.FC<GameCanvasProps> = memo(({ difficulty, status, onStat
     setRecentRuns((previousRuns) => {
       const next = [run, ...previousRuns].slice(0, 10);
       void import('../lib/waveStorage').then(({ persistWaveRuns }) => {
-        persistWaveRuns({ difficultyId: difficulty.id, isEndless, isMini }, next);
+        const merged = persistWaveRuns(
+          { difficultyId: difficulty.id, isEndless, isMini },
+          next
+        );
+        setRecentRuns(merged);
       });
       return next;
     });

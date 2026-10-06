@@ -65,27 +65,56 @@ function runsKey(scope: WaveStorageScope) {
   return `gd_spam_runs_${scope.difficultyId}_${scope.isEndless ? "endless" : "timed"}_${scope.isMini ? "mini" : "normal"}`;
 }
 
+function readWaveRuns(scope: WaveStorageScope) {
+  const savedRuns = readStorage(runsKey(scope));
+  if (!savedRuns) return [];
+
+  try {
+    return normalizeWaveRuns(JSON.parse(savedRuns));
+  } catch {
+    return [];
+  }
+}
+
 export function loadWaveRecords(scope: WaveStorageScope) {
   const savedBest = Number.parseFloat(readStorage(bestKey(scope)) || "0");
-  let recentRuns: WaveRun[] = [];
-
-  const savedRuns = readStorage(runsKey(scope));
-  if (savedRuns) {
-    try {
-      recentRuns = normalizeWaveRuns(JSON.parse(savedRuns));
-    } catch {}
-  }
 
   return {
     highScore: Number.isFinite(savedBest) && savedBest >= 0 ? savedBest : 0,
-    recentRuns,
+    recentRuns: readWaveRuns(scope),
   };
 }
 
 export function persistWaveHighScore(scope: WaveStorageScope, time: number) {
-  writeStorage(bestKey(scope), String(time));
+  const current = Number.parseFloat(readStorage(bestKey(scope)) || "0");
+  const safeCurrent = Number.isFinite(current) && current >= 0 ? current : 0;
+  if (!Number.isFinite(time) || time < 0) return safeCurrent;
+
+  const next = Math.max(safeCurrent, time);
+  if (next > safeCurrent) writeStorage(bestKey(scope), String(next));
+  return next;
 }
 
 export function persistWaveRuns(scope: WaveStorageScope, runs: WaveRun[]) {
-  writeStorage(runsKey(scope), JSON.stringify(normalizeWaveRuns(runs)));
+  const combined = [...normalizeWaveRuns(runs), ...readWaveRuns(scope)]
+    .sort((a, b) => b.timestamp - a.timestamp);
+
+  const seen = new Set<string>();
+  const merged: WaveRun[] = [];
+  for (const run of combined) {
+    const signature = [
+      run.timestamp,
+      run.time,
+      run.clicks,
+      run.result,
+      run.mode,
+    ].join("|");
+    if (seen.has(signature)) continue;
+    seen.add(signature);
+    merged.push(run);
+    if (merged.length >= 10) break;
+  }
+
+  writeStorage(runsKey(scope), JSON.stringify(merged));
+  return merged;
 }

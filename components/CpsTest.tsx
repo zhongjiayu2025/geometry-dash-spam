@@ -7,8 +7,8 @@ import { MousePointer2, Clock } from 'lucide-react';
 import { ClickTestSpeedPanel, ClickTestTimerCard } from './ClickTestPanels';
 import { useLazyClickSound } from '../lib/useLazyClickSound';
 import { useExactCountdown } from '../lib/useExactCountdown';
-import type { CpsRun } from '../lib/cpsRecords';
 import { readStorage, writeStorage } from '../lib/browserStorage';
+import { useCpsRecords } from '../lib/useCpsRecords';
 
 const CpsRunHistory = dynamic(() => import('./CpsRunHistory'), { ssr: false });
 const CpsFinishedActions = dynamic(() => import('./CpsFinishedActions'), { ssr: false });
@@ -23,8 +23,7 @@ const CpsTest: React.FC = () => {
   const [timeLeft, setTimeLeft] = useState(10.00);
   
   const [soundEnabled, setSoundEnabled] = useState(false);
-  const [bestScores, setBestScores] = useState<Record<number, number>>({});
-  const [runHistory, setRunHistory] = useState<CpsRun[]>([]);
+  const { bestScores, runHistory, persistRun } = useCpsRecords();
   
   const clicksRef = useRef(0);
   const testStartRef = useRef(0);
@@ -33,18 +32,6 @@ const CpsTest: React.FC = () => {
 
   useEffect(() => {
     setSoundEnabled(readStorage('cpsSoundEnabled') === 'true');
-
-    let cancelled = false;
-    void import('../lib/cpsRecords').then(({ loadCpsRecords }) => {
-      if (cancelled) return;
-      const records = loadCpsRecords();
-      setBestScores(records.bestScores);
-      setRunHistory(records.runHistory);
-    });
-
-    return () => {
-      cancelled = true;
-    };
   }, []);
 
 
@@ -150,12 +137,8 @@ const CpsTest: React.FC = () => {
     setActive(false);
     setClicks(finalClicks);
 
-    void import('../lib/cpsRecords').then(({ persistCpsRun }) => {
-      const records = persistCpsRun(selectedDuration, finalClicks);
-      setBestScores(records.bestScores);
-      setRunHistory(records.runHistory);
-    });
-  }, [selectedDuration]);
+    persistRun(selectedDuration, finalClicks);
+  }, [persistRun, selectedDuration]);
 
   const cancelCountdown = useExactCountdown({
     running: active && !finished,
