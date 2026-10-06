@@ -15,7 +15,7 @@ export const metadata: Metadata = {
     type: "website",
   },
   twitter: {
-    card: "summary",
+    card: "summary_large_image",
     title: "Geometry Dash Clicker | Free Orb Clicker Game",
     description: "Play a free Geometry Dash Clicker in your browser. Click the cube, earn orbs, buy upgrades, prestige and keep progress locally with no account.",
   },
