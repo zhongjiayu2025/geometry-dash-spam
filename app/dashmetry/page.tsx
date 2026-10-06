@@ -20,7 +20,7 @@ export const metadata: Metadata = {
     type: "website",
   },
   twitter: {
-    card: "summary",
+    card: "summary_large_image",
     title: "Dashmetry Is Now Challenge Rush | Current Game Guide",
     description:
       "Dashmetry is now Challenge Rush. See the current official home, rebrand context and source-checked game features.",
