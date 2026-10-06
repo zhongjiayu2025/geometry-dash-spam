@@ -656,6 +656,15 @@ if (
   );
 }
 
+if (
+  !ghostingClientSource.includes("visibilitychange") ||
+  !ghostingClientSource.includes("if (document.hidden) clearPressed()")
+) {
+  infrastructureErrors.push(
+    "KeyboardGhostingTest must clear pressed keys when the page becomes hidden"
+  );
+}
+
 const rolloverClientSource = supportClientSources.find(([file]) => file === "KeyRolloverTest.tsx")?.[1] ?? "";
 if (
   rolloverClientSource.includes("setActiveKeys") ||
@@ -664,6 +673,15 @@ if (
 ) {
   infrastructureErrors.push(
     "KeyRolloverTest must keep active keys and max count in one measurement state"
+  );
+}
+
+if (
+  !rolloverClientSource.includes("visibilitychange") ||
+  !rolloverClientSource.includes("if (document.hidden) clearPressed()")
+) {
+  infrastructureErrors.push(
+    "KeyRolloverTest must clear active keys only when the page becomes hidden"
   );
 }
 
