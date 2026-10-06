@@ -920,11 +920,11 @@ if (
 }
 
 if (
-  !rightClickClientSource.includes("touch-pan-y") ||
-  rightClickClientSource.includes("select-none touch-none")
+  !secondaryClickClientSource.includes('isRightClick ? "touch-pan-y"') ||
+  secondaryClickClientSource.includes('isRightClick ? "touch-none"')
 ) {
   infrastructureErrors.push(
-    "RightClickTest must not block vertical touch scrolling on mobile"
+    "Shared Right Click variant must keep vertical touch scrolling enabled"
   );
 }
 
