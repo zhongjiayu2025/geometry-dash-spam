@@ -728,6 +728,16 @@ if (
 }
 
 if (
+  !waveClientSource.includes("Loading Geometry Dash wave trainer") ||
+  !waveClientSource.includes("h-[330px]") ||
+  !waveClientSource.includes("md:h-[500px]")
+) {
+  infrastructureErrors.push(
+    "WaveSimulator dynamic GameCanvas must reserve its responsive height while the chunk loads"
+  );
+}
+
+if (
   !gameCanvasSource.includes("useState<boolean>(true)") ||
   !gameCanvasSource.includes("savedMuted === null ? true") ||
   !gameCanvasSource.includes("import('../lib/waveAudio')") ||
