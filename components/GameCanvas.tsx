@@ -99,9 +99,10 @@ const GameCanvas: React.FC<GameCanvasProps> = memo(({ difficulty, status, onStat
 
   const [highScore, setHighScore] = useState<number>(0);
   const [isNewBest, setIsNewBest] = useState<boolean>(false);
-  const [displayTime, setDisplayTime] = useState<number>(0);
   const [recentRuns, setRecentRuns] = useState<WaveRun[]>([]);
   const lastHudUpdateRef = useRef<number>(0);
+  const timeDisplayRef = useRef<HTMLDivElement>(null);
+  const progressRef = useRef<HTMLDivElement>(null);
   const runRecordedRef = useRef(false);
   
   // Share Modal State
@@ -517,7 +518,6 @@ const GameCanvas: React.FC<GameCanvasProps> = memo(({ difficulty, status, onStat
     initStars(width, height);
     setConsistency('100%');
     setIsNewBest(false);
-    setDisplayTime(0);
     runRecordedRef.current = false;
     lastHudUpdateRef.current = 0;
   }, [difficulty.color, difficulty.speed, difficulty.id, isEndless, isMini]);
@@ -546,7 +546,16 @@ const GameCanvas: React.FC<GameCanvasProps> = memo(({ difficulty, status, onStat
 
         const hudInterval = lowVisualsRef.current ? 100 : 50;
         if (now - lastHudUpdateRef.current >= hudInterval) {
-            setDisplayTime(gameState.current.runTime / 1000);
+            if (timeDisplayRef.current) {
+                timeDisplayRef.current.textContent = `${(gameState.current.runTime / 1000).toFixed(2)}s`;
+            }
+            if (progressRef.current && !isEndless) {
+                const progress = Math.min(
+                  100,
+                  (gameState.current.distanceTraveled / gameState.current.finishLineX) * 100
+                );
+                progressRef.current.style.width = `${progress}%`;
+            }
             lastHudUpdateRef.current = now;
         }
 
@@ -1124,18 +1133,19 @@ const GameCanvas: React.FC<GameCanvasProps> = memo(({ difficulty, status, onStat
       {/* --- HUD --- */}
       <div className="absolute top-3 left-3 right-3 sm:top-4 sm:left-4 sm:right-4 flex justify-between items-start pointer-events-none">
           <div className="flex flex-col gap-1">
-              <div className="text-3xl sm:text-4xl font-display font-black text-white italic drop-shadow-lg tabular-nums">
-                  {status === GameStatus.Playing
-                    ? displayTime.toFixed(2)
-                    : (gameState.current.runTime / 1000).toFixed(2)
-                  }s
+              <div
+                ref={timeDisplayRef}
+                className="text-3xl sm:text-4xl font-display font-black text-white italic drop-shadow-lg tabular-nums"
+              >
+                {(gameState.current.runTime / 1000).toFixed(2)}s
               </div>
               {!isEndless ? (
                 <div className="w-32 sm:w-48 h-2 bg-slate-800 rounded-full overflow-hidden border border-white/10">
-                   <div 
+                   <div
+                      ref={progressRef}
                       className="h-full bg-white shadow-[0_0_10px_white] transition-all duration-75"
                       style={{ width: `${Math.min(100, (gameState.current.distanceTraveled / gameState.current.finishLineX) * 100)}%` }}
-                   ></div>
+                   />
                 </div>
               ) : (
                 <div className="flex items-center gap-2">
