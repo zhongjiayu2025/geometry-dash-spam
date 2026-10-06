@@ -104,7 +104,6 @@ const CpsTest: React.FC = () => {
 
     clicksRef.current += 1;
     clickTimesRef.current.push(now);
-    setClicks(clicksRef.current);
   };
 
   const ensureAudio = useCallback(async () => {
@@ -281,10 +280,11 @@ const CpsTest: React.FC = () => {
     };
   }, [active, finished, selectedDuration, finishTest]);
 
+  const renderedClicks = active ? clicksRef.current : clicks;
   const cps = finished
     ? (clicks / selectedDuration).toFixed(2)
     : active
-    ? (clicks / Math.max(0.05, selectedDuration - timeLeft)).toFixed(1)
+    ? (clicksRef.current / Math.max(0.05, selectedDuration - timeLeft)).toFixed(1)
     : "0.00";
 
   const getTimingStats = () => {
@@ -384,7 +384,7 @@ const CpsTest: React.FC = () => {
             
             {active && (
               <>
-                <span className="text-6xl sm:text-8xl font-display font-black text-white drop-shadow-lg scale-110 transition-transform">{clicks}</span>
+                <span className="text-6xl sm:text-8xl font-display font-black text-white drop-shadow-lg scale-110 transition-transform">{renderedClicks}</span>
                 <span className="text-blue-200 mt-4 font-mono uppercase tracking-widest">Clicks</span>
               </>
             )}
