@@ -36,6 +36,7 @@ const ButterflyClickTest: React.FC = () => {
   const audioCtxRef = useRef<AudioContext | null>(null);
   const clicksRef = useRef(0);
   const startTimeRef = useRef(0);
+  const pendingTouchRef = useRef<{ pointerId: number; x: number; y: number } | null>(null);
 
   useEffect(() => {
     if (typeof window !== 'undefined') {
@@ -107,21 +108,50 @@ const ButterflyClickTest: React.FC = () => {
     setTimeLeft(10.00);
   };
 
-  const handlePointerDown = (e: React.PointerEvent) => {
-    e.preventDefault();
-    if (finished) return;
-    if (active && performance.now() - startTimeRef.current >= 10000) return;
+  const registerInput = () => {
+      if (finished) return;
+      if (active && performance.now() - startTimeRef.current >= 10000) return;
+  
+      if (soundEnabled) {
+        const audio = ensureAudio();
+        if (audio) playClickSound(audio);
+      }
+      if (!active) {
+        startTest();
+        return;
+      }
+      clicksRef.current += 1;
+      setClicks(clicksRef.current);
+    };
+  };
 
-    if (soundEnabled) {
-      const audio = ensureAudio();
-      if (audio) playClickSound(audio);
-    }
-    if (!active) {
-      startTest();
+  const handlePointerDown = (e: React.PointerEvent<HTMLButtonElement>) => {
+    if (!active && e.pointerType === 'touch') {
+      pendingTouchRef.current = {
+        pointerId: e.pointerId,
+        x: e.clientX,
+        y: e.clientY,
+      };
       return;
     }
-    clicksRef.current += 1;
-    setClicks(clicksRef.current);
+
+    e.preventDefault();
+    registerInput();
+  };
+
+  const handlePointerUp = (e: React.PointerEvent<HTMLButtonElement>) => {
+    const pending = pendingTouchRef.current;
+    if (!pending || pending.pointerId !== e.pointerId) return;
+
+    pendingTouchRef.current = null;
+    const moved = Math.hypot(e.clientX - pending.x, e.clientY - pending.y);
+    if (moved > 12 || active || finished) return;
+
+    registerInput();
+  };
+
+  const handlePointerCancel = () => {
+    pendingTouchRef.current = null;
   };
 
   const reset = (e?: React.MouseEvent) => {
@@ -178,6 +208,9 @@ const ButterflyClickTest: React.FC = () => {
 
   return (
     <div className="w-full max-w-4xl mx-auto animate-in slide-in-from-bottom-4 duration-500">
+      <p className="sr-only" role="status" aria-live="polite" aria-atomic="true">
+        {finished ? `Test complete. ${cps} clicks per second over 10 seconds.` : ""}
+      </p>
       <div className="text-center mb-8">
          <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-pink-500/10 border border-pink-500/20 text-xs font-mono text-pink-400 mb-4">
             <Fingerprint className="w-3 h-3" /> DOUBLE FINGER TECHNIQUE
@@ -195,8 +228,10 @@ const ButterflyClickTest: React.FC = () => {
         <div className="relative aspect-square md:aspect-auto md:h-[400px]">
           <button
             onPointerDown={handlePointerDown}
+            onPointerUp={handlePointerUp}
+            onPointerCancel={handlePointerCancel}
             className={`
-              w-full h-full rounded-2xl border-2 flex flex-col items-center justify-center transition-all duration-100 active:scale-[0.99] select-none touch-none
+              w-full h-full rounded-2xl border-2 flex flex-col items-center justify-center transition-all duration-100 active:scale-[0.99] select-none ${active ? 'touch-none' : 'touch-pan-y'}
               ${finished 
                 ? 'bg-slate-900 border-slate-700 cursor-default opacity-50' 
                 : 'bg-gradient-to-br from-pink-600 to-purple-800 border-pink-500 shadow-[0_0_40px_rgba(236,72,153,0.3)] hover:shadow-[0_0_60px_rgba(236,72,153,0.5)] cursor-pointer'
@@ -243,6 +278,8 @@ const ButterflyClickTest: React.FC = () => {
               <div className="flex items-center gap-4">
                  <button 
                   onClick={toggleSound}
+                  aria-label={soundEnabled ? "Mute click sound" : "Enable click sound"}
+                  aria-pressed={soundEnabled}
                   className={`p-3 rounded-xl border transition-colors ${soundEnabled ? 'bg-pink-600/20 border-pink-500/50 text-pink-400 hover:bg-pink-600/30' : 'bg-slate-800 border-white/10 text-slate-500 hover:text-slate-300'}`}
                   title={soundEnabled ? "Mute Click Sound" : "Enable Click Sound"}
                  >
