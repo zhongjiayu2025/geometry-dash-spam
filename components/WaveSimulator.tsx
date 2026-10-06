@@ -8,7 +8,18 @@ import { DIFFICULTY_CONFIGS } from '../constants';
 import DifficultySelector from './DifficultySelector';
 import { Infinity as InfinityIcon, Minimize2, Star } from 'lucide-react';
 
-const GameCanvas = dynamic(() => import('./GameCanvas'), { ssr: false });
+const GameCanvas = dynamic(() => import('./GameCanvas'), {
+  ssr: false,
+  loading: () => (
+    <div
+      className="flex h-[330px] w-full max-w-5xl items-center justify-center rounded-lg border border-white/10 bg-slate-950 text-sm text-slate-500 sm:h-auto sm:aspect-video md:h-[500px]"
+      role="status"
+      aria-live="polite"
+    >
+      Loading Geometry Dash wave trainer…
+    </div>
+  ),
+});
 
 interface WaveSimulatorProps {
   variant?: 'spam' | 'wave';
