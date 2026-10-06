@@ -27,15 +27,29 @@ interface WaveSimulatorProps {
   variant?: 'spam' | 'wave';
 }
 
-type WavePreset = 'normal' | 'mini' | 'spam' | 'precision' | 'endless' | 'custom';
+type WavePreset = 'normal' | 'mini' | 'spam' | 'precision' | 'endless';
+type WavePresetState = WavePreset | 'custom';
 
-const WAVE_PRESETS: Array<{ id: WavePreset; label: string; description: string }> = [
-  { id: 'normal', label: 'Normal Wave', description: 'Balanced wave control practice.' },
-  { id: 'mini', label: 'Mini Wave', description: 'Faster vertical movement with tighter corrections.' },
-  { id: 'spam', label: 'Wave Spam', description: 'Rapid repeated inputs with a demanding pace.' },
-  { id: 'precision', label: 'Precision', description: 'Narrower high-difficulty control practice.' },
-  { id: 'endless', label: 'Endless', description: 'Survive as long as possible and chase a local best.' },
+const WAVE_PRESETS: Array<{
+  id: WavePreset;
+  label: string;
+  description: string;
+  difficulty: Difficulty;
+  mini: boolean;
+  endless: boolean;
+}> = [
+  { id: 'normal', label: 'Normal Wave', description: 'Balanced wave control practice.', difficulty: Difficulty.Hard, mini: false, endless: false },
+  { id: 'mini', label: 'Mini Wave', description: 'Faster vertical movement with tighter corrections.', difficulty: Difficulty.Insane, mini: true, endless: false },
+  { id: 'spam', label: 'Wave Spam', description: 'Rapid repeated inputs with a demanding pace.', difficulty: Difficulty.EasyDemon, mini: true, endless: false },
+  { id: 'precision', label: 'Precision', description: 'Narrower high-difficulty control practice.', difficulty: Difficulty.ExtremeDemon, mini: false, endless: false },
+  { id: 'endless', label: 'Endless', description: 'Survive as long as possible and chase a local best.', difficulty: Difficulty.Hard, mini: false, endless: true },
 ];
+
+const persistWaveSettings = (difficulty: Difficulty, mini: boolean, endless: boolean) => {
+  localStorage.setItem('gd_spam_last_difficulty', difficulty);
+  localStorage.setItem('gd_spam_mini_mode', String(mini));
+  localStorage.setItem('gd_spam_endless_mode', String(endless));
+};
 
 const WaveSimulator: React.FC<WaveSimulatorProps> = ({ variant = 'spam' }) => {
   const [difficulty, setDifficulty] = useState<Difficulty>(Difficulty.Easy);
@@ -43,7 +57,7 @@ const WaveSimulator: React.FC<WaveSimulatorProps> = ({ variant = 'spam' }) => {
   const [isMini, setIsMini] = useState(false);
   
   const [gameStatus, setGameStatus] = useState<GameStatus>(GameStatus.Idle);
-  const [wavePreset, setWavePreset] = useState<WavePreset>('custom');
+  const [wavePreset, setWavePreset] = useState<WavePresetState>('custom');
   const isWavePage = variant === 'wave';
 
   useEffect(() => {
@@ -79,38 +93,19 @@ const WaveSimulator: React.FC<WaveSimulatorProps> = ({ variant = 'spam' }) => {
     setGameStatus(GameStatus.Idle);
   };
 
-  const applyWavePreset = (preset: WavePreset) => {
+  const applyWavePreset = useCallback((presetId: WavePreset) => {
     if (gameStatus === GameStatus.Playing) return;
 
-    setWavePreset(preset);
+    const preset = WAVE_PRESETS.find(({ id }) => id === presetId);
+    if (!preset) return;
 
-    if (preset === 'normal') {
-      setDifficulty(Difficulty.Hard);
-      setIsMini(false);
-      setIsEndless(false);
-    } else if (preset === 'mini') {
-      setDifficulty(Difficulty.Insane);
-      setIsMini(true);
-      setIsEndless(false);
-    } else if (preset === 'spam') {
-      setDifficulty(Difficulty.EasyDemon);
-      setIsMini(true);
-      setIsEndless(false);
-    } else if (preset === 'precision') {
-      setDifficulty(Difficulty.ExtremeDemon);
-      setIsMini(false);
-      setIsEndless(false);
-    } else {
-      setDifficulty(Difficulty.Hard);
-      setIsMini(false);
-      setIsEndless(true);
-    }
-
-    localStorage.setItem('gd_spam_last_difficulty', preset === 'normal' || preset === 'endless' ? Difficulty.Hard : preset === 'mini' ? Difficulty.Insane : preset === 'spam' ? Difficulty.EasyDemon : Difficulty.ExtremeDemon);
-    localStorage.setItem('gd_spam_mini_mode', String(preset === 'mini' || preset === 'spam'));
-    localStorage.setItem('gd_spam_endless_mode', String(preset === 'endless'));
+    setWavePreset(preset.id);
+    setDifficulty(preset.difficulty);
+    setIsMini(preset.mini);
+    setIsEndless(preset.endless);
+    persistWaveSettings(preset.difficulty, preset.mini, preset.endless);
     setGameStatus(GameStatus.Idle);
-  };
+  }, [gameStatus]);
 
   const currentConfig = DIFFICULTY_CONFIGS[difficulty];
 
@@ -120,9 +115,7 @@ const WaveSimulator: React.FC<WaveSimulatorProps> = ({ variant = 'spam' }) => {
     setIsEndless(false);
     setWavePreset('mini');
     setGameStatus(GameStatus.Idle);
-    localStorage.setItem('gd_spam_last_difficulty', Difficulty.Insane);
-    localStorage.setItem('gd_spam_mini_mode', 'true');
-    localStorage.setItem('gd_spam_endless_mode', 'false');
+    persistWaveSettings(Difficulty.Insane, true, false);
     document.getElementById('spam-test-tool')?.scrollIntoView({ behavior: 'smooth', block: 'start' });
   };
 
