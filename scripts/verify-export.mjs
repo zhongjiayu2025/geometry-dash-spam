@@ -3339,11 +3339,11 @@ for (const [path, requiredSnippet] of [
   }
 }
 
-const llmsPath = join(process.cwd(), "public", "llms.txt");
-if (!existsSync(llmsPath)) {
+const llmsPublicPath = join(process.cwd(), "public", "llms.txt");
+if (!existsSync(llmsPublicPath)) {
   contentErrors.push("public/llms.txt: optional GEO interoperability file is referenced by the site but missing");
 } else {
-  const llmsSource = readFileSync(llmsPath, "utf8");
+  const llmsSource = readFileSync(llmsPublicPath, "utf8");
   for (const snippet of [
     "Last updated:",
     "## Freshness and citation notes",
