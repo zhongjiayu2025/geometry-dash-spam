@@ -47,6 +47,8 @@ export default function HardestLevelPage() {
     "@type": "WebPage",
     name: "What Is the Hardest Level in Geometry Dash?",
     url: "https://geometrydashspam.cc/hardest-level",
+    isPartOf: { "@id": "https://geometrydashspam.cc/#website" },
+    publisher: { "@id": "https://geometrydashspam.cc/#organization" },
     dateModified: DEMON_VERIFIED_AT,
     isBasedOn: DEMON_SOURCE_URL,
     about: {

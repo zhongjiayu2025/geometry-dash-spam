@@ -71,6 +71,26 @@ const recommendations = [
 ];
 
 export default function EasiestDemonsPage() {
+  const collectionSchema = {
+    "@context": "https://schema.org",
+    "@type": "CollectionPage",
+    name: "Easiest Demons in Geometry Dash",
+    url: "https://geometrydashspam.cc/easiest-demons",
+    isPartOf: { "@id": "https://geometrydashspam.cc/#website" },
+    publisher: { "@id": "https://geometrydashspam.cc/#organization" },
+    dateModified: CHECKED_AT,
+    mainEntity: {
+      "@type": "ItemList",
+      numberOfItems: recommendations.length,
+      itemListElement: recommendations.map((item, index) => ({
+        "@type": "ListItem",
+        position: index + 1,
+        name: item.level,
+        url: item.source,
+      })),
+    },
+  };
+
   const faqSchema = {
     "@context": "https://schema.org",
     "@type": "FAQPage",
@@ -84,6 +104,7 @@ export default function EasiestDemonsPage() {
   return (
     <>
       <Breadcrumbs items={[{ label: "Easiest Demons", href: "/easiest-demons" }]} />
+      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(collectionSchema) }} />
       <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(faqSchema) }} />
     <article className="mx-auto max-w-5xl">
       <header className="mx-auto mb-8 max-w-4xl">

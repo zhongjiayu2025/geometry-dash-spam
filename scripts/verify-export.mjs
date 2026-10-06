@@ -524,6 +524,7 @@ const chimpBoardSource = readFileSync(join(process.cwd(), "components", "ChimpBo
 const demonListSource = readFileSync(join(process.cwd(), "components", "DemonListTable.tsx"), "utf8");
 const demonPageSource = readFileSync(join(process.cwd(), "app", "demon-list", "page.tsx"), "utf8");
 const hardestPageSource = readFileSync(join(process.cwd(), "app", "hardest-level", "page.tsx"), "utf8");
+const easiestDemonsPageSource = readFileSync(join(process.cwd(), "app", "easiest-demons", "page.tsx"), "utf8");
 const demonFilterSource = readFileSync(join(process.cwd(), "components", "DemonListFilterControls.tsx"), "utf8");
 const clickTestHeroSource = readFileSync(join(process.cwd(), "components", "ClickTestHero.tsx"), "utf8");
 const clickerSource = readFileSync(join(process.cwd(), "components", "GeometryDashClicker.tsx"), "utf8");
@@ -2665,6 +2666,28 @@ for (const [route, source] of [
   ) {
     infrastructureErrors.push(`${route}: related-game WebPage schema must attach to the site Website and Organization entities`);
   }
+}
+
+if (
+  !hardestPageSource.includes('isPartOf: { "@id": "https://geometrydashspam.cc/#website" }') ||
+  !hardestPageSource.includes('publisher: { "@id": "https://geometrydashspam.cc/#organization" }')
+) {
+  infrastructureErrors.push(
+    "/hardest-level: WebPage schema must attach to the site Website and Organization entities"
+  );
+}
+
+if (
+  !easiestDemonsPageSource.includes('"@type": "CollectionPage"') ||
+  !easiestDemonsPageSource.includes('"@type": "ItemList"') ||
+  !easiestDemonsPageSource.includes("numberOfItems: recommendations.length") ||
+  !easiestDemonsPageSource.includes("position: index + 1") ||
+  !easiestDemonsPageSource.includes('isPartOf: { "@id": "https://geometrydashspam.cc/#website" }') ||
+  !easiestDemonsPageSource.includes('publisher: { "@id": "https://geometrydashspam.cc/#organization" }')
+) {
+  infrastructureErrors.push(
+    "/easiest-demons: beginner recommendations must expose a site-linked CollectionPage ItemList"
+  );
 }
 
 const metadataErrors = [];
