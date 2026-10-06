@@ -98,7 +98,7 @@ export const BLOG_POSTS: BlogPost[] = [
   {
     id: "2",
     slug: "how-to-improve-cps-geometry-dash",
-    title: "How to Improve CPS in Geometry Dash: Click Faster With Control",
+    title: "How to Improve CPS in Geometry Dash: Faster Clicking",
     excerpt:
       "Improve Geometry Dash CPS with repeatable click tests, jitter and butterfly comparisons, and wave-control drills without relying on fake target numbers.",
     date: "January 10, 2026",
@@ -173,7 +173,7 @@ export const BLOG_POSTS: BlogPost[] = [
   {
     id: "11",
     slug: "top-spam-levels-2026",
-    title: "Top Geometry Dash Spam Levels & Spam Demon List Guide 2026",
+    title: "Top Geometry Dash Spam Levels & Demon Guide 2026",
     excerpt:
       "Looking for the hardest Geometry Dash spam levels? Use this source-led 2026 guide to separate Spam Challenge List rankings, spam-heavy Demons and wave practice references.",
     date: "January 10, 2026",
