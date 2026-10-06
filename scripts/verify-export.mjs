@@ -409,6 +409,20 @@ const gameCanvasSource = readFileSync(join(process.cwd(), "components", "GameCan
 const waveAudioSource = readFileSync(join(process.cwd(), "lib", "waveAudio.ts"), "utf8");
 const demonListSource = readFileSync(join(process.cwd(), "components", "DemonListTable.tsx"), "utf8");
 const homeSource = readFileSync(join(process.cwd(), "app", "page.tsx"), "utf8");
+const supportClientPaths = [
+  "SpacebarCounter.tsx",
+  "KeyboardLatencyTest.tsx",
+  "PollingRateTest.tsx",
+  "KeyboardGhostingTest.tsx",
+  "DoubleClickTest.tsx",
+  "DragClickTest.tsx",
+  "KeyRolloverTest.tsx",
+  "JitterClickTest.tsx",
+];
+const supportClientSources = supportClientPaths.map((file) => [
+  file,
+  readFileSync(join(process.cwd(), "components", file), "utf8"),
+]);
 const blogReaderSource = readFileSync(join(process.cwd(), "components", "BlogPostReader.tsx"), "utf8");
 const copyLinkSource = readFileSync(join(process.cwd(), "components", "CopyLinkButton.tsx"), "utf8");
 if (!layoutSource.includes(`client=ca-${publisherId}`)) {
@@ -449,6 +463,19 @@ if (
   !headerRouteStateSource.includes("data-nav-href")
 ) {
   infrastructureErrors.push("HeaderRouteState must own active-route state without hydrating the full Header");
+}
+
+for (const [file, source] of supportClientSources) {
+  if (source.includes("RelatedTools")) {
+    infrastructureErrors.push(
+      `${file}: static RelatedTools must render from the page Server Component`
+    );
+  }
+}
+
+const jitterClientSource = supportClientSources.find(([file]) => file === "JitterClickTest.tsx")?.[1] ?? "";
+if (jitterClientSource.includes("Breadcrumbs") || jitterClientSource.includes("next/dynamic")) {
+  infrastructureErrors.push("Jitter breadcrumbs must stay server-rendered outside the client test component");
 }
 
 if (cpsClientSource.includes("RelatedTools") || cpsClientSource.includes("How is CPS Calculated?")) {
