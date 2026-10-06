@@ -2136,14 +2136,14 @@ if (
 }
 
 if (
-  !cpsClientSource.includes("import('../lib/cpsRecords')") ||
   cpsClientSource.includes("localStorage.setItem('cpsRunHistory'") ||
   cpsClientSource.includes("localStorage.setItem('cpsBestScores'") ||
+  !cpsRecordsHookSource.includes('import("./cpsRecords")') ||
   !cpsRecordsSource.includes("export function loadCpsRecords") ||
   !cpsRecordsSource.includes("export function persistCpsRun")
 ) {
   infrastructureErrors.push(
-    "CPS history and best-score persistence must stay in the deferred cpsRecords module"
+    "CPS history and best-score persistence must remain deferred behind useCpsRecords/cpsRecords"
   );
 }
 
