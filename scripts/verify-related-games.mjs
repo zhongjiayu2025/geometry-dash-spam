@@ -216,7 +216,10 @@ if (
 
 if (
   !readFileSync(new URL("./verify-related-games-live.mjs", import.meta.url), "utf8").includes(
-    "application/vnd.github.raw+json"
+    "readmePayload.encoding !== \"base64\""
+  ) ||
+  !readFileSync(new URL("./verify-related-games-live.mjs", import.meta.url), "utf8").includes(
+    'Buffer.from('
   ) ||
   !readFileSync(new URL("./verify-related-games-live.mjs", import.meta.url), "utf8").includes(
     "currently consists of\\s+(\\d+)\\s+levels"

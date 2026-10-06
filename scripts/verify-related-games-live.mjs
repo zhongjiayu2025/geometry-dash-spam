@@ -78,12 +78,22 @@ const [releaseResponse, readmeResponse] = await Promise.all([
   ),
   fetchGithub(
     "https://api.github.com/repos/ItzZyann/Geometry-Dash-Breeze/readme",
-    "application/vnd.github.raw+json"
+    "application/vnd.github+json"
   ),
 ]);
 
 const release = await releaseResponse.json();
-const readme = await readmeResponse.text();
+const readmePayload = await readmeResponse.json();
+if (
+  typeof readmePayload?.content !== "string" ||
+  readmePayload.encoding !== "base64"
+) {
+  throw new Error("GitHub README response is missing base64 content.");
+}
+const readme = Buffer.from(
+  readmePayload.content.replace(/\s+/g, ""),
+  "base64"
+).toString("utf8");
 const liveVersion = release.tag_name;
 const releaseBody = typeof release.body === "string" ? release.body : "";
 
