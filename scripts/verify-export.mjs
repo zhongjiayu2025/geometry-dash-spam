@@ -366,6 +366,29 @@ if (existsSync(manifestPath)) {
       `manifest start_url is "${manifest.start_url ?? "missing"}", expected "/"`
     );
   }
+
+  if (manifest.id !== "/" || manifest.scope !== "/") {
+    infrastructureErrors.push("manifest id and scope must stay rooted at /");
+  }
+
+  if (!manifest.categories?.includes("games") || !manifest.categories?.includes("utilities")) {
+    infrastructureErrors.push("manifest must describe both games and utilities categories");
+  }
+
+  const primaryIcon = manifest.icons?.[0];
+  if (
+    primaryIcon?.src !== "/logo.svg" ||
+    !String(primaryIcon?.purpose ?? "").includes("maskable")
+  ) {
+    infrastructureErrors.push("manifest primary icon must remain the maskable Geometry Dash Spam logo");
+  }
+
+  const shortcutUrls = new Set((manifest.shortcuts ?? []).map((item) => item.url));
+  for (const route of ["/geometry-dash-wave", "/cps-test", "/demon-list"]) {
+    if (!shortcutUrls.has(route)) {
+      infrastructureErrors.push(`manifest missing core shortcut: ${route}`);
+    }
+  }
 }
 
 const llmsPath = join(outDir, "llms.txt");
