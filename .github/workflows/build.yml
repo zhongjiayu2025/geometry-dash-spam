@@ -42,3 +42,37 @@ jobs:
 
       - name: Verify data and exported site
         run: npm run verify
+
+  verify-production:
+    if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+    needs: build
+    runs-on: ubuntu-latest
+    timeout-minutes: 8
+    steps:
+      - name: Verify production deployment
+        env:
+          EXPECTED_SHA: ${{ github.sha }}
+        shell: bash
+        run: |
+          endpoint="https://geometrydashspam.cc/deploy-status.json"
+
+          for attempt in {1..24}; do
+            body="$(curl -fsS --connect-timeout 10 --max-time 20 -H 'Cache-Control: no-cache' "${endpoint}?commit=${EXPECTED_SHA}&attempt=${attempt}" || true)"
+            live_sha="$(printf '%s' "$body" | python3 -c 'import json,sys
+try:
+    print(json.load(sys.stdin).get("commit", ""))
+except Exception:
+    print("")' 2>/dev/null || true)"
+
+            if [[ "$live_sha" == "$EXPECTED_SHA" ]]; then
+              echo "Production is serving expected commit $EXPECTED_SHA"
+              printf '%s\n' "$body"
+              exit 0
+            fi
+
+            echo "Attempt $attempt: production commit is '${live_sha:-missing}', expected '$EXPECTED_SHA'"
+            sleep 15
+          done
+
+          echo "::error::Production is stale or deploy-status.json is unavailable. Expected commit: $EXPECTED_SHA"
+          exit 1
