@@ -1,4 +1,5 @@
 import KeyboardGhostingTest from "../../components/KeyboardGhostingTest";
+import ToolWebApplicationSchema from "../../components/ToolWebApplicationSchema";
 import RelatedTools from "../../components/RelatedTools";
 import InputToolGuide from "../../components/InputToolGuide";
 import { Metadata } from "next";
@@ -24,6 +25,11 @@ export const metadata: Metadata = {
 export default function KeyboardGhostingPage() {
   return (
     <>
+      <ToolWebApplicationSchema
+        name="Keyboard Ghosting Test"
+        path="/keyboard-ghosting"
+        description="Visualize which simultaneous key presses your browser receives and inspect possible rollover or ghosting limitations."
+      />
       <KeyboardGhostingTest />
       <InputToolGuide tool="keyboard-ghosting" />
           <RelatedTools currentTool="keyboardGhosting" />
