@@ -12,7 +12,6 @@ import type { WaveRun } from '../lib/waveStorage';
 
 type WaveRenderer = typeof import('../lib/waveRenderer').renderWaveFrame;
 type WaveRuntime = typeof import('../lib/waveRuntime');
-type WaveStorage = typeof import('../lib/waveStorage');
 
 const WaveRunOverlays = dynamic(() => import('./WaveRunOverlays'), { ssr: false });
 
@@ -44,18 +43,6 @@ const GameCanvas: React.FC<GameCanvasProps> = memo(({ difficulty, status, onStat
   const runRecordedRef = useRef(false);
   const shareOpenRef = useRef(false);
   const highScoreRef = useRef(0);
-  const storageRef = useRef<WaveStorage | null>(null);
-  const storageLoadRef = useRef<Promise<WaveStorage | null> | null>(null);
-
-  const ensureStorage = useCallback(async () => {
-      if (storageRef.current) return storageRef.current;
-      if (!storageLoadRef.current) {
-          storageLoadRef.current = import('../lib/waveStorage').catch(() => null);
-      }
-      const storage = await storageLoadRef.current;
-      if (storage) storageRef.current = storage;
-      return storage;
-  }, []);
   
   useEffect(() => {
     lowVisualsRef.current =
@@ -72,9 +59,9 @@ const GameCanvas: React.FC<GameCanvasProps> = memo(({ difficulty, status, onStat
       (savedMotion === null && window.matchMedia('(prefers-reduced-motion: reduce)').matches)
     );
     let cancelled = false;
-    void ensureStorage().then((storage) => {
-      if (!storage || cancelled) return;
-      const records = storage.loadWaveRecords({
+    void import('../lib/waveStorage').then(({ loadWaveRecords }) => {
+      if (cancelled) return;
+      const records = loadWaveRecords({
         difficultyId: difficulty.id,
         isEndless,
         isMini,
@@ -88,7 +75,7 @@ const GameCanvas: React.FC<GameCanvasProps> = memo(({ difficulty, status, onStat
     return () => {
       cancelled = true;
     };
-  }, [difficulty.id, isEndless, isMini, ensureStorage]);
+  }, [difficulty.id, isEndless, isMini]);
 
   // Handle Fullscreen Change Events
   useEffect(() => {
@@ -125,14 +112,11 @@ const GameCanvas: React.FC<GameCanvasProps> = memo(({ difficulty, status, onStat
       highScoreRef.current = time;
       setHighScore(time);
       setIsNewBest(true);
-      void ensureStorage().then((storage) => {
-        storage?.persistWaveHighScore(
-          { difficultyId: difficulty.id, isEndless, isMini },
-          time
-        );
+      void import('../lib/waveStorage').then(({ persistWaveHighScore }) => {
+        persistWaveHighScore({ difficultyId: difficulty.id, isEndless, isMini }, time);
       });
       return true;
-  }, [difficulty.id, ensureStorage, isEndless, isMini]);
+  }, [difficulty.id, isEndless, isMini]);
   
   const [consistency, setConsistency] = useState<string>('100%');
   
@@ -307,11 +291,8 @@ const GameCanvas: React.FC<GameCanvasProps> = memo(({ difficulty, status, onStat
 
     setRecentRuns((previousRuns) => {
       const next = [run, ...previousRuns].slice(0, 10);
-      void ensureStorage().then((storage) => {
-        storage?.persistWaveRuns(
-          { difficultyId: difficulty.id, isEndless, isMini },
-          next
-        );
+      void import('../lib/waveStorage').then(({ persistWaveRuns }) => {
+        persistWaveRuns({ difficultyId: difficulty.id, isEndless, isMini }, next);
       });
       return next;
     });
