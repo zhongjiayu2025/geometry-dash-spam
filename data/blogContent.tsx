@@ -13,6 +13,7 @@ export interface BlogPost {
   content: React.ReactNode;
   tags: string[];
   toc?: { id: string; title: string }[];
+  faqs?: { q: string; a: string }[];
 }
 
 const ToolLink = ({ href, children }: { href: string; children: React.ReactNode }) => (
@@ -192,6 +193,20 @@ export const BLOG_POSTS: BlogPost[] = [
       { id: "references", title: "Spam-heavy Demon references" },
       { id: "practice", title: "How to practice spam levels" },
       { id: "verification", title: "How to verify current information" },
+    ],
+    faqs: [
+      {
+        q: "What is the hardest Geometry Dash spam level?",
+        a: "There is no single official universal answer. For ranked community spam challenges, use the current Spam Challenge List; Pointercrate ranks difficult rated Demons overall rather than by spam intensity.",
+      },
+      {
+        q: "Is the Spam Challenge List the same as a spam demonlist?",
+        a: "No. The Spam Challenge List ranks community spam challenges under its own rules. A spam demonlist is usually an informal way to describe rated Demons with spam-heavy gameplay.",
+      },
+      {
+        q: "Where should I check current Geometry Dash spam rankings?",
+        a: "Use the maintained Spam Challenge List source for spam-challenge placements and Pointercrate for current Extreme Demon positions. Check the verification date because both community lists can change.",
+      },
     ],
     content: (
       <>
