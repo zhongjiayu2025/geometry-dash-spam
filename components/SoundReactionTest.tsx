@@ -12,19 +12,19 @@ import { useReactionTrialGuard } from "../lib/useReactionTrialGuard";
 
 const SoundReactionResult = dynamic(() => import("./SoundReactionResult"), { ssr: false });
 
-type SoundReactionState = "idle" | "waiting" | "ready" | "result";
+type State = "idle" | "waiting" | "ready" | "result";
 
 export default function SoundReactionTest() {
-  const [gameState, setGameState] = useState<SoundReactionState>("idle");
+  const [gameState, setGameState] = useState<State>("idle");
   const [reactionTime, setReactionTime] = useState<number | null>(null);
-  const [bestTime, commitBestTime] = usePersistentBestNumber("soundReactionBest", "min");
+  const [bestTime, commitBest] = usePersistentBestNumber("soundReactionBest", "min");
 
   const startTimeRef = useRef(0);
-  const { ensure: ensureClickSound, play: playClickSound } = useLazyClickSound();
+  const { ensure: ensureSound, play: playSound } = useLazyClickSound();
   const { schedule: scheduleTimeout, clear: clearTimeout } = useManagedTimeout();
 
   const startTest = useCallback(() => {
-    void ensureClickSound();
+    void ensureSound();
     setGameState("waiting");
     setReactionTime(null);
 
@@ -32,9 +32,9 @@ export default function SoundReactionTest() {
     scheduleTimeout(() => {
       setGameState("ready");
       startTimeRef.current = performance.now();
-      playClickSound("soundReaction");
+      playSound("soundReaction");
     }, delay);
-  }, [ensureClickSound, playClickSound, scheduleTimeout]);
+  }, [ensureSound, playSound, scheduleTimeout]);
 
   const handleInteraction = useCallback(() => {
     if (gameState === "idle" || gameState === "result") {
@@ -52,9 +52,9 @@ export default function SoundReactionTest() {
     const nextTime = Math.round(performance.now() - startTimeRef.current);
     setReactionTime(nextTime);
 
-    commitBestTime(nextTime);
+    commitBest(nextTime);
     setGameState("result");
-  }, [clearTimeout, commitBestTime, gameState, startTest]);
+  }, [clearTimeout, commitBest, gameState, startTest]);
 
   useEffect(() => {
     const handleKeyDown = (event: KeyboardEvent) => {
@@ -69,17 +69,9 @@ export default function SoundReactionTest() {
     return () => window.removeEventListener("keydown", handleKeyDown);
   }, [handleInteraction]);
 
-  useReactionTrialGuard({
-    clearTimeout,
-    startTimeRef,
-    setState: setGameState,
-    onInterrupt: () => setReactionTime(null),
-  });
+  useReactionTrialGuard({ clearTimeout, startTimeRef, setState: setGameState, onInterrupt: () => setReactionTime(null) });
 
-  const pointerAction = useIntentionalPointerAction<HTMLDivElement>({
-    onAction: handleInteraction,
-    deferTouch: gameState === "idle" || gameState === "result",
-  });
+  const pointerAction = useIntentionalPointerAction<HTMLDivElement>({ onAction: handleInteraction, deferTouch: gameState === "idle" || gameState === "result" });
 
   return (
     <div className="w-full max-w-4xl mx-auto px-4 md:px-0">

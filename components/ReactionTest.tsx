@@ -11,10 +11,10 @@ import { useReactionTrialGuard } from "../lib/useReactionTrialGuard";
 
 const ReactionResult = dynamic(() => import("./ReactionResult"), { ssr: false });
 
-type TestState = "idle" | "waiting" | "ready" | "result" | "early";
+type State = "idle" | "waiting" | "ready" | "result" | "early";
 
 export default function ReactionTest() {
-  const [state, setState] = useState<TestState>("idle");
+  const [state, setState] = useState<State>("idle");
   const [result, setResult] = useState(0);
   const [bestScore, commitBestScore] = usePersistentBestNumber("reactionBestScore", "min");
   const startTimeRef = useRef(0);
@@ -67,17 +67,9 @@ export default function ReactionTest() {
     return () => window.removeEventListener("keydown", handleKeyDown);
   }, [handleInteraction]);
 
-  useReactionTrialGuard({
-    clearTimeout,
-    startTimeRef,
-    setState,
-  });
+  useReactionTrialGuard({ clearTimeout, startTimeRef, setState });
 
-  const pointerAction = useIntentionalPointerAction<HTMLDivElement>({
-    onAction: handleInteraction,
-    deferTouch: state === "idle" || state === "result" || state === "early",
-    ignoreSelector: "button",
-  });
+  const pointerAction = useIntentionalPointerAction<HTMLDivElement>({ onAction: handleInteraction, deferTouch: state === "idle" || state === "result" || state === "early", ignoreSelector: "button" });
 
   return (
     <div className="w-full max-w-4xl mx-auto animate-in slide-in-from-bottom-4 duration-500">
