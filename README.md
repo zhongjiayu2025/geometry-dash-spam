@@ -43,6 +43,19 @@ npm run verify
 
 The verification step checks core static routes, internal links, sitemap targets, canonical URLs and required metadata before deployment.
 
+
+## Architecture invariants
+
+- Keep the global `Header` server-rendered. Route highlighting and native menu cleanup belong in the tiny `HeaderRouteState` client helper.
+- Keep article bodies, SEO guides, related-tool copy and structured data in Server Components whenever they do not require browser state.
+- Keep `CpsTest`, `WaveSimulator` and `GameCanvas` focused on interaction only; do not move static SEO copy back into those client bundles.
+- Wave movement must remain delta-time normalized so 60 Hz, 120 Hz and other displays do not change the intended practice speed.
+- Wave audio is opt-in on first visit. Do not initialize Web Audio while muted.
+- Lower-priority click-method utilities may exist as contextual links, but should not return to the global Header.
+- Long below-the-fold guides may use `content-visibility: auto`; their HTML must still be fully present in the static export.
+
+The CI export verifier protects these boundaries in addition to metadata, sitemap, redirect, data freshness, internal-link and indexability checks.
+
 ## SEO and content policy
 
 - Preserve established URLs such as `/cps-test`.
