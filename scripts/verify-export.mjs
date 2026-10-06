@@ -807,6 +807,17 @@ if (
   );
 }
 
+if (
+  !dragClientSource.includes("analysisVersionRef") ||
+  !dragClientSource.includes("const analysisVersion = ++analysisVersionRef.current") ||
+  !dragClientSource.includes("if (analysisVersion !== analysisVersionRef.current) return;") ||
+  (dragClientSource.match(/analysisVersionRef\.current \+= 1/g) ?? []).length < 2
+) {
+  infrastructureErrors.push(
+    "Drag deferred finish analysis must ignore stale promises after reset or a new run"
+  );
+}
+
 if (dragClientSource.includes("This page measures browser-registered inputs")) {
   infrastructureErrors.push(
     "DragClickTest measurement limits must stay in the server-rendered InputToolGuide"

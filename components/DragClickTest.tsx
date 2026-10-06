@@ -24,6 +24,7 @@ export default function DragClickTest() {
   const clicksRef = useRef(0);
   const activeRef = useRef(false);
   const finishedRef = useRef(false);
+  const analysisVersionRef = useRef(0);
   const pendingTouchRef = useRef<{ pointerId: number; x: number; y: number } | null>(null);
 
   const finishTest = useCallback(() => {
@@ -35,6 +36,7 @@ export default function DragClickTest() {
     const times = clickTimesRef.current.slice();
     const startTime = startTimeRef.current;
     const finalClicks = clicksRef.current;
+    const analysisVersion = ++analysisVersionRef.current;
 
     setIsFinished(true);
     setIsActive(false);
@@ -42,6 +44,7 @@ export default function DragClickTest() {
     setClicks(finalClicks);
 
     void import("../lib/dragClickStats").then(({ getDragPeakOneSecondCps, getDragBuckets }) => {
+      if (analysisVersion !== analysisVersionRef.current) return;
       const peak = getDragPeakOneSecondCps(times);
       setPeakCps(peak);
       setBuckets(getDragBuckets(times, startTime));
@@ -50,6 +53,7 @@ export default function DragClickTest() {
   }, [commitBestPeakCps]);
 
   const startTest = useCallback((now: number) => {
+    analysisVersionRef.current += 1;
     activeRef.current = true;
     finishedRef.current = false;
     startTimeRef.current = now;
@@ -113,6 +117,7 @@ export default function DragClickTest() {
 
   const resetTest = () => {
     cancelCountdown();
+    analysisVersionRef.current += 1;
     startTimeRef.current = 0;
     clickTimesRef.current = [];
     clicksRef.current = 0;
