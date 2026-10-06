@@ -906,6 +906,15 @@ if (
 }
 
 if (
+  !doubleClickClientSource.includes("const intervalCount = history.length;") ||
+  doubleClickClientSource.includes("const intervalCount = Math.max(0, clicks - 1)")
+) {
+  infrastructureErrors.push(
+    "DoubleClick rapid rate must use only measured interval history so ignored long pauses do not dilute the result"
+  );
+}
+
+if (
   !doubleClickClientSource.includes("dynamic(() => import(\"./DoubleClickHistory\")") ||
   doubleClickClientSource.includes("history.map((item)") ||
   !doubleClickHistorySource.includes("history.map((item)") ||

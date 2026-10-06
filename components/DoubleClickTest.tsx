@@ -107,7 +107,7 @@ export default function DoubleClickTest() {
     clickIdRef.current = 0;
   };
 
-  const intervalCount = Math.max(0, clicks - 1);
+  const intervalCount = history.length;
   const rapidRate =
     intervalCount > 0
       ? ((rapidIntervals / intervalCount) * 100).toFixed(1)
