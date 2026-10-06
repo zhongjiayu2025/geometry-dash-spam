@@ -123,7 +123,7 @@ export default function DemonListPage() {
 
         <section className="mb-6 rounded-2xl border border-white/10 bg-black/20 p-5 md:p-6">
           <div className="mb-3 text-xs font-bold uppercase tracking-[0.18em] text-slate-400">Choose the right list</div>
-          <div className="grid gap-3 md:grid-cols-2">
+          <div className="grid gap-3 md:grid-cols-3">
             <Link href="/spam-challenge-list" className="rounded-xl border border-fuchsia-500/20 bg-fuchsia-950/10 p-4 hover:border-fuchsia-400/40">
               <h2 className="mb-1 font-bold text-white">Looking for the Spam Challenge List?</h2>
               <p className="text-sm leading-6 text-slate-400">
@@ -134,6 +134,12 @@ export default function DemonListPage() {
               <h2 className="mb-1 font-bold text-white">Looking for spam-heavy Demons?</h2>
               <p className="text-sm leading-6 text-slate-400">
                 Use the practice reference page for rapid-input Demons while keeping their real Pointercrate ranks separate.
+              </p>
+            </Link>
+            <Link href="/blog/top-spam-levels-2026" className="rounded-xl border border-fuchsia-500/20 bg-fuchsia-950/10 p-4 hover:border-fuchsia-400/40">
+              <h2 className="mb-1 font-bold text-white">Looking for top spam levels?</h2>
+              <p className="text-sm leading-6 text-slate-400">
+                Use the 2026 guide to choose between current spam-challenge rankings, spam-heavy Demons and wave references.
               </p>
             </Link>
           </div>
