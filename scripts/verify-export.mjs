@@ -450,6 +450,7 @@ const cpsRecordsSource = readFileSync(join(process.cwd(), "lib", "cpsRecords.ts"
 const persistentBestSource = readFileSync(join(process.cwd(), "lib", "usePersistentBestNumber.ts"), "utf8");
 const managedTimeoutSource = readFileSync(join(process.cwd(), "lib", "useManagedTimeout.ts"), "utf8");
 const exactCountdownSource = readFileSync(join(process.cwd(), "lib", "useExactCountdown.ts"), "utf8");
+const keyboardChordSource = readFileSync(join(process.cwd(), "lib", "useKeyboardChordMeasurement.ts"), "utf8");
 const typingRuntimeSource = readFileSync(join(process.cwd(), "lib", "typingRuntime.ts"), "utf8");
 const memoryTestRuntimeSource = readFileSync(join(process.cwd(), "lib", "memoryTestRuntime.ts"), "utf8");
 const lazyClickSoundSource = readFileSync(join(process.cwd(), "lib", "useLazyClickSound.ts"), "utf8");
@@ -822,74 +823,51 @@ if (
   );
 }
 
-if (
-  ghostingClientSource.includes("setPressedKeys") ||
-  ghostingClientSource.includes("setMaxKeys") ||
-  !ghostingClientSource.includes("useState<GhostingState>")
-) {
-  infrastructureErrors.push(
-    "KeyboardGhostingTest must keep pressed keys and max count in one measurement state"
-  );
-}
-
-if (
-  !ghostingClientSource.includes("visibilitychange") ||
-  !ghostingClientSource.includes("if (document.hidden) clearPressed()")
-) {
-  infrastructureErrors.push(
-    "KeyboardGhostingTest must clear pressed keys when the page becomes hidden"
-  );
-}
-
-if (!ghostingClientSource.includes("if (event.repeat) return;")) {
-  infrastructureErrors.push(
-    "KeyboardGhostingTest must ignore repeated keydown events that do not change the pressed-key set"
-  );
-}
-
-if (
-  !ghostingClientSource.includes("isInteractiveKeyboardTarget(event.target)") ||
-  ghostingClientSource.includes("isInteractiveKeyboardTarget(e.target)") ||
-  !ghostingClientSource.includes('["Space", "ArrowUp", "ArrowDown", "PageUp", "PageDown"]') ||
-  ghostingClientSource.includes('!["F5", "F11", "F12"].includes')
-) {
-  infrastructureErrors.push(
-    "KeyboardGhostingTest must preserve interactive controls and Tab navigation while only suppressing scrolling keys"
-  );
-}
-
 const rolloverClientSource = supportClientSources.find(([file]) => file === "KeyRolloverTest.tsx")?.[1] ?? "";
-if (
-  rolloverClientSource.includes("setActiveKeys") ||
-  rolloverClientSource.includes("setMaxKeys") ||
-  !rolloverClientSource.includes("useState<RolloverState>")
-) {
-  infrastructureErrors.push(
-    "KeyRolloverTest must keep active keys and max count in one measurement state"
-  );
+
+for (const [file, source] of [
+  ["KeyboardGhostingTest.tsx", ghostingClientSource],
+  ["KeyRolloverTest.tsx", rolloverClientSource],
+]) {
+  if (
+    !source.includes("useKeyboardChordMeasurement") ||
+    source.includes("addEventListener(\"keydown\"") ||
+    source.includes("setMeasurement(") ||
+    source.includes("isInteractiveKeyboardTarget")
+  ) {
+    infrastructureErrors.push(
+      `${file}: keyboard chord event handling must stay in the shared useKeyboardChordMeasurement hook`
+    );
+  }
 }
 
 if (
-  !rolloverClientSource.includes("visibilitychange") ||
-  !rolloverClientSource.includes("if (document.hidden) clearPressed()")
+  !keyboardChordSource.includes("isInteractiveKeyboardTarget(event.target)") ||
+  !keyboardChordSource.includes("event.repeat") ||
+  !keyboardChordSource.includes('["Space", "ArrowUp", "ArrowDown", "PageUp", "PageDown"]') ||
+  !keyboardChordSource.includes("if (!previous.activeKeys.has(event.code)) return previous;") ||
+  !keyboardChordSource.includes('window.addEventListener("blur", clearActiveKeys)') ||
+  !keyboardChordSource.includes('document.addEventListener("visibilitychange", handleVisibilityChange)') ||
+  !keyboardChordSource.includes("if (document.hidden) clearActiveKeys()") ||
+  !keyboardChordSource.includes("const resetAll = useCallback") ||
+  !keyboardChordSource.includes("const resetMax = useCallback")
 ) {
   infrastructureErrors.push(
-    "KeyRolloverTest must clear active keys only when the page becomes hidden"
+    "Shared keyboard chord hook must preserve repeat suppression, navigation safety, tracked-key release, blur/visibility cleanup and reset controls"
   );
 }
 
-if (!rolloverClientSource.includes("if (event.repeat) return;")) {
-  infrastructureErrors.push(
-    "KeyRolloverTest must ignore repeated keydown events that do not change the active-key set"
-  );
-}
-
+const keyUpStart = keyboardChordSource.indexOf("const handleKeyUp");
+const keyUpEnd = keyboardChordSource.indexOf("const clearActiveKeys", keyUpStart);
+const keyUpSource = keyUpStart >= 0 && keyUpEnd > keyUpStart
+  ? keyboardChordSource.slice(keyUpStart, keyUpEnd)
+  : "";
 if (
-  !rolloverClientSource.includes("isInteractiveKeyboardTarget(event.target)") ||
-  rolloverClientSource.includes("isInteractiveKeyboardTarget(e.target)")
+  !keyUpSource ||
+  keyUpSource.includes("isInteractiveKeyboardTarget")
 ) {
   infrastructureErrors.push(
-    "KeyRolloverTest must use the current KeyboardEvent when skipping interactive controls"
+    "Shared keyboard chord keyup must release tracked keys even if focus moved onto an interactive control"
   );
 }
 
@@ -1400,6 +1378,8 @@ const clientSourceBudgets = [
   ["BpmTapper.tsx", bpmClientSource, 5000],
   ["DoubleClickTest.tsx", doubleClickClientSource, 8000],
   ["KeyboardLatencyTest.tsx", keyboardTimingClientSource, 8000],
+  ["KeyboardGhostingTest.tsx", ghostingClientSource, 5500],
+  ["KeyRolloverTest.tsx", rolloverClientSource, 3500],
   ["GameCanvas.tsx", gameCanvasSource, 30000],
 ];
 
