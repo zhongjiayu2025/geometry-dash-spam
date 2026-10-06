@@ -1,4 +1,5 @@
 import SystemInfo from "../../components/SystemInfo";
+import RelatedTools from "../../components/RelatedTools";
 import { Metadata } from "next";
 
 export const metadata: Metadata = {
@@ -21,5 +22,10 @@ export const metadata: Metadata = {
 };
 
 export default function SystemInfoPage() {
-  return <SystemInfo />;
+  return (
+    <>
+      <SystemInfo />
+      <RelatedTools currentTool="systemInfo" />
+    </>
+  );
 }

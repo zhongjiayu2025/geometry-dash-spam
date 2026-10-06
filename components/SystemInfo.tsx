@@ -1,8 +1,6 @@
 "use client";
 
 import React, { useState, useEffect } from 'react';
-import dynamic from 'next/dynamic';
-const RelatedTools = dynamic(() => import('./RelatedTools'));
 import { Monitor, Cpu, Globe, Search, Wifi, Clock, Eye, Maximize } from 'lucide-react';
 
 
@@ -96,8 +94,6 @@ export default function SystemInfo() {
                     {info.userAgent}
                 </div>
             </div>
-            
-            <RelatedTools currentTool="systemInfo" />
-        </div>
+</div>
     );
 }

@@ -1,4 +1,5 @@
 import RefreshRateTest from "../../components/RefreshRateTest";
+import RelatedTools from "../../components/RelatedTools";
 import { Metadata } from "next";
 
 export const metadata: Metadata = {
@@ -21,5 +22,10 @@ export const metadata: Metadata = {
 };
 
 export default function RefreshRatePage() {
-  return <RefreshRateTest />;
+  return (
+    <>
+      <RefreshRateTest />
+      <RelatedTools currentTool="refreshRate" />
+    </>
+  );
 }

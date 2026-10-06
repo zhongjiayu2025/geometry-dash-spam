@@ -1,10 +1,7 @@
 "use client";
 
 import React, { useEffect, useRef, useState } from "react";
-import dynamic from "next/dynamic";
 import { Info, Monitor, RefreshCw, Zap } from "lucide-react";
-
-const RelatedTools = dynamic(() => import("./RelatedTools"));
 
 export default function RefreshRateTest() {
   const [observedHz, setObservedHz] = useState(0);
@@ -129,8 +126,6 @@ export default function RefreshRateTest() {
           </div>
         </div>
       </div>
-
-      <RelatedTools currentTool="refreshRate" />
-    </div>
+</div>
   );
 }

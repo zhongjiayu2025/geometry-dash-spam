@@ -1,9 +1,6 @@
 "use client";
 
 import React, { useState, useEffect, useRef } from 'react';
-import dynamic from 'next/dynamic';
-const RelatedTools = dynamic(() => import('./RelatedTools'));
-
 import { MousePointer2, RotateCcw, AlertTriangle } from 'lucide-react';
 
 export default function MouseAccelerationTest() {
@@ -151,8 +148,6 @@ export default function MouseAccelerationTest() {
                     </div>
                 </div>
             </div>
-            
-            <RelatedTools currentTool="mouseAcceleration" />
-        </div>
+</div>
     );
 }

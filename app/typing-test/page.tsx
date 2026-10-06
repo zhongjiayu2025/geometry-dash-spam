@@ -1,4 +1,5 @@
 import TypingTest from "../../components/TypingTest";
+import RelatedTools from "../../components/RelatedTools";
 import { Metadata } from "next";
 
 export const metadata: Metadata = {
@@ -33,6 +34,7 @@ export default function TypingPage() {
         </p>
       </div>
       <TypingTest />
+      <RelatedTools currentTool="typing" />
     </>
   );
 }

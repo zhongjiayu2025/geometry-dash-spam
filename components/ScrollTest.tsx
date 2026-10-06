@@ -1,10 +1,7 @@
 "use client";
 
 import React, { useCallback, useEffect, useRef, useState } from "react";
-import dynamic from "next/dynamic";
 import { Activity, RotateCcw } from "lucide-react";
-
-const RelatedTools = dynamic(() => import("./RelatedTools"));
 
 const TEST_MS = 10000;
 
@@ -186,8 +183,6 @@ export default function ScrollTest() {
           )}
         </div>
       </div>
-
-      <RelatedTools currentTool="scroll" />
-    </div>
+</div>
   );
 }

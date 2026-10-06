@@ -1,4 +1,5 @@
 import ScrollTest from "../../components/ScrollTest";
+import RelatedTools from "../../components/RelatedTools";
 import { Metadata } from "next";
 
 export const metadata: Metadata = {
@@ -33,6 +34,7 @@ export default function ScrollTestPage() {
         </p>
       </div>
       <ScrollTest />
+      <RelatedTools currentTool="scroll" />
     </>
   );
 }

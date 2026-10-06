@@ -1,10 +1,7 @@
 "use client";
 
 import React, { useEffect, useRef, useState } from "react";
-import dynamic from "next/dynamic";
 import { Check, Keyboard, RotateCcw, Share2, Trophy } from "lucide-react";
-
-const RelatedTools = dynamic(() => import("./RelatedTools"));
 
 const WORDS = [
   "the", "be", "of", "and", "a", "to", "in", "he", "have", "it", "that", "for", "they", "I", "with", "as", "not", "on", "she", "at",
@@ -282,8 +279,6 @@ export default function TypingTest() {
           )}
         </div>
       </div>
-
-      <RelatedTools currentTool="typing" />
-    </div>
+</div>
   );
 }

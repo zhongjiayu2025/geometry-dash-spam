@@ -1,4 +1,5 @@
 import MouseAccelerationTest from "../../components/MouseAccelerationTest";
+import RelatedTools from "../../components/RelatedTools";
 import { Metadata } from "next";
 
 export const metadata: Metadata = {
@@ -33,6 +34,7 @@ export default function MouseAccelerationPage() {
         </p>
       </div>
       <MouseAccelerationTest />
+      <RelatedTools currentTool="mouseAcceleration" />
     </>
   );
 }
