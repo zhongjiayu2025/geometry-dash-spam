@@ -1,7 +1,9 @@
 "use client";
 
-import React, { useCallback, useEffect, useRef, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import { RotateCcw, Timer } from "lucide-react";
+import { isInteractiveKeyboardTarget } from "../lib/inputTarget";
+import { useManagedTimeout } from "../lib/useManagedTimeout";
 
 export default function BpmTapper() {
   const [bpm, setBpm] = useState(0);
@@ -9,27 +11,21 @@ export default function BpmTapper() {
   const [isActive, setIsActive] = useState(false);
 
   const tapsRef = useRef<number[]>([]);
-  const resetTimeoutRef = useRef<number | null>(null);
+  const { schedule: scheduleReset, clear: clearReset } = useManagedTimeout();
 
   const reset = useCallback(() => {
+    clearReset();
     tapsRef.current = [];
     setTapCount(0);
     setBpm(0);
     setIsActive(false);
-
-    if (resetTimeoutRef.current) {
-      clearTimeout(resetTimeoutRef.current);
-      resetTimeoutRef.current = null;
-    }
-  }, []);
+  }, [clearReset]);
 
   const recordTap = useCallback(() => {
     const now = performance.now();
     let taps = [...tapsRef.current, now];
 
-    if (taps.length > 10) {
-      taps = taps.slice(-10);
-    }
+    if (taps.length > 10) taps = taps.slice(-10);
 
     tapsRef.current = taps;
     setTapCount(taps.length);
@@ -47,28 +43,20 @@ export default function BpmTapper() {
       setBpm(estimate > 0 && estimate < 1000 ? estimate : 0);
     }
 
-    if (resetTimeoutRef.current) clearTimeout(resetTimeoutRef.current);
-    resetTimeoutRef.current = window.setTimeout(reset, 3000);
-  }, [reset]);
+    scheduleReset(reset, 3000);
+  }, [reset, scheduleReset]);
 
   useEffect(() => {
     const handleKeyDown = (event: KeyboardEvent) => {
-      if (
-        event.code === "Space" &&
-        document.activeElement?.tagName !== "INPUT" &&
-        document.activeElement?.tagName !== "TEXTAREA" &&
-        document.activeElement?.tagName !== "BUTTON"
-      ) {
-        event.preventDefault();
-        recordTap();
-      }
+      if (event.repeat || isInteractiveKeyboardTarget(event.target)) return;
+      if (event.code !== "Space") return;
+
+      event.preventDefault();
+      recordTap();
     };
 
     window.addEventListener("keydown", handleKeyDown);
-    return () => {
-      window.removeEventListener("keydown", handleKeyDown);
-      if (resetTimeoutRef.current) clearTimeout(resetTimeoutRef.current);
-    };
+    return () => window.removeEventListener("keydown", handleKeyDown);
   }, [recordTap]);
 
   return (
@@ -113,6 +101,7 @@ export default function BpmTapper() {
           </button>
 
           <button
+            type="button"
             onClick={reset}
             className="mt-6 px-6 py-2 bg-white/5 hover:bg-white/10 text-slate-300 font-medium rounded-lg transition-colors flex items-center gap-2"
           >
@@ -120,6 +109,6 @@ export default function BpmTapper() {
           </button>
         </div>
       </div>
-</div>
+    </div>
   );
 }
