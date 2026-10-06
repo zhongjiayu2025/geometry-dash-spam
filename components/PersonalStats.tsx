@@ -93,7 +93,36 @@ export default function PersonalStats() {
   const [stats, setStats] = useState<UserStats | null>(null);
 
   useEffect(() => {
-    setStats(loadStats());
+    const syncStats = () => setStats(loadStats());
+    const handleStorage = (event: StorageEvent) => {
+      const key = event.key;
+      if (
+        key === null ||
+        key === "cpsBestScores" ||
+        key === "cpsRunHistory" ||
+        key?.startsWith("gd_spam_runs_") ||
+        key?.startsWith("gd_spam_best_") ||
+        [
+          "jitterClickBest",
+          "butterflyClickBest",
+          "rightClickBest",
+          "dragClickBest",
+          "spacebarBest",
+          "reactionBestScore",
+          "soundReactionBest",
+          "aimTrainerBest",
+          "typingTestBestWpm",
+          "chimpBestScore",
+          "visualMemoryBest",
+        ].includes(key)
+      ) {
+        syncStats();
+      }
+    };
+
+    syncStats();
+    window.addEventListener("storage", handleStorage);
+    return () => window.removeEventListener("storage", handleStorage);
   }, []);
 
   const clearStats = () => {

@@ -2046,6 +2046,9 @@ if (
   !personalStatsSource.includes("removeStorage") ||
   !personalStatsSource.includes('cpsTests: normalizeCpsBestScores(loadJson("cpsBestScores"))') ||
   !personalStatsSource.includes("parsed >= 0") ||
+  !personalStatsSource.includes('window.addEventListener("storage", handleStorage)') ||
+  !personalStatsSource.includes('key?.startsWith("gd_spam_runs_")') ||
+  !personalStatsSource.includes('"reactionBestScore"') ||
   personalStatsSource.includes('loadObject("cpsBestScores")') ||
   personalStatsSource.includes("localStorage.")
 ) {
