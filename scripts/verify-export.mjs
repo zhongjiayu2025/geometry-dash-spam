@@ -444,6 +444,7 @@ const waveRuntimeSource = readFileSync(join(process.cwd(), "lib", "waveRuntime.t
 const waveStorageSource = readFileSync(join(process.cwd(), "lib", "waveStorage.ts"), "utf8");
 const waveRunOverlaysSource = readFileSync(join(process.cwd(), "components", "WaveRunOverlays.tsx"), "utf8");
 const waveCanvasHudSource = readFileSync(join(process.cwd(), "components", "WaveCanvasHud.tsx"), "utf8");
+const waveShareModalSource = readFileSync(join(process.cwd(), "components", "WaveShareModal.tsx"), "utf8");
 const clickSoundSource = readFileSync(join(process.cwd(), "lib", "clickSound.ts"), "utf8");
 const cpsRecordsSource = readFileSync(join(process.cwd(), "lib", "cpsRecords.ts"), "utf8");
 const persistentBestSource = readFileSync(join(process.cwd(), "lib", "usePersistentBestNumber.ts"), "utf8");
@@ -1596,10 +1597,12 @@ if (
   gameCanvasSource.includes("COMPLETE!") ||
   gameCanvasSource.includes("Share Result") ||
   !waveRunOverlaysSource.includes("CRASHED") ||
-  !waveRunOverlaysSource.includes("Share Result")
+  !waveRunOverlaysSource.includes("dynamic(() => import(\"./WaveShareModal\")") ||
+  waveRunOverlaysSource.includes("navigator.clipboard.writeText") ||
+  !waveShareModalSource.includes("Share Result")
 ) {
   infrastructureErrors.push(
-    "Wave result and share overlays must stay outside the initial GameCanvas chunk"
+    "Wave result overlays must stay lazy, with share-modal UI deferred one level further"
   );
 }
 
@@ -1625,10 +1628,12 @@ if (
   gameCanvasSource.includes("handleShareClick") ||
   !gameCanvasSource.includes("shareOpenRef") ||
   !waveRunOverlaysSource.includes("const [showShareModal") ||
-  !waveRunOverlaysSource.includes("navigator.clipboard.writeText")
+  !waveShareModalSource.includes("navigator.clipboard.writeText") ||
+  !waveShareModalSource.includes("useManagedTimeout") ||
+  !waveShareModalSource.includes("closeRef.current?.focus")
 ) {
   infrastructureErrors.push(
-    "Wave share modal state and clipboard work must stay inside the lazy WaveRunOverlays chunk"
+    "Wave share state must stay in WaveRunOverlays while clipboard, focus, and copied-timeout work stay in the second-level lazy WaveShareModal chunk"
   );
 }
 
