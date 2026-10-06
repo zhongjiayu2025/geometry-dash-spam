@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState, useEffect, useRef } from 'react';
+import React, { useState, useEffect, useRef, useCallback } from 'react';
 import { MousePointer2, RotateCcw, Timer, Mouse, Trophy, Volume2, VolumeX, Share2, Check } from 'lucide-react';
 
 const playClickSound = (audioCtx: AudioContext | null) => {
@@ -28,25 +28,73 @@ const RightClickTest: React.FC = () => {
   const [clicks, setClicks] = useState(0);
   const [timeLeft, setTimeLeft] = useState(10.00);
   const [bestCps, setBestCps] = useState<number | null>(null);
-  const [soundEnabled, setSoundEnabled] = useState(true);
+  const [soundEnabled, setSoundEnabled] = useState(false);
   const [copied, setCopied] = useState(false);
   
   const timerRef = useRef<number | null>(null);
+  const endTimerRef = useRef<number | null>(null);
   const audioCtxRef = useRef<AudioContext | null>(null);
   const clicksRef = useRef(0);
   const startTimeRef = useRef(0);
 
   useEffect(() => {
     if (typeof window !== 'undefined') {
-      const AudioContextClass = window.AudioContext || (window as any).webkitAudioContext;
-      if (AudioContextClass) {
-          audioCtxRef.current = new AudioContextClass();
-      }
+      setSoundEnabled(localStorage.getItem('rightClickSoundEnabled') === 'true');
       const saved = localStorage.getItem('rightClickBest');
       if (saved) {
         try { setBestCps(parseFloat(saved)); } catch(e) {}
       }
     }
+
+    return () => {
+      if (audioCtxRef.current && audioCtxRef.current.state !== 'closed') {
+        void audioCtxRef.current.close();
+      }
+    };
+  }, []);
+
+  const ensureAudio = () => {
+    if (!audioCtxRef.current) {
+      const AudioContextClass = window.AudioContext || (window as any).webkitAudioContext;
+      if (AudioContextClass) {
+        audioCtxRef.current = new AudioContextClass();
+      }
+    }
+
+    if (audioCtxRef.current?.state === 'suspended') {
+      void audioCtxRef.current.resume();
+    }
+    return audioCtxRef.current;
+  };
+
+  const toggleSound = (e: React.MouseEvent) => {
+    e.stopPropagation();
+    const next = !soundEnabled;
+    setSoundEnabled(next);
+    localStorage.setItem('rightClickSoundEnabled', String(next));
+
+    if (next) {
+      ensureAudio();
+    } else if (audioCtxRef.current?.state === 'running') {
+      void audioCtxRef.current.suspend();
+    }
+  };
+
+  const finishTest = useCallback(() => {
+    const finalClicks = clicksRef.current;
+    const finalCps = finalClicks / 10;
+
+    setTimeLeft(0);
+    setClicks(finalClicks);
+    setFinished(true);
+    setActive(false);
+    setBestCps(prev => {
+      if (prev === null || finalCps > prev) {
+        localStorage.setItem('rightClickBest', finalCps.toString());
+        return finalCps;
+      }
+      return prev;
+    });
   }, []);
 
   const startTest = () => {
@@ -61,12 +109,13 @@ const RightClickTest: React.FC = () => {
 
   const handleContextMenu = (e: React.MouseEvent) => {
     e.preventDefault(); // Prevent the context menu from showing
-    if (soundEnabled && audioCtxRef.current) {
-        if (audioCtxRef.current.state === 'suspended') audioCtxRef.current.resume();
-        playClickSound(audioCtxRef.current);
-    }
-    
     if (finished) return;
+    if (active && performance.now() - startTimeRef.current >= 10000) return;
+
+    if (soundEnabled) {
+      const audio = ensureAudio();
+      if (audio) playClickSound(audio);
+    }
     if (!active) {
       startTest();
       return;
@@ -84,37 +133,31 @@ const RightClickTest: React.FC = () => {
     setClicks(0);
     setTimeLeft(10.00);
     if (timerRef.current) clearInterval(timerRef.current);
+    if (endTimerRef.current) clearTimeout(endTimerRef.current);
   };
 
   useEffect(() => {
     if (active && !finished) {
-      timerRef.current = window.setInterval(() => {
+      const updateTimer = () => {
         const elapsed = (performance.now() - startTimeRef.current) / 1000;
-        const remaining = Math.max(0, 10 - elapsed);
-        setTimeLeft(remaining);
+        setTimeLeft(Math.max(0, 10 - elapsed));
+      };
 
-        if (remaining <= 0) {
-          setFinished(true);
-          setActive(false);
-          if (timerRef.current) clearInterval(timerRef.current);
+      updateTimer();
+      timerRef.current = window.setInterval(updateTimer, 100);
 
-          const finalClicks = clicksRef.current;
-          setClicks(finalClicks);
-          setBestCps(prev => {
-            const finalCps = finalClicks / 10;
-            if (prev === null || finalCps > prev) {
-              localStorage.setItem('rightClickBest', finalCps.toString());
-              return finalCps;
-            }
-            return prev;
-          });
-        }
-      }, 33);
+      const elapsedMs = performance.now() - startTimeRef.current;
+      endTimerRef.current = window.setTimeout(
+        finishTest,
+        Math.max(0, 10000 - elapsedMs)
+      );
     }
+
     return () => {
       if (timerRef.current) clearInterval(timerRef.current);
+      if (endTimerRef.current) clearTimeout(endTimerRef.current);
     };
-  }, [active, finished]);
+  }, [active, finished, finishTest]);
 
   const cps = finished ? (clicks / 10).toFixed(2) : (active ? (clicks / Math.max(0.05, 10 - timeLeft)).toFixed(1) : "0.00");
 
@@ -199,7 +242,7 @@ const RightClickTest: React.FC = () => {
               </div>
               <div className="flex items-center gap-4">
                  <button 
-                  onClick={() => setSoundEnabled(!soundEnabled)}
+                  onClick={toggleSound}
                   className={`p-3 rounded-xl border transition-colors ${soundEnabled ? 'bg-emerald-600/20 border-emerald-500/50 text-emerald-400 hover:bg-emerald-600/30' : 'bg-slate-800 border-white/10 text-slate-500 hover:text-slate-300'}`}
                   title={soundEnabled ? "Mute Click Sound" : "Enable Click Sound"}
                  >
