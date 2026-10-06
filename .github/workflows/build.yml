@@ -52,9 +52,13 @@ jobs:
       - name: Verify production deployment
         env:
           EXPECTED_SHA: ${{ github.sha }}
+          REPO: ${{ github.repository }}
+          GH_TOKEN: ${{ github.token }}
         shell: bash
         run: |
           endpoint="https://geometrydashspam.cc/deploy-status.json"
+
+          last_checked_sha=""
 
           for attempt in {1..24}; do
             body="$(curl -fsS --connect-timeout 10 --max-time 20 -H 'Cache-Control: no-cache' "${endpoint}?commit=${EXPECTED_SHA}&attempt=${attempt}" || true)"
@@ -64,6 +68,21 @@ jobs:
               echo "Production is serving expected commit $EXPECTED_SHA"
               printf '%s\n' "$body"
               exit 0
+            fi
+
+            if [[ "$live_sha" =~ ^[0-9a-f]{40}$ && "$live_sha" != "$last_checked_sha" ]]; then
+              last_checked_sha="$live_sha"
+              compare_body="$(curl -fsS --connect-timeout 10 --max-time 20 \
+                -H "Authorization: Bearer $GH_TOKEN" \
+                -H "Accept: application/vnd.github+json" \
+                "https://api.github.com/repos/${REPO}/compare/${EXPECTED_SHA}...${live_sha}" || true)"
+              compare_status="$(printf '%s' "$compare_body" | python3 -c 'import json,sys; print(json.load(sys.stdin).get("status", ""))' 2>/dev/null || true)"
+
+              if [[ "$compare_status" == "ahead" || "$compare_status" == "identical" ]]; then
+                echo "Production is serving descendant commit $live_sha; expected commit $EXPECTED_SHA is included"
+                printf '%s\n' "$body"
+                exit 0
+              fi
             fi
 
             echo "Attempt $attempt: production commit is '${live_sha:-missing}', expected '$EXPECTED_SHA'"

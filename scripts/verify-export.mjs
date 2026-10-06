@@ -2,6 +2,7 @@ import { existsSync, readFileSync, readdirSync } from "node:fs";
 import { join } from "node:path";
 
 const outDir = join(process.cwd(), "out");
+const buildWorkflowSource = readFileSync(join(process.cwd(), ".github", "workflows", "build.yml"), "utf8");
 const demonSource = readFileSync(join(process.cwd(), "data", "demons.ts"), "utf8");
 const vaultSource = readFileSync(join(process.cwd(), "data", "vaultCodes.ts"), "utf8");
 const relatedSearchData = JSON.parse(
@@ -263,6 +264,18 @@ const unexpected = removedGhostRoutes.filter((route) =>
 const metadataFiles = ["sitemap.xml", "robots.txt", "manifest.webmanifest", "ads.txt", "llms.txt", "_redirects"].filter(
   (file) => !existsSync(join(outDir, file))
 );
+
+if (
+  !buildWorkflowSource.includes('EXPECTED_SHA: ${{ github.sha }}') ||
+  !buildWorkflowSource.includes('GH_TOKEN: ${{ github.token }}') ||
+  !buildWorkflowSource.includes('/compare/${EXPECTED_SHA}...${live_sha}') ||
+  !buildWorkflowSource.includes('compare_status" == "ahead"') ||
+  !buildWorkflowSource.includes('compare_status" == "identical"')
+) {
+  infrastructureErrors.push(
+    "Build production freshness must accept the expected commit or a deployed descendant while still rejecting stale production"
+  );
+}
 
 const deployStatusPath = join(outDir, "deploy-status.json");
 if (!existsSync(deployStatusPath)) {
