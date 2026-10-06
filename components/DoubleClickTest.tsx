@@ -10,12 +10,25 @@ type HistoryItem = {
   isRapid: boolean;
 };
 
+type MeasurementState = {
+  clicks: number;
+  rapidIntervals: number;
+  lastDelta: number | null;
+  history: HistoryItem[];
+};
+
+const EMPTY_MEASUREMENT: MeasurementState = {
+  clicks: 0,
+  rapidIntervals: 0,
+  lastDelta: null,
+  history: [],
+};
+
 export default function DoubleClickTest() {
-  const [clicks, setClicks] = useState(0);
-  const [rapidIntervals, setRapidIntervals] = useState(0);
-  const [lastDelta, setLastDelta] = useState<number | null>(null);
-  const [history, setHistory] = useState<HistoryItem[]>([]);
+  const [measurement, setMeasurement] = useState<MeasurementState>(EMPTY_MEASUREMENT);
   const [threshold, setThreshold] = useState(80);
+
+  const { clicks, rapidIntervals, lastDelta, history } = measurement;
 
   const lastClickTime = useRef(0);
   const clickIdRef = useRef(0);
@@ -25,28 +38,37 @@ export default function DoubleClickTest() {
     const now = performance.now();
     const previous = lastClickTime.current;
     lastClickTime.current = now;
-    setClicks((value) => value + 1);
 
-    if (!previous) return;
+    if (!previous) {
+      setMeasurement((current) => ({
+        ...current,
+        clicks: current.clicks + 1,
+      }));
+      return;
+    }
 
     const delta = now - previous;
-    if (delta > 2000) return;
+    if (delta > 2000) {
+      setMeasurement((current) => ({
+        ...current,
+        clicks: current.clicks + 1,
+      }));
+      return;
+    }
 
     const rounded = Math.round(delta);
     const isRapid = delta < threshold;
-
-    if (isRapid) {
-      setRapidIntervals((value) => value + 1);
-    }
-
-    setLastDelta(rounded);
     clickIdRef.current += 1;
-    setHistory((items) =>
-      [
+
+    setMeasurement((current) => ({
+      clicks: current.clicks + 1,
+      rapidIntervals: current.rapidIntervals + (isRapid ? 1 : 0),
+      lastDelta: rounded,
+      history: [
         { id: clickIdRef.current, delta: rounded, isRapid },
-        ...items,
-      ].slice(0, 50)
-    );
+        ...current.history,
+      ].slice(0, 50),
+    }));
   };
 
   const handlePointerDown = (event: React.PointerEvent<HTMLButtonElement>) => {
@@ -77,10 +99,7 @@ export default function DoubleClickTest() {
   };
 
   const resetTest = () => {
-    setClicks(0);
-    setRapidIntervals(0);
-    setLastDelta(null);
-    setHistory([]);
+    setMeasurement(EMPTY_MEASUREMENT);
     lastClickTime.current = 0;
     clickIdRef.current = 0;
   };
