@@ -765,6 +765,15 @@ if (
 }
 
 if (
+  cpsClientSource.includes("clickTimesRef.current.push(now);\n    setClicks(clicksRef.current);") ||
+  !cpsClientSource.includes("const renderedClicks = active ? clicksRef.current : clicks;")
+) {
+  infrastructureErrors.push(
+    "CPS click hot path must accumulate in refs instead of triggering React state on every input"
+  );
+}
+
+if (
   !globalsSource.includes(".defer-render") ||
   !globalsSource.includes("content-visibility: auto")
 ) {
