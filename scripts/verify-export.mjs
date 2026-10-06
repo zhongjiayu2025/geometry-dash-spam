@@ -446,6 +446,8 @@ const demonFilterSource = readFileSync(join(process.cwd(), "components", "DemonL
 const clickTestHeroSource = readFileSync(join(process.cwd(), "components", "ClickTestHero.tsx"), "utf8");
 const clickerSource = readFileSync(join(process.cwd(), "components", "GeometryDashClicker.tsx"), "utf8");
 const homeSource = readFileSync(join(process.cwd(), "app", "page.tsx"), "utf8");
+const personalStatsSource = readFileSync(join(process.cwd(), "components", "PersonalStats.tsx"), "utf8");
+const dashboardPageSource = readFileSync(join(process.cwd(), "app", "dashboard", "page.tsx"), "utf8");
 const supportClientPaths = [
   "SpacebarCounter.tsx",
   "KeyboardLatencyTest.tsx",
@@ -1019,7 +1021,7 @@ if (
 
 const clientSourceBudgets = [
   ["WaveSimulator.tsx", waveClientSource, 11000],
-  ["CpsTest.tsx", cpsClientSource, 18500],
+  ["CpsTest.tsx", cpsClientSource, 16500],
   ["AimTrainer.tsx", aimClientSource, 12000],
   ["ReactionTest.tsx", reactionClientSource, 6500],
   ["VisualMemoryTest.tsx", visualMemoryClientSource, 11500],
@@ -1028,7 +1030,7 @@ const clientSourceBudgets = [
   ["ScrollTest.tsx", scrollClientSource, 7500],
   ["RefreshRateTest.tsx", refreshRateClientSource, 4500],
   ["SoundReactionTest.tsx", soundReactionClientSource, 10000],
-  ["GameCanvas.tsx", gameCanvasSource, 48000],
+  ["GameCanvas.tsx", gameCanvasSource, 46000],
 ];
 
 for (const [file, source, maxBytes] of clientSourceBudgets) {
@@ -1170,10 +1172,36 @@ if (
 }
 
 if (
-  !cpsClientSource.includes("const timingStats = finished") ||
-  cpsClientSource.includes("const timingStats = getTimingStats();")
+  gameCanvasSource.includes("showShareModal") ||
+  gameCanvasSource.includes("copyToClipboard") ||
+  gameCanvasSource.includes("handleShareClick") ||
+  !gameCanvasSource.includes("shareOpenRef") ||
+  !waveRunOverlaysSource.includes("const [showShareModal") ||
+  !waveRunOverlaysSource.includes("navigator.clipboard.writeText")
 ) {
-  infrastructureErrors.push("CPS timing statistics must only run after the test finishes");
+  infrastructureErrors.push(
+    "Wave share modal state and clipboard work must stay inside the lazy WaveRunOverlays chunk"
+  );
+}
+
+if (
+  personalStatsSource.includes("RelatedTools") ||
+  !dashboardPageSource.includes('<RelatedTools currentTool="dashboard" />')
+) {
+  infrastructureErrors.push(
+    "Dashboard RelatedTools must stay server-rendered outside PersonalStats"
+  );
+}
+
+if (
+  cpsClientSource.includes("const getTimingStats") ||
+  cpsClientSource.includes("navigator.share") ||
+  !cpsFinishedActionsSource.includes("function getTimingStats") ||
+  !cpsFinishedActionsSource.includes("navigator.share")
+) {
+  infrastructureErrors.push(
+    "CPS timing statistics and sharing must stay inside the lazy finished-actions chunk"
+  );
 }
 
 if (
