@@ -42,7 +42,7 @@ const routeLinkClass =
 
 export default function Header() {
   return (
-    <header className="fixed inset-x-0 top-0 z-50 h-16 border-b border-white/5 bg-[#020617]/90 backdrop-blur-xl md:h-20">
+    <header className="fixed inset-x-0 top-0 z-50 h-16 border-b border-white/5 bg-[#020617]/95 md:h-20 lg:bg-[#020617]/90 lg:backdrop-blur-xl">
       <HeaderRouteState />
 
       <div className="mx-auto flex h-full max-w-7xl items-center justify-between gap-4 px-4">
@@ -53,7 +53,6 @@ export default function Header() {
             width={40}
             height={40}
             className="h-9 w-9 rounded-lg"
-            priority
           />
           <div className="hidden sm:block">
             <div className="font-display font-bold uppercase tracking-tight text-white">Geometry Dash Spam</div>
