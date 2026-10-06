@@ -1,8 +1,7 @@
 "use client";
 
-import React, { useEffect, useRef, useState } from "react";
+import React, { useCallback, useEffect, useRef, useState } from "react";
 import { Check, MousePointer2, RotateCcw, Share2, Trophy } from "lucide-react";
-
 
 const TEST_MS = 10000;
 
@@ -43,11 +42,13 @@ export default function DragClickTest() {
   const [copied, setCopied] = useState(false);
 
   const timerRef = useRef<number | null>(null);
+  const endTimerRef = useRef<number | null>(null);
   const startTimeRef = useRef(0);
   const clickTimesRef = useRef<number[]>([]);
   const clicksRef = useRef(0);
   const activeRef = useRef(false);
   const finishedRef = useRef(false);
+  const pendingTouchRef = useRef<{ pointerId: number; x: number; y: number } | null>(null);
 
   useEffect(() => {
     const saved = localStorage.getItem("dragClickBest");
@@ -57,26 +58,33 @@ export default function DragClickTest() {
     }
 
     return () => {
-      if (timerRef.current) clearInterval(timerRef.current);
+      if (timerRef.current) window.clearInterval(timerRef.current);
+      if (endTimerRef.current) window.clearTimeout(endTimerRef.current);
     };
   }, []);
 
-  const finishTest = () => {
+  const finishTest = useCallback(() => {
     if (finishedRef.current) return;
 
     finishedRef.current = true;
     activeRef.current = false;
-    setIsFinished(true);
-    setIsActive(false);
-    setTimeLeft(0);
 
     if (timerRef.current) {
-      clearInterval(timerRef.current);
+      window.clearInterval(timerRef.current);
       timerRef.current = null;
+    }
+    if (endTimerRef.current) {
+      window.clearTimeout(endTimerRef.current);
+      endTimerRef.current = null;
     }
 
     const times = clickTimesRef.current;
     const peak = getPeakOneSecondCps(times);
+
+    setIsFinished(true);
+    setIsActive(false);
+    setTimeLeft(0);
+    setDragActive(false);
     setPeakCps(peak);
     setBuckets(getBuckets(times, startTimeRef.current));
     setClicks(clicksRef.current);
@@ -88,36 +96,56 @@ export default function DragClickTest() {
       }
       return previous;
     });
-  };
+  }, []);
 
-  const startTest = (now: number) => {
+  const startTest = useCallback((now: number) => {
     activeRef.current = true;
     finishedRef.current = false;
     startTimeRef.current = now;
+
     setIsActive(true);
     setIsFinished(false);
     setTimeLeft(10);
+  }, []);
 
-    timerRef.current = window.setInterval(() => {
+  useEffect(() => {
+    if (!isActive || isFinished) return;
+
+    const updateTimer = () => {
       const elapsed = performance.now() - startTimeRef.current;
-      const remaining = Math.max(0, (TEST_MS - elapsed) / 1000);
-      setTimeLeft(remaining);
+      setTimeLeft(Math.max(0, (TEST_MS - elapsed) / 1000));
+    };
 
-      if (elapsed >= TEST_MS) {
-        finishTest();
+    updateTimer();
+    timerRef.current = window.setInterval(updateTimer, 100);
+
+    const elapsedMs = performance.now() - startTimeRef.current;
+    endTimerRef.current = window.setTimeout(
+      finishTest,
+      Math.max(0, TEST_MS - elapsedMs)
+    );
+
+    return () => {
+      if (timerRef.current) {
+        window.clearInterval(timerRef.current);
+        timerRef.current = null;
       }
-    }, 33);
-  };
+      if (endTimerRef.current) {
+        window.clearTimeout(endTimerRef.current);
+        endTimerRef.current = null;
+      }
+    };
+  }, [finishTest, isActive, isFinished]);
 
-  const handlePointerDown = (event: React.PointerEvent<HTMLButtonElement>) => {
-    event.preventDefault();
+  const registerInput = (now: number) => {
     if (finishedRef.current) return;
 
-    const now = performance.now();
-
-    if (!activeRef.current) {
-      startTest(now);
+    if (activeRef.current && now - startTimeRef.current >= TEST_MS) {
+      finishTest();
+      return;
     }
+
+    if (!activeRef.current) startTest(now);
 
     clicksRef.current += 1;
     clickTimesRef.current.push(now);
@@ -127,15 +155,47 @@ export default function DragClickTest() {
     window.setTimeout(() => setDragActive(false), 55);
   };
 
+  const handlePointerDown = (event: React.PointerEvent<HTMLButtonElement>) => {
+    if (!activeRef.current && event.pointerType === "touch") {
+      pendingTouchRef.current = {
+        pointerId: event.pointerId,
+        x: event.clientX,
+        y: event.clientY,
+      };
+      return;
+    }
+
+    event.preventDefault();
+    registerInput(performance.now());
+  };
+
+  const handlePointerUp = (event: React.PointerEvent<HTMLButtonElement>) => {
+    const pending = pendingTouchRef.current;
+    if (!pending || pending.pointerId !== event.pointerId) return;
+
+    pendingTouchRef.current = null;
+    const moved = Math.hypot(event.clientX - pending.x, event.clientY - pending.y);
+    if (moved <= 12 && !finishedRef.current) {
+      registerInput(performance.now());
+    }
+  };
+
+  const handlePointerCancel = () => {
+    pendingTouchRef.current = null;
+  };
+
   const resetTest = () => {
-    if (timerRef.current) clearInterval(timerRef.current);
+    if (timerRef.current) window.clearInterval(timerRef.current);
+    if (endTimerRef.current) window.clearTimeout(endTimerRef.current);
 
     timerRef.current = null;
+    endTimerRef.current = null;
     startTimeRef.current = 0;
     clickTimesRef.current = [];
     clicksRef.current = 0;
     activeRef.current = false;
     finishedRef.current = false;
+    pendingTouchRef.current = null;
 
     setClicks(0);
     setTimeLeft(10);
@@ -167,8 +227,12 @@ export default function DragClickTest() {
 
   return (
     <div className="w-full max-w-4xl mx-auto px-4 md:px-0">
+      <p className="sr-only" role="status" aria-live="polite" aria-atomic="true">
+        {isFinished ? `Test complete. ${(clicks / 10).toFixed(2)} average CPS and ${peakCps} peak one-second CPS.` : ""}
+      </p>
+
       <div className="bg-[#0b1021] border border-white/10 rounded-3xl p-6 md:p-12 shadow-2xl relative overflow-hidden">
-        <div className="absolute top-0 right-0 w-64 h-64 bg-indigo-500/10 rounded-full blur-[80px] -translate-y-1/2 translate-x-1/3" />
+        <div aria-hidden="true" className="absolute top-0 right-0 w-64 h-64 bg-indigo-500/10 rounded-full blur-[80px] -translate-y-1/2 translate-x-1/3" />
 
         <div className="relative z-10 flex flex-col items-center">
           <div className="grid grid-cols-3 w-full gap-2 mb-8 bg-slate-900/50 p-4 rounded-2xl border border-white/5">
@@ -196,8 +260,10 @@ export default function DragClickTest() {
             <button
               type="button"
               onPointerDown={handlePointerDown}
+              onPointerUp={handlePointerUp}
+              onPointerCancel={handlePointerCancel}
               className={
-                "touch-none w-full h-64 md:h-80 rounded-3xl border-2 flex flex-col items-center justify-center gap-4 transition-all duration-75 group select-none " +
+                `${isActive ? "touch-none" : "touch-pan-y"} w-full h-64 md:h-80 rounded-3xl border-2 flex flex-col items-center justify-center gap-4 transition-all duration-75 group select-none ` +
                 (dragActive
                   ? "bg-indigo-600/20 border-indigo-500/50 scale-[0.98]"
                   : "bg-indigo-900/10 border-indigo-500/20 hover:bg-indigo-800/20 hover:border-indigo-500/30")
@@ -283,6 +349,6 @@ export default function DragClickTest() {
       <div className="mt-8 rounded-xl border border-white/10 bg-slate-900/25 p-5 text-sm leading-6 text-slate-400">
         This page measures browser-registered inputs, not the electrical behavior of a mouse switch. Use repeated runs on the same setup when comparing technique changes.
       </div>
-</div>
+    </div>
   );
 }
