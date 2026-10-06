@@ -1,26 +1,8 @@
 "use client";
 
 import React, { useState, useEffect, useRef, useCallback } from 'react';
+import type { ClickSoundEngine } from '../lib/clickSound';
 import { MousePointer2, RotateCcw, Timer, Trophy, Volume2, VolumeX, Share2, Check } from 'lucide-react';
-
-const playClickSound = (audioCtx: AudioContext | null) => {
-  if (!audioCtx) return;
-  const oscillator = audioCtx.createOscillator();
-  const gainNode = audioCtx.createGain();
-  
-  oscillator.type = 'sine';
-  oscillator.frequency.setValueAtTime(850, audioCtx.currentTime);
-  oscillator.frequency.exponentialRampToValueAtTime(300, audioCtx.currentTime + 0.05);
-  
-  gainNode.gain.setValueAtTime(0.2, audioCtx.currentTime);
-  gainNode.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + 0.05);
-  
-  oscillator.connect(gainNode);
-  gainNode.connect(audioCtx.destination);
-  
-  oscillator.start();
-  oscillator.stop(audioCtx.currentTime + 0.05);
-};
 
 const ButterflyClickTest: React.FC = () => {
   const [active, setActive] = useState(false);
@@ -33,7 +15,9 @@ const ButterflyClickTest: React.FC = () => {
   
   const timerRef = useRef<number | null>(null);
   const endTimerRef = useRef<number | null>(null);
-  const audioCtxRef = useRef<AudioContext | null>(null);
+  const audioEngineRef = useRef<ClickSoundEngine | null>(null);
+  const audioLoadRef = useRef<Promise<ClickSoundEngine | null> | null>(null);
+  const audioDisposedRef = useRef(false);
   const clicksRef = useRef(0);
   const startTimeRef = useRef(0);
   const pendingTouchRef = useRef<{ pointerId: number; x: number; y: number } | null>(null);
@@ -46,26 +30,33 @@ const ButterflyClickTest: React.FC = () => {
         try { setBestCps(parseFloat(saved)); } catch(e) {}
       }
     }
-
-    return () => {
-      if (audioCtxRef.current && audioCtxRef.current.state !== 'closed') {
-        void audioCtxRef.current.close();
-      }
-    };
   }, []);
 
-  const ensureAudio = () => {
-    if (!audioCtxRef.current) {
-      const AudioContextClass = window.AudioContext || (window as any).webkitAudioContext;
-      if (AudioContextClass) {
-        audioCtxRef.current = new AudioContextClass();
-      }
+  const ensureAudio = async () => {
+    if (audioDisposedRef.current) return null;
+
+    if (audioEngineRef.current) {
+      await audioEngineRef.current.resume();
+      return audioEngineRef.current;
     }
 
-    if (audioCtxRef.current?.state === 'suspended') {
-      void audioCtxRef.current.resume();
+    if (!audioLoadRef.current) {
+      audioLoadRef.current = import('../lib/clickSound')
+        .then(({ createClickSoundEngine }) => createClickSoundEngine())
+        .catch(() => null);
     }
-    return audioCtxRef.current;
+
+    const engine = await audioLoadRef.current;
+    if (!engine) return null;
+
+    if (audioDisposedRef.current) {
+      await engine.destroy();
+      return null;
+    }
+
+    audioEngineRef.current = engine;
+    await engine.resume();
+    return engine;
   };
 
   const toggleSound = (e: React.MouseEvent) => {
@@ -75,11 +66,20 @@ const ButterflyClickTest: React.FC = () => {
     localStorage.setItem('butterflyClickSoundEnabled', String(next));
 
     if (next) {
-      ensureAudio();
-    } else if (audioCtxRef.current?.state === 'running') {
-      void audioCtxRef.current.suspend();
+      void ensureAudio();
+    } else if (audioEngineRef.current) {
+      void audioEngineRef.current.suspend();
     }
   };
+
+  useEffect(() => {
+    return () => {
+      audioDisposedRef.current = true;
+      const engine = audioEngineRef.current;
+      audioEngineRef.current = null;
+      if (engine) void engine.destroy();
+    };
+  }, []);
 
   const finishTest = useCallback(() => {
     const finalClicks = clicksRef.current;
@@ -113,9 +113,13 @@ const ButterflyClickTest: React.FC = () => {
       if (active && performance.now() - startTimeRef.current >= 10000) return;
   
       if (soundEnabled) {
-        const audio = ensureAudio();
-        if (audio) playClickSound(audio);
+      const engine = audioEngineRef.current;
+      if (engine) {
+        engine.play('butterfly');
+      } else {
+        void ensureAudio().then((loadedEngine) => loadedEngine?.play('butterfly'));
       }
+    }
       if (!active) {
         startTest();
         return;
