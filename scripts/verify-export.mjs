@@ -441,6 +441,8 @@ const waveAudioSource = readFileSync(join(process.cwd(), "lib", "waveAudio.ts"),
 const waveRunOverlaysSource = readFileSync(join(process.cwd(), "components", "WaveRunOverlays.tsx"), "utf8");
 const clickSoundSource = readFileSync(join(process.cwd(), "lib", "clickSound.ts"), "utf8");
 const secondaryClickFinishedSource = readFileSync(join(process.cwd(), "components", "SecondaryClickFinishedActions.tsx"), "utf8");
+const dragClickResultSource = readFileSync(join(process.cwd(), "components", "DragClickResult.tsx"), "utf8");
+const spacebarFinishedSource = readFileSync(join(process.cwd(), "components", "SpacebarFinishedActions.tsx"), "utf8");
 const demonListSource = readFileSync(join(process.cwd(), "components", "DemonListTable.tsx"), "utf8");
 const demonFilterSource = readFileSync(join(process.cwd(), "components", "DemonListFilterControls.tsx"), "utf8");
 const clickTestHeroSource = readFileSync(join(process.cwd(), "components", "ClickTestHero.tsx"), "utf8");
@@ -658,6 +660,18 @@ if (
 }
 
 if (
+  !spacebarClientSource.includes('dynamic(() => import("./SpacebarFinishedActions")') ||
+  spacebarClientSource.includes("navigator.share") ||
+  spacebarClientSource.includes("<Share2") ||
+  spacebarClientSource.includes("<RotateCcw") ||
+  !spacebarFinishedSource.includes("navigator.share")
+) {
+  infrastructureErrors.push(
+    "SpacebarCounter finished sharing and reset controls must stay in the lazy result chunk"
+  );
+}
+
+if (
   !spacebarClientSource.includes("isInteractiveKeyboardTarget(event.target)") ||
   spacebarClientSource.includes("isInteractiveKeyboardTarget(e.target)")
 ) {
@@ -687,6 +701,18 @@ if (
 ) {
   infrastructureErrors.push(
     "DragClickTest hot path must stay ref-based with CSS active feedback instead of per-input React state"
+  );
+}
+
+if (
+  !dragClientSource.includes('dynamic(() => import("./DragClickResult")') ||
+  dragClientSource.includes("navigator.share") ||
+  dragClientSource.includes("<Share2") ||
+  dragClientSource.includes("<RotateCcw") ||
+  !dragClickResultSource.includes("navigator.share")
+) {
+  infrastructureErrors.push(
+    "DragClickTest finished result and sharing must stay in the lazy result chunk"
   );
 }
 
@@ -1030,6 +1056,8 @@ const clientSourceBudgets = [
   ["ScrollTest.tsx", scrollClientSource, 7500],
   ["RefreshRateTest.tsx", refreshRateClientSource, 4500],
   ["SoundReactionTest.tsx", soundReactionClientSource, 10000],
+  ["DragClickTest.tsx", dragClientSource, 10000],
+  ["SpacebarCounter.tsx", spacebarClientSource, 12000],
   ["GameCanvas.tsx", gameCanvasSource, 46000],
 ];
 
