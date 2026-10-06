@@ -32,6 +32,7 @@ const CORE_ROUTES = [
   "/geometry-dash-wave",
   "/cps-test",
   "/reaction-test",
+  "/aim-trainer",
   "/demon-list",
   "/demon-list/wave-demons",
   "/demon-list/spam-demons",

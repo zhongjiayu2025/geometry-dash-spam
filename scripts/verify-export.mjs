@@ -45,6 +45,8 @@ const requiredRoutes = [
   "/",
   "/geometry-dash-wave",
   "/cps-test",
+  "/reaction-test",
+  "/aim-trainer",
   "/demon-list",
   "/demon-list/spam-demons",
   "/spam-challenge-list",
@@ -69,14 +71,11 @@ const removedGhostRoutes = [
   "/10-second-cps-test",
   "/reaction-time",
   "/stats",
-  "/blog/top-spam-levels-2026",
   "/blog/interview-top-players",
 ];
 
 const noindexUtilityRoutes = [
-  "/reaction-test",
   "/sound-reaction",
-  "/aim-trainer",
   "/typing-test",
   "/visual-memory",
   "/chimp-test",
@@ -104,6 +103,16 @@ const metadataExpectations = {
     title: "Geometry Dash CPS Test",
     description: "Take a Geometry Dash CPS test",
     canonical: "https://geometrydashspam.cc/cps-test",
+  },
+  "/reaction-test": {
+    title: "Reaction Time Test",
+    description: "Measure browser-based reaction time",
+    canonical: "https://geometrydashspam.cc/reaction-test",
+  },
+  "/aim-trainer": {
+    title: "Aim Trainer",
+    description: "Practice mouse accuracy",
+    canonical: "https://geometrydashspam.cc/aim-trainer",
   },
   "/demon-list": {
     title: "Geometry Dash Demon List",
@@ -303,7 +312,6 @@ const expectedRedirects = new Map([
   ["/10-second-cps-test", "/cps-test"],
   ["/reaction-time", "/reaction-test"],
   ["/stats", "/dashboard"],
-  ["/blog/top-spam-levels-2026", "/blog/notable-wave-spam-levels"],
   ["/blog/interview-top-players", "/blog/evaluate-geometry-dash-spam-advice"],
 ]);
 
@@ -445,6 +453,8 @@ if (existsSync(llmsPath)) {
     "https://geometrydashspam.cc/",
     "https://geometrydashspam.cc/geometry-dash-wave",
     "https://geometrydashspam.cc/cps-test",
+    "https://geometrydashspam.cc/reaction-test",
+    "https://geometrydashspam.cc/aim-trainer",
     "https://geometrydashspam.cc/demon-list",
     "https://geometrydashspam.cc/spam-challenge-list",
     "https://geometrydashspam.cc/geometry-dash-codes",
@@ -1288,8 +1298,8 @@ if (
 if (
   !reactionClientSource.includes('import("./ReactionResult")') ||
   reactionClientSource.includes("navigator.share") ||
-  reactionClientSource.includes("How to use this reaction test") ||
-  !reactionPageSource.includes("How to use this reaction test")
+  reactionClientSource.includes("What this reaction test measures") ||
+  !reactionPageSource.includes("What this reaction test measures")
 ) {
   infrastructureErrors.push(
     "ReactionTest must keep result sharing lazy and static guidance server-rendered"
@@ -3153,6 +3163,8 @@ const htmlSitemapPath = exportedPath("/sitemap");
 const htmlSitemapPriorityRoutes = [
   "/geometry-dash-wave",
   "/cps-test",
+  "/reaction-test",
+  "/aim-trainer",
   "/demon-list",
   "/spam-challenge-list",
   "/geometry-dash-codes",

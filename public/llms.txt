@@ -10,6 +10,7 @@ Browser measurements on this site are training diagnostics, not laboratory hardw
 - [Geometry Dash Wave Trainer](https://geometrydashspam.cc/geometry-dash-wave): Normal, mini, precision, spam, and endless wave practice presets.
 - [Geometry Dash CPS Test](https://geometrydashspam.cc/cps-test): 1, 3, 5, 10, 30, and 60 second click-speed tests with browser-side timing diagnostics.
 - [Reaction Time Test](https://geometrydashspam.cc/reaction-test): Browser-observed visual response practice with Geometry Dash context and measurement limitations.
+- [Aim Trainer](https://geometrydashspam.cc/aim-trainer): 30-second browser target-clicking practice for mouse accuracy and precision.
 
 ## Source-checked Geometry Dash references
 

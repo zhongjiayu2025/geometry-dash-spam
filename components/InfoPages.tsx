@@ -318,6 +318,7 @@ export const SitemapPage = () => (
             ["/double-click", "Double Click Test"],
             ["/spacebar-counter", "Spacebar Counter"],
             ["/reaction-test", "Reaction Time Test"],
+            ["/aim-trainer", "Aim Trainer"],
             ["/polling-rate", "Mouse Polling Rate"],
             ["/keyboard-latency", "Keyboard Timing"],
             ["/keyboard-ghosting", "Keyboard Ghosting"],
