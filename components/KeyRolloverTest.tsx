@@ -1,10 +1,8 @@
 "use client";
 
 import React, { useEffect, useState } from "react";
-import dynamic from "next/dynamic";
 import { AlertCircle, Keyboard as KeyboardIcon } from "lucide-react";
 
-const RelatedTools = dynamic(() => import("./RelatedTools"));
 
 export default function KeyRolloverTest() {
   const [activeKeys, setActiveKeys] = useState<Set<string>>(new Set());
@@ -120,8 +118,6 @@ export default function KeyRolloverTest() {
           )}
         </div>
       </div>
-
-      <RelatedTools currentTool="rollover" />
-    </div>
+</div>
   );
 }
