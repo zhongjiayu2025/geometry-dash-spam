@@ -426,6 +426,7 @@ if (existsSync(llmsPath)) {
 }
 
 const layoutSource = readFileSync(join(process.cwd(), "app", "layout.tsx"), "utf8");
+const loadingSource = readFileSync(join(process.cwd(), "app", "loading.tsx"), "utf8");
 const globalsSource = readFileSync(join(process.cwd(), "app", "globals.css"), "utf8");
 const headerSource = readFileSync(join(process.cwd(), "components", "Header.tsx"), "utf8");
 const headerRouteStateSource = readFileSync(join(process.cwd(), "components", "HeaderRouteState.tsx"), "utf8");
@@ -475,6 +476,15 @@ if (
 
 if (!layoutSource.includes('"max-image-preview": "large"')) {
   infrastructureErrors.push("Root metadata must allow large Google image previews");
+}
+
+if (
+  loadingSource.includes(">Loading...</") ||
+  !loadingSource.includes('aria-label="Loading Geometry Dash tools"')
+) {
+  infrastructureErrors.push(
+    "Global route fallback must keep an accessible label without generic visible Loading... text"
+  );
 }
 
 for (const utilityRoute of ["/jitter-click", "/butterfly-click", "/drag-click"]) {
