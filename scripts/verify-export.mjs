@@ -449,6 +449,7 @@ const clickTestHeroSource = readFileSync(join(process.cwd(), "components", "Clic
 const clickerSource = readFileSync(join(process.cwd(), "components", "GeometryDashClicker.tsx"), "utf8");
 const homeSource = readFileSync(join(process.cwd(), "app", "page.tsx"), "utf8");
 const personalStatsSource = readFileSync(join(process.cwd(), "components", "PersonalStats.tsx"), "utf8");
+const dashboardWaveHistorySource = readFileSync(join(process.cwd(), "components", "DashboardWaveHistory.tsx"), "utf8");
 const dashboardPageSource = readFileSync(join(process.cwd(), "app", "dashboard", "page.tsx"), "utf8");
 const supportClientPaths = [
   "SpacebarCounter.tsx",
@@ -1058,6 +1059,7 @@ const clientSourceBudgets = [
   ["SoundReactionTest.tsx", soundReactionClientSource, 10000],
   ["DragClickTest.tsx", dragClientSource, 10000],
   ["SpacebarCounter.tsx", spacebarClientSource, 12000],
+  ["PersonalStats.tsx", personalStatsSource, 13500],
   ["GameCanvas.tsx", gameCanvasSource, 46000],
 ];
 
@@ -1218,6 +1220,16 @@ if (
 ) {
   infrastructureErrors.push(
     "Dashboard RelatedTools must stay server-rendered outside PersonalStats"
+  );
+}
+
+if (
+  !personalStatsSource.includes("dynamic(() => import('./DashboardWaveHistory')") ||
+  personalStatsSource.includes("Saved Runs") ||
+  !dashboardWaveHistorySource.includes("Saved Runs")
+) {
+  infrastructureErrors.push(
+    "Dashboard wave history must stay in its conditional lazy chunk"
   );
 }
 
