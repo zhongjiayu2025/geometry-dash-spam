@@ -669,6 +669,17 @@ if (
 }
 
 if (
+  gameCanvasSource.includes("displayTime") ||
+  gameCanvasSource.includes("setDisplayTime") ||
+  !gameCanvasSource.includes("timeDisplayRef.current.textContent") ||
+  !gameCanvasSource.includes("progressRef.current.style.width")
+) {
+  infrastructureErrors.push(
+    "Wave HUD timing and progress must update through refs instead of React state on the game loop"
+  );
+}
+
+if (
   !waveSimulatorSource.includes("useEffect(() => {") ||
   !waveSimulatorSource.includes("gd_spam_last_difficulty") ||
   waveSimulatorSource.includes("useState<Difficulty>(() =>") ||
