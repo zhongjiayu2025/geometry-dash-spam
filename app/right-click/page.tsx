@@ -1,4 +1,6 @@
 import RightClickTest from "../../components/RightClickTest";
+import Breadcrumbs from "../../components/Breadcrumbs";
+import ClickTestHero from "../../components/ClickTestHero";
 import RelatedTools from "../../components/RelatedTools";
 import InputToolGuide from "../../components/InputToolGuide";
 import { Metadata } from "next";
@@ -24,6 +26,8 @@ export const metadata: Metadata = {
 export default function RightClickPage() {
   return (
     <>
+            <Breadcrumbs items={[{ label: "Right Click", href: "/right-click", active: true }]} />
+      <ClickTestHero variant="rightClick" />
       <RightClickTest />
       <InputToolGuide tool="right-click" />
           <RelatedTools currentTool="rightClick" />
