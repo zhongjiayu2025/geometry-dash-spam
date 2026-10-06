@@ -1,7 +1,8 @@
 "use client";
 
-import React, { useState, useRef, useEffect } from 'react';
-import { RotateCcw, Volume2, Ear } from 'lucide-react';
+import React, { useCallback, useState, useRef, useEffect } from 'react';
+import { Volume2, Ear } from 'lucide-react';
+import type { ClickSoundEngine } from '../lib/clickSound';
 
 export default function SoundReactionTest() {
     const [gameState, setGameState] = useState<'idle' | 'waiting' | 'ready' | 'result'>('idle');
@@ -10,8 +11,10 @@ export default function SoundReactionTest() {
     const [earlyClick, setEarlyClick] = useState(false);
 
     const startTimeRef = useRef<number>(0);
-    const timeoutRef = useRef<NodeJS.Timeout | null>(null);
-    const audioContextRef = useRef<AudioContext | null>(null);
+    const timeoutRef = useRef<number | null>(null);
+    const audioEngineRef = useRef<ClickSoundEngine | null>(null);
+    const audioLoadRef = useRef<Promise<ClickSoundEngine | null> | null>(null);
+    const audioDisposedRef = useRef(false);
 
     useEffect(() => {
         const saved = localStorage.getItem('soundReactionBest');
@@ -19,39 +22,53 @@ export default function SoundReactionTest() {
             const parsed = Number(saved);
             if (Number.isFinite(parsed)) setBestTime(parsed);
         }
+
+        return () => {
+            audioDisposedRef.current = true;
+            const engine = audioEngineRef.current;
+            audioEngineRef.current = null;
+            if (engine) void engine.destroy();
+        };
     }, []);
 
-    const createBeep = () => {
-        if (!audioContextRef.current) {
-            audioContextRef.current = new (window.AudioContext || (window as any).webkitAudioContext)();
-        }
-        
-        const ctx = audioContextRef.current;
-        if (ctx.state === 'suspended') {
-            ctx.resume();
+    const ensureAudio = useCallback(async () => {
+        if (audioDisposedRef.current) return null;
+
+        if (audioEngineRef.current) {
+            await audioEngineRef.current.resume();
+            return audioEngineRef.current;
         }
 
-        const oscillator = ctx.createOscillator();
-        const gainNode = ctx.createGain();
+        if (!audioLoadRef.current) {
+            audioLoadRef.current = import('../lib/clickSound')
+                .then(({ createClickSoundEngine }) => createClickSoundEngine())
+                .catch(() => null);
+        }
 
-        oscillator.type = 'sine';
-        oscillator.frequency.setValueAtTime(800, ctx.currentTime); // 800Hz beep
-        
-        gainNode.gain.setValueAtTime(1, ctx.currentTime);
-        gainNode.gain.exponentialRampToValueAtTime(0.01, ctx.currentTime + 0.3);
+        const engine = await audioLoadRef.current;
+        if (!engine) return null;
 
-        oscillator.connect(gainNode);
-        gainNode.connect(ctx.destination);
+        if (audioDisposedRef.current) {
+            await engine.destroy();
+            return null;
+        }
 
-        oscillator.start();
-        oscillator.stop(ctx.currentTime + 0.3);
-    };
+        audioEngineRef.current = engine;
+        await engine.resume();
+        return engine;
+    }, []);
+
+    const createBeep = useCallback(() => {
+        const engine = audioEngineRef.current;
+        if (engine) {
+            engine.play('soundReaction');
+        } else {
+            void ensureAudio().then((loadedEngine) => loadedEngine?.play('soundReaction'));
+        }
+    }, [ensureAudio]);
 
     const startTest = () => {
-        // Initialize audio context on user interaction
-        if (!audioContextRef.current) {
-            audioContextRef.current = new (window.AudioContext || (window as any).webkitAudioContext)();
-        }
+        void ensureAudio();
         
         setGameState('waiting');
         setEarlyClick(false);
@@ -60,7 +77,7 @@ export default function SoundReactionTest() {
         // Random delay between 2 and 5 seconds
         const delay = Math.floor(Math.random() * 3000) + 2000;
         
-        timeoutRef.current = setTimeout(() => {
+        timeoutRef.current = window.setTimeout(() => {
             setGameState('ready');
             startTimeRef.current = performance.now();
             createBeep();
