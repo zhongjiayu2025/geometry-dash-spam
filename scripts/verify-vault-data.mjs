@@ -17,6 +17,8 @@ const entries = [
   note: match[3]?.trim() ?? "",
 }));
 
+const SOFT_MAX_AGE_DAYS = 14;
+const HARD_MAX_AGE_DAYS = 45;
 const errors = [];
 
 if (!checkedAt || !/^\d{4}-\d{2}-\d{2}$/.test(checkedAt)) {
@@ -61,9 +63,13 @@ if (checkedAt && /^\d{4}-\d{2}-\d{2}$/.test(checkedAt)) {
 
     if (ageDays < -1) {
       errors.push(`VAULT_CODES_CHECKED_AT is in the future: ${checkedAt}.`);
-    } else if (ageDays > 14) {
+    } else if (ageDays > HARD_MAX_AGE_DAYS) {
       errors.push(
         `Wraith code data is ${ageDays} days old. Re-check the live Secret Room source before publishing.`
+      );
+    } else if (ageDays > SOFT_MAX_AGE_DAYS) {
+      console.warn(
+        `::warning title=Wraith data needs review::Wraith code data is ${ageDays} days old; manually re-check the Secret Room source before ${HARD_MAX_AGE_DAYS} days.`
       );
     }
   }

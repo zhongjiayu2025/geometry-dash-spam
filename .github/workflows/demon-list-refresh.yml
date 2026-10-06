@@ -55,7 +55,7 @@ jobs:
       - name: Validate Demon List data
         run: node scripts/verify-demon-data.mjs
 
-      - name: Validate Wraith code freshness
+      - name: Validate Wraith code data
         run: node scripts/verify-vault-data.mjs
 
       - name: Validate Breeze latest release
