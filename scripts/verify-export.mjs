@@ -478,6 +478,7 @@ const supportClientPaths = [
   "RefreshRateTest.tsx",
   "ScrollTest.tsx",
   "SystemInfo.tsx",
+  "SecondaryClickTest.tsx",
 ];
 const supportClientSources = supportClientPaths.map((file) => [
   file,
@@ -543,6 +544,7 @@ for (const [file, source] of supportClientSources) {
 }
 
 const jitterClientSource = supportClientSources.find(([file]) => file === "JitterClickTest.tsx")?.[1] ?? "";
+const secondaryClickClientSource = supportClientSources.find(([file]) => file === "SecondaryClickTest.tsx")?.[1] ?? "";
 if (
   jitterClientSource.includes("Breadcrumbs") ||
   jitterClientSource.includes("import('./Breadcrumbs')") ||
@@ -551,47 +553,50 @@ if (
   infrastructureErrors.push("Jitter breadcrumbs must stay server-rendered outside the client test component");
 }
 
-for (const file of ["JitterClickTest.tsx", "ButterflyClickTest.tsx", "RightClickTest.tsx"]) {
+const secondaryWrappers = [
+  ["JitterClickTest.tsx", 'variant="jitter"'],
+  ["ButterflyClickTest.tsx", 'variant="butterfly"'],
+  ["RightClickTest.tsx", 'variant="rightClick"'],
+];
+
+for (const [file, variantMarker] of secondaryWrappers) {
   const source = supportClientSources.find(([name]) => name === file)?.[1] ?? "";
   if (
-    !source.includes("useState(false)") ||
-    !source.includes("10000 - elapsedMs") ||
-    !source.includes("setInterval(updateTimer, 100)") ||
-    !source.includes("performance.now() - startTimeRef.current >= 10000") ||
-    source.includes("}, 33)")
+    !source.includes('import SecondaryClickTest from "./SecondaryClickTest"') ||
+    !source.includes(variantMarker) ||
+    source.length > 400
   ) {
     infrastructureErrors.push(
-      `${file}: 10-second click tests must keep opt-in audio and exact cutoff timing`
+      `${file}: secondary click route wrapper must stay tiny and delegate to SecondaryClickTest`
     );
   }
 }
 
-for (const file of ["JitterClickTest.tsx", "ButterflyClickTest.tsx", "RightClickTest.tsx"]) {
-  const source = supportClientSources.find(([name]) => name === file)?.[1] ?? "";
-  if (
-    source.includes("setClicks(clicksRef.current)") ||
-    !source.includes("const renderedClicks = active ? clicksRef.current : clicks;")
-  ) {
-    infrastructureErrors.push(
-      `${file}: click hot path must accumulate in refs instead of re-rendering React on every input`
-    );
-  }
+if (
+  !secondaryClickClientSource.includes("useState(false)") ||
+  !secondaryClickClientSource.includes("10000 - elapsedMs") ||
+  !secondaryClickClientSource.includes("window.setInterval(updateTimer, 100)") ||
+  !secondaryClickClientSource.includes("performance.now() - startTimeRef.current >= 10000") ||
+  secondaryClickClientSource.includes("}, 33)") ||
+  secondaryClickClientSource.includes("setClicks(clicksRef.current)") ||
+  !secondaryClickClientSource.includes("const renderedClicks = active ? clicksRef.current : clicks;")
+) {
+  infrastructureErrors.push(
+    "Shared SecondaryClickTest must keep exact 10-second timing and a ref-based click hot path"
+  );
 }
 
-for (const file of ["JitterClickTest.tsx", "ButterflyClickTest.tsx", "RightClickTest.tsx"]) {
-  const source = supportClientSources.find(([name]) => name === file)?.[1] ?? "";
-  if (
-    !source.includes("import('./SecondaryClickFinishedActions')") ||
-    source.includes("navigator.share") ||
-    source.includes("navigator.clipboard") ||
-    source.includes("<RotateCcw") ||
-    source.includes("<Share2") ||
-    source.includes("<Check")
-  ) {
-    infrastructureErrors.push(
-      `${file}: finished actions and sharing must stay in the shared lazy result chunk`
-    );
-  }
+if (
+  !secondaryClickClientSource.includes('dynamic(() => import("./SecondaryClickFinishedActions")') ||
+  secondaryClickClientSource.includes("navigator.share") ||
+  secondaryClickClientSource.includes("navigator.clipboard") ||
+  secondaryClickClientSource.includes("<RotateCcw") ||
+  secondaryClickClientSource.includes("<Share2") ||
+  secondaryClickClientSource.includes("<Check")
+) {
+  infrastructureErrors.push(
+    "Shared SecondaryClickTest must keep finished actions and sharing in the lazy result chunk"
+  );
 }
 
 if (
@@ -604,36 +609,31 @@ if (
   );
 }
 
-for (const file of ["JitterClickTest.tsx", "ButterflyClickTest.tsx", "RightClickTest.tsx"]) {
-  const source = supportClientSources.find(([name]) => name === file)?.[1] ?? "";
-  if (
-    !source.includes("import('../lib/clickSound')") ||
-    source.includes("AudioContext") ||
-    source.includes("createOscillator") ||
-    source.includes("createGain")
-  ) {
-    infrastructureErrors.push(
-      `${file}: click audio must stay in the shared lazy-loaded clickSound chunk`
-    );
-  }
+if (
+  !secondaryClickClientSource.includes('import("../lib/clickSound")') ||
+  secondaryClickClientSource.includes("AudioContext") ||
+  secondaryClickClientSource.includes("createOscillator") ||
+  secondaryClickClientSource.includes("createGain")
+) {
+  infrastructureErrors.push(
+    "Shared SecondaryClickTest audio must stay in the lazy-loaded clickSound chunk"
+  );
 }
 
 if (!clickSoundSource.includes("createClickSoundEngine")) {
   infrastructureErrors.push("Shared clickSound engine is missing its lazy factory");
 }
 
-for (const file of ["JitterClickTest.tsx", "ButterflyClickTest.tsx"]) {
-  const source = supportClientSources.find(([name]) => name === file)?.[1] ?? "";
-  if (
-    !source.includes("pendingTouchRef") ||
-    !source.includes("touch-pan-y") ||
-    !source.includes("onPointerUp={handlePointerUp}") ||
-    !source.includes("onPointerCancel={handlePointerCancel}")
-  ) {
-    infrastructureErrors.push(
-      `${file}: mobile test start must allow scrolling before the run begins`
-    );
-  }
+if (
+  !secondaryClickClientSource.includes("pendingTouchRef") ||
+  !secondaryClickClientSource.includes('"touch-none" : "touch-pan-y"') ||
+  !secondaryClickClientSource.includes("onPointerUp={isRightClick ? undefined : handlePointerUp}") ||
+  !secondaryClickClientSource.includes("onPointerCancel={isRightClick ? undefined : handlePointerCancel}") ||
+  !secondaryClickClientSource.includes("onContextMenu={isRightClick ? handleContextMenu : undefined}")
+) {
+  infrastructureErrors.push(
+    "Shared SecondaryClickTest must preserve mobile scrolling before start and right-click context-menu input"
+  );
 }
 
 const spacebarClientSource = supportClientSources.find(([file]) => file === "SpacebarCounter.tsx")?.[1] ?? "";
@@ -1089,6 +1089,7 @@ const clientSourceBudgets = [
   ["RefreshRateTest.tsx", refreshRateClientSource, 4500],
   ["MouseAccelerationTest.tsx", mouseAccelerationClientSource, 5000],
   ["SoundReactionTest.tsx", soundReactionClientSource, 9000],
+  ["SecondaryClickTest.tsx", secondaryClickClientSource, 16000],
   ["DragClickTest.tsx", dragClientSource, 10000],
   ["SpacebarCounter.tsx", spacebarClientSource, 12000],
   ["PersonalStats.tsx", personalStatsSource, 5000],
