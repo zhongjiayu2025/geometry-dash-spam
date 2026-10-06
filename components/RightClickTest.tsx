@@ -125,7 +125,6 @@ const RightClickTest: React.FC = () => {
       return;
     }
     clicksRef.current += 1;
-    setClicks(clicksRef.current);
   };
 
   const reset = (e?: React.MouseEvent) => {
@@ -163,7 +162,8 @@ const RightClickTest: React.FC = () => {
     };
   }, [active, finished, finishTest]);
 
-  const cps = finished ? (clicks / 10).toFixed(2) : (active ? (clicks / Math.max(0.05, 10 - timeLeft)).toFixed(1) : "0.00");
+  const renderedClicks = active ? clicksRef.current : clicks;
+  const cps = finished ? (clicks / 10).toFixed(2) : (active ? (clicksRef.current / Math.max(0.05, 10 - timeLeft)).toFixed(1) : "0.00");
 
   const shareScore = async (e: React.MouseEvent) => {
     e.stopPropagation();
@@ -211,7 +211,7 @@ const RightClickTest: React.FC = () => {
             
             {active && (
               <>
-                <span className="text-8xl font-display font-black text-white drop-shadow-lg scale-110 transition-transform">{clicks}</span>
+                <span className="text-8xl font-display font-black text-white drop-shadow-lg scale-110 transition-transform">{renderedClicks}</span>
                 <span className="text-emerald-200 mt-4 font-mono uppercase tracking-widest">RMB Clicks</span>
               </>
             )}
