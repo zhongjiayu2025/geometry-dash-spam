@@ -1,4 +1,4 @@
-export type ClickTone = "jitter" | "butterfly" | "rightClick";
+export type ClickTone = "jitter" | "butterfly" | "rightClick" | "spacebar";
 
 export interface ClickSoundEngine {
   resume(): Promise<void>;
@@ -11,6 +11,7 @@ const TONE_FREQUENCIES: Record<ClickTone, number> = {
   jitter: 900,
   butterfly: 850,
   rightClick: 700,
+  spacebar: 400,
 };
 
 class BrowserClickSoundEngine implements ClickSoundEngine {
@@ -39,9 +40,9 @@ class BrowserClickSoundEngine implements ClickSoundEngine {
     const gainNode = this.ctx.createGain();
     const now = this.ctx.currentTime;
 
-    oscillator.type = "sine";
+    oscillator.type = tone === "spacebar" ? "triangle" : "sine";
     oscillator.frequency.setValueAtTime(TONE_FREQUENCIES[tone], now);
-    oscillator.frequency.exponentialRampToValueAtTime(300, now + 0.05);
+    oscillator.frequency.exponentialRampToValueAtTime(tone === "spacebar" ? 100 : 300, now + 0.05);
 
     gainNode.gain.setValueAtTime(0.2, now);
     gainNode.gain.exponentialRampToValueAtTime(0.01, now + 0.05);
