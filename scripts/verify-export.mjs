@@ -646,6 +646,27 @@ if (
   );
 }
 
+if (
+  ghostingClientSource.includes("setPressedKeys") ||
+  ghostingClientSource.includes("setMaxKeys") ||
+  !ghostingClientSource.includes("useState<GhostingState>")
+) {
+  infrastructureErrors.push(
+    "KeyboardGhostingTest must keep pressed keys and max count in one measurement state"
+  );
+}
+
+const rolloverClientSource = supportClientSources.find(([file]) => file === "KeyRolloverTest.tsx")?.[1] ?? "";
+if (
+  rolloverClientSource.includes("setActiveKeys") ||
+  rolloverClientSource.includes("setMaxKeys") ||
+  !rolloverClientSource.includes("useState<RolloverState>")
+) {
+  infrastructureErrors.push(
+    "KeyRolloverTest must keep active keys and max count in one measurement state"
+  );
+}
+
 const doubleClickClientSource = supportClientSources.find(([file]) => file === "DoubleClickTest.tsx")?.[1] ?? "";
 if (
   !doubleClickClientSource.includes("pendingTouchRef") ||
