@@ -983,6 +983,21 @@ if (
   );
 }
 
+const latencyKeyUpStart = keyboardTimingClientSource.indexOf("const handleKeyUp");
+const latencyKeyUpEnd = keyboardTimingClientSource.indexOf("const clearInterruptedPress", latencyKeyUpStart);
+const latencyKeyUpSource = latencyKeyUpStart >= 0 && latencyKeyUpEnd > latencyKeyUpStart
+  ? keyboardTimingClientSource.slice(latencyKeyUpStart, latencyKeyUpEnd)
+  : "";
+if (
+  !latencyKeyUpSource ||
+  latencyKeyUpSource.includes("isInteractiveKeyboardTarget") ||
+  !latencyKeyUpSource.includes("if (startTime === undefined) return;")
+) {
+  infrastructureErrors.push(
+    "KeyboardLatency keyup must complete tracked presses even if focus moved to an interactive control"
+  );
+}
+
 if (
   !keyboardTimingClientSource.includes("type TimingState") ||
   !keyboardTimingClientSource.includes("setTiming((current) => ({") ||

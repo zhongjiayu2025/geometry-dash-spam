@@ -44,13 +44,9 @@ export default function KeyboardLatencyTest() {
         };
 
         const handleKeyUp = (e: KeyboardEvent) => {
-            if (isInteractiveKeyboardTarget(e.target)) return;
             const startTime = pressTimes.current.get(e.code);
 
-            if (startTime === undefined) {
-                setTiming((current) => ({ ...current, activeKey: null }));
-                return;
-            }
+            if (startTime === undefined) return;
 
             const duration = Math.round(performance.now() - startTime);
 
