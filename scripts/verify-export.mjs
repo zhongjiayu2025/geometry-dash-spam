@@ -445,6 +445,7 @@ const secondaryClickFinishedSource = readFileSync(join(process.cwd(), "component
 const dragClickResultSource = readFileSync(join(process.cwd(), "components", "DragClickResult.tsx"), "utf8");
 const spacebarFinishedSource = readFileSync(join(process.cwd(), "components", "SpacebarFinishedActions.tsx"), "utf8");
 const mouseAccelerationResultSource = readFileSync(join(process.cwd(), "components", "MouseAccelerationResult.tsx"), "utf8");
+const soundReactionResultSource = readFileSync(join(process.cwd(), "components", "SoundReactionResult.tsx"), "utf8");
 const demonListSource = readFileSync(join(process.cwd(), "components", "DemonListTable.tsx"), "utf8");
 const demonFilterSource = readFileSync(join(process.cwd(), "components", "DemonListFilterControls.tsx"), "utf8");
 const clickTestHeroSource = readFileSync(join(process.cwd(), "components", "ClickTestHero.tsx"), "utf8");
@@ -1033,6 +1034,17 @@ if (
   );
 }
 
+if (
+  !soundReactionClientSource.includes("dynamic(() => import('./SoundReactionResult')") ||
+  soundReactionClientSource.includes("earlyClick") ||
+  soundReactionClientSource.includes("Too Early!") ||
+  !soundReactionResultSource.includes("Too Early!")
+) {
+  infrastructureErrors.push(
+    "SoundReactionTest result UI must stay in the lazy result chunk with early state derived from reactionTime"
+  );
+}
+
 if (!clickSoundSource.includes('"soundReaction"')) {
   infrastructureErrors.push(
     "Shared clickSound engine must retain the Sound Reaction cue tone"
@@ -1074,7 +1086,7 @@ const clientSourceBudgets = [
   ["ScrollTest.tsx", scrollClientSource, 7500],
   ["RefreshRateTest.tsx", refreshRateClientSource, 4500],
   ["MouseAccelerationTest.tsx", mouseAccelerationClientSource, 5000],
-  ["SoundReactionTest.tsx", soundReactionClientSource, 10000],
+  ["SoundReactionTest.tsx", soundReactionClientSource, 9000],
   ["DragClickTest.tsx", dragClientSource, 10000],
   ["SpacebarCounter.tsx", spacebarClientSource, 12000],
   ["PersonalStats.tsx", personalStatsSource, 13500],
