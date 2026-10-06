@@ -11,7 +11,10 @@ export default function MouseAccelerationTest() {
     const [startX, setStartX] = useState<number | null>(null);
     const [endX, setEndX] = useState<number | null>(null);
     const [returnX, setReturnX] = useState<number | null>(null);
-    const handleMouseClick = (e: React.MouseEvent<HTMLDivElement>) => {
+    const handleMouseClick = (e: React.PointerEvent<HTMLDivElement>) => {
+        if (e.pointerType !== 'mouse') return;
+        if ((e.target as Element).closest('button')) return;
+        e.preventDefault();
         const bounds = e.currentTarget.getBoundingClientRect();
         const relativeX = Math.round(e.clientX - bounds.left);
 
@@ -41,8 +44,8 @@ export default function MouseAccelerationTest() {
                 
                 <div className="relative z-10 flex flex-col items-center">
                     <div 
-                        onClick={handleMouseClick}
-                        className={`w-full min-h-80 rounded-3xl border-2 flex flex-col items-center justify-center p-8 transition-all duration-300 cursor-crosshair select-none relative
+                        onPointerDown={handleMouseClick}
+                        className={`touch-pan-y w-full min-h-80 rounded-3xl border-2 flex flex-col items-center justify-center p-8 transition-all duration-300 cursor-crosshair select-none relative
                             ${state === 'start' ? 'bg-orange-900/10 border-orange-500/20 hover:border-orange-500/40' : ''}
                             ${state === 'moveRight' ? 'bg-blue-900/10 border-blue-500/40' : ''}
                             ${state === 'moveLeft' ? 'bg-green-900/10 border-green-500/40' : ''}
@@ -53,7 +56,7 @@ export default function MouseAccelerationTest() {
                             <div className="text-center animate-in zoom-in-95 duration-300">
                                 <MousePointer2 className="w-16 h-16 text-orange-400 mx-auto mb-4" />
                                 <h3 className="text-2xl font-display font-bold text-white mb-2">Step 1: Set Point A</h3>
-                                <p className="text-slate-400">Position mouse physically on the left. Click here.</p>
+                                <p className="text-slate-400">Desktop mouse only. Position it physically on the left, then click here.</p>
                             </div>
                         )}
 

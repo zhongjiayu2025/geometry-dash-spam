@@ -1679,6 +1679,18 @@ if (
 }
 
 if (
+  !mouseAccelerationClientSource.includes("e.pointerType !== 'mouse'") ||
+  !mouseAccelerationClientSource.includes("onPointerDown={handleMouseClick}") ||
+  !mouseAccelerationClientSource.includes("touch-pan-y") ||
+  !mouseAccelerationClientSource.includes("closest('button')") ||
+  mouseAccelerationClientSource.includes("onClick={handleMouseClick}")
+) {
+  infrastructureErrors.push(
+    "MouseAccelerationTest must ignore touch/pen input and reserve measurements for real mouse pointer events"
+  );
+}
+
+if (
   systemInfoClientSource.includes("<h1") ||
   systemInfoClientSource.includes("A quick diagnostic tool") ||
   !systemInfoPageSource.includes("Browser & System Info") ||
