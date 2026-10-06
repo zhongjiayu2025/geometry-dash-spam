@@ -25,8 +25,6 @@ const CpsTest: React.FC = () => {
   const [selectedDuration, setSelectedDuration] = useState(10); 
   const [timeLeft, setTimeLeft] = useState(10.00);
   
-  const [copied, setCopied] = useState(false);
-  
   const [soundEnabled, setSoundEnabled] = useState(false);
   const [bestScores, setBestScores] = useState<Record<number, number>>({});
   const [runHistory, setRunHistory] = useState<CpsRun[]>([]);
@@ -203,28 +201,10 @@ const CpsTest: React.FC = () => {
     testStartRef.current = 0;
     setClicks(0);
     setTimeLeft(selectedDuration);
-    setCopied(false);
     if (timerRef.current) clearInterval(timerRef.current);
     if (endTimerRef.current) clearTimeout(endTimerRef.current);
   };
 
-  const shareScore = async (e: React.MouseEvent) => {
-     e.stopPropagation();
-     const score = (clicks / selectedDuration).toFixed(2);
-     const text = `I got ${score} CPS in the ${selectedDuration}s Geometry Dash CPS Test.`;
-     const url = 'https://geometrydashspam.cc/cps-test';
-
-     if (typeof navigator !== 'undefined' && navigator.share) {
-        try {
-            await navigator.share({ title: 'CPS Test Result', text: text, url: url });
-            return;
-        } catch (err) { console.error(err); }
-     }
-     
-     navigator.clipboard.writeText(`${text} ${url}`);
-     setCopied(true);
-     setTimeout(() => setCopied(false), 2000);
-  };
 
   const finishTest = useCallback(() => {
     const finalClicks = clicksRef.current;
@@ -286,44 +266,6 @@ const CpsTest: React.FC = () => {
     : active
     ? (clicksRef.current / Math.max(0.05, selectedDuration - timeLeft)).toFixed(1)
     : "0.00";
-
-  const getTimingStats = () => {
-    const times = clickTimesRef.current;
-    if (times.length < 2) {
-      return {
-        averageInterval: null as number | null,
-        peakCps: times.length,
-        consistency: null as number | null,
-      };
-    }
-
-    const intervals = times.slice(1).map((time, index) => time - times[index]);
-    const mean = intervals.reduce((sum, value) => sum + value, 0) / intervals.length;
-    const variance = intervals.reduce((sum, value) => sum + Math.pow(value - mean, 2), 0) / intervals.length;
-    const stdDev = Math.sqrt(variance);
-    const coefficient = mean > 0 ? stdDev / mean : 0;
-
-    let left = 0;
-    let peakCps = 0;
-    for (let right = 0; right < times.length; right++) {
-      while (times[right] - times[left] > 1000) left++;
-      peakCps = Math.max(peakCps, right - left + 1);
-    }
-
-    return {
-      averageInterval: mean,
-      peakCps,
-      consistency: Math.max(0, Math.min(100, 100 - coefficient * 100)),
-    };
-  };
-
-  const timingStats = finished
-    ? getTimingStats()
-    : {
-        averageInterval: null as number | null,
-        peakCps: 0,
-        consistency: null as number | null,
-      };
 
   const currentBest = bestScores[selectedDuration];
 
@@ -443,10 +385,10 @@ const CpsTest: React.FC = () => {
 
                {finished && (
                  <CpsFinishedActions
-                   timingStats={timingStats}
-                   copied={copied}
+                   clickTimes={clickTimesRef.current}
+                   clicks={clicks}
+                   duration={selectedDuration}
                    onReset={() => reset()}
-                   onShare={shareScore}
                  />
                )}
            </div>

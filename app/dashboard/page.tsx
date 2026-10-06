@@ -1,4 +1,5 @@
 import PersonalStats from "../../components/PersonalStats";
+import RelatedTools from "../../components/RelatedTools";
 import { Metadata } from "next";
 
 export const metadata: Metadata = {
@@ -29,6 +30,7 @@ export default function DashboardPage() {
         </p>
       </div>
       <PersonalStats />
+      <RelatedTools currentTool="dashboard" />
     </>
   );
 }

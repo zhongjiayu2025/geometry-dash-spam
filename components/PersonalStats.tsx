@@ -1,8 +1,6 @@
 "use client";
 
 import React, { useState, useEffect } from 'react';
-import dynamic from 'next/dynamic';
-const RelatedTools = dynamic(() => import('./RelatedTools'));
 import Link from 'next/link';
 import { Trophy, MousePointer2, Target, Keyboard, Timer, Activity, RotateCcw, ArrowRight, BrainCircuit } from 'lucide-react';
 
@@ -312,8 +310,6 @@ export default function PersonalStats() {
                 <StatCard title="Spacebar Best" value={stats.spacebarCps?.toFixed(2)} unit="CPS" icon={Timer} href="/spacebar-counter" emptyText="Take the 10s Spacebar test" />
 
             </div>
-            
-            <RelatedTools currentTool="dashboard" />
         </div>
     );
 }
