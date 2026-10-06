@@ -665,6 +665,12 @@ if (
   );
 }
 
+if (!ghostingClientSource.includes("if (event.repeat) return;")) {
+  infrastructureErrors.push(
+    "KeyboardGhostingTest must ignore repeated keydown events that do not change the pressed-key set"
+  );
+}
+
 const rolloverClientSource = supportClientSources.find(([file]) => file === "KeyRolloverTest.tsx")?.[1] ?? "";
 if (
   rolloverClientSource.includes("setActiveKeys") ||
@@ -682,6 +688,12 @@ if (
 ) {
   infrastructureErrors.push(
     "KeyRolloverTest must clear active keys only when the page becomes hidden"
+  );
+}
+
+if (!rolloverClientSource.includes("if (event.repeat) return;")) {
+  infrastructureErrors.push(
+    "KeyRolloverTest must ignore repeated keydown events that do not change the active-key set"
   );
 }
 
