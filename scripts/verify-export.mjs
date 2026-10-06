@@ -636,6 +636,17 @@ if (
 }
 
 if (
+  !clickerSource.includes("pendingTouchRef") ||
+  !clickerSource.includes("touch-pan-y") ||
+  !clickerSource.includes("onPointerUp={handleCubePointerUp}") ||
+  clickerSource.includes("touch-none mx-auto")
+) {
+  infrastructureErrors.push(
+    "Geometry Dash Clicker must allow vertical mobile scrolling and count only intentional taps"
+  );
+}
+
+if (
   clickerSource.includes("localStorage.setItem(STORAGE_KEY, JSON.stringify(state));")
 ) {
   infrastructureErrors.push(
