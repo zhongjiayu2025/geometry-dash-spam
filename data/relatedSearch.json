@@ -18,6 +18,13 @@
     "sources": [
       "https://github.com/ItzZyann/Geometry-Dash-Breeze",
       "https://github.com/ItzZyann/Geometry-Dash-Breeze/releases"
+    ],
+    "latestVersion": "v1.3.1",
+    "levelCount": 10,
+    "platforms": [
+      "GD Lists",
+      "Android",
+      "Windows"
     ]
   }
 }

@@ -2724,6 +2724,16 @@ if (
   );
 }
 
+if (
+  !relatedSearchData.breeze?.latestVersion ||
+  !Number.isInteger(relatedSearchData.breeze?.levelCount) ||
+  !Array.isArray(relatedSearchData.breeze?.platforms)
+) {
+  infrastructureErrors.push(
+    "Geometry Dash Breeze source-checked release facts must stay centralized in relatedSearch.json"
+  );
+}
+
 const metadataErrors = [];
 
 for (const [route, expected] of Object.entries(metadataExpectations)) {

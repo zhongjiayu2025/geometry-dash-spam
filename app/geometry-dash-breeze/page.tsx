@@ -6,8 +6,9 @@ import relatedSearchData from "../../data/relatedSearch.json";
 const relatedPageData = relatedSearchData.breeze;
 const CHECKED_AT = relatedPageData.checkedAt;
 const [REPO_SOURCE, RELEASE_SOURCE] = relatedPageData.sources;
-const LATEST_VERSION = "v1.3.1";
-const LEVEL_COUNT = 10;
+const LATEST_VERSION = relatedPageData.latestVersion;
+const LEVEL_COUNT = relatedPageData.levelCount;
+const PLATFORM_LABEL = relatedPageData.platforms.join(" + ");
 const breezeTitle = `Geometry Dash Breeze | ${LATEST_VERSION}, ${LEVEL_COUNT} Levels & Download`;
 const breezeDescription =
   `Geometry Dash Breeze is a fan-made spinoff with ${LEVEL_COUNT} levels. Check ${LATEST_VERSION}, Android/Windows availability, known issues and the maintained GitHub download source.`;
@@ -126,7 +127,7 @@ export default function GeometryDashBreezePage() {
             <div className="text-xs uppercase tracking-wider text-slate-400">Latest GitHub release checked {CHECKED_AT}</div>
           </div>
           <div className="rounded-xl border border-white/10 bg-slate-900/30 p-4">
-            <div className="text-2xl font-bold text-white">Android + Windows</div>
+            <div className="text-2xl font-bold text-white">{PLATFORM_LABEL}</div>
             <div className="text-xs uppercase tracking-wider text-slate-400">Platforms listed by the maintained repository</div>
           </div>
         </section>
@@ -136,7 +137,7 @@ export default function GeometryDashBreezePage() {
           <div className="grid gap-4 md:grid-cols-3">
             <div className="rounded-xl border border-white/10 bg-slate-900/30 p-4">
               <h3 className="mb-2 font-bold text-white">Available formats</h3>
-              <p className="text-sm leading-6 text-slate-400">The repository lists GD Lists, Android and Windows availability.</p>
+              <p className="text-sm leading-6 text-slate-400">The repository lists {relatedPageData.platforms.join(", ")} availability.</p>
             </div>
             <div className="rounded-xl border border-white/10 bg-slate-900/30 p-4">
               <h3 className="mb-2 font-bold text-white">Android</h3>

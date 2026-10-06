@@ -72,6 +72,45 @@ for (const page of pages) {
   }
 }
 
+  if (page.key === "breeze") {
+    if (
+      typeof config.latestVersion !== "string" ||
+      !/^v\d+\.\d+\.\d+$/.test(config.latestVersion)
+    ) {
+      errors.push("Geometry Dash Breeze: latestVersion must be a semantic vX.Y.Z string.");
+    }
+
+    if (!Number.isInteger(config.levelCount) || config.levelCount <= 0) {
+      errors.push("Geometry Dash Breeze: levelCount must be a positive integer.");
+    }
+
+    if (
+      !Array.isArray(config.platforms) ||
+      config.platforms.length < 1 ||
+      config.platforms.some((item) => typeof item !== "string" || !item.trim())
+    ) {
+      errors.push("Geometry Dash Breeze: platforms must contain one or more non-empty labels.");
+    }
+
+    for (const token of [
+      "relatedPageData.latestVersion",
+      "relatedPageData.levelCount",
+      "relatedPageData.platforms",
+    ]) {
+      if (!source.includes(token)) {
+        errors.push(`Geometry Dash Breeze: page must consume centralized ${token}.`);
+      }
+    }
+
+    if (
+      /const LATEST_VERSION = "v\d+\.\d+\.\d+"/.test(source) ||
+      /const LEVEL_COUNT = \d+/.test(source)
+    ) {
+      errors.push("Geometry Dash Breeze: release facts must not be hard-coded in the page.");
+    }
+  }
+}
+
 if (errors.length) {
   console.error("Related search source verification failed:");
   for (const error of errors) console.error(`- ${error}`);
