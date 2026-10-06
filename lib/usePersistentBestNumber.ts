@@ -1,6 +1,6 @@
 "use client";
 
-import { useCallback, useEffect, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import { readStorage, writeStorage } from "./browserStorage";
 
 export function usePersistentBestNumber(
@@ -8,17 +8,21 @@ export function usePersistentBestNumber(
   mode: "max" | "min" = "max"
 ) {
   const [best, setBest] = useState<number | null>(null);
+  const bestRef = useRef<number | null>(null);
 
   useEffect(() => {
     const syncBest = () => {
       const saved = readStorage(storageKey);
       if (!saved) {
+        bestRef.current = null;
         setBest(null);
         return;
       }
 
       const parsed = Number(saved);
-      setBest(Number.isFinite(parsed) && parsed >= 0 ? parsed : null);
+      const next = Number.isFinite(parsed) && parsed >= 0 ? parsed : null;
+      bestRef.current = next;
+      setBest(next);
     };
 
     const handleStorage = (event: StorageEvent) => {
@@ -31,35 +35,39 @@ export function usePersistentBestNumber(
   }, [storageKey]);
 
   const commitBest = useCallback((value: number) => {
-    setBest((previous) => {
-      if (!Number.isFinite(value) || value < 0) return previous;
+    if (!Number.isFinite(value) || value < 0) return;
 
-      const storedRaw = readStorage(storageKey);
-      const storedNumber = storedRaw === null ? null : Number(storedRaw);
-      const stored =
-        storedNumber !== null && Number.isFinite(storedNumber) && storedNumber >= 0
-          ? storedNumber
-          : null;
+    const storedRaw = readStorage(storageKey);
+    const storedNumber = storedRaw === null ? null : Number(storedRaw);
+    const stored =
+      storedNumber !== null && Number.isFinite(storedNumber) && storedNumber >= 0
+        ? storedNumber
+        : null;
 
-      let baseline = previous;
-      if (stored !== null) {
-        if (baseline === null) {
-          baseline = stored;
-        } else {
-          baseline = mode === "min"
+    let baseline = bestRef.current;
+    if (stored !== null) {
+      baseline =
+        baseline === null
+          ? stored
+          : mode === "min"
             ? Math.min(baseline, stored)
             : Math.max(baseline, stored);
+    }
+
+    if (baseline !== null) {
+      const improves = mode === "min" ? value < baseline : value > baseline;
+      if (!improves) {
+        if (baseline !== bestRef.current) {
+          bestRef.current = baseline;
+          setBest(baseline);
         }
+        return;
       }
+    }
 
-      if (baseline !== null) {
-        const improves = mode === "min" ? value < baseline : value > baseline;
-        if (!improves) return baseline;
-      }
-
-      writeStorage(storageKey, String(value));
-      return value;
-    });
+    bestRef.current = value;
+    writeStorage(storageKey, String(value));
+    setBest(value);
   }, [mode, storageKey]);
 
   return [best, commitBest] as const;

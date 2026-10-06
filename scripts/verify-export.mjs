@@ -1444,10 +1444,22 @@ if (
   (persistentBestSource.match(/readStorage\(storageKey\)/g) ?? []).length < 2 ||
   !persistentBestSource.includes("Math.min(baseline, stored)") ||
   !persistentBestSource.includes("Math.max(baseline, stored)") ||
-  !persistentBestSource.includes("if (!improves) return baseline;")
+  !persistentBestSource.includes("bestRef.current = value") ||
+  !persistentBestSource.includes("setBest(value)") ||
+  !persistentBestSource.includes("if (!improves) {")
 ) {
   infrastructureErrors.push(
     "Persistent best-score commits must re-read storage and preserve any better score written by another tab"
+  );
+}
+
+if (
+  !persistentBestSource.includes("const bestRef = useRef<number | null>(null)") ||
+  !persistentBestSource.includes("bestRef.current = next") ||
+  persistentBestSource.includes("setBest((previous) =>")
+) {
+  infrastructureErrors.push(
+    "Persistent best-score storage writes must stay outside React state updater functions"
   );
 }
 
