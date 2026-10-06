@@ -24,6 +24,20 @@ export const metadata: Metadata = {
 };
 
 export default function RightClickPage() {
+  const schema = {
+    "@context": "https://schema.org",
+    "@type": "WebApplication",
+    name: "Right Click CPS Test",
+    url: "https://geometrydashspam.cc/right-click",
+    description: "Measure right-mouse-button clicks per second with a simple browser-based RMB speed test.",
+    applicationCategory: "UtilityApplication",
+    operatingSystem: "Any",
+    isAccessibleForFree: true,
+    isPartOf: { "@id": "https://geometrydashspam.cc/#website" },
+    publisher: { "@id": "https://geometrydashspam.cc/#organization" },
+    offers: { "@type": "Offer", price: "0", priceCurrency: "USD" },
+  };
+
   return (
     <>
             <Breadcrumbs items={[{ label: "Right Click", href: "/right-click", active: true }]} />
