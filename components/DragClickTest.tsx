@@ -35,7 +35,6 @@ export default function DragClickTest() {
   const [timeLeft, setTimeLeft] = useState(10);
   const [isActive, setIsActive] = useState(false);
   const [isFinished, setIsFinished] = useState(false);
-  const [dragActive, setDragActive] = useState(false);
   const [buckets, setBuckets] = useState<number[]>(Array(10).fill(0));
   const [peakCps, setPeakCps] = useState(0);
   const [bestPeakCps, setBestPeakCps] = useState<number | null>(null);
@@ -84,7 +83,6 @@ export default function DragClickTest() {
     setIsFinished(true);
     setIsActive(false);
     setTimeLeft(0);
-    setDragActive(false);
     setPeakCps(peak);
     setBuckets(getBuckets(times, startTimeRef.current));
     setClicks(clicksRef.current);
@@ -149,10 +147,6 @@ export default function DragClickTest() {
 
     clicksRef.current += 1;
     clickTimesRef.current.push(now);
-    setClicks(clicksRef.current);
-
-    setDragActive(true);
-    window.setTimeout(() => setDragActive(false), 55);
   };
 
   const handlePointerDown = (event: React.PointerEvent<HTMLButtonElement>) => {
@@ -201,13 +195,13 @@ export default function DragClickTest() {
     setTimeLeft(10);
     setIsActive(false);
     setIsFinished(false);
-    setDragActive(false);
     setBuckets(Array(10).fill(0));
     setPeakCps(0);
   };
 
+  const renderedClicks = isActive ? clicksRef.current : clicks;
   const elapsed = isFinished ? 10 : Math.max(0, 10 - timeLeft);
-  const averageCps = elapsed > 0 ? clicks / elapsed : 0;
+  const averageCps = elapsed > 0 ? renderedClicks / elapsed : 0;
   const maxBucket = Math.max(1, ...buckets);
 
   const shareScore = async () => {
@@ -262,21 +256,9 @@ export default function DragClickTest() {
               onPointerDown={handlePointerDown}
               onPointerUp={handlePointerUp}
               onPointerCancel={handlePointerCancel}
-              className={
-                `${isActive ? "touch-none" : "touch-pan-y"} w-full h-64 md:h-80 rounded-3xl border-2 flex flex-col items-center justify-center gap-4 transition-all duration-75 group select-none ` +
-                (dragActive
-                  ? "bg-indigo-600/20 border-indigo-500/50 scale-[0.98]"
-                  : "bg-indigo-900/10 border-indigo-500/20 hover:bg-indigo-800/20 hover:border-indigo-500/30")
-              }
+              className={`${isActive ? "touch-none" : "touch-pan-y"} w-full h-64 md:h-80 rounded-3xl border-2 flex flex-col items-center justify-center gap-4 transition-all duration-75 group select-none bg-indigo-900/10 border-indigo-500/20 hover:bg-indigo-800/20 hover:border-indigo-500/30 active:bg-indigo-600/20 active:border-indigo-500/50 active:scale-[0.98]`}
             >
-              <MousePointer2
-                className={
-                  "w-16 h-16 md:w-20 md:h-20 transition-all duration-75 " +
-                  (dragActive
-                    ? "text-indigo-400 scale-90"
-                    : "text-indigo-500/50 group-hover:text-indigo-400")
-                }
-              />
+              <MousePointer2 className="w-16 h-16 md:w-20 md:h-20 text-indigo-500/50 transition-all duration-75 group-hover:text-indigo-400 group-active:scale-90 group-active:text-indigo-400" />
               <div className="text-center px-5">
                 <h2 className="text-2xl md:text-3xl font-display font-bold text-white">
                   {isActive ? "Keep Drag Clicking" : "Drag Click Here"}
