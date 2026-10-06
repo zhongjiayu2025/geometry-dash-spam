@@ -9,6 +9,7 @@ import type { WaveAudioEngine, WaveSound } from '../lib/waveAudio';
 import type { WaveRuntimeState } from '../lib/waveRuntime';
 import type { WaveRun } from '../lib/waveStorage';
 import { readStorage, writeStorage } from '../lib/browserStorage';
+import { useWaveRecords } from '../lib/useWaveRecords';
 
 type WaveRenderer = typeof import('../lib/waveRenderer').renderWaveFrame;
 type WaveRuntime = typeof import('../lib/waveRuntime');
@@ -35,15 +36,15 @@ const GameCanvas: React.FC<GameCanvasProps> = memo(({ difficulty, status, onStat
   const [canFullscreen, setCanFullscreen] = useState<boolean>(false);
   const [reduceMotion, setReduceMotion] = useState<boolean>(false);
 
-  const [highScore, setHighScore] = useState<number>(0);
-  const [isNewBest, setIsNewBest] = useState<boolean>(false);
-  const [recentRuns, setRecentRuns] = useState<WaveRun[]>([]);
+  const {
+    highScore, isNewBest, recentRuns, highScoreRef,
+    setHighScore, setIsNewBest, setRecentRuns,
+  } = useWaveRecords(difficulty.id, isEndless, isMini);
   const lastHudUpdateRef = useRef<number>(0);
   const timeDisplayRef = useRef<HTMLDivElement>(null);
   const progressRef = useRef<HTMLDivElement>(null);
   const runRecordedRef = useRef(false);
   const shareOpenRef = useRef(false);
-  const highScoreRef = useRef(0);
   
   useEffect(() => {
     lowVisualsRef.current =
@@ -61,38 +62,6 @@ const GameCanvas: React.FC<GameCanvasProps> = memo(({ difficulty, status, onStat
       (savedMotion === null && window.matchMedia('(prefers-reduced-motion: reduce)').matches)
     );
   }, []);
-
-  useEffect(() => {
-    highScoreRef.current = 0;
-    setHighScore(0);
-    setRecentRuns([]);
-    setIsNewBest(false);
-
-    let cancelled = false;
-    const syncWaveRecords = () => {
-      void import('../lib/waveStorage').then(({ loadWaveRecords }) => {
-        if (cancelled) return;
-        const records = loadWaveRecords({
-          difficultyId: difficulty.id,
-          isEndless,
-          isMini,
-        });
-        highScoreRef.current = records.highScore;
-        setHighScore(records.highScore);
-        setRecentRuns(records.recentRuns);
-        setIsNewBest(false);
-      });
-    };
-
-    const handleStorage = () => syncWaveRecords();
-
-    syncWaveRecords();
-    window.addEventListener('storage', handleStorage);
-    return () => {
-      cancelled = true;
-      window.removeEventListener('storage', handleStorage);
-    };
-  }, [difficulty.id, isEndless, isMini]);
 
   // Handle Fullscreen Change Events
   useEffect(() => {

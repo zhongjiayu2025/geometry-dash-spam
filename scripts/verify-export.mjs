@@ -442,6 +442,7 @@ const waveAudioSource = readFileSync(join(process.cwd(), "lib", "waveAudio.ts"),
 const waveRendererSource = readFileSync(join(process.cwd(), "lib", "waveRenderer.ts"), "utf8");
 const waveRuntimeSource = readFileSync(join(process.cwd(), "lib", "waveRuntime.ts"), "utf8");
 const waveStorageSource = readFileSync(join(process.cwd(), "lib", "waveStorage.ts"), "utf8");
+const waveRecordsHookSource = readFileSync(join(process.cwd(), "lib", "useWaveRecords.ts"), "utf8");
 const waveRunOverlaysSource = readFileSync(join(process.cwd(), "components", "WaveRunOverlays.tsx"), "utf8");
 const waveCanvasHudSource = readFileSync(join(process.cwd(), "components", "WaveCanvasHud.tsx"), "utf8");
 const waveShareModalSource = readFileSync(join(process.cwd(), "components", "WaveShareModal.tsx"), "utf8");
@@ -1939,11 +1940,14 @@ if (
   !waveStorageSource.includes("...readWaveRuns(scope)") ||
   !waveStorageSource.includes("const seen = new Set<string>()") ||
   !waveStorageSource.includes("return merged") ||
-  !gameCanvasSource.includes("window.addEventListener('storage', handleStorage)") ||
-  !gameCanvasSource.includes("setRecentRuns(merged)")
+  !gameCanvasSource.includes("useWaveRecords(difficulty.id, isEndless, isMini)") ||
+  !gameCanvasSource.includes("setRecentRuns(merged)") ||
+  !waveRecordsHookSource.includes('window.addEventListener("storage", handleStorage)') ||
+  !waveRecordsHookSource.includes("event.key === keys?.best") ||
+  !waveRecordsHookSource.includes("event.key === keys?.runs")
 ) {
   infrastructureErrors.push(
-    "Wave records must merge cross-tab history, preserve monotonic best scores, and resync the active tool on storage updates"
+    "Wave records must merge cross-tab history while useWaveRecords scopes live storage synchronization"
   );
 }
 
@@ -1976,10 +1980,11 @@ if (
   (gameCanvasSource.match(/document\.addEventListener\('visibilitychange'/g) ?? []).length !== 1 ||
   (gameCanvasSource.match(/readStorage\('gd_spam_muted'\)/g) ?? []).length !== 1 ||
   !gameCanvasSource.includes("useEffect(() => {\n    lowVisualsRef.current") ||
-  !gameCanvasSource.includes("useEffect(() => {\n    highScoreRef.current = 0")
+  !waveRecordsHookSource.includes("highScoreRef.current = 0") ||
+  !waveRecordsHookSource.includes("setRecentRuns([])")
 ) {
   infrastructureErrors.push(
-    "GameCanvas preferences, scoped records, and visibility/audio synchronization must stay separated with one visibility listener"
+    "GameCanvas preferences and audio effects must stay separate while scoped record synchronization stays in useWaveRecords"
   );
 }
 
