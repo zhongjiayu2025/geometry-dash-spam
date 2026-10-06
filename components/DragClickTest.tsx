@@ -1,7 +1,10 @@
 "use client";
 
 import React, { useCallback, useEffect, useRef, useState } from "react";
-import { Check, MousePointer2, RotateCcw, Share2, Trophy } from "lucide-react";
+import dynamic from "next/dynamic";
+import { MousePointer2, Trophy } from "lucide-react";
+
+const DragClickResult = dynamic(() => import("./DragClickResult"), { ssr: false });
 
 const TEST_MS = 10000;
 
@@ -38,7 +41,6 @@ export default function DragClickTest() {
   const [buckets, setBuckets] = useState<number[]>(Array(10).fill(0));
   const [peakCps, setPeakCps] = useState(0);
   const [bestPeakCps, setBestPeakCps] = useState<number | null>(null);
-  const [copied, setCopied] = useState(false);
 
   const timerRef = useRef<number | null>(null);
   const endTimerRef = useRef<number | null>(null);
@@ -202,22 +204,7 @@ export default function DragClickTest() {
   const renderedClicks = isActive ? clicksRef.current : clicks;
   const elapsed = isFinished ? 10 : Math.max(0, 10 - timeLeft);
   const averageCps = elapsed > 0 ? renderedClicks / elapsed : 0;
-  const maxBucket = Math.max(1, ...buckets);
 
-  const shareScore = async () => {
-    const text = `I recorded ${peakCps} peak 1-second CPS and ${(clicks / 10).toFixed(2)} average CPS on the Geometry Dash Drag Click Test.`;
-    const url = "https://geometrydashspam.cc/drag-click";
-
-    if (typeof navigator !== "undefined" && navigator.share) {
-      try {
-        await navigator.share({ title: "Drag Click Test", text, url });
-      } catch {}
-    } else {
-      await navigator.clipboard.writeText(`${text} ${url}`);
-      setCopied(true);
-      window.setTimeout(() => setCopied(false), 2000);
-    }
-  };
 
   return (
     <div className="w-full max-w-4xl mx-auto px-4 md:px-0">
@@ -269,61 +256,12 @@ export default function DragClickTest() {
               </div>
             </button>
           ) : (
-            <div className="w-full">
-              <div className="bg-indigo-900/20 border border-indigo-500/30 rounded-3xl p-8 text-center">
-                <h2 className="text-2xl text-indigo-200 font-bold mb-5">Test Complete</h2>
-
-                <div className="grid gap-3 sm:grid-cols-3 mb-6">
-                  <div className="rounded-xl bg-black/25 p-4">
-                    <div className="text-xs uppercase tracking-wider text-slate-500">Average CPS</div>
-                    <div className="text-3xl font-display font-bold text-white">{(clicks / 10).toFixed(2)}</div>
-                  </div>
-                  <div className="rounded-xl bg-black/25 p-4">
-                    <div className="text-xs uppercase tracking-wider text-slate-500">Peak 1s CPS</div>
-                    <div className="text-3xl font-display font-bold text-indigo-300">{peakCps}</div>
-                  </div>
-                  <div className="rounded-xl bg-black/25 p-4">
-                    <div className="text-xs uppercase tracking-wider text-slate-500">Total clicks</div>
-                    <div className="text-3xl font-display font-bold text-white">{clicks}</div>
-                  </div>
-                </div>
-
-                <div className="w-full h-28 flex items-end gap-1 mb-6 opacity-90" aria-label="Clicks registered in each second">
-                  {buckets.map((value, index) => (
-                    <div
-                      key={index}
-                      className="flex-1 bg-indigo-500/30 rounded-t-sm relative group"
-                      style={{ height: `${Math.max(5, (value / maxBucket) * 100)}%` }}
-                    >
-                      <div className="absolute bottom-full left-1/2 -translate-x-1/2 mb-1 opacity-0 group-hover:opacity-100 bg-slate-800 text-xs text-white px-2 py-1 rounded whitespace-nowrap">
-                        Second {index + 1}: {value}
-                      </div>
-                    </div>
-                  ))}
-                </div>
-
-                <p className="text-sm leading-6 text-slate-400 max-w-xl mx-auto mb-7">
-                  Peak CPS is the largest number of registered inputs found in any rolling one-second window. Browser event behavior can differ by device and operating system.
-                </p>
-
-                <div className="flex justify-center gap-2">
-                  <button
-                    onClick={resetTest}
-                    className="px-8 py-4 bg-indigo-600 hover:bg-indigo-500 text-white font-bold rounded-xl transition-colors flex items-center gap-2"
-                  >
-                    <RotateCcw className="w-5 h-5" /> Try Again
-                  </button>
-                  <button
-                    onClick={shareScore}
-                    className="p-4 bg-slate-800 text-white rounded-xl flex items-center justify-center hover:bg-slate-700 transition-colors border border-white/10"
-                    title={copied ? "Copied" : "Share your score"}
-                    aria-label={copied ? "Result copied" : "Share drag-click result"}
-                  >
-                    {copied ? <Check className="w-5 h-5 text-green-400" /> : <Share2 className="w-5 h-5" />}
-                  </button>
-                </div>
-              </div>
-            </div>
+            <DragClickResult
+              clicks={clicks}
+              peakCps={peakCps}
+              buckets={buckets}
+              onReset={resetTest}
+            />
           )}
         </div>
       </div>
