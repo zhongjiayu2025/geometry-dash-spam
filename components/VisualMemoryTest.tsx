@@ -9,6 +9,7 @@ import { useManagedTimeout } from '../lib/useManagedTimeout';
 type MemoryTestRuntime = typeof import('../lib/memoryTestRuntime');
 
 const VisualMemoryGameOver = dynamic(() => import('./VisualMemoryGameOver'), { ssr: false });
+const VisualMemoryGrid = dynamic(() => import('./VisualMemoryGrid'), { ssr: false });
 
 
 export default function VisualMemoryTest() {
@@ -153,49 +154,14 @@ export default function VisualMemoryTest() {
                         )}
 
                         {gameState !== 'idle' && (
-                            <div 
-                                className="grid gap-2 p-2 bg-slate-900 rounded-2xl border border-white/10"
-                                style={{ 
-                                    gridTemplateColumns: `repeat(${gridSize}, minmax(0, 1fr))`,
-                                    width: '100%',
-                                    maxWidth: `${Math.max(300, gridSize * 80)}px`
-                                }}
-                            >
-                                {Array.from({ length: gridSize * gridSize }).map((_, i) => {
-                                    const isActive = activeSquares.includes(i);
-                                    const isClicked = clickedSquares.includes(i);
-                                    const isMissed = missedSquares.includes(i);
-                                    
-                                    let bgColor = 'bg-slate-800'; // Default
-                                    
-                                    if (gameState === 'showing' && isActive) {
-                                        bgColor = 'bg-white shadow-[0_0_15px_rgba(255,255,255,0.8)]'; // Flash white
-                                    } else if (gameState === 'failed') {
-                                        if (isActive && !isClicked) bgColor = 'bg-white/50 border border-white'; // Reveal missed
-                                        if (isClicked) bgColor = 'bg-fuchsia-500'; // Correctly clicked
-                                        if (isMissed) bgColor = 'bg-red-500 shadow-[0_0_15px_rgba(239,68,68,0.8)]'; // Wrongly clicked
-                                    } else if (isClicked) {
-                                        bgColor = 'bg-white shadow-[0_0_15px_rgba(255,255,255,0.8)]'; // Reveal correct
-                                    } else if (isMissed) {
-                                        bgColor = 'bg-red-500'; // Show mistake temporarily (if not failed yet)
-                                    } else {
-                                        bgColor = 'bg-slate-800 hover:bg-slate-700 cursor-pointer border border-white/5'; // Playable state
-                                    }
-                                    
-                                    // If playing, we don't show active squares, they are hidden in 'slate-800'
-                                    
-                                    return (
-                                        <button
-                                            key={i}
-                                            type="button"
-                                            onClick={() => handleSquareClick(i)}
-                                            disabled={gameState !== 'playing'}
-                                            aria-label={`Memory square ${i + 1}`}
-                                            className={`aspect-square rounded-xl transition-all duration-300 ${bgColor} ${gameState === 'playing' ? 'active:scale-95 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-fuchsia-400' : ''}`}
-                                        />
-                                    );
-                                })}
-                            </div>
+                            <VisualMemoryGrid
+                                gameState={gameState}
+                                gridSize={gridSize}
+                                activeSquares={activeSquares}
+                                clickedSquares={clickedSquares}
+                                missedSquares={missedSquares}
+                                onSquareClick={handleSquareClick}
+                            />
                         )}
                     </div>
                 </div>
