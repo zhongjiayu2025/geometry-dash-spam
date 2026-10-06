@@ -2,8 +2,6 @@
 "use client";
 
 import React, { useState, useEffect, useRef } from 'react';
-import dynamic from 'next/dynamic';
-const Breadcrumbs = dynamic(() => import('./Breadcrumbs'));
 import { MousePointer2, RotateCcw, Timer, Zap, AlertTriangle, CheckCircle, Crosshair, Trophy, BookOpen, ArrowRight, Volume2, VolumeX, Share2, Check } from 'lucide-react';
 
 import Link from 'next/link';
@@ -140,10 +138,7 @@ const JitterClickTest: React.FC = () => {
 
   return (
     <div className="w-full max-w-4xl mx-auto animate-in slide-in-from-bottom-4 duration-500">
-      
-      <Breadcrumbs items={[{ label: 'Jitter Click', href: '/jitter-click', active: true }]} />
-
-      <div className="text-center mb-8">
+<div className="text-center mb-8">
          <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-orange-500/10 border border-orange-500/20 text-xs font-mono text-orange-400 mb-4">
             <Zap className="w-3 h-3" /> CLICKING TECHNIQUE
          </div>
