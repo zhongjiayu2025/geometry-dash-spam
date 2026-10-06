@@ -138,6 +138,7 @@ export default function VisualMemoryTest() {
                                 </p>
                                 <button
                                     onPointerEnter={preloadRuntime}
+                                    onPointerDown={preloadRuntime}
                                     onFocus={preloadRuntime}
                                     onClick={startGame}
                                     className="px-8 py-3 bg-fuchsia-600 hover:bg-fuchsia-500 text-white font-bold rounded-lg transition-colors flex items-center gap-2 shadow-lg"
@@ -184,10 +185,13 @@ export default function VisualMemoryTest() {
                                     // If playing, we don't show active squares, they are hidden in 'slate-800'
                                     
                                     return (
-                                        <div
+                                        <button
                                             key={i}
+                                            type="button"
                                             onClick={() => handleSquareClick(i)}
-                                            className={`aspect-square rounded-xl transition-all duration-300 ${bgColor} ${gameState === 'playing' ? 'active:scale-95' : ''}`}
+                                            disabled={gameState !== 'playing'}
+                                            aria-label={`Memory square ${i + 1}`}
+                                            className={`aspect-square rounded-xl transition-all duration-300 ${bgColor} ${gameState === 'playing' ? 'active:scale-95 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-fuchsia-400' : ''}`}
                                         />
                                     );
                                 })}

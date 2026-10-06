@@ -147,6 +147,7 @@ export default function ChimpTest() {
                                 </p>
                                 <button
                                     onPointerEnter={preloadRuntime}
+                                    onPointerDown={preloadRuntime}
                                     onFocus={preloadRuntime}
                                     onClick={startGame}
                                     className="px-8 py-3 bg-indigo-600 hover:bg-indigo-500 text-white font-bold rounded-lg transition-colors flex items-center gap-2 shadow-lg"
