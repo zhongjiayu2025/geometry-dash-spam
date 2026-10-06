@@ -1,14 +1,16 @@
 "use client";
 
 import React, { useState, useEffect } from 'react';
-import { Brain, RotateCcw, Play, Trophy, Share2, Check } from 'lucide-react';
+import dynamic from 'next/dynamic';
+import { Brain, Play, Trophy } from 'lucide-react';
+
+const VisualMemoryGameOver = dynamic(() => import('./VisualMemoryGameOver'), { ssr: false });
 
 
 export default function VisualMemoryTest() {
     const [gameState, setGameState] = useState<'idle' | 'showing' | 'playing' | 'finished' | 'failed'>('idle');
     const [level, setLevel] = useState(1);
     const [bestScore, setBestScore] = useState<number | null>(null);
-    const [copied, setCopied] = useState(false);
     const [strikes, setStrikes] = useState(0);
     const [gridSize, setGridSize] = useState(3); // 3x3 initially
     const [activeSquares, setActiveSquares] = useState<number[]>([]);
@@ -106,19 +108,6 @@ export default function VisualMemoryTest() {
         }
     };
 
-    const shareScore = async () => {
-        const text = `I reached Level ${level} on the Geometry Dash Visual Memory Test! Can you beat me?`;
-        const url = `https://geometrydashspam.cc/visual-memory`;
-        if (typeof navigator !== 'undefined' && navigator.share) {
-            try {
-                await navigator.share({ title: 'Visual Memory Test', text, url });
-            } catch(e) { console.log(e); }
-        } else {
-            navigator.clipboard.writeText(`${text} ${url}`);
-            setCopied(true);
-            setTimeout(() => setCopied(false), 2000);
-        }
-    };
 
     return (
         <div className="w-full max-w-4xl mx-auto px-4 md:px-0">
@@ -168,30 +157,7 @@ export default function VisualMemoryTest() {
                         )}
 
                         {gameState === 'idle' && strikes >= 3 && (
-                            <div className="text-center animate-in zoom-in-95 duration-500">
-                                <h3 className="text-3xl font-bold text-red-400 mb-2">OUT OF CHANCES</h3>
-                                <p className="text-white text-xl mb-6">You survived to Level {level}</p>
-                                {bestScore !== null && (
-                                    <div className="flex items-center justify-center gap-2 mb-6 text-yellow-400 font-bold">
-                                        <Trophy className="w-4 h-4" /> Personal Best: {bestScore}
-                                    </div>
-                                )}
-                                <div className="flex items-center gap-2 justify-center">
-                                    <button
-                                        onClick={startGame}
-                                        className="px-8 py-3 bg-white hover:bg-slate-200 text-fuchsia-900 font-bold rounded-lg transition-colors inline-flex items-center gap-2 shadow-lg"
-                                    >
-                                        <RotateCcw className="w-5 h-5" /> Try Again
-                                    </button>
-                                    <button
-                                        onClick={shareScore}
-                                        className="p-3 bg-fuchsia-900/50 text-white rounded-lg flex items-center justify-center hover:bg-fuchsia-800 transition-colors border border-fuchsia-500/30"
-                                        title="Share your score"
-                                    >
-                                        {copied ? <Check className="w-5 h-5 text-green-400" /> : <Share2 className="w-5 h-5" />}
-                                    </button>
-                                </div>
-                            </div>
+                            <VisualMemoryGameOver level={level} bestScore={bestScore} onRestart={startGame} />
                         )}
 
                         {gameState !== 'idle' && (

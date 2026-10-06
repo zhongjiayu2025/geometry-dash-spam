@@ -1,7 +1,10 @@
 "use client";
 
 import React, { useState, useRef, useEffect } from 'react';
-import { Timer, AlertCircle, Play, Eye, Trophy, Share2, Check } from 'lucide-react';
+import dynamic from 'next/dynamic';
+import { Timer, AlertCircle, Play, Trophy } from 'lucide-react';
+
+const ReactionResult = dynamic(() => import('./ReactionResult'), { ssr: false });
 
 
 type TestState = 'idle' | 'waiting' | 'ready' | 'result' | 'early';
@@ -21,7 +24,6 @@ const ReactionTest: React.FC = () => {
     return () => window.removeEventListener('keydown', handleKeyDown);
   }, [state]);
 
-  const [copied, setCopied] = useState(false);
   const timeoutRef = useRef<number | null>(null);
   const startTimeRef = useRef<number>(0);
 
@@ -64,20 +66,6 @@ const ReactionTest: React.FC = () => {
     }
   };
 
-  const shareScore = async (e: React.MouseEvent) => {
-    e.stopPropagation();
-    const text = `I got a reaction time of ${result}ms on the Geometry Dash Reaction Test! Can you beat me?`;
-    const url = `https://geometrydashspam.cc/reaction-test`;
-    if (typeof navigator !== 'undefined' && navigator.share) {
-        try {
-            await navigator.share({ title: 'Reaction Time Test', text, url });
-        } catch(e) { console.log(e); }
-    } else {
-        navigator.clipboard.writeText(`${text} ${url}`);
-        setCopied(true);
-        setTimeout(() => setCopied(false), 2000);
-    }
-  };
 
   return (
     <div className="w-full max-w-4xl mx-auto animate-in slide-in-from-bottom-4 duration-500">
@@ -122,27 +110,7 @@ const ReactionTest: React.FC = () => {
         )}
 
         {state === 'result' && (
-          <>
-            <div className="text-8xl font-display font-black text-white mb-2 text-glow">{result} ms</div>
-            <p className="text-slate-300 text-xl mb-6">Your reaction time</p>
-            {bestScore && (
-              <div className="flex items-center justify-center gap-2 text-yellow-400 font-bold mb-8">
-                <Trophy className="w-4 h-4" /> Best: {bestScore} ms
-              </div>
-            )}
-            <div className="flex items-center gap-2">
-              <div className="px-6 py-3 bg-slate-700 rounded-full text-white font-bold hover:bg-slate-600 transition-colors">
-                Click to Try Again
-              </div>
-              <button
-                onMouseDown={shareScore}
-                className="p-3 bg-slate-800 text-white rounded-full flex items-center justify-center hover:bg-slate-700 transition-colors border border-white/10 relative z-10"
-                title="Share your score"
-              >
-                {copied ? <Check className="w-5 h-5 text-green-400" /> : <Share2 className="w-5 h-5" />}
-              </button>
-            </div>
-          </>
+          <ReactionResult result={result} bestScore={bestScore} />
         )}
 
         {state === 'early' && (
@@ -170,39 +138,6 @@ const ReactionTest: React.FC = () => {
          </div>
       </div>
 
-      <section className="space-y-8 pb-12">
-          <div className="bg-slate-900/40 border border-white/5 rounded-2xl p-8 md:p-12">
-             <h2 className="text-3xl font-display font-bold text-white mb-6 flex items-center gap-3">
-                 <Eye className="w-8 h-8 text-green-500"/> How to use this reaction test
-             </h2>
-             <div className="space-y-4 text-slate-300 leading-relaxed">
-               <p>
-                 This page measures the time between a browser visual cue and the input event that reaches the page. The result includes your response plus delay from the display, input device, operating system and browser.
-               </p>
-               <p>
-                 Use several attempts on the same setup and compare your own results. A single unusually fast or slow run is less useful than a repeatable range.
-               </p>
-               <p>
-                 Refresh rate can change how quickly a visual cue becomes visible, but the display frame interval is not the same thing as total end-to-end input latency.
-               </p>
-             </div>
-          </div>
-
-          <div className="grid gap-4 md:grid-cols-3">
-            <div className="rounded-xl border border-white/10 bg-slate-900/30 p-5">
-              <h3 className="font-bold text-white mb-2">Keep the setup fixed</h3>
-              <p className="text-sm leading-6 text-slate-400">Compare runs using the same device, browser, display and input method.</p>
-            </div>
-            <div className="rounded-xl border border-white/10 bg-slate-900/30 p-5">
-              <h3 className="font-bold text-white mb-2">Use multiple attempts</h3>
-              <p className="text-sm leading-6 text-slate-400">Your local best is useful, but repeated results are more informative than one outlier.</p>
-            </div>
-            <div className="rounded-xl border border-white/10 bg-slate-900/30 p-5">
-              <h3 className="font-bold text-white mb-2">Treat it as a browser test</h3>
-              <p className="text-sm leading-6 text-slate-400">The number is not a laboratory measurement of your nervous system or one hardware component.</p>
-            </div>
-          </div>
-</section>
 
     </div>
   );
