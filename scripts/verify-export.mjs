@@ -522,7 +522,11 @@ for (const [file, source] of supportClientSources) {
 }
 
 const jitterClientSource = supportClientSources.find(([file]) => file === "JitterClickTest.tsx")?.[1] ?? "";
-if (jitterClientSource.includes("Breadcrumbs") || jitterClientSource.includes("next/dynamic")) {
+if (
+  jitterClientSource.includes("Breadcrumbs") ||
+  jitterClientSource.includes("import('./Breadcrumbs')") ||
+  jitterClientSource.includes('import("./Breadcrumbs")')
+) {
   infrastructureErrors.push("Jitter breadcrumbs must stay server-rendered outside the client test component");
 }
 
