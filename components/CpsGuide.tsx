@@ -4,7 +4,7 @@ import RelatedTools from "./RelatedTools";
 
 export default function CpsGuide() {
   return (
-    <>
+    <div className="defer-render">
       <section className="mb-12 rounded-2xl border border-blue-500/20 bg-blue-900/10 p-6 md:p-8">
         <h2 className="mb-4 text-2xl font-display font-bold text-white">How is CPS Calculated?</h2>
         <div className="flex flex-col items-center gap-8 md:flex-row">
@@ -56,6 +56,6 @@ export default function CpsGuide() {
       </Link>
 
       <RelatedTools currentTool="cps" />
-    </>
+    </div>
   );
 }
