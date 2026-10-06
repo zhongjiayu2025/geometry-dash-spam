@@ -4,6 +4,7 @@
 import React, { useState, useEffect, useRef, useCallback } from 'react';
 import { MousePointer2, RotateCcw, Timer, Check, Clock, Trophy, Share2, ArrowRight, Volume2, VolumeX } from 'lucide-react';
 import Link from 'next/link';
+import type { ClickSoundEngine } from '../lib/clickSound';
 
 interface CpsRun {
   duration: number;
@@ -11,25 +12,6 @@ interface CpsRun {
   cps: number;
   timestamp: number;
 }
-
-const playClickSound = (audioCtx: AudioContext | null) => {
-  if (!audioCtx) return;
-  const oscillator = audioCtx.createOscillator();
-  const gainNode = audioCtx.createGain();
-  
-  oscillator.type = 'sine';
-  oscillator.frequency.setValueAtTime(800, audioCtx.currentTime);
-  oscillator.frequency.exponentialRampToValueAtTime(300, audioCtx.currentTime + 0.05);
-  
-  gainNode.gain.setValueAtTime(0.2, audioCtx.currentTime);
-  gainNode.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + 0.05);
-  
-  oscillator.connect(gainNode);
-  gainNode.connect(audioCtx.destination);
-  
-  oscillator.start();
-  oscillator.stop(audioCtx.currentTime + 0.05);
-};
 
 const CpsTest: React.FC = () => {
   const [active, setActive] = useState(false);
@@ -48,7 +30,9 @@ const CpsTest: React.FC = () => {
   
   const timerRef = useRef<number | null>(null);
   const endTimerRef = useRef<number | null>(null);
-  const audioCtxRef = useRef<AudioContext | null>(null);
+  const audioEngineRef = useRef<ClickSoundEngine | null>(null);
+  const audioLoadRef = useRef<Promise<ClickSoundEngine | null> | null>(null);
+  const audioDisposedRef = useRef(false);
   const clicksRef = useRef(0);
   const testStartRef = useRef(0);
   const clickTimesRef = useRef<number[]>([]);
@@ -74,11 +58,14 @@ const CpsTest: React.FC = () => {
       }
     }
 
+  }, []);
+
+  useEffect(() => {
     return () => {
-      if (audioCtxRef.current) {
-        void audioCtxRef.current.close();
-        audioCtxRef.current = null;
-      }
+      audioDisposedRef.current = true;
+      const engine = audioEngineRef.current;
+      audioEngineRef.current = null;
+      if (engine) void engine.destroy();
     };
   }, []);
 
@@ -117,32 +104,54 @@ const CpsTest: React.FC = () => {
     setClicks(clicksRef.current);
   };
 
+  const ensureAudio = useCallback(async () => {
+    if (audioDisposedRef.current) return null;
+
+    if (audioEngineRef.current) {
+      await audioEngineRef.current.resume();
+      return audioEngineRef.current;
+    }
+
+    if (!audioLoadRef.current) {
+      audioLoadRef.current = import('../lib/clickSound')
+        .then(({ createClickSoundEngine }) => createClickSoundEngine())
+        .catch(() => null);
+    }
+
+    const engine = await audioLoadRef.current;
+    if (!engine) return null;
+
+    if (audioDisposedRef.current) {
+      await engine.destroy();
+      return null;
+    }
+
+    audioEngineRef.current = engine;
+    await engine.resume();
+    return engine;
+  }, []);
+
   const toggleSound = () => {
     const next = !soundEnabled;
     setSoundEnabled(next);
     localStorage.setItem('cpsSoundEnabled', String(next));
 
-    if (!next && audioCtxRef.current?.state === 'running') {
-      void audioCtxRef.current.suspend();
+    if (next) {
+      void ensureAudio();
+    } else if (audioEngineRef.current) {
+      void audioEngineRef.current.suspend();
     }
   };
 
   const playInputSound = () => {
-    if (!soundEnabled || typeof window === 'undefined') return;
+    if (!soundEnabled) return;
 
-    if (!audioCtxRef.current) {
-      const AudioContextClass =
-        window.AudioContext || (window as typeof window & { webkitAudioContext?: typeof AudioContext }).webkitAudioContext;
-      if (AudioContextClass) {
-        audioCtxRef.current = new AudioContextClass();
-      }
+    const engine = audioEngineRef.current;
+    if (engine) {
+      engine.play('cps');
+    } else {
+      void ensureAudio().then((loadedEngine) => loadedEngine?.play('cps'));
     }
-
-    if (audioCtxRef.current?.state === 'suspended') {
-      void audioCtxRef.current.resume();
-    }
-
-    playClickSound(audioCtxRef.current);
   };
 
   const handlePointerDown = (e: React.PointerEvent<HTMLButtonElement>) => {
