@@ -648,6 +648,19 @@ if (
   );
 }
 
+if (
+  !doubleClickClientSource.includes("type MeasurementState") ||
+  !doubleClickClientSource.includes("setMeasurement((current) => ({") ||
+  doubleClickClientSource.includes("setClicks(") ||
+  doubleClickClientSource.includes("setRapidIntervals(") ||
+  doubleClickClientSource.includes("setLastDelta(") ||
+  doubleClickClientSource.includes("setHistory(")
+) {
+  infrastructureErrors.push(
+    "DoubleClickTest must merge per-input measurement updates into one React state transition"
+  );
+}
+
 const keyboardTimingClientSource = supportClientSources.find(([file]) => file === "KeyboardLatencyTest.tsx")?.[1] ?? "";
 if (
   !keyboardTimingClientSource.includes("clearInterruptedPress") ||
