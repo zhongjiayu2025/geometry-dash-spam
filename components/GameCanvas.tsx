@@ -8,9 +8,11 @@ import { WIN_TIME_MS } from '../constants';
 import { Crown, Volume2, VolumeX, Maximize, Minimize, Activity, ZapOff } from 'lucide-react';
 import type { WaveAudioEngine, WaveSound } from '../lib/waveAudio';
 import type { WaveRuntimeState } from '../lib/waveRuntime';
+import type { WaveRun } from '../lib/waveStorage';
 
 type WaveRenderer = typeof import('../lib/waveRenderer').renderWaveFrame;
 type WaveRuntime = typeof import('../lib/waveRuntime');
+type WaveStorage = typeof import('../lib/waveStorage');
 
 const WaveRunOverlays = dynamic(() => import('./WaveRunOverlays'), { ssr: false });
 
@@ -22,16 +24,6 @@ interface GameCanvasProps {
   isMini?: boolean;
 }
 
-interface WaveRun {
-  time: number;
-  averageCps: number;
-  peakCps: number;
-  timingSd: number;
-  clicks: number;
-  result: "won" | "lost";
-  timestamp: number;
-  mode: string;
-}
 
 const GameCanvas: React.FC<GameCanvasProps> = memo(({ difficulty, status, onStatusChange, isEndless = false, isMini = false }) => {
   const canvasRef = useRef<HTMLCanvasElement>(null);
@@ -51,6 +43,19 @@ const GameCanvas: React.FC<GameCanvasProps> = memo(({ difficulty, status, onStat
   const progressRef = useRef<HTMLDivElement>(null);
   const runRecordedRef = useRef(false);
   const shareOpenRef = useRef(false);
+  const highScoreRef = useRef(0);
+  const storageRef = useRef<WaveStorage | null>(null);
+  const storageLoadRef = useRef<Promise<WaveStorage | null> | null>(null);
+
+  const ensureStorage = useCallback(async () => {
+      if (storageRef.current) return storageRef.current;
+      if (!storageLoadRef.current) {
+          storageLoadRef.current = import('../lib/waveStorage').catch(() => null);
+      }
+      const storage = await storageLoadRef.current;
+      if (storage) storageRef.current = storage;
+      return storage;
+  }, []);
   
   useEffect(() => {
     lowVisualsRef.current =
@@ -66,9 +71,24 @@ const GameCanvas: React.FC<GameCanvasProps> = memo(({ difficulty, status, onStat
       savedMotion === 'true' ||
       (savedMotion === null && window.matchMedia('(prefers-reduced-motion: reduce)').matches)
     );
-    loadHighScore();
-    loadRunHistory();
-  }, [difficulty.id, isEndless, isMini]);
+    let cancelled = false;
+    void ensureStorage().then((storage) => {
+      if (!storage || cancelled) return;
+      const records = storage.loadWaveRecords({
+        difficultyId: difficulty.id,
+        isEndless,
+        isMini,
+      });
+      highScoreRef.current = records.highScore;
+      setHighScore(records.highScore);
+      setRecentRuns(records.recentRuns);
+      setIsNewBest(false);
+    });
+
+    return () => {
+      cancelled = true;
+    };
+  }, [difficulty.id, isEndless, isMini, ensureStorage]);
 
   // Handle Fullscreen Change Events
   useEffect(() => {
@@ -99,42 +119,20 @@ const GameCanvas: React.FC<GameCanvasProps> = memo(({ difficulty, status, onStat
       localStorage.setItem('gd_spam_reduce_motion', String(newValue));
   }, [reduceMotion]);
 
-  const loadHighScore = () => {
-      const key = `gd_spam_best_${difficulty.id}_${isEndless ? 'endless' : 'timed'}_${isMini ? 'mini' : 'normal'}`;
-      const saved = localStorage.getItem(key);
-      setHighScore(saved ? parseFloat(saved) : 0);
-      setIsNewBest(false);
-  };
-
-  const getRunHistoryKey = () =>
-      `gd_spam_runs_${difficulty.id}_${isEndless ? 'endless' : 'timed'}_${isMini ? 'mini' : 'normal'}`;
-
-  const loadRunHistory = () => {
-      const saved = localStorage.getItem(getRunHistoryKey());
-      if (!saved) {
-          setRecentRuns([]);
-          return;
-      }
-
-      try {
-          const parsed = JSON.parse(saved);
-          setRecentRuns(Array.isArray(parsed) ? parsed.slice(0, 10) : []);
-      } catch {
-          setRecentRuns([]);
-      }
-  };
-
   const saveHighScore = useCallback((time: number) => {
-      const key = `gd_spam_best_${difficulty.id}_${isEndless ? 'endless' : 'timed'}_${isMini ? 'mini' : 'normal'}`;
-      const currentBest = parseFloat(localStorage.getItem(key) || '0');
-      if (time > currentBest) {
-          localStorage.setItem(key, time.toString());
-          setHighScore(time);
-          setIsNewBest(true);
-          return true;
-      }
-      return false;
-  }, [difficulty.id, isEndless, isMini]);
+      if (time <= highScoreRef.current) return false;
+
+      highScoreRef.current = time;
+      setHighScore(time);
+      setIsNewBest(true);
+      void ensureStorage().then((storage) => {
+        storage?.persistWaveHighScore(
+          { difficultyId: difficulty.id, isEndless, isMini },
+          time
+        );
+      });
+      return true;
+  }, [difficulty.id, ensureStorage, isEndless, isMini]);
   
   const [consistency, setConsistency] = useState<string>('100%');
   
@@ -309,7 +307,12 @@ const GameCanvas: React.FC<GameCanvasProps> = memo(({ difficulty, status, onStat
 
     setRecentRuns((previousRuns) => {
       const next = [run, ...previousRuns].slice(0, 10);
-      localStorage.setItem(getRunHistoryKey(), JSON.stringify(next));
+      void ensureStorage().then((storage) => {
+        storage?.persistWaveRuns(
+          { difficultyId: difficulty.id, isEndless, isMini },
+          next
+        );
+      });
       return next;
     });
     runRecordedRef.current = true;
