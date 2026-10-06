@@ -1,8 +1,6 @@
 "use client";
 
 import React, { useState, useEffect, useRef } from 'react';
-import dynamic from 'next/dynamic';
-const RelatedTools = dynamic(() => import('./RelatedTools'));
 
 import { Keyboard, RotateCcw } from 'lucide-react';
 
@@ -142,8 +140,6 @@ export default function KeyboardLatencyTest() {
 
                 </div>
             </div>
-            
-            <RelatedTools currentTool="latency" />
-        </div>
+</div>
     );
 }
