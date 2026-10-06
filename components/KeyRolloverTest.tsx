@@ -26,6 +26,7 @@ export default function KeyRolloverTest() {
       ) {
         event.preventDefault();
       }
+      if (event.repeat) return;
 
       setMeasurement((previous) => {
         const activeKeys = new Set(previous.activeKeys);
