@@ -1,8 +1,8 @@
 "use client";
 
-import { useState } from "react";
 import { Check, RotateCcw, Share2 } from "lucide-react";
 
+import { useShareResult } from "../lib/useShareResult";
 export default function SpacebarFinishedActions({
   count,
   onReset,
@@ -10,23 +10,12 @@ export default function SpacebarFinishedActions({
   count: number;
   onReset: () => void;
 }) {
-  const [copied, setCopied] = useState(false);
 
-  const shareScore = async () => {
-    const text = `I got ${(count / 10).toFixed(2)} CPS on the Geometry Dash Spacebar Counter Test! Can you beat me?`;
-    const url = "https://geometrydashspam.cc/spacebar-counter";
-
-    if (navigator.share) {
-      try {
-        await navigator.share({ title: "Spacebar Counter Test", text, url });
-        return;
-      } catch {}
-    }
-
-    await navigator.clipboard.writeText(`${text} ${url}`);
-    setCopied(true);
-    window.setTimeout(() => setCopied(false), 2000);
-  };
+  const { copied, share: shareScore } = useShareResult({
+    title: "Spacebar Counter Test",
+    text: `I got ${(count / 10).toFixed(2)} CPS on the Geometry Dash Spacebar Counter Test! Can you beat me?`,
+    url: "https://geometrydashspam.cc/spacebar-counter",
+  });
 
   return (
     <div className="animate-in fade-in zoom-in duration-300">
@@ -43,7 +32,7 @@ export default function SpacebarFinishedActions({
         </button>
         <button
           type="button"
-          onClick={shareScore}
+          onClick={() => void shareScore()}
           className="flex items-center justify-center rounded-lg border border-white/10 bg-slate-800 p-3 text-white transition-colors hover:bg-slate-700"
           aria-label={copied ? "Spacebar score copied" : "Share your spacebar score"}
         >

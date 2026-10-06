@@ -1,9 +1,10 @@
 "use client";
 
-import { useMemo, useState } from "react";
+import { useMemo } from "react";
 import Link from "next/link";
 import { ArrowRight, Check, RotateCcw, Share2 } from "lucide-react";
 
+import { useShareResult } from "../lib/useShareResult";
 function getTimingStats(times: number[]) {
   if (times.length < 2) {
     return {
@@ -45,25 +46,13 @@ export default function CpsFinishedActions({
   duration: number;
   onReset: () => void;
 }) {
-  const [copied, setCopied] = useState(false);
   const timingStats = useMemo(() => getTimingStats(clickTimes), [clickTimes]);
 
-  const shareScore = async () => {
-    const score = (clicks / duration).toFixed(2);
-    const text = `I got ${score} CPS in the ${duration}s Geometry Dash CPS Test.`;
-    const url = "https://geometrydashspam.cc/cps-test";
-
-    if (navigator.share) {
-      try {
-        await navigator.share({ title: "CPS Test Result", text, url });
-        return;
-      } catch {}
-    }
-
-    await navigator.clipboard.writeText(`${text} ${url}`);
-    setCopied(true);
-    window.setTimeout(() => setCopied(false), 2000);
-  };
+  const { copied, share: shareScore } = useShareResult({
+    title: "CPS Test Result",
+    text: `I got ${(clicks / duration).toFixed(2)} CPS in the ${duration}s Geometry Dash CPS Test.`,
+    url: "https://geometrydashspam.cc/cps-test",
+  });
 
   return (
     <>
@@ -107,7 +96,7 @@ export default function CpsFinishedActions({
         </Link>
         <button
           type="button"
-          onClick={shareScore}
+          onClick={() => void shareScore()}
           aria-label={copied ? "CPS result copied" : "Share CPS score"}
           className={`flex items-center gap-2 rounded-lg px-4 py-3 font-bold text-white shadow-lg transition-colors ${copied ? "bg-green-500" : "bg-blue-600 hover:bg-blue-500"}`}
         >

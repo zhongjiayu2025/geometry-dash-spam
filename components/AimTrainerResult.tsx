@@ -1,8 +1,8 @@
 "use client";
 
-import React, { useState } from "react";
 import { Check, RotateCcw, Share2 } from "lucide-react";
 
+import { useShareResult } from "../lib/useShareResult";
 interface AimTrainerResultProps {
   score: number;
   misses: number;
@@ -12,23 +12,12 @@ interface AimTrainerResultProps {
 }
 
 export default function AimTrainerResult({ score, misses, accuracy, averageTime, onReset }: AimTrainerResultProps) {
-  const [copied, setCopied] = useState(false);
 
-  const shareScore = async () => {
-    const text = `I got a score of ${score} with ${accuracy}% accuracy on the Geometry Dash Aim Trainer!`;
-    const url = "https://geometrydashspam.cc/aim-trainer";
-
-    if (navigator.share) {
-      try {
-        await navigator.share({ title: "Aim Trainer Test", text, url });
-        return;
-      } catch {}
-    }
-
-    await navigator.clipboard.writeText(`${text} ${url}`);
-    setCopied(true);
-    window.setTimeout(() => setCopied(false), 2000);
-  };
+  const { copied, share: shareScore } = useShareResult({
+    title: "Aim Trainer Test",
+    text: `I got a score of ${score} with ${accuracy}% accuracy on the Geometry Dash Aim Trainer!`,
+    url: "https://geometrydashspam.cc/aim-trainer",
+  });
 
   return (
     <div className="w-full animate-in zoom-in-95 duration-500">
@@ -62,7 +51,7 @@ export default function AimTrainerResult({ score, misses, accuracy, averageTime,
           </button>
           <button
             type="button"
-            onClick={shareScore}
+            onClick={() => void shareScore()}
             className="flex items-center justify-center rounded-xl border border-white/10 bg-slate-800 px-5 py-4 text-white transition-colors hover:bg-slate-700"
             title={copied ? "Copied" : "Share your score"}
             aria-label={copied ? "Aim result copied" : "Share aim result"}

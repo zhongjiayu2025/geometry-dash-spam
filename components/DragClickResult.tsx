@@ -1,8 +1,8 @@
 "use client";
 
-import { useState } from "react";
 import { Check, RotateCcw, Share2 } from "lucide-react";
 
+import { useShareResult } from "../lib/useShareResult";
 export default function DragClickResult({
   clicks,
   peakCps,
@@ -14,24 +14,13 @@ export default function DragClickResult({
   buckets: number[];
   onReset: () => void;
 }) {
-  const [copied, setCopied] = useState(false);
   const maxBucket = Math.max(1, ...buckets);
 
-  const shareScore = async () => {
-    const text = `I recorded ${peakCps} peak 1-second CPS and ${(clicks / 10).toFixed(2)} average CPS on the Geometry Dash Drag Click Test.`;
-    const url = "https://geometrydashspam.cc/drag-click";
-
-    if (navigator.share) {
-      try {
-        await navigator.share({ title: "Drag Click Test", text, url });
-        return;
-      } catch {}
-    }
-
-    await navigator.clipboard.writeText(`${text} ${url}`);
-    setCopied(true);
-    window.setTimeout(() => setCopied(false), 2000);
-  };
+  const { copied, share: shareScore } = useShareResult({
+    title: "Drag Click Test",
+    text: `I recorded ${peakCps} peak 1-second CPS and ${(clicks / 10).toFixed(2)} average CPS on the Geometry Dash Drag Click Test.`,
+    url: "https://geometrydashspam.cc/drag-click",
+  });
 
   return (
     <div className="w-full">
@@ -80,7 +69,7 @@ export default function DragClickResult({
           </button>
           <button
             type="button"
-            onClick={shareScore}
+            onClick={() => void shareScore()}
             className="flex items-center justify-center rounded-xl border border-white/10 bg-slate-800 p-4 text-white transition-colors hover:bg-slate-700"
             title={copied ? "Copied" : "Share your score"}
             aria-label={copied ? "Result copied" : "Share drag-click result"}

@@ -1,8 +1,8 @@
 "use client";
 
-import React, { useState } from "react";
 import { Check, RotateCcw, Share2, Trophy } from "lucide-react";
 
+import { useShareResult } from "../lib/useShareResult";
 interface TypingResultProps {
   wpm: number;
   accuracy: number;
@@ -11,23 +11,12 @@ interface TypingResultProps {
 }
 
 export default function TypingResult({ wpm, accuracy, bestWpm, onReset }: TypingResultProps) {
-  const [copied, setCopied] = useState(false);
 
-  const shareScore = async () => {
-    const text = `I typed ${wpm} WPM with ${accuracy}% character accuracy on the 60-second typing test.`;
-    const url = "https://geometrydashspam.cc/typing-test";
-
-    if (navigator.share) {
-      try {
-        await navigator.share({ title: "Typing Speed Test", text, url });
-        return;
-      } catch {}
-    }
-
-    await navigator.clipboard.writeText(`${text} ${url}`);
-    setCopied(true);
-    window.setTimeout(() => setCopied(false), 2000);
-  };
+  const { copied, share: shareScore } = useShareResult({
+    title: "Typing Speed Test",
+    text: `I typed ${wpm} WPM with ${accuracy}% character accuracy on the 60-second typing test.`,
+    url: "https://geometrydashspam.cc/typing-test",
+  });
 
   return (
     <div className="w-full rounded-3xl border border-sky-500/30 bg-slate-900/40 p-8 text-center">
@@ -61,7 +50,7 @@ export default function TypingResult({ wpm, accuracy, bestWpm, onReset }: Typing
         </button>
         <button
           type="button"
-          onClick={shareScore}
+          onClick={() => void shareScore()}
           className="flex items-center justify-center rounded-xl border border-white/10 bg-slate-800 p-4 text-white transition-colors hover:bg-slate-700"
           title={copied ? "Copied" : "Share your score"}
           aria-label={copied ? "Typing result copied" : "Share typing result"}

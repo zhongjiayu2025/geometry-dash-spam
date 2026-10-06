@@ -1,8 +1,8 @@
 "use client";
 
-import React, { useState } from "react";
 import { Check, RotateCcw, Share2, Trophy } from "lucide-react";
 
+import { useShareResult } from "../lib/useShareResult";
 interface ChimpGameOverProps {
   level: number;
   bestScore: number | null;
@@ -10,23 +10,12 @@ interface ChimpGameOverProps {
 }
 
 export default function ChimpGameOver({ level, bestScore, onRestart }: ChimpGameOverProps) {
-  const [copied, setCopied] = useState(false);
 
-  const shareScore = async () => {
-    const text = `I reached Level ${level} on the Geometry Dash Chimp Test! How far can you get?`;
-    const url = "https://geometrydashspam.cc/chimp-test";
-
-    if (navigator.share) {
-      try {
-        await navigator.share({ title: "Chimp Memory Test", text, url });
-        return;
-      } catch {}
-    }
-
-    await navigator.clipboard.writeText(`${text} ${url}`);
-    setCopied(true);
-    window.setTimeout(() => setCopied(false), 2000);
-  };
+  const { copied, share: shareScore } = useShareResult({
+    title: "Chimp Memory Test",
+    text: `I reached Level ${level} on the Geometry Dash Chimp Test! How far can you get?`,
+    url: "https://geometrydashspam.cc/chimp-test",
+  });
 
   return (
     <div className="text-center animate-in zoom-in-95 duration-500">
@@ -47,7 +36,7 @@ export default function ChimpGameOver({ level, bestScore, onRestart }: ChimpGame
         </button>
         <button
           type="button"
-          onClick={shareScore}
+          onClick={() => void shareScore()}
           className="flex items-center justify-center rounded-lg border border-indigo-500/30 bg-indigo-900/50 p-3 text-white transition-colors hover:bg-indigo-800"
           title={copied ? "Copied" : "Share your score"}
           aria-label={copied ? "Chimp result copied" : "Share chimp result"}

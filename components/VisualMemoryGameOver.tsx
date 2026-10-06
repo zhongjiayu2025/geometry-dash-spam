@@ -1,8 +1,8 @@
 "use client";
 
-import React, { useState } from "react";
 import { Check, RotateCcw, Share2, Trophy } from "lucide-react";
 
+import { useShareResult } from "../lib/useShareResult";
 interface VisualMemoryGameOverProps {
   level: number;
   bestScore: number | null;
@@ -10,23 +10,12 @@ interface VisualMemoryGameOverProps {
 }
 
 export default function VisualMemoryGameOver({ level, bestScore, onRestart }: VisualMemoryGameOverProps) {
-  const [copied, setCopied] = useState(false);
 
-  const shareScore = async () => {
-    const text = `I reached Level ${level} on the Geometry Dash Visual Memory Test! Can you beat me?`;
-    const url = "https://geometrydashspam.cc/visual-memory";
-
-    if (navigator.share) {
-      try {
-        await navigator.share({ title: "Visual Memory Test", text, url });
-        return;
-      } catch {}
-    }
-
-    await navigator.clipboard.writeText(`${text} ${url}`);
-    setCopied(true);
-    window.setTimeout(() => setCopied(false), 2000);
-  };
+  const { copied, share: shareScore } = useShareResult({
+    title: "Visual Memory Test",
+    text: `I reached Level ${level} on the Geometry Dash Visual Memory Test! Can you beat me?`,
+    url: "https://geometrydashspam.cc/visual-memory",
+  });
 
   return (
     <div className="text-center animate-in zoom-in-95 duration-500">
@@ -47,7 +36,7 @@ export default function VisualMemoryGameOver({ level, bestScore, onRestart }: Vi
         </button>
         <button
           type="button"
-          onClick={shareScore}
+          onClick={() => void shareScore()}
           className="flex items-center justify-center rounded-lg border border-fuchsia-500/30 bg-fuchsia-900/50 p-3 text-white transition-colors hover:bg-fuchsia-800"
           title={copied ? "Copied" : "Share your score"}
           aria-label={copied ? "Visual memory result copied" : "Share visual memory result"}
