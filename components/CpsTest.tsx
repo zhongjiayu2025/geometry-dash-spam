@@ -323,6 +323,9 @@ const CpsTest: React.FC = () => {
 
   return (
     <div className="w-full max-w-5xl mx-auto animate-in slide-in-from-bottom-4 duration-500">
+      <p className="sr-only" role="status" aria-live="polite" aria-atomic="true">
+        {finished ? `Test complete. ${cps} clicks per second over ${selectedDuration} seconds.` : ""}
+      </p>
       {/* Time Selector - Critical for SEO (1s CPS Test, 5s CPS Test keywords) */}
       <div className="flex flex-nowrap justify-start sm:justify-center gap-2 mb-5 sm:mb-8 overflow-x-auto overscroll-x-contain pb-1">
           {[1, 3, 5, 10, 30, 60].map(sec => (
