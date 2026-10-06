@@ -11,12 +11,13 @@ const SpacebarCounter: React.FC = () => {
   const [finished, setFinished] = useState(false);
   const [count, setCount] = useState(0);
   const [timeLeft, setTimeLeft] = useState(10);
-  const [isPressed, setIsPressed] = useState(false);
   const [bestCps, setBestCps] = useState<number | null>(null);
   const [soundEnabled, setSoundEnabled] = useState(false);
   const [copied, setCopied] = useState(false);
 
   const timerRef = useRef<number | null>(null);
+  const visualKeyRef = useRef<HTMLDivElement>(null);
+  const visualKeyLabelRef = useRef<HTMLSpanElement>(null);
   const endTimerRef = useRef<number | null>(null);
   const startTimeRef = useRef(0);
   const countRef = useRef(0);
@@ -34,7 +35,7 @@ const SpacebarCounter: React.FC = () => {
       const parsed = Number(saved);
       if (Number.isFinite(parsed)) setBestCps(parsed);
     }
-  }, []);
+  }, [setVisualPressed]);
 
   useEffect(() => {
     return () => {
@@ -72,6 +73,24 @@ const SpacebarCounter: React.FC = () => {
     return engine;
   }, []);
 
+  const setVisualPressed = useCallback((pressed: boolean) => {
+    const key = visualKeyRef.current;
+    const label = visualKeyLabelRef.current;
+    if (!key || !label) return;
+
+    key.classList.toggle("bg-purple-500", pressed);
+    key.classList.toggle("border-purple-700", pressed);
+    key.classList.toggle("translate-y-2", pressed);
+    key.classList.toggle("shadow-none", pressed);
+    key.classList.toggle("bg-slate-200", !pressed);
+    key.classList.toggle("border-slate-400", !pressed);
+    key.classList.toggle("translate-y-0", !pressed);
+    key.classList.toggle("shadow-[0_10px_20px_rgba(0,0,0,0.5)]", !pressed);
+
+    label.classList.toggle("text-white", pressed);
+    label.classList.toggle("text-slate-500", !pressed);
+  }, []);
+
   const finishTest = useCallback(() => {
     if (finishedRef.current) return;
 
@@ -83,7 +102,7 @@ const SpacebarCounter: React.FC = () => {
 
     setFinished(true);
     setActive(false);
-    setIsPressed(false);
+    setVisualPressed(false);
     setTimeLeft(0);
     setCount(finalCount);
 
@@ -140,7 +159,7 @@ const SpacebarCounter: React.FC = () => {
       }
     }
 
-    setIsPressed(true);
+    setVisualPressed(true);
 
     if (!activeRef.current) {
       startTest(now);
@@ -152,7 +171,7 @@ const SpacebarCounter: React.FC = () => {
   }, [ensureAudio, finishTest, soundEnabled, startTest]);
 
   const handleKeyUp = useCallback((event: KeyboardEvent) => {
-    if (event.code === "Space") setIsPressed(false);
+    if (event.code === "Space") setVisualPressed(false);
   }, []);
 
   useEffect(() => {
@@ -204,7 +223,7 @@ const SpacebarCounter: React.FC = () => {
     setFinished(false);
     setCount(0);
     setTimeLeft(10);
-    setIsPressed(false);
+    setVisualPressed(false);
 
     if (timerRef.current) window.clearInterval(timerRef.current);
     if (endTimerRef.current) window.clearTimeout(endTimerRef.current);
@@ -262,14 +281,10 @@ const SpacebarCounter: React.FC = () => {
 
           <div className="mb-8 flex justify-center">
             <div
-              className={
-                "flex h-24 w-full max-w-md items-center justify-center rounded-lg border-b-8 transition-all duration-75 " +
-                (isPressed
-                  ? "translate-y-2 border-purple-700 bg-purple-500 shadow-none"
-                  : "translate-y-0 border-slate-400 bg-slate-200 shadow-[0_10px_20px_rgba(0,0,0,0.5)]")
-              }
+              ref={visualKeyRef}
+              className="flex h-24 w-full max-w-md translate-y-0 items-center justify-center rounded-lg border-b-8 border-slate-400 bg-slate-200 shadow-[0_10px_20px_rgba(0,0,0,0.5)] transition-all duration-75"
             >
-              <span className={`text-xl font-bold uppercase tracking-widest ${isPressed ? "text-white" : "text-slate-500"}`}>
+              <span ref={visualKeyLabelRef} className="text-xl font-bold uppercase tracking-widest text-slate-500">
                 Space
               </span>
             </div>
