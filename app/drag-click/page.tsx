@@ -1,4 +1,5 @@
 import DragClickTest from "../../components/DragClickTest";
+import ToolWebApplicationSchema from "../../components/ToolWebApplicationSchema";
 import RelatedTools from "../../components/RelatedTools";
 import InputToolGuide from "../../components/InputToolGuide";
 import { Metadata } from "next";
@@ -24,6 +25,11 @@ export const metadata: Metadata = {
 export default function DragClickPage() {
   return (
     <>
+      <ToolWebApplicationSchema
+        name="Drag Click Test"
+        path="/drag-click"
+        description="Practice drag clicking and measure registered click speed in a browser-based test."
+      />
       <div className="mb-8 md:mb-12 text-center">
         <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-white/5 border border-white/10 text-xs font-mono text-slate-400 mb-4">
           FRICTION CLICK PRACTICE
