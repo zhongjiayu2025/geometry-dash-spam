@@ -1,7 +1,7 @@
 "use client";
 
 import React, { useEffect, useState } from "react";
-import { Info, Keyboard as KeyboardIcon, RotateCcw } from "lucide-react";
+import { RotateCcw } from "lucide-react";
 
 
 const virtualKeyboardLayout = [
@@ -88,18 +88,6 @@ export default function KeyboardGhostingTest() {
 
   return (
     <div className="w-full max-w-5xl mx-auto px-4 md:px-0">
-      <div className="mb-8 text-center">
-        <div className="inline-flex items-center justify-center p-3 rounded-2xl bg-amber-500/10 mb-6 border border-amber-500/20">
-          <KeyboardIcon className="w-10 h-10 text-amber-400" />
-        </div>
-        <h1 className="text-3xl md:text-5xl font-display font-bold text-white mb-4">
-          Keyboard Ghosting & Key Rollover Test
-        </h1>
-        <p className="text-slate-400 max-w-2xl mx-auto text-sm md:text-base leading-7">
-          Hold several keys at once and see which key events reach this browser. The page visualizes registered inputs; it cannot observe a key event that the keyboard, operating system or browser never delivers.
-        </p>
-      </div>
-
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8">
         <div className="bg-slate-900/50 border border-white/5 p-6 rounded-2xl flex items-center justify-between">
           <div>
@@ -151,14 +139,6 @@ export default function KeyboardGhostingTest() {
         </div>
       </div>
 
-      <div className="mt-8 p-5 bg-blue-500/10 border border-blue-500/20 rounded-2xl flex items-start gap-4">
-        <Info className="w-6 h-6 text-blue-400 shrink-0" />
-        <div className="text-sm text-blue-100 leading-6">
-          <strong>How to test:</strong> hold a combination you actually use, such as W + A + Space, then add another key.
-          Watch which keys remain highlighted. Repeat the same combination several times. This can reveal a rollover limitation,
-          but it does not prove the exact electrical cause inside the keyboard.
-        </div>
-      </div>
 </div>
   );
 }
