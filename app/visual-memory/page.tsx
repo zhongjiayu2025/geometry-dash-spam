@@ -1,4 +1,5 @@
 import VisualMemoryTest from "../../components/VisualMemoryTest";
+import RelatedTools from "../../components/RelatedTools";
 import { Metadata } from "next";
 
 export const metadata: Metadata = {
@@ -21,5 +22,10 @@ export const metadata: Metadata = {
 };
 
 export default function VisualMemoryPage() {
-  return <VisualMemoryTest />;
+  return (
+    <>
+      <VisualMemoryTest />
+      <RelatedTools currentTool="visualMemory" />
+    </>
+  );
 }

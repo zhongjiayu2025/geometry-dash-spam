@@ -1,9 +1,6 @@
 "use client";
 
 import React, { useState, useEffect, useRef } from 'react';
-import dynamic from "next/dynamic";
-
-const RelatedTools = dynamic(() => import('./RelatedTools'), { ssr: true });
 import { RotateCcw, Target, Trophy, Volume2, VolumeX, Share2, Check } from 'lucide-react';
 
 const playSound = (audioCtx: AudioContext | null, type: 'hit' | 'miss') => {
@@ -298,8 +295,6 @@ export default function AimTrainer() {
                     )}
                 </div>
             </div>
-            
-            <RelatedTools currentTool="aim" />
-        </div>
+</div>
     );
 }

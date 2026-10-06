@@ -1,4 +1,5 @@
 import ChimpTest from "../../components/ChimpTest";
+import RelatedTools from "../../components/RelatedTools";
 import { Metadata } from "next";
 
 export const metadata: Metadata = {
@@ -21,5 +22,10 @@ export const metadata: Metadata = {
 };
 
 export default function ChimpTestPage() {
-  return <ChimpTest />;
+  return (
+    <>
+      <ChimpTest />
+      <RelatedTools currentTool="chimpTest" />
+    </>
+  );
 }

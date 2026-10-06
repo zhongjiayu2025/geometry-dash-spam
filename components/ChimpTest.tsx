@@ -1,9 +1,6 @@
 "use client";
 
 import React, { useState, useEffect, useRef } from 'react';
-import dynamic from 'next/dynamic';
-const RelatedTools = dynamic(() => import('./RelatedTools'));
-
 import { Target, RotateCcw, BrainCircuit, Play, Trophy, Share2, Check } from 'lucide-react';
 
 export default function ChimpTest() {
@@ -256,8 +253,6 @@ export default function ChimpTest() {
                     </div>
                 </div>
             </div>
-            
-            <RelatedTools currentTool="chimpTest" />
-        </div>
+</div>
     );
 }

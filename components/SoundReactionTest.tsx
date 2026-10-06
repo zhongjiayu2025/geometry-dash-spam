@@ -1,9 +1,6 @@
 "use client";
 
 import React, { useState, useRef, useEffect } from 'react';
-import dynamic from 'next/dynamic';
-const RelatedTools = dynamic(() => import('./RelatedTools'));
-
 import { RotateCcw, Volume2, Ear } from 'lucide-react';
 
 export default function SoundReactionTest() {
@@ -189,8 +186,6 @@ export default function SoundReactionTest() {
                     </div>
                 </div>
             </div>
-            
-            <RelatedTools currentTool="soundReaction" />
-        </div>
+</div>
     );
 }

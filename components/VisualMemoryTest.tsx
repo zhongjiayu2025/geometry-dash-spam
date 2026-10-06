@@ -1,8 +1,6 @@
 "use client";
 
 import React, { useState, useEffect } from 'react';
-import dynamic from 'next/dynamic';
-const RelatedTools = dynamic(() => import('./RelatedTools'));
 import { Brain, RotateCcw, Play, Trophy, Share2, Check } from 'lucide-react';
 
 
@@ -241,8 +239,6 @@ export default function VisualMemoryTest() {
                     </div>
                 </div>
             </div>
-            
-            <RelatedTools currentTool="visualMemory" />
-        </div>
+</div>
     );
 }

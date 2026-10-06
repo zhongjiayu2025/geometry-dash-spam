@@ -1,4 +1,5 @@
 import ReactionTest from "../../components/ReactionTest";
+import RelatedTools from "../../components/RelatedTools";
 import { Metadata } from "next";
 
 export const metadata: Metadata = {
@@ -33,6 +34,7 @@ export default function ReactionTestPage() {
         </p>
       </div>
       <ReactionTest />
+      <RelatedTools currentTool="reaction" />
     </>
   );
 }

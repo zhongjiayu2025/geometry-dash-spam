@@ -1,4 +1,5 @@
 import SoundReactionTest from "../../components/SoundReactionTest";
+import RelatedTools from "../../components/RelatedTools";
 import { Metadata } from "next";
 
 export const metadata: Metadata = {
@@ -33,6 +34,7 @@ export default function SoundReactionPage() {
         </p>
       </div>
       <SoundReactionTest />
+      <RelatedTools currentTool="soundReaction" />
     </>
   );
 }

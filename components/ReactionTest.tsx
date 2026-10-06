@@ -1,8 +1,6 @@
 "use client";
 
 import React, { useState, useRef, useEffect } from 'react';
-import dynamic from 'next/dynamic';
-const RelatedTools = dynamic(() => import('./RelatedTools'));
 import { Timer, AlertCircle, Play, Eye, Trophy, Share2, Check } from 'lucide-react';
 
 
@@ -204,9 +202,7 @@ const ReactionTest: React.FC = () => {
               <p className="text-sm leading-6 text-slate-400">The number is not a laboratory measurement of your nervous system or one hardware component.</p>
             </div>
           </div>
-
-          <RelatedTools currentTool="reaction" />
-      </section>
+</section>
 
     </div>
   );

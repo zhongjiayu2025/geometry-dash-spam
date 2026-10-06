@@ -1,10 +1,7 @@
 "use client";
 
 import React, { useCallback, useEffect, useRef, useState } from "react";
-import dynamic from "next/dynamic";
 import { RotateCcw, Timer } from "lucide-react";
-
-const RelatedTools = dynamic(() => import("./RelatedTools"));
 
 export default function BpmTapper() {
   const [bpm, setBpm] = useState(0);
@@ -123,8 +120,6 @@ export default function BpmTapper() {
           </button>
         </div>
       </div>
-
-      <RelatedTools currentTool="bpm" />
-    </div>
+</div>
   );
 }

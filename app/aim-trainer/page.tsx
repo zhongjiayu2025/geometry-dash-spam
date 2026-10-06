@@ -1,4 +1,5 @@
 import AimTrainer from "../../components/AimTrainer";
+import RelatedTools from "../../components/RelatedTools";
 import { Metadata } from "next";
 
 export const metadata: Metadata = {
@@ -35,6 +36,7 @@ export default function AimTrainerPage() {
         </p>
       </div>
       <AimTrainer />
+      <RelatedTools currentTool="aim" />
     </>
   );
 }

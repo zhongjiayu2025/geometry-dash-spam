@@ -1,4 +1,5 @@
 import BpmTapper from "../../components/BpmTapper";
+import RelatedTools from "../../components/RelatedTools";
 import { Metadata } from "next";
 
 export const metadata: Metadata = {
@@ -33,6 +34,7 @@ export default function BpmTapperPage() {
         </p>
       </div>
       <BpmTapper />
+      <RelatedTools currentTool="bpm" />
     </>
   );
 }
