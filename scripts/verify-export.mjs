@@ -1147,6 +1147,18 @@ if (
 }
 
 if (
+  !gameCanvasSource.includes("const preloadGameplay = useCallback") ||
+  !gameCanvasSource.includes("Promise.all([ensureRuntime(), ensureRenderer()])") ||
+  !gameCanvasSource.includes("onPointerEnter={preloadGameplay}") ||
+  !gameCanvasSource.includes("onPointerDown={preloadGameplay}") ||
+  !gameCanvasSource.includes("onFocus={preloadGameplay}")
+) {
+  infrastructureErrors.push(
+    "Wave first-run chunks must preload only after START RUN interaction intent"
+  );
+}
+
+if (
   gameCanvasSource.includes("const spawnObstacle") ||
   gameCanvasSource.includes("const createExplosion") ||
   gameCanvasSource.includes("const calculateConsistency") ||
