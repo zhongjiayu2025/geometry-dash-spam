@@ -1,4 +1,5 @@
 import SpacebarCounter from "../../components/SpacebarCounter";
+import ToolWebApplicationSchema from "../../components/ToolWebApplicationSchema";
 import RelatedTools from "../../components/RelatedTools";
 import InputToolGuide from "../../components/InputToolGuide";
 import { Metadata } from "next";
@@ -24,6 +25,11 @@ export const metadata: Metadata = {
 export default function SpacebarCounterPage() {
   return (
     <>
+      <ToolWebApplicationSchema
+        name="Spacebar Counter"
+        path="/spacebar-counter"
+        description="Count spacebar presses and measure press speed in your browser. This is not a direct keyboard hardware-latency measurement."
+      />
       <div className="mb-8 md:mb-12 text-center">
         <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-white/5 border border-white/10 text-xs font-mono text-slate-400 mb-4">
           KEY PRESS SPEED
