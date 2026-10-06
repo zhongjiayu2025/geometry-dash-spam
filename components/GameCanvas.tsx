@@ -6,6 +6,7 @@ import Link from 'next/link';
 import { DifficultyConfig, GameStatus } from '../types';
 import { WIN_TIME_MS, WAVE_SPEED_Y } from '../constants';
 import { Trophy, AlertTriangle, Crown, Volume2, VolumeX, Maximize, Minimize, Activity, ZapOff, Share2, Check, RotateCcw, Menu, Zap, X, Copy } from 'lucide-react';
+import type { WaveAudioEngine, WaveSound } from '../lib/waveAudio';
 
 interface GameCanvasProps {
   difficulty: DifficultyConfig;
@@ -112,7 +113,9 @@ const GameCanvas: React.FC<GameCanvasProps> = memo(({ difficulty, status, onStat
       window.matchMedia('(max-width: 640px)').matches;
 
     const savedMuted = localStorage.getItem('gd_spam_muted');
-    setIsMuted(savedMuted === null ? true : savedMuted === 'true');
+    const muted = savedMuted === null ? true : savedMuted === 'true';
+    mutedRef.current = muted;
+    setIsMuted(muted);
     const savedMotion = localStorage.getItem('gd_spam_reduce_motion');
     setReduceMotion(
       savedMotion === 'true' ||
@@ -190,14 +193,12 @@ const GameCanvas: React.FC<GameCanvasProps> = memo(({ difficulty, status, onStat
   
   const [consistency, setConsistency] = useState<string>('100%');
   
-  // Audio Refs
-  const audioCtxRef = useRef<AudioContext | null>(null);
-  const masterGainRef = useRef<GainNode | null>(null);
-  const hiHatBufferRef = useRef<AudioBuffer | null>(null);
-  
-  const musicSchedulerRef = useRef<number | null>(null);
-  const nextNoteTimeRef = useRef<number>(0);
-  const noteIndexRef = useRef<number>(0);
+  // Audio is dynamically imported only after the user opts in.
+  const audioEngineRef = useRef<WaveAudioEngine | null>(null);
+  const audioLoadRef = useRef<Promise<WaveAudioEngine | null> | null>(null);
+  const audioDisposedRef = useRef(false);
+  const mutedRef = useRef(true);
+  const statusRef = useRef(status);
 
   // Game State Ref
   const gameState = useRef({
@@ -233,236 +234,78 @@ const GameCanvas: React.FC<GameCanvasProps> = memo(({ difficulty, status, onStat
   const requestRef = useRef<number | undefined>(undefined);
   const lowVisualsRef = useRef(false);
 
-  // --- AUDIO SYSTEM (ENHANCED) ---
-  const initAudio = useCallback(() => {
-    if (!audioCtxRef.current) {
-      const AudioContextClass = window.AudioContext || (window as any).webkitAudioContext;
-      if (AudioContextClass) {
-          const ctx = new AudioContextClass();
-          audioCtxRef.current = ctx;
-
-          const hiHatBuffer = ctx.createBuffer(1, Math.floor(ctx.sampleRate * 0.1), ctx.sampleRate);
-          const hiHatData = hiHatBuffer.getChannelData(0);
-          for (let i = 0; i < hiHatData.length; i++) {
-              hiHatData[i] = Math.random() * 2 - 1;
-          }
-          hiHatBufferRef.current = hiHatBuffer;
-          
-          // Master Gain
-          masterGainRef.current = ctx.createGain();
-          masterGainRef.current.gain.value = 0.8;
-
-          // Delay/Echo Effect for "Space" feel
-          const delay = ctx.createDelay(5.0);
-          delay.delayTime.value = 0.3; // 300ms delay
-          const feedback = ctx.createGain();
-          feedback.gain.value = 0.4; // 40% feedback
-          const delayFilter = ctx.createBiquadFilter();
-          delayFilter.type = 'lowpass';
-          delayFilter.frequency.value = 2000; // Dampen repeats
-
-          // Connect Delay Graph
-          masterGainRef.current.connect(ctx.destination); // Dry signal
-          masterGainRef.current.connect(delay); // Send to delay
-          delay.connect(delayFilter);
-          delayFilter.connect(feedback);
-          feedback.connect(delay); // Loop back
-          delayFilter.connect(ctx.destination); // Wet signal output
-          
-      }
-    }
-    if (audioCtxRef.current?.state === 'suspended') audioCtxRef.current.resume();
-  }, []);
-
-  // Trigger Beat Pulse Visuals
+  // --- LAZY AUDIO BRIDGE ---
   const triggerBeat = useCallback(() => {
-     if (reduceMotion) return;
-     gameState.current.beatScale = 1.015; 
+      if (reduceMotion) return;
+      gameState.current.beatScale = 1.015;
   }, [reduceMotion]);
 
-  const playKick = useCallback((time: number) => {
-    if (!audioCtxRef.current || !masterGainRef.current) return;
-    const osc = audioCtxRef.current.createOscillator();
-    const gain = audioCtxRef.current.createGain();
-    osc.connect(gain);
-    gain.connect(masterGainRef.current);
-    
-    osc.frequency.setValueAtTime(150, time);
-    osc.frequency.exponentialRampToValueAtTime(0.01, time + 0.5);
-    
-    gain.gain.setValueAtTime(1.0, time); 
-    gain.gain.exponentialRampToValueAtTime(0.01, time + 0.5);
-    
-    osc.start(time);
-    osc.stop(time + 0.5);
+  const ensureAudio = useCallback(async () => {
+      if (audioDisposedRef.current) return null;
 
-    const timeUntilKick = (time - audioCtxRef.current.currentTime) * 1000;
-    setTimeout(() => {
-        triggerBeat();
-    }, Math.max(0, timeUntilKick));
+      if (audioEngineRef.current) {
+          await audioEngineRef.current.resume();
+          return audioEngineRef.current;
+      }
 
-  }, [triggerBeat]);
+      if (!audioLoadRef.current) {
+          audioLoadRef.current = import('../lib/waveAudio')
+              .then(({ createWaveAudioEngine }) => createWaveAudioEngine())
+              .catch(() => null);
+      }
 
-  const playBass = useCallback((time: number, note: number) => {
-    if (!audioCtxRef.current || !masterGainRef.current) return;
-    const osc = audioCtxRef.current.createOscillator();
-    const gain = audioCtxRef.current.createGain();
-    
-    osc.type = 'sawtooth'; 
-    osc.connect(gain);
-    gain.connect(masterGainRef.current);
-    
-    const freq = 55 * Math.pow(2, note / 12); 
-    osc.frequency.setValueAtTime(freq, time);
-    osc.detune.setValueAtTime(Math.random() * 20 - 10, time); 
-    
-    const filter = audioCtxRef.current.createBiquadFilter();
-    filter.type = 'lowpass';
-    filter.frequency.setValueAtTime(200, time);
-    filter.frequency.exponentialRampToValueAtTime(2000, time + 0.1);
-    filter.frequency.exponentialRampToValueAtTime(200, time + 0.3);
-    
-    osc.disconnect();
-    osc.connect(filter);
-    filter.connect(gain);
+      const engine = await audioLoadRef.current;
+      if (!engine) return null;
 
-    gain.gain.setValueAtTime(0.2, time);
-    gain.gain.exponentialRampToValueAtTime(0.001, time + 0.4);
-    
-    osc.start(time);
-    osc.stop(time + 0.4);
+      if (audioDisposedRef.current) {
+          await engine.destroy();
+          return null;
+      }
+
+      audioEngineRef.current = engine;
+      await engine.resume();
+      return engine;
   }, []);
 
-  const playHiHat = useCallback((time: number) => {
-      if (!audioCtxRef.current || !masterGainRef.current || !hiHatBufferRef.current) return;
+  const playSound = useCallback((type: WaveSound) => {
+      if (mutedRef.current) return;
 
-      const noise = audioCtxRef.current.createBufferSource();
-      noise.buffer = hiHatBufferRef.current;
-      const gain = audioCtxRef.current.createGain();
-      const filter = audioCtxRef.current.createBiquadFilter();
-      filter.type = 'highpass';
-      filter.frequency.value = 8000; 
+      const existing = audioEngineRef.current;
+      if (existing) {
+          existing.playSound(type, isMini);
+          return;
+      }
 
-      noise.connect(filter);
-      filter.connect(gain);
-      gain.connect(masterGainRef.current);
-
-      gain.gain.setValueAtTime(0.05, time);
-      gain.gain.exponentialRampToValueAtTime(0.001, time + 0.05);
-
-      noise.start(time);
-  }, []);
-
-  const scheduleMusic = useCallback(() => {
-    const ctx = audioCtxRef.current;
-    if (!ctx || isMuted) return;
-
-    const tempo = 140; 
-    const secondsPerBeat = 60.0 / tempo;
-    const lookahead = 0.1;
-
-    if (nextNoteTimeRef.current < ctx.currentTime - 0.25) {
-        nextNoteTimeRef.current = ctx.currentTime + 0.05;
-    }
-
-    while (nextNoteTimeRef.current < ctx.currentTime + lookahead) {
-        const sixteenth = noteIndexRef.current % 16;
-        if (sixteenth % 4 === 0) playKick(nextNoteTimeRef.current);
-        if (sixteenth % 2 === 0 && sixteenth % 4 !== 0) playHiHat(nextNoteTimeRef.current);
-        let note = 0; 
-        if (noteIndexRef.current % 64 >= 32) note = 3; 
-        if (noteIndexRef.current % 64 >= 48) note = 5; 
-
-        if (sixteenth % 4 !== 0) {
-           playBass(nextNoteTimeRef.current, note);
-        }
-
-        const secondsPer16th = secondsPerBeat / 4;
-        nextNoteTimeRef.current += secondsPer16th;
-        noteIndexRef.current++;
-    }
-  }, [isMuted, playKick, playBass, playHiHat]);
-
-  const startMusic = useCallback(() => {
-    if (musicSchedulerRef.current || !audioCtxRef.current || isMuted) return;
-
-    nextNoteTimeRef.current = audioCtxRef.current.currentTime + 0.1;
-    noteIndexRef.current = 0;
-    musicSchedulerRef.current = window.setInterval(scheduleMusic, 25);
-  }, [isMuted, scheduleMusic]);
-
-  const stopMusic = useCallback(() => {
-    if (musicSchedulerRef.current) {
-        clearInterval(musicSchedulerRef.current);
-        musicSchedulerRef.current = null;
-    }
-  }, []);
+      void ensureAudio().then((engine) => {
+          if (!mutedRef.current) engine?.playSound(type, isMini);
+      });
+  }, [ensureAudio, isMini]);
 
   const toggleMute = useCallback((e: React.MouseEvent) => {
       e.stopPropagation();
-      const nextMuted = !isMuted;
+
+      const nextMuted = !mutedRef.current;
+      mutedRef.current = nextMuted;
       setIsMuted(nextMuted);
       localStorage.setItem('gd_spam_muted', String(nextMuted));
 
       if (nextMuted) {
-          stopMusic();
-          if (audioCtxRef.current?.state === 'running') {
-              void audioCtxRef.current.suspend();
+          audioEngineRef.current?.stopMusic();
+          if (audioEngineRef.current) void audioEngineRef.current.suspend();
+          return;
+      }
+
+      void ensureAudio().then((engine) => {
+          if (
+              engine &&
+              !mutedRef.current &&
+              statusRef.current === GameStatus.Playing &&
+              !document.hidden
+          ) {
+              engine.startMusic(triggerBeat);
           }
-      } else {
-          initAudio();
-      }
-  }, [initAudio, isMuted, stopMusic]);
-
-  const playSound = useCallback((type: 'crash' | 'win' | 'click' | 'newBest') => {
-      if (isMuted || !audioCtxRef.current || !masterGainRef.current) return;
-      const ctx = audioCtxRef.current;
-      const now = ctx.currentTime;
-      
-      const osc = ctx.createOscillator();
-      const gain = ctx.createGain();
-      gain.connect(masterGainRef.current);
-      osc.connect(gain);
-
-      if (type === 'click') {
-          osc.type = 'triangle'; 
-          osc.frequency.setValueAtTime(isMini ? 800 : 600, now);
-          osc.frequency.exponentialRampToValueAtTime(1200, now + 0.05); 
-          gain.gain.setValueAtTime(0.15, now);
-          gain.gain.exponentialRampToValueAtTime(0.01, now + 0.05);
-          osc.start(now);
-          osc.stop(now + 0.05);
-      } else if (type === 'crash') {
-          const bufferSize = ctx.sampleRate * 0.5;
-          const buffer = ctx.createBuffer(1, bufferSize, ctx.sampleRate);
-          const data = buffer.getChannelData(0);
-          for (let i = 0; i < bufferSize; i++) data[i] = Math.random() * 2 - 1;
-          const noise = ctx.createBufferSource();
-          noise.buffer = buffer;
-          const noiseGain = ctx.createGain();
-          noise.connect(noiseGain);
-          noiseGain.connect(masterGainRef.current);
-          noiseGain.gain.setValueAtTime(0.5, now);
-          noiseGain.gain.exponentialRampToValueAtTime(0.01, now + 0.5);
-          noise.start(now);
-      } else if (type === 'win') {
-          osc.type = 'sine';
-          osc.frequency.setValueAtTime(440, now);
-          osc.frequency.linearRampToValueAtTime(880, now + 0.5);
-          gain.gain.setValueAtTime(0.2, now);
-          gain.gain.linearRampToValueAtTime(0, now + 1.0);
-          osc.start(now);
-          osc.stop(now + 1.0);
-      } else if (type === 'newBest') {
-          osc.type = 'square';
-          osc.frequency.setValueAtTime(880, now); 
-          osc.frequency.exponentialRampToValueAtTime(1760, now + 0.2);
-          gain.gain.setValueAtTime(0.2, now);
-          gain.gain.linearRampToValueAtTime(0, now + 0.4);
-          osc.start(now);
-          osc.stop(now + 0.4);
-      }
-  }, [isMuted, isMini]);
+      });
+  }, [ensureAudio, triggerBeat]);
 
   // --- GAMEPLAY & VISUALS ---
 
@@ -1038,7 +881,6 @@ const GameCanvas: React.FC<GameCanvasProps> = memo(({ difficulty, status, onStat
      if (status === GameStatus.Lost || status === GameStatus.Won) {
          resetGame();
          onStatusChange(GameStatus.Playing);
-         if (!isMuted) initAudio();
          gameState.current.isHolding = true; 
          playSound('click');
          return;
@@ -1046,7 +888,6 @@ const GameCanvas: React.FC<GameCanvasProps> = memo(({ difficulty, status, onStat
      
      if (status === GameStatus.Idle) {
          onStatusChange(GameStatus.Playing);
-         if (!isMuted) initAudio();
      }
      
      gameState.current.isHolding = true;
@@ -1062,7 +903,7 @@ const GameCanvas: React.FC<GameCanvasProps> = memo(({ difficulty, status, onStat
      gameState.current.clickCount += 1;
 
      playSound('click');
-  }, [status, resetGame, onStatusChange, initAudio, isMuted, playSound, showShareModal]);
+  }, [status, resetGame, onStatusChange, playSound, showShareModal]);
 
   const handleEnd = useCallback(() => {
      gameState.current.isHolding = false;
@@ -1075,12 +916,25 @@ const GameCanvas: React.FC<GameCanvasProps> = memo(({ difficulty, status, onStat
   }, []);
 
   useEffect(() => {
+      statusRef.current = status;
+      mutedRef.current = isMuted;
+
       const syncMusic = () => {
-          if (status === GameStatus.Playing && !document.hidden) {
-              startMusic();
-          } else {
-              stopMusic();
+          if (isMuted || status !== GameStatus.Playing || document.hidden) {
+              audioEngineRef.current?.stopMusic();
+              return;
           }
+
+          void ensureAudio().then((engine) => {
+              if (
+                  engine &&
+                  !mutedRef.current &&
+                  statusRef.current === GameStatus.Playing &&
+                  !document.hidden
+              ) {
+                  engine.startMusic(triggerBeat);
+              }
+          });
       };
 
       syncMusic();
@@ -1088,9 +942,18 @@ const GameCanvas: React.FC<GameCanvasProps> = memo(({ difficulty, status, onStat
 
       return () => {
           document.removeEventListener('visibilitychange', syncMusic);
-          stopMusic();
+          audioEngineRef.current?.stopMusic();
       };
-  }, [status, startMusic, stopMusic]);
+  }, [ensureAudio, isMuted, status, triggerBeat]);
+
+  useEffect(() => {
+      return () => {
+          audioDisposedRef.current = true;
+          const engine = audioEngineRef.current;
+          audioEngineRef.current = null;
+          if (engine) void engine.destroy();
+      };
+  }, []);
 
   useEffect(() => {
       const releaseInput = () => {
@@ -1341,8 +1204,7 @@ const GameCanvas: React.FC<GameCanvasProps> = memo(({ difficulty, status, onStat
               
               <button
                 onClick={() => {
-                    if (!isMuted) initAudio();
-                    onStatusChange(GameStatus.Playing);
+                               onStatusChange(GameStatus.Playing);
                     focusGame();
                 }}
                 className="group relative w-full py-3 sm:py-4 bg-white text-black font-display font-black text-lg sm:text-xl rounded hover:scale-[1.02] transition-transform overflow-hidden"
