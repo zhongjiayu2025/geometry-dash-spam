@@ -3,10 +3,10 @@
 import { memo } from "react";
 
 const ACHIEVEMENTS = [
-  { label: "100 Clicks", detail: "Register 100 manual clicks.", test: (totalClicks: number) => totalClicks >= 100 },
-  { label: "Power 10", detail: "Reach Click Power level 10.", testPower: (clickPower: number) => clickPower >= 10 },
-  { label: "Auto 5/s", detail: "Generate at least 5 automatic orbs per second.", testAuto: (autoPower: number) => autoPower >= 5 },
-  { label: "First Prestige", detail: "Complete one prestige reset.", testPrestige: (prestige: number) => prestige >= 1 },
+  { label: "100 Clicks", detail: "Register 100 manual clicks." },
+  { label: "Power 10", detail: "Reach Click Power level 10." },
+  { label: "Auto 5/s", detail: "Generate at least 5 automatic orbs per second." },
+  { label: "First Prestige", detail: "Complete one prestige reset." },
 ] as const;
 
 function ClickerAchievements({
