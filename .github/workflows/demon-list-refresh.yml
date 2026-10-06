@@ -15,6 +15,7 @@ on:
       - "scripts/verify-related-games.mjs"
       - "scripts/verify-related-games-live.mjs"
       - "scripts/verify-dashmetry-live.mjs"
+      - "scripts/verify-spam-challenge-live.mjs"
       - "data/vaultCodes.ts"
       - "data/relatedSearch.json"
       - "app/spam-challenge-list/page.tsx"
@@ -66,6 +67,9 @@ jobs:
 
       - name: Validate Dashmetry rebrand and official home
         run: node scripts/verify-dashmetry-live.mjs
+
+      - name: Validate current Spam Challenge List entry
+        run: node scripts/verify-spam-challenge-live.mjs
 
       - name: Commit changes
         shell: bash

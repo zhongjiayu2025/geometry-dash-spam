@@ -5,7 +5,7 @@ import relatedSearchData from "../../data/relatedSearch.json";
 
 const relatedPageData = relatedSearchData.spamChallengeList;
 const CHECKED_AT = relatedPageData.checkedAt;
-const [LIST_SOURCE, LIST_HUB_SOURCE] = relatedPageData.sources;
+const [CURRENT_LIST_SOURCE, LEGACY_LIST_SOURCE, LIST_HUB_SOURCE] = relatedPageData.sources;
 
 export const metadata: Metadata = {
   title: "Geometry Dash Spam Challenge List | Current SCL Guide",
@@ -51,7 +51,7 @@ export default function SpamChallengeListPage() {
     isPartOf: { "@id": "https://geometrydashspam.cc/#website" },
     publisher: { "@id": "https://geometrydashspam.cc/#organization" },
     dateModified: CHECKED_AT,
-    isBasedOn: [LIST_SOURCE, LIST_HUB_SOURCE],
+    isBasedOn: [CURRENT_LIST_SOURCE, LEGACY_LIST_SOURCE, LIST_HUB_SOURCE],
     about: {
       "@type": "Thing",
       name: "Geometry Dash Spam Challenge List",
@@ -93,7 +93,8 @@ export default function SpamChallengeListPage() {
           <div className="mb-2 text-xs font-bold uppercase tracking-[0.18em] text-fuchsia-300">Quick answer</div>
           <p className="leading-7 text-slate-300">
             If you want the <strong className="text-white">current Spam Challenge List rankings, rules or submission information</strong>,
-            open the maintained list source below. Its page states that it is the new, up-to-date list.
+            open the live SCL app below. The older Google Sites page now identifies itself as the old list and points players
+            toward the newer list, while the GeometryDashLists hub also lists the Spam Challenge List separately.
             We intentionally do not copy the live ranking here because placements and rules can change.
           </p>
         </section>
@@ -160,12 +161,28 @@ export default function SpamChallengeListPage() {
 
         <div className="flex flex-wrap gap-3">
           <a
-            href={LIST_SOURCE}
+            href={CURRENT_LIST_SOURCE}
             target="_blank"
             rel="noopener noreferrer"
             className="rounded-lg bg-fuchsia-600 px-4 py-2 text-sm font-bold text-white"
           >
             Open current Spam Challenge List
+          </a>
+          <a
+            href={LEGACY_LIST_SOURCE}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="rounded-lg border border-white/10 px-4 py-2 text-sm font-bold text-slate-300"
+          >
+            Old list migration note
+          </a>
+          <a
+            href={LIST_HUB_SOURCE}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="rounded-lg border border-white/10 px-4 py-2 text-sm font-bold text-slate-300"
+          >
+            GeometryDashLists hub
           </a>
           <Link href="/" className="rounded-lg border border-white/10 px-4 py-2 text-sm font-bold text-white">
             Spam Test

@@ -73,6 +73,33 @@ for (const page of pages) {
     );
   }
 
+  if (page.key === "spamChallengeList") {
+    if (
+      config.sources.length < 3 ||
+      config.sources[0] !== "https://thespamchallengelist.pages.dev/" ||
+      config.sources[1] !== "https://sites.google.com/view/gdspamchallengeslist/main-list" ||
+      config.sources[2] !== "https://linktr.ee/GeometryDashLists"
+    ) {
+      errors.push(
+        "Spam Challenge List: sources must preserve the current SCL app, legacy migration page, and GeometryDashLists hub."
+      );
+    }
+
+    for (const token of [
+      "CURRENT_LIST_SOURCE",
+      "LEGACY_LIST_SOURCE",
+      "LIST_HUB_SOURCE",
+    ]) {
+      if (!source.includes(token)) {
+        errors.push(`Spam Challenge List: page must consume centralized ${token}.`);
+      }
+    }
+
+    if (source.includes("href={LIST_SOURCE}")) {
+      errors.push("Spam Challenge List: the primary CTA must not point at the legacy list source.");
+    }
+  }
+
   if (page.key === "dashmetry") {
     if (
       typeof config.legacyName !== "string" ||
@@ -172,6 +199,15 @@ if (
 ) {
   errors.push(
     "Related-game refresh workflow must live-check the Dashmetry rebrand and official Challenge Rush home."
+  );
+}
+
+if (
+  !workflowSource.includes('"scripts/verify-spam-challenge-live.mjs"') ||
+  !workflowSource.includes("Validate current Spam Challenge List entry")
+) {
+  errors.push(
+    "Related-game refresh workflow must live-check the current Spam Challenge List and migration sources."
   );
 }
 
