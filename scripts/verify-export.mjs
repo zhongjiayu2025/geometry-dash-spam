@@ -1556,7 +1556,7 @@ const clientSourceBudgets = [
   ["DragClickTest.tsx", dragClientSource, 7100],
   ["SpacebarCounter.tsx", spacebarClientSource, 9300],
   ["PersonalStats.tsx", personalStatsSource, 5000],
-  ["GeometryDashClicker.tsx", clickerSource, 9200],
+  ["GeometryDashClicker.tsx", clickerSource, 8200],
   ["BpmTapper.tsx", bpmClientSource, 5000],
   ["DoubleClickTest.tsx", doubleClickClientSource, 7200],
   ["PollingRateTest.tsx", pollingClientSource, 8500],
@@ -2014,13 +2014,14 @@ if (
 }
 
 if (
-  !clickerSource.includes("pendingTouchRef") ||
+  !clickerSource.includes("useIntentionalPointerAction") ||
+  !clickerSource.includes("deferTouch: true") ||
   !clickerSource.includes("touch-pan-y") ||
-  !clickerSource.includes("onPointerUp={handleCubePointerUp}") ||
+  clickerSource.includes("pendingTouchRef") ||
   clickerSource.includes("touch-none mx-auto")
 ) {
   infrastructureErrors.push(
-    "Geometry Dash Clicker must allow vertical mobile scrolling and count only intentional taps"
+    "Geometry Dash Clicker must share intentional-touch filtering while allowing vertical mobile scrolling"
   );
 }
 

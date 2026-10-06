@@ -3,6 +3,7 @@
 import React, { useEffect, useRef, useState } from "react";
 import { RotateCcw, Sparkles, Zap } from "lucide-react";
 import ClickerAchievements from "./ClickerAchievements";
+import { useIntentionalPointerAction } from "../lib/useIntentionalPointerAction";
 
 type SaveState = {
   orbs: number;
@@ -21,7 +22,6 @@ export default function GeometryDashClicker() {
   const stateRef = useRef(state);
   const dirtyRef = useRef(false);
   const autoTickRef = useRef(0);
-  const pendingTouchRef = useRef<{ pointerId: number; x: number; y: number } | null>(null);
 
   useEffect(() => {
     try {
@@ -110,32 +110,10 @@ export default function GeometryDashClicker() {
     });
   };
 
-  const handleCubePointerDown = (event: React.PointerEvent<HTMLButtonElement>) => {
-    if (event.pointerType === "touch") {
-      pendingTouchRef.current = {
-        pointerId: event.pointerId,
-        x: event.clientX,
-        y: event.clientY,
-      };
-      return;
-    }
-
-    event.preventDefault();
-    clickCube();
-  };
-
-  const handleCubePointerUp = (event: React.PointerEvent<HTMLButtonElement>) => {
-    const pending = pendingTouchRef.current;
-    if (!pending || pending.pointerId !== event.pointerId) return;
-
-    pendingTouchRef.current = null;
-    const moved = Math.hypot(event.clientX - pending.x, event.clientY - pending.y);
-    if (moved <= 12) clickCube();
-  };
-
-  const handleCubePointerCancel = () => {
-    pendingTouchRef.current = null;
-  };
+  const cubePointerAction = useIntentionalPointerAction<HTMLButtonElement>({
+    onAction: clickCube,
+    deferTouch: true,
+  });
 
   const buyClick = () => {
     if (state.orbs < clickCost) return;
@@ -181,9 +159,7 @@ export default function GeometryDashClicker() {
 
         <button
           type="button"
-          onPointerDown={handleCubePointerDown}
-          onPointerUp={handleCubePointerUp}
-          onPointerCancel={handleCubePointerCancel}
+          {...cubePointerAction}
           className="touch-pan-y mx-auto flex aspect-square w-full max-w-sm select-none items-center justify-center rounded-3xl border-2 border-blue-400/50 bg-gradient-to-br from-blue-600 to-indigo-900 shadow-[0_0_45px_rgba(37,99,235,0.25)] transition-transform active:scale-[0.97]"
           aria-label="Click the Geometry Dash cube"
         >
