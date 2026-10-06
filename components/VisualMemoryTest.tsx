@@ -1,10 +1,12 @@
 "use client";
 
-import React, { useState } from 'react';
+import React, { useCallback, useRef, useState } from 'react';
 import dynamic from 'next/dynamic';
 import { Brain, Play, Trophy } from 'lucide-react';
 import { usePersistentBestNumber } from '../lib/usePersistentBestNumber';
 import { useManagedTimeout } from '../lib/useManagedTimeout';
+
+type MemoryTestRuntime = typeof import('../lib/memoryTestRuntime');
 
 const VisualMemoryGameOver = dynamic(() => import('./VisualMemoryGameOver'), { ssr: false });
 
@@ -19,41 +21,38 @@ export default function VisualMemoryTest() {
     const [clickedSquares, setClickedSquares] = useState<number[]>([]);
     const [missedSquares, setMissedSquares] = useState<number[]>([]); // To show red when wrong
     const { schedule: scheduleTimeout, clear: clearTimeout } = useManagedTimeout();
-    
-    // Level formula: active squares = level + 2
-    // Grid size increases gradually
-    
+    const runtimeRef = useRef<MemoryTestRuntime | null>(null);
+    const runtimeLoadRef = useRef<Promise<MemoryTestRuntime | null> | null>(null);
 
-    const startLevel = (currentLevel: number) => {
-        let currentGridSize = 3;
-        if (currentLevel >= 3) currentGridSize = 4;
-        if (currentLevel >= 7) currentGridSize = 5;
-        if (currentLevel >= 12) currentGridSize = 6;
-        if (currentLevel >= 20) currentGridSize = 7;
-        
-        setGridSize(currentGridSize);
-        
-        const totalSquares = currentGridSize * currentGridSize;
-        const numActive = Math.min(currentLevel + 2, totalSquares);
-        
-        const newActive: number[] = [];
-        while (newActive.length < numActive) {
-            const r = Math.floor(Math.random() * totalSquares);
-            if (!newActive.includes(r)) {
-                newActive.push(r);
-            }
+    const ensureRuntime = useCallback(async () => {
+        if (runtimeRef.current) return runtimeRef.current;
+        if (!runtimeLoadRef.current) {
+            runtimeLoadRef.current = import('../lib/memoryTestRuntime').catch(() => null);
         }
-        
-        setActiveSquares(newActive);
-        setClickedSquares([]);
-        setMissedSquares([]);
-        setGameState('showing');
-        
-        // Hide after some time depending on grid size
-        scheduleTimeout(() => {
-            setGameState('playing');
-        }, Math.max(1000, 1500 - (currentLevel * 20))); // Gradually gets slightly faster, but minimum 1s
-    };
+        const runtime = await runtimeLoadRef.current;
+        if (runtime) runtimeRef.current = runtime;
+        return runtime;
+    }, []);
+
+    const preloadRuntime = useCallback(() => {
+        void ensureRuntime();
+    }, [ensureRuntime]);
+
+    const startLevel = useCallback((currentLevel: number) => {
+        void ensureRuntime().then((runtime) => {
+            if (!runtime) return;
+            const next = runtime.generateVisualLevel(currentLevel);
+            setGridSize(next.gridSize);
+            setActiveSquares(next.activeSquares);
+            setClickedSquares([]);
+            setMissedSquares([]);
+            setGameState('showing');
+
+            scheduleTimeout(() => {
+                setGameState('playing');
+            }, next.revealMs);
+        });
+    }, [ensureRuntime, scheduleTimeout]);
 
     const startGame = () => {
         clearTimeout();
@@ -138,6 +137,8 @@ export default function VisualMemoryTest() {
                                     Memorize the white squares. Once they turn blue, click the ones you remember. The grid gets larger as you progress.
                                 </p>
                                 <button
+                                    onPointerEnter={preloadRuntime}
+                                    onFocus={preloadRuntime}
                                     onClick={startGame}
                                     className="px-8 py-3 bg-fuchsia-600 hover:bg-fuchsia-500 text-white font-bold rounded-lg transition-colors flex items-center gap-2 shadow-lg"
                                 >

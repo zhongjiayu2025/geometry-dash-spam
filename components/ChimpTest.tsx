@@ -1,10 +1,13 @@
 "use client";
 
-import React, { useState } from 'react';
+import React, { useCallback, useRef, useState } from 'react';
 import dynamic from 'next/dynamic';
 import { BrainCircuit, Play, Trophy } from 'lucide-react';
 import { usePersistentBestNumber } from '../lib/usePersistentBestNumber';
 import { useManagedTimeout } from '../lib/useManagedTimeout';
+import type { ChimpNumber } from '../lib/memoryTestRuntime';
+
+type MemoryTestRuntime = typeof import('../lib/memoryTestRuntime');
 
 const ChimpGameOver = dynamic(() => import('./ChimpGameOver'), { ssr: false });
 
@@ -12,47 +15,41 @@ export default function ChimpTest() {
     const [gameState, setGameState] = useState<'idle' | 'showing' | 'playing' | 'finished' | 'failed'>('idle');
     const [level, setLevel] = useState(4); // Starts at 4 numbers
     const [bestScore, commitBestScore] = usePersistentBestNumber('chimpBestScore');
-    const [numbers, setNumbers] = useState<{ id: number, val: number, x: number, y: number, hidden: boolean, clicked: boolean }[]>([]);
+    const [numbers, setNumbers] = useState<ChimpNumber[]>([]);
     const [nextExpected, setNextExpected] = useState(1);
     const [strikes, setStrikes] = useState(0);
     const { schedule: scheduleTimeout, clear: clearTimeout } = useManagedTimeout();
+    const runtimeRef = useRef<MemoryTestRuntime | null>(null);
+    const runtimeLoadRef = useRef<Promise<MemoryTestRuntime | null> | null>(null);
 
-    const generateLevel = (currentLevel: number) => {
+    const ensureRuntime = useCallback(async () => {
+        if (runtimeRef.current) return runtimeRef.current;
+        if (!runtimeLoadRef.current) {
+            runtimeLoadRef.current = import('../lib/memoryTestRuntime').catch(() => null);
+        }
+        const runtime = await runtimeLoadRef.current;
+        if (runtime) runtimeRef.current = runtime;
+        return runtime;
+    }, []);
+
+    const preloadRuntime = useCallback(() => {
+        void ensureRuntime();
+    }, [ensureRuntime]);
+
+    const generateLevel = useCallback((currentLevel: number) => {
         if (currentLevel > 40) {
             commitBestScore(40);
             setGameState('finished');
             return;
         }
 
-        // Grid is approx 8x5
-        const cols = 8;
-        const rows = 5;
-        const totalCells = cols * rows;
-        
-        let availablePositions = Array.from(Array(totalCells).keys());
-        
-        // Shuffle positions
-        for (let i = availablePositions.length - 1; i > 0; i--) {
-            const j = Math.floor(Math.random() * (i + 1));
-            [availablePositions[i], availablePositions[j]] = [availablePositions[j], availablePositions[i]];
-        }
-        
-        const selected = availablePositions.slice(0, currentLevel);
-        const newNumbers = selected.map((pos, index) => {
-            return {
-                id: pos,
-                val: index + 1,
-                x: pos % cols,
-                y: Math.floor(pos / cols),
-                hidden: false,
-                clicked: false
-            };
+        void ensureRuntime().then((runtime) => {
+            if (!runtime) return;
+            setNumbers(runtime.generateChimpLevel(currentLevel));
+            setNextExpected(1);
+            setGameState('showing');
         });
-        
-        setNumbers(newNumbers);
-        setNextExpected(1);
-        setGameState('showing');
-    };
+    }, [commitBestScore, ensureRuntime]);
 
     const startGame = () => {
         clearTimeout();
@@ -149,6 +146,8 @@ export default function ChimpTest() {
                                     Click the numbers in sequential order. After you click '1', the remaining numbers will hide. See how many positions you can recall in sequence.
                                 </p>
                                 <button
+                                    onPointerEnter={preloadRuntime}
+                                    onFocus={preloadRuntime}
                                     onClick={startGame}
                                     className="px-8 py-3 bg-indigo-600 hover:bg-indigo-500 text-white font-bold rounded-lg transition-colors flex items-center gap-2 shadow-lg"
                                 >
