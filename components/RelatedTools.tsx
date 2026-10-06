@@ -206,7 +206,7 @@ const RECOMMENDATIONS: Record<string, ToolKey[]> = {
   spacebar: ["cps", "keyboardLatency", "game"],
   pollingRate: ["cps", "keyboardLatency", "game"],
   keyboardLatency: ["spacebar", "keyboardGhosting", "game"],
-  keyboardGhosting: ["keyboardLatency", "spacebar", "typing"],
+  keyboardGhosting: ["keyboardLatency", "spacebar", "cps"],
   mouseAcceleration: ["game", "cps", "wave"],
   reaction: ["game", "cps", "wave"],
   soundReaction: ["game", "cps", "wave"],
