@@ -1924,10 +1924,14 @@ if (
   !wavePresetSource.includes('id: "precision"') ||
   !wavePresetSource.includes('id: "endless"') ||
   !homeGuideSource.includes("Geometry Dash Spam Test Series: 5 drills in one trainer") ||
-  !homeGuideSource.includes("WAVE_PRESETS.map")
+  !homeGuideSource.includes("WAVE_PRESETS.map") ||
+  !homeSource.includes('import { WAVE_PRESETS } from "../data/wavePresets"') ||
+  !homeSource.includes('"@type": "ItemList"') ||
+  !homeSource.includes("numberOfItems: WAVE_PRESETS.length") ||
+  !homeSource.includes("itemListElement: WAVE_PRESETS.map")
 ) {
   infrastructureErrors.push(
-    "Wave presets must stay centralized and the server-rendered home guide must expose the five-drill spam practice ladder"
+    "Wave presets must stay centralized while the home page exposes the five-drill ladder in visible content and ItemList schema"
   );
 }
 

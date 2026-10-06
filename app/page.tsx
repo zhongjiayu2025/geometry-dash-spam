@@ -2,6 +2,7 @@ import { Metadata } from "next";
 import WaveSimulator from "../components/WaveSimulator";
 import HomeGuide from "../components/HomeGuide";
 import CoreTrainingLinks from "../components/CoreTrainingLinks";
+import { WAVE_PRESETS } from "../data/wavePresets";
 
 export const metadata: Metadata = {
   title: "Geometry Dash Spam Test – Wave Spam Trainer Online",
@@ -64,6 +65,20 @@ export default function Home() {
     ],
   };
 
+  const drillSchema = {
+    "@context": "https://schema.org",
+    "@type": "ItemList",
+    name: "Geometry Dash Spam Test Series",
+    numberOfItems: WAVE_PRESETS.length,
+    itemListElement: WAVE_PRESETS.map((preset, index) => ({
+      "@type": "ListItem",
+      position: index + 1,
+      name: preset.label,
+      description: preset.description,
+      url: "https://geometrydashspam.cc/#spam-test-tool",
+    })),
+  };
+
   return (
     <>
       <script
@@ -71,6 +86,7 @@ export default function Home() {
         dangerouslySetInnerHTML={{ __html: JSON.stringify(softwareSchema) }}
       />
       <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(howToSchema) }} />
+      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(drillSchema) }} />
 
       <header className="mb-5 md:mb-8 text-center">
         <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-white/5 border border-white/10 text-[10px] md:text-xs font-mono text-slate-400 mb-3">
