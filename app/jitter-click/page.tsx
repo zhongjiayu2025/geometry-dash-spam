@@ -34,6 +34,9 @@ export default function JitterClickPage() {
         "description": "Run a 10-second jitter click test and compare browser-registered CPS. Practice a rapid clicking technique without relying on claimed benchmark speeds.",
         "applicationCategory": "UtilityApplication",
         "operatingSystem": "Any",
+        "isAccessibleForFree": true,
+        "isPartOf": { "@id": "https://geometrydashspam.cc/#website" },
+        "publisher": { "@id": "https://geometrydashspam.cc/#organization" },
         "offers": {
             "@type": "Offer",
             "price": "0",
