@@ -91,7 +91,7 @@ const GameCanvas: React.FC<GameCanvasProps> = memo(({ difficulty, status, onStat
     setCanFullscreen(Boolean(document.fullscreenEnabled && containerRef.current?.requestFullscreen));
 
     const handleFsChange = () => {
-        setIsFullscreen(!!document.fullscreenElement);
+        setIsFullscreen(document.fullscreenElement === containerRef.current);
     };
     document.addEventListener('fullscreenchange', handleFsChange);
     return () => document.removeEventListener('fullscreenchange', handleFsChange);
@@ -99,12 +99,15 @@ const GameCanvas: React.FC<GameCanvasProps> = memo(({ difficulty, status, onStat
 
   const toggleFullscreen = useCallback(() => {
     if (!containerRef.current) return;
+    if (document.fullscreenElement === containerRef.current) {
+        void document.exitFullscreen();
+        return;
+    }
+
     if (!document.fullscreenElement) {
         containerRef.current.requestFullscreen().catch(err => {
             console.error(`Error attempting to enable fullscreen: ${err.message}`);
         });
-    } else {
-        document.exitFullscreen();
     }
   }, []);
 

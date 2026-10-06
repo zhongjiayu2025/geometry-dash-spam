@@ -1642,6 +1642,15 @@ if (
 }
 
 if (
+  !gameCanvasSource.includes("document.fullscreenElement === containerRef.current") ||
+  gameCanvasSource.includes("setIsFullscreen(!!document.fullscreenElement)")
+) {
+  infrastructureErrors.push(
+    "GameCanvas fullscreen state must reflect only its own container, not arbitrary page fullscreen elements"
+  );
+}
+
+if (
   gameCanvasSource.includes("onStatusChange(GameStatus.Playing);\n         gameState.current.isHolding = true; \n         playSound('click');\n         return;") ||
   !gameCanvasSource.includes("gameState.current.clickCount += 1")
 ) {
