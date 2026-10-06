@@ -1,7 +1,7 @@
 
 "use client";
 
-import React, { useEffect, useState } from 'react';
+import React, { useCallback, useEffect, useState } from 'react';
 import dynamic from 'next/dynamic';
 import { Difficulty, GameStatus } from '../types';
 import { DIFFICULTY_CONFIGS } from '../constants';
@@ -56,12 +56,12 @@ const WaveSimulator: React.FC<WaveSimulatorProps> = ({ variant = 'spam' }) => {
     setIsMini(localStorage.getItem('gd_spam_mini_mode') === 'true');
   }, []);
 
-  const handleDifficultySelect = (newDiff: Difficulty) => {
+  const handleDifficultySelect = useCallback((newDiff: Difficulty) => {
     setDifficulty(newDiff);
     setWavePreset('custom');
     setGameStatus(GameStatus.Idle);
     localStorage.setItem('gd_spam_last_difficulty', newDiff);
-  };
+  }, []);
 
   const toggleEndless = () => {
     const newState = !isEndless;
