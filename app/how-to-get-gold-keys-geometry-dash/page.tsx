@@ -21,7 +21,7 @@ export const metadata: Metadata = {
     type: "website",
   },
   twitter: {
-    card: "summary",
+    card: "summary_large_image",
     title: "How to Get Gold Keys in Geometry Dash | Current Methods",
     description: "How to get Gold Keys in Geometry Dash: use eligible Event Level reward chests or Secret Room/Wraith codes, then spend them on gold chests.",
   },
