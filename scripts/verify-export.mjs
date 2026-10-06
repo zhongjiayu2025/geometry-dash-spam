@@ -456,6 +456,7 @@ const spacebarFinishedSource = readFileSync(join(process.cwd(), "components", "S
 const mouseAccelerationResultSource = readFileSync(join(process.cwd(), "components", "MouseAccelerationResult.tsx"), "utf8");
 const soundReactionResultSource = readFileSync(join(process.cwd(), "components", "SoundReactionResult.tsx"), "utf8");
 const visualMemoryGridSource = readFileSync(join(process.cwd(), "components", "VisualMemoryGrid.tsx"), "utf8");
+const chimpBoardSource = readFileSync(join(process.cwd(), "components", "ChimpBoard.tsx"), "utf8");
 const demonListSource = readFileSync(join(process.cwd(), "components", "DemonListTable.tsx"), "utf8");
 const demonFilterSource = readFileSync(join(process.cwd(), "components", "DemonListFilterControls.tsx"), "utf8");
 const clickTestHeroSource = readFileSync(join(process.cwd(), "components", "ClickTestHero.tsx"), "utf8");
@@ -1034,6 +1035,18 @@ if (
 }
 
 if (
+  !chimpClientSource.includes("dynamic(() => import('./ChimpBoard')") ||
+  chimpClientSource.includes("max-w-[600px] aspect-[8/5]") ||
+  !chimpBoardSource.includes('type="button"') ||
+  !chimpBoardSource.includes('aria-label={number.hidden ? "Hidden number tile"') ||
+  !chimpBoardSource.includes("focus-visible:outline-indigo-400")
+) {
+  infrastructureErrors.push(
+    "Chimp number board must stay lazy-loaded with keyboard focus and hidden-number-safe labels"
+  );
+}
+
+if (
   !typingClientSource.includes('dynamic(() => import("./TypingResult")') ||
   !typingClientSource.includes("window.setInterval(updateTimer, 100)") ||
   !typingClientSource.includes("endTimerRef") ||
@@ -1225,7 +1238,7 @@ const clientSourceBudgets = [
   ["AimTrainer.tsx", aimClientSource, 10500],
   ["ReactionTest.tsx", reactionClientSource, 6500],
   ["VisualMemoryTest.tsx", visualMemoryClientSource, 9000],
-  ["ChimpTest.tsx", chimpClientSource, 10800],
+  ["ChimpTest.tsx", chimpClientSource, 9500],
   ["TypingTest.tsx", typingClientSource, 8000],
   ["ScrollTest.tsx", scrollClientSource, 7500],
   ["RefreshRateTest.tsx", refreshRateClientSource, 4500],
