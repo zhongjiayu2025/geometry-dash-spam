@@ -15,7 +15,7 @@ export const metadata: Metadata = {
     type: "website",
   },
   twitter: {
-    card: "summary",
+    card: "summary_large_image",
     title: "Double Click Test | Browser Mouse Bounce Check",
     description: "Check for unusually rapid repeated mouse clicks and inspect time intervals between registered clicks in your browser.",
   },
