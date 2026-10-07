@@ -145,8 +145,9 @@ Preferred order:
 Do not use logos as generic filler.
 
 Blog cover direction:
-- replace generic stock imagery over time with first-party screenshots/diagrams from the actual Wave/CPS/Demon experience
-- maintain 1200×630 social-share compatibility
+- blog covers use first-party branded vector visuals stored under `/public/blog-covers/`
+- future upgrades may replace a vector with an actual tool screenshot/diagram when that adds more explanatory value
+- social sharing uses the site-owned 1200×630 PNG Open Graph image for broad crawler compatibility
 - keep subject matter understandable without overlaid keyword stuffing
 
 ## 9. Motion
