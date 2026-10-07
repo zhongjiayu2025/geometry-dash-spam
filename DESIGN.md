@@ -156,6 +156,12 @@ Blog cover direction:
 - Do not invent benchmark numbers; illustrative values must be labeled as examples.
 - Reuse a diagram only when it explains the same underlying concept.
 
+### Content-value rule
+- Do not expand an article merely to increase word count.
+- Add content only when it improves a decision, comparison, troubleshooting path, source check or next action.
+- Short support articles may stay short when the search/user task is already answered.
+- Prefer one strong diagram, table or workflow over several repetitive paragraphs.
+
 ## 9. Motion
 
 - default transitions: 150–250ms
