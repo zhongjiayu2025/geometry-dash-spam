@@ -1,0 +1,25 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="675" viewBox="0 0 1200 675">
+  <rect width="1200" height="675" rx="32" fill="#020617"/>
+  <text x="64" y="78" fill="#fff" font-family="Arial" font-size="36" font-weight="700">Which Geometry Dash spam reference should you use?</text>
+  <g font-family="Arial">
+    <rect x="80" y="180" width="300" height="190" rx="24" fill="#3b0764" stroke="#d946ef"/>
+    <text x="110" y="230" fill="#f5d0fe" font-size="26" font-weight="700">Spam Challenge List</text>
+    <text x="110" y="275" fill="#e2e8f0" font-size="20">Community spam challenges</text>
+    <text x="110" y="310" fill="#94a3b8" font-size="18">Use for its own rankings &amp; rules</text>
+
+    <rect x="450" y="180" width="300" height="190" rx="24" fill="#172554" stroke="#6366f1"/>
+    <text x="480" y="230" fill="#c7d2fe" font-size="26" font-weight="700">Pointercrate Demon List</text>
+    <text x="480" y="275" fill="#e2e8f0" font-size="20">Difficult rated Demons</text>
+    <text x="480" y="310" fill="#94a3b8" font-size="18">Overall rank, not spam intensity</text>
+
+    <rect x="820" y="180" width="300" height="190" rx="24" fill="#082f49" stroke="#38bdf8"/>
+    <text x="850" y="230" fill="#bae6fd" font-size="26" font-weight="700">Wave / Spam Guides</text>
+    <text x="850" y="275" fill="#e2e8f0" font-size="20">Practice-oriented references</text>
+    <text x="850" y="310" fill="#94a3b8" font-size="18">Not an official ranking system</text>
+
+    <path d="M380 275H450M750 275H820" stroke="#64748b" stroke-width="5" stroke-dasharray="12 12"/>
+    <rect x="250" y="460" width="700" height="110" rx="24" fill="#0f172a" stroke="#334155"/>
+    <text x="300" y="505" fill="#fff" font-size="25" font-weight="700">One search phrase can point to different systems.</text>
+    <text x="300" y="542" fill="#94a3b8" font-size="20">Check the source and the question before treating a list as authoritative.</text>
+  </g>
+</svg>
