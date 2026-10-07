@@ -1,0 +1,34 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="675" viewBox="0 0 1200 675">
+  <rect width="1200" height="675" rx="32" fill="#020617"/>
+  <text x="64" y="78" fill="#fff" font-family="Arial" font-size="36" font-weight="700">Choose a mouse by repeatable fit, not one spec</text>
+  <text x="64" y="116" fill="#94a3b8" font-family="Arial" font-size="20">A practical comparison framework for Geometry Dash spam</text>
+  <g font-family="Arial">
+    <rect x="70" y="180" width="245" height="300" rx="24" fill="#0f172a" stroke="#60a5fa"/>
+    <text x="100" y="235" fill="#bfdbfe" font-size="25" font-weight="700">1. Click feel</text>
+    <text x="100" y="290" fill="#cbd5e1" font-size="19">Force</text>
+    <text x="100" y="325" fill="#cbd5e1" font-size="19">Button shape</text>
+    <text x="100" y="360" fill="#cbd5e1" font-size="19">Grip comfort</text>
+
+    <rect x="340" y="180" width="245" height="300" rx="24" fill="#0f172a" stroke="#22c55e"/>
+    <text x="370" y="235" fill="#bbf7d0" font-size="25" font-weight="700">2. Registration</text>
+    <text x="370" y="290" fill="#cbd5e1" font-size="19">Debounce behavior</text>
+    <text x="370" y="325" fill="#cbd5e1" font-size="19">Switch behavior</text>
+    <text x="370" y="360" fill="#cbd5e1" font-size="19">Firmware/settings</text>
+
+    <rect x="610" y="180" width="245" height="300" rx="24" fill="#0f172a" stroke="#f59e0b"/>
+    <text x="640" y="235" fill="#fde68a" font-size="25" font-weight="700">3. Reporting</text>
+    <text x="640" y="290" fill="#cbd5e1" font-size="19">Polling rate</text>
+    <text x="640" y="325" fill="#cbd5e1" font-size="19">Browser diagnostics</text>
+    <text x="640" y="360" fill="#cbd5e1" font-size="19">Not total latency</text>
+
+    <rect x="880" y="180" width="245" height="300" rx="24" fill="#0f172a" stroke="#d946ef"/>
+    <text x="910" y="235" fill="#f5d0fe" font-size="25" font-weight="700">4. Verify</text>
+    <text x="910" y="290" fill="#cbd5e1" font-size="19">Same duration</text>
+    <text x="910" y="325" fill="#cbd5e1" font-size="19">Several runs</text>
+    <text x="910" y="360" fill="#cbd5e1" font-size="19">Comfort + consistency</text>
+
+    <rect x="230" y="525" width="740" height="92" rx="20" fill="#172554" stroke="#334155"/>
+    <text x="600" y="566" text-anchor="middle" fill="#fff" font-size="24" font-weight="700">No single “best mouse” wins every hand, grip and technique.</text>
+    <text x="600" y="599" text-anchor="middle" fill="#94a3b8" font-size="18">Compare the exact model and your own repeatable results.</text>
+  </g>
+</svg>
