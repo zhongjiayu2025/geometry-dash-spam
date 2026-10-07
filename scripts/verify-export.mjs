@@ -382,6 +382,9 @@ const requiredBlogVisuals = [
   "/blog-visuals/wave-ufo-ship-input.svg",
   "/blog-visuals/practice-loop.svg",
   "/blog-visuals/mobile-vs-pc-comparison.svg",
+  "/blog-visuals/mouse-selection-framework.svg",
+  "/blog-visuals/spam-troubleshooting-map.svg",
+  "/blog-visuals/evidence-checklist.svg",
 ];
 for (const visual of requiredBlogVisuals) {
   const visualPath = join(outDir, visual.replace(/^\//, ""));
@@ -3380,6 +3383,11 @@ const intentClusterLinks = new Map([
   ["/spacebar-counter", ["/cps-test", "/blog/how-to-improve-cps-geometry-dash"]],
   ["/keyboard-ghosting", ["/key-rollover"]],
   ["/key-rollover", ["/keyboard-ghosting"]],
+  ["/blog/best-mouse-for-spam-geometry-dash", ["/cps-test", "/polling-rate", "/geometry-dash-wave"]],
+  ["/blog/mobile-vs-pc-spam", ["/cps-test", "/polling-rate", "/keyboard-latency", "/refresh-rate"]],
+  ["/blog/common-spam-mistakes", ["/cps-test", "/geometry-dash-wave", "/blog/30-day-spam-challenge"]],
+  ["/blog/30-day-spam-challenge", ["/geometry-dash-wave", "/blog/common-spam-mistakes"]],
+  ["/blog/evaluate-geometry-dash-spam-advice", ["/spam-challenge-list", "/demon-list", "/about", "/cps-test"]],
 ]);
 
 for (const [route, expectedLinks] of intentClusterLinks) {
