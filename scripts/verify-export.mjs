@@ -85,6 +85,7 @@ const removedGhostRoutes = [
 ];
 
 const noindexUtilityRoutes = [
+  "/double-click",
   "/sound-reaction",
   "/typing-test",
   "/visual-memory",
@@ -3283,7 +3284,6 @@ const htmlSitemapPriorityRoutes = [
   "/dashmetry",
   "/drag-click",
   "/right-click",
-  "/double-click",
   "/spacebar-counter",
   "/polling-rate",
   "/keyboard-latency",
@@ -3305,7 +3305,6 @@ if (htmlSitemapPath) {
 const supportGuideRoutes = [
   "/drag-click",
   "/right-click",
-  "/double-click",
   "/spacebar-counter",
   "/polling-rate",
   "/keyboard-latency",
