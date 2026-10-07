@@ -140,3 +140,17 @@ Decision:
 - Previously proven GSC pages such as CPS, homepage, Reaction, Aim, Jitter, Butterfly, Spacebar and Right Click were not deindexed.
 
 The export verifier now treats `/double-click` as a noindex utility and will fail if it re-enters the search sitemap unintentionally.
+
+
+## 15. Google Search Console sitemap fetch hardening
+
+A Google Search Console screenshot on 2026-10-07 reported `/sitemap.xml` as **Couldn't fetch / unable to read sitemap**, with zero discovered URLs.
+
+Hardening applied:
+- `/sitemap.xml` now has an explicit `application/xml; charset=utf-8` response header in Cloudflare Pages `_headers`.
+- `/robots.txt` now has an explicit `text/plain; charset=utf-8` response header.
+- Both files use short revalidation caching so crawler retries are not held behind a long stale cache.
+- Static export verification now checks the XML declaration and standard sitemap `urlset` namespace.
+- Production CI now fetches both files with a Googlebot user agent, requires HTTP 200, validates MIME types, parses sitemap XML, checks canonical-host URLs and verifies the robots sitemap declaration.
+
+After deployment, Search Console should be asked to re-read/resubmit `sitemap.xml`. Search Console may continue showing the previous failed read until Google retries it.
