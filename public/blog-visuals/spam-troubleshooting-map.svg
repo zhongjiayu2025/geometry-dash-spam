@@ -1,0 +1,31 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="675" viewBox="0 0 1200 675">
+  <rect width="1200" height="675" rx="32" fill="#020617"/>
+  <text x="64" y="78" fill="#fff" font-family="Arial" font-size="36" font-weight="700">Troubleshoot the symptom before changing everything</text>
+  <g font-family="Arial">
+    <rect x="70" y="175" width="320" height="355" rx="24" fill="#3f1d2e" fill-opacity=".35" stroke="#ef4444"/>
+    <text x="105" y="230" fill="#fecaca" font-size="27" font-weight="700">Speed problem</text>
+    <text x="105" y="285" fill="#e2e8f0" font-size="20">Symptom:</text>
+    <text x="105" y="320" fill="#cbd5e1" font-size="18">CPS drops quickly</text>
+    <text x="105" y="370" fill="#e2e8f0" font-size="20">Check:</text>
+    <text x="105" y="405" fill="#cbd5e1" font-size="18">Duration + technique</text>
+    <text x="105" y="445" fill="#60a5fa" font-size="18">→ CPS Test</text>
+
+    <rect x="440" y="175" width="320" height="355" rx="24" fill="#172554" fill-opacity=".45" stroke="#3b82f6"/>
+    <text x="475" y="230" fill="#bfdbfe" font-size="27" font-weight="700">Control problem</text>
+    <text x="475" y="285" fill="#e2e8f0" font-size="20">Symptom:</text>
+    <text x="475" y="320" fill="#cbd5e1" font-size="18">Fast clicks, unstable path</text>
+    <text x="475" y="370" fill="#e2e8f0" font-size="20">Check:</text>
+    <text x="475" y="405" fill="#cbd5e1" font-size="18">Difficulty + intervals</text>
+    <text x="475" y="445" fill="#60a5fa" font-size="18">→ Wave / Spam Trainer</text>
+
+    <rect x="810" y="175" width="320" height="355" rx="24" fill="#3b2f0b" fill-opacity=".45" stroke="#f59e0b"/>
+    <text x="845" y="230" fill="#fde68a" font-size="27" font-weight="700">Comparison problem</text>
+    <text x="845" y="285" fill="#e2e8f0" font-size="20">Symptom:</text>
+    <text x="845" y="320" fill="#cbd5e1" font-size="18">Results change randomly</text>
+    <text x="845" y="370" fill="#e2e8f0" font-size="20">Check:</text>
+    <text x="845" y="405" fill="#cbd5e1" font-size="18">Device + settings + duration</text>
+    <text x="845" y="445" fill="#60a5fa" font-size="18">→ Repeat same setup</text>
+
+    <text x="600" y="604" text-anchor="middle" fill="#94a3b8" font-size="19">Change one variable at a time so the next run actually teaches you something.</text>
+  </g>
+</svg>
