@@ -154,3 +154,6 @@ Hardening applied:
 - Production CI now fetches both files with a Googlebot user agent, requires HTTP 200, validates MIME types, parses sitemap XML, checks canonical-host URLs and verifies the robots sitemap declaration.
 
 After deployment, Search Console should be asked to re-read/resubmit `sitemap.xml`. Search Console may continue showing the previous failed read until Google retries it.
+
+
+Validation rerun marker: sitemap hardening was re-queued after the earlier concurrency-cancelled workflow so the final branch state is tested as one release.
