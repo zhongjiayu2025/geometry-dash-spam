@@ -16,6 +16,8 @@ export async function generateMetadata({ params }: { params: Promise<{ slug: str
     const post = BLOG_POSTS.find((p) => p.slug === slug);
     if (!post) return { title: 'Post Not Found' };
 
+    const socialImage = "https://geometrydashspam.cc/opengraph-image";
+
     return {
         title: post.title, // Template in layout handles the suffix
         description: post.excerpt,
@@ -30,7 +32,7 @@ export async function generateMetadata({ params }: { params: Promise<{ slug: str
             tags: post.tags,
             images: [
                 {
-                    url: post.coverImage,
+                    url: socialImage,
                     width: 1200,
                     height: 630,
                     alt: post.title,
@@ -41,7 +43,7 @@ export async function generateMetadata({ params }: { params: Promise<{ slug: str
             card: "summary_large_image",
             title: post.title,
             description: post.excerpt,
-            images: [post.coverImage],
+            images: [socialImage],
         },
         alternates: {
             canonical: `/blog/${post.slug}`,
@@ -63,7 +65,7 @@ export default async function BlogPostPage({ params }: { params: Promise<{ slug:
         "@type": "Article",
         "headline": post.title,
         "description": post.excerpt,
-        "image": post.coverImage,
+        "image": "https://geometrydashspam.cc/opengraph-image",
         "datePublished": new Date(post.date).toISOString(),
         "dateModified": new Date(post.updated ?? post.date).toISOString(),
         "inLanguage": "en",
