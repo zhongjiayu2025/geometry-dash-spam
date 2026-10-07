@@ -125,3 +125,18 @@ The remaining support articles were reviewed for whether more content would add 
 - `common-spam-mistakes`: converted into a faster troubleshooting entry point and linked explicitly to the 30-day progression plan.
 - `evaluate-geometry-dash-spam-advice`: kept compact but strengthened with a first-party evidence checklist and direct source-policy/list routing.
 - The verifier now protects the intended handoffs between these support articles and their relevant tools/hubs.
+
+
+## 14. Conservative indexation reduction audit
+
+A final reduction-focused review was performed after the main SEO/GEO clusters stabilized.
+
+Decision:
+- `/double-click` is now `noindex,follow`.
+- It was removed from the XML sitemap and the human sitemap's promoted indexable-tool list.
+- Indexable related-tool pages no longer recommend it as a search destination.
+- The tool itself remains available for users who reach it through narrower diagnostic flows.
+- Polling Rate, Keyboard Timing, Ghosting/Rollover, Drag Click, Geometry Dash Clicker and source-checked Geometry Dash guides remain indexable because they still provide distinct intent and/or meaningful topical support.
+- Previously proven GSC pages such as CPS, homepage, Reaction, Aim, Jitter, Butterfly, Spacebar and Right Click were not deindexed.
+
+The export verifier now treats `/double-click` as a noindex utility and will fail if it re-enters the search sitemap unintentionally.
