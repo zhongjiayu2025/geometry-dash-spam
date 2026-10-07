@@ -91,3 +91,79 @@ jobs:
 
           echo "::error::Production is stale or deploy-status.json is unavailable. Expected commit: $EXPECTED_SHA"
           exit 1
+
+      - name: Verify sitemap and robots are crawler-readable
+        shell: bash
+        run: |
+          set -euo pipefail
+
+          sitemap_url="https://geometrydashspam.cc/sitemap.xml"
+          robots_url="https://geometrydashspam.cc/robots.txt"
+          googlebot_ua="Mozilla/5.0 (compatible; Googlebot/2.1; +http://www.google.com/bot.html)"
+
+          sitemap_headers="$(mktemp)"
+          sitemap_body="$(mktemp)"
+          robots_headers="$(mktemp)"
+          robots_body="$(mktemp)"
+
+          curl -fsSL             --connect-timeout 10             --max-time 30             -A "$googlebot_ua"             -D "$sitemap_headers"             -o "$sitemap_body"             "$sitemap_url"
+
+          sitemap_status="$(awk 'toupper($1) ~ /^HTTP\// {code=$2} END {print code}' "$sitemap_headers")"
+          sitemap_type="$(awk -F': ' 'tolower($1)=="content-type" {gsub("\r","",$2); value=$2} END {print tolower(value)}' "$sitemap_headers")"
+
+          if [[ "$sitemap_status" != "200" ]]; then
+            echo "::error::sitemap.xml returned HTTP $sitemap_status"
+            cat "$sitemap_headers"
+            exit 1
+          fi
+
+          if [[ "$sitemap_type" != *"xml"* ]]; then
+            echo "::error::sitemap.xml Content-Type is '$sitemap_type', expected an XML MIME type"
+            cat "$sitemap_headers"
+            exit 1
+          fi
+
+          python3 - "$sitemap_body" <<'PY'
+          import sys
+          import xml.etree.ElementTree as ET
+
+          path = sys.argv[1]
+          tree = ET.parse(path)
+          root = tree.getroot()
+          ns = {"sm": "http://www.sitemaps.org/schemas/sitemap/0.9"}
+          urls = [node.text or "" for node in root.findall("sm:url/sm:loc", ns)]
+
+          if root.tag != "{http://www.sitemaps.org/schemas/sitemap/0.9}urlset":
+              raise SystemExit(f"unexpected sitemap root: {root.tag}")
+          if len(urls) < 20:
+              raise SystemExit(f"too few sitemap URLs: {len(urls)}")
+          bad = [url for url in urls if not url.startswith("https://geometrydashspam.cc")]
+          if bad:
+              raise SystemExit(f"non-canonical sitemap URLs: {bad[:5]}")
+          print(f"sitemap.xml parsed successfully with {len(urls)} URLs")
+          PY
+
+          curl -fsSL             --connect-timeout 10             --max-time 30             -A "$googlebot_ua"             -D "$robots_headers"             -o "$robots_body"             "$robots_url"
+
+          robots_status="$(awk 'toupper($1) ~ /^HTTP\// {code=$2} END {print code}' "$robots_headers")"
+          robots_type="$(awk -F': ' 'tolower($1)=="content-type" {gsub("\r","",$2); value=$2} END {print tolower(value)}' "$robots_headers")"
+
+          if [[ "$robots_status" != "200" ]]; then
+            echo "::error::robots.txt returned HTTP $robots_status"
+            cat "$robots_headers"
+            exit 1
+          fi
+
+          if [[ "$robots_type" != *"text/plain"* ]]; then
+            echo "::error::robots.txt Content-Type is '$robots_type', expected text/plain"
+            cat "$robots_headers"
+            exit 1
+          fi
+
+          grep -Fqi "Sitemap: https://geometrydashspam.cc/sitemap.xml" "$robots_body" || {
+            echo "::error::robots.txt is missing the canonical sitemap declaration"
+            cat "$robots_body"
+            exit 1
+          }
+
+          echo "robots.txt and sitemap.xml are crawler-readable in production"
