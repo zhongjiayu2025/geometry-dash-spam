@@ -87,3 +87,13 @@ Use private Search Console data outside this public repository to review:
 Public drift baseline: `SEO-GEO-BASELINE.md`.
 
 A future release is a regression if it unintentionally changes protected canonical URLs, creates sitemap/indexation mismatch, creates orphan pages, removes source/freshness evidence, weakens entity consistency, or moves important SEO content into client-only rendering.
+
+
+## 10. Design-system and consent follow-up
+
+- `DESIGN.md`: added to freeze the current visual language and prevent arbitrary UI drift.
+- `QA-CHECKLIST.md`: added for project-specific mobile/visual/accessibility/release checks.
+- AdSense tag: present in the root layout.
+- Referrer policy: `strict-origin-when-cross-origin`, compatible with Google's documented consent-message requirement.
+- `ADS-CONSENT.md`: records the required account-side CMP setup.
+- Source code cannot prove that an AdSense Privacy & messaging European regulations message has been published. This must be verified in the AdSense account.

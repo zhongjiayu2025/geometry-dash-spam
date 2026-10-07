@@ -66,6 +66,14 @@ This project follows the owner baseline in [chenmu2024/Website-Starter-Standard]
 
 The public repository intentionally does not store private Search Console or analytics performance data.
 
+Project governance files:
+
+- `DESIGN.md` — Geometry Dash Spam visual system and UI guardrails.
+- `QA-CHECKLIST.md` — project-specific release/visual/accessibility QA.
+- `ADS-CONSENT.md` — AdSense consent/CMP setup notes and the account-side action that cannot be verified from source code alone.
+- `SEO-GEO-PROJECT-BRIEF.md` — search intent, indexation, source, entity and crawler architecture.
+- `SEO-GEO-RELEASE-EVIDENCE.md` — release proof and production verification.
+
 ## SEO and content policy
 
 - Preserve established URLs such as `/cps-test`.

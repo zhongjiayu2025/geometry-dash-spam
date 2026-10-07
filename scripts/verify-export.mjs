@@ -7,6 +7,9 @@ const requiredSeoGovernanceFiles = [
   "SEO-GEO-BASELINE.md",
   "SEO-GEO-PROJECT-BRIEF.md",
   "SEO-GEO-RELEASE-EVIDENCE.md",
+  "DESIGN.md",
+  "QA-CHECKLIST.md",
+  "ADS-CONSENT.md",
 ];
 const buildWorkflowSource = readFileSync(join(process.cwd(), ".github", "workflows", "build.yml"), "utf8");
 const demonSource = readFileSync(join(process.cwd(), "data", "demons.ts"), "utf8");
@@ -492,6 +495,16 @@ if (existsSync(llmsPath)) {
 }
 
 const layoutSource = readFileSync(join(process.cwd(), "app", "layout.tsx"), "utf8");
+const headersSource = readFileSync(join(process.cwd(), "public", "_headers"), "utf8");
+if (
+  !headersSource.includes("Referrer-Policy: strict-origin-when-cross-origin") ||
+  !layoutSource.includes("pagead2.googlesyndication.com/pagead/js/adsbygoogle.js")
+) {
+  infrastructureErrors.push(
+    "AdSense consent-message prerequisite is missing: keep the AdSense tag and a cross-origin-compatible Referrer-Policy"
+  );
+}
+
 if (!layoutSource.includes('"@id": "https://geometrydashspam.cc/#editorial"')) {
   infrastructureErrors.push("global schema missing stable editorial entity #editorial");
 }

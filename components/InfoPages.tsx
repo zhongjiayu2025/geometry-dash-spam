@@ -242,19 +242,28 @@ export const PrivacyPage = () => (
         </p>
       </SectionCard>
 
-      <SectionCard title="3. Information you send us" icon={<Mail className="w-5 h-5"/>}>
+      <SectionCard title="3. Consent and regional ad choices" icon={<Shield className="w-5 h-5"/>}>
+        <p>
+          In regions where advertising consent is required, a Google-certified consent management platform may present choices about personalized advertising, non-personalized advertising, limited ads and related data use. Those choices are handled by the consent platform and advertising provider rather than by the local practice tools.
+        </p>
+        <p>
+          Advertising consent is separate from the browser-local settings and personal-best data used by the training tools. Declining advertising consent should not be treated as consent to upload local practice history.
+        </p>
+      </SectionCard>
+
+      <SectionCard title="4. Information you send us" icon={<Mail className="w-5 h-5"/>}>
         <p>
           If you email us, the message and contact information you provide are processed for the purpose of reading and responding to that request.
         </p>
       </SectionCard>
 
-      <SectionCard title="4. Children" icon={<Lock className="w-5 h-5"/>}>
+      <SectionCard title="5. Children" icon={<Lock className="w-5 h-5"/>}>
         <p>
           The site does not require users to create profiles or submit age information. Do not send personal information through email unless it is necessary for a support request.
         </p>
       </SectionCard>
 
-      <SectionCard title="5. Your browser controls">
+      <SectionCard title="6. Your browser controls">
         <p>
           You can clear locally stored tool data through your browser settings. Advertising and cookie controls may also be available through your browser and any consent interface shown on the site.
         </p>
