@@ -1,0 +1,24 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="675" viewBox="0 0 1200 675">
+  <rect width="1200" height="675" rx="32" fill="#020617"/>
+  <text x="64" y="78" fill="#fff" font-family="Arial" font-size="36" font-weight="700">Rapid inputs solve different control problems</text>
+  <g font-family="Arial">
+    <rect x="70" y="165" width="320" height="390" rx="26" fill="#0c4a6e" fill-opacity=".35" stroke="#38bdf8"/>
+    <text x="105" y="220" fill="#bae6fd" font-size="30" font-weight="700">Wave</text>
+    <polyline points="110,390 165,315 220,405 275,300 335,385" fill="none" stroke="#38bdf8" stroke-width="10" stroke-linecap="round"/>
+    <text x="105" y="475" fill="#e2e8f0" font-size="20">Press/release spacing</text>
+    <text x="105" y="510" fill="#94a3b8" font-size="18">changes diagonal direction</text>
+
+    <rect x="440" y="165" width="320" height="390" rx="26" fill="#3f1d2e" fill-opacity=".45" stroke="#f472b6"/>
+    <text x="475" y="220" fill="#fbcfe8" font-size="30" font-weight="700">UFO</text>
+    <circle cx="600" cy="345" r="70" fill="none" stroke="#f472b6" stroke-width="10"/>
+    <path d="M500 430Q600 350 700 430" fill="none" stroke="#f472b6" stroke-width="10"/>
+    <text x="475" y="475" fill="#e2e8f0" font-size="20">Repeated tap impulses</text>
+    <text x="475" y="510" fill="#94a3b8" font-size="18">change vertical rhythm</text>
+
+    <rect x="810" y="165" width="320" height="390" rx="26" fill="#3b2f0b" fill-opacity=".45" stroke="#f59e0b"/>
+    <text x="845" y="220" fill="#fde68a" font-size="30" font-weight="700">Ship</text>
+    <path d="M855 420Q920 250 985 420Q1045 520 1090 355" fill="none" stroke="#f59e0b" stroke-width="10"/>
+    <text x="845" y="475" fill="#e2e8f0" font-size="20">Hold/release balance</text>
+    <text x="845" y="510" fill="#94a3b8" font-size="18">controls vertical momentum</text>
+  </g>
+</svg>
