@@ -13,6 +13,7 @@ const requiredSeoGovernanceFiles = [
 ];
 const buildWorkflowSource = readFileSync(join(process.cwd(), ".github", "workflows", "build.yml"), "utf8");
 const demonSource = readFileSync(join(process.cwd(), "data", "demons.ts"), "utf8");
+const blogContentSource = readFileSync(join(process.cwd(), "data", "blogContent.tsx"), "utf8");
 const vaultSource = readFileSync(join(process.cwd(), "data", "vaultCodes.ts"), "utf8");
 const relatedSearchData = JSON.parse(
   readFileSync(join(process.cwd(), "data", "relatedSearch.json"), "utf8")
@@ -361,6 +362,29 @@ if (existsSync(redirectsPath)) {
 }
 
 const infrastructureErrors = [];
+const blogCoverRoutes = [
+  "/blog-covers/what-is-spam-geometry-dash-guide.svg",
+  "/blog-covers/how-to-improve-cps-geometry-dash.svg",
+  "/blog-covers/top-spam-levels-2026.svg",
+  "/blog-covers/best-mouse-for-spam-geometry-dash.svg",
+  "/blog-covers/wave-vs-ufo-spam.svg",
+  "/blog-covers/notable-wave-spam-levels.svg",
+  "/blog-covers/30-day-spam-challenge.svg",
+  "/blog-covers/science-of-clicking.svg",
+  "/blog-covers/mobile-vs-pc-spam.svg",
+  "/blog-covers/common-spam-mistakes.svg",
+  "/blog-covers/evaluate-geometry-dash-spam-advice.svg"
+];
+if (blogContentSource.includes("images.unsplash.com") || /coverImage:\s*["']https?:\/\//.test(blogContentSource)) {
+  infrastructureErrors.push("blog covers must stay first-party/same-origin; remote stock cover URLs are not allowed");
+}
+for (const cover of blogCoverRoutes) {
+  const coverPath = join(outDir, cover.replace(/^\//, ""));
+  if (!existsSync(coverPath)) {
+    infrastructureErrors.push(`missing first-party blog cover in export: ${cover}`);
+  }
+}
+
 
 for (const file of requiredSeoGovernanceFiles) {
   if (!existsSync(join(process.cwd(), file))) {
