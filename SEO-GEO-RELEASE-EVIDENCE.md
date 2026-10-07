@@ -9,24 +9,24 @@ Private Search Console metrics are intentionally not stored in this public repos
 ## Release under test
 
 - Architecture/content commit: `da820caf0f4bee4f077308ab2bded845d3c62c45`
-- Final production commit: pending CI/deployment confirmation
+- Verified production content commit: `3dc1aa0b4eac66a7a86e4b054659535dba9c8993`
 - Reviewer: repository automation + manual architecture review
 
 ## 1. Deterministic checks
 
 | Check | Command / mechanism | Status | Evidence |
 |---|---|---|---|
-| TypeScript | `npm run check` | pending current CI | GitHub Actions Build |
-| Static build | `npm run build` | pending current CI | GitHub Actions Build |
-| Data/source verification | `npm run verify:data` | pending current CI | Demon/Vault/related-game verifiers |
-| Export SEO/GEO verification | `npm run verify:export` | pending current CI | route/metadata/schema/link/index checks |
-| Redirects | export verifier | pending current CI | required 301 map |
-| Sitemap/canonical/robots | export verifier | pending current CI | sitemap ↔ indexable canonical parity |
-| Duplicate title/description/H1 | export verifier | pending current CI | sitemap-page semantic checks |
-| Broken internal links | export verifier | pending current CI | exported HTML link crawl |
-| Orphan indexable pages | export verifier | pending current CI | inbound-link audit excluding HTML sitemap |
-| Intent clusters | export verifier | pending current CI | protected CPS/Wave/Demon/keyboard clusters |
-| Source/entity checks | export verifier | pending current CI | #editorial + About source links |
+| TypeScript | `npm run check` | PASS | GitHub Actions Build run 37550666721 |
+| Static build | `npm run build` | PASS | GitHub Actions Build run 37550666721 |
+| Data/source verification | `npm run verify:data` | PASS | Demon/Vault/related-game verifiers in run 37550666721 |
+| Export SEO/GEO verification | `npm run verify:export` | PASS | route/metadata/schema/link/index checks in run 37550666721 |
+| Redirects | export verifier | PASS | required 301 map |
+| Sitemap/canonical/robots | export verifier | PASS | sitemap ↔ indexable canonical parity |
+| Duplicate title/description/H1 | export verifier | PASS | sitemap-page semantic checks |
+| Broken internal links | export verifier | PASS | exported HTML link crawl |
+| Orphan indexable pages | export verifier | PASS | inbound-link audit excluding HTML sitemap |
+| Intent clusters | export verifier | PASS | protected CPS/Wave/Demon/keyboard clusters |
+| Source/entity checks | export verifier | PASS | #editorial + About source links |
 
 ## 2. Raw HTML / entity alignment
 
@@ -41,7 +41,7 @@ The current static architecture is expected to preserve the following in exporte
 - direct source links on source-sensitive content
 - crawlable intent-cluster links
 
-Verification status: pending current CI.
+Verification status: PASS in GitHub Actions run `37550666721`.
 
 ## 3. Intent / content quality
 
@@ -64,9 +64,9 @@ Verification status: pending current CI.
 
 ## 5. Production verification
 
-- Build: pending
-- Production deployment: pending
-- `deploy-status.json` commit match/descendant check: pending
+- Build: PASS
+- Production deployment: PASS
+- `deploy-status.json` commit match/descendant check: PASS for `3dc1aa0b4eac66a7a86e4b054659535dba9c8993` in GitHub Actions run `37550666721`
 - robots.txt / sitemap.xml: enforced by CI/export checks
 - Production freshness: enforced by the `verify-production` workflow
 
