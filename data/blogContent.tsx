@@ -321,12 +321,23 @@ export const BLOG_POSTS: BlogPost[] = [
     excerpt:
       "What actually matters when comparing mice for Geometry Dash: click feel, debounce behavior, polling, shape and repeatable comfort.",
     date: "January 10, 2026",
-    updated: "October 5, 2026",
+    updated: "October 7, 2026",
     readTime: "6 min read",
     coverImage: "/blog-covers/best-mouse-for-spam-geometry-dash.svg",
     tags: ["Hardware", "Guide"],
     content: (
       <>
+        <div className="mb-8 rounded-2xl border border-blue-500/20 bg-blue-950/15 p-5 md:p-6">
+          <p className="text-sm leading-7 text-slate-300">
+            <strong className="text-white">Quick answer:</strong> there is no universal best mouse for Geometry Dash spam. Compare click feel, button shape, debounce behavior, polling and hand comfort on the exact model, then verify the choice with repeated tests on the same duration.
+          </p>
+        </div>
+        <BlogVisual
+          src="/blog-visuals/mouse-selection-framework.svg"
+          alt="Four-part mouse selection framework covering click feel, registration behavior, polling and repeated verification"
+          caption="A buying decision should combine fit, registration behavior and repeatable results instead of one headline latency number."
+        />
+
         <h2 className="text-3xl font-display font-bold text-white mt-12 mb-6">Do not shop by one latency number</h2>
         <p className="mb-4 text-slate-300">
           Mouse click latency, debounce behavior and polling are measurable, but a product category such as “gaming mouse” does not guarantee one fixed latency. Compare independent measurements for the exact model and firmware you plan to use.
@@ -344,10 +355,26 @@ export const BLOG_POSTS: BlogPost[] = [
         <h2 className="text-3xl font-display font-bold text-white mt-12 mb-6">How to compare two mice yourself</h2>
         <ol className="list-decimal pl-6 mb-6 space-y-2 text-slate-300">
           <li>Use the same <ToolLink href="/cps-test">CPS Test</ToolLink> duration on both mice.</li>
-          <li>Record several runs instead of choosing the highest single score.</li>
-          <li>Compare comfort and consistency as well as CPS.</li>
-          <li>Use the <ToolLink href="/polling-rate">Polling Rate Test</ToolLink> as a browser-side diagnostic, not as a complete latency benchmark.</li>
+          <li>Run at least several comparable attempts rather than choosing the highest single score.</li>
+          <li>Compare average CPS, interval consistency and comfort together.</li>
+          <li>Use the <ToolLink href="/polling-rate">Polling Rate Test</ToolLink> as a browser-side reporting diagnostic, not as a complete latency benchmark.</li>
+          <li>Finish with the same spam or <ToolLink href="/geometry-dash-wave">Wave Trainer</ToolLink> difficulty to see whether the faster result still feels controllable.</li>
         </ol>
+
+        <h2 className="text-3xl font-display font-bold text-white mt-12 mb-6">What not to use as a buying rule</h2>
+        <div className="grid gap-3 md:grid-cols-2">
+          {[
+            ["One advertised latency number", "End-to-end response depends on the exact model, firmware, host system and test method."],
+            ["One peak CPS result", "A lucky burst says less than several repeatable runs with the same settings."],
+            ["A generic gaming-mouse label", "Category names do not guarantee a particular switch feel, debounce implementation or fit."],
+            ["Someone else's grip preference", "Hand size, finger placement and clicking technique can change which shape feels controllable."],
+          ].map(([title, body]) => (
+            <div key={title} className="rounded-xl border border-white/10 bg-slate-900/30 p-4">
+              <h3 className="mb-2 font-bold text-white">{title}</h3>
+              <p className="text-sm leading-6 text-slate-400">{body}</p>
+            </div>
+          ))}
+        </div>
       </>
     ),
   },
@@ -583,8 +610,22 @@ export const BLOG_POSTS: BlogPost[] = [
 
         <h2 className="text-2xl font-bold text-white mt-8 mb-4">Compare your own setups</h2>
         <p className="text-slate-300 mb-4">
-          Run the same CPS duration on each device, then compare repeatability and comfort. For the spam simulator, use the same difficulty and wave mode so the comparison is meaningful.
+          Run the same <ToolLink href="/cps-test">CPS Test</ToolLink> duration on each device, then compare repeatability and comfort. For the spam simulator, use the same difficulty and wave mode so the comparison is meaningful.
         </p>
+        <div className="grid gap-3 md:grid-cols-2">
+          <div className="rounded-xl border border-white/10 bg-slate-900/30 p-4">
+            <h3 className="mb-2 font-bold text-white">PC input diagnostics</h3>
+            <p className="text-sm leading-6 text-slate-400">
+              Use <ToolLink href="/polling-rate">Polling Rate</ToolLink> and <ToolLink href="/keyboard-latency">Keyboard Latency</ToolLink> as browser-side diagnostics, not as complete end-to-end latency measurements.
+            </p>
+          </div>
+          <div className="rounded-xl border border-white/10 bg-slate-900/30 p-4">
+            <h3 className="mb-2 font-bold text-white">Display context</h3>
+            <p className="text-sm leading-6 text-slate-400">
+              Use the <ToolLink href="/refresh-rate">Refresh Rate Test</ToolLink> to identify browser-observed refresh behavior, then keep that display context fixed when comparing runs.
+            </p>
+          </div>
+        </div>
       </>
     ),
   },
@@ -601,6 +642,16 @@ export const BLOG_POSTS: BlogPost[] = [
     tags: ["Tips", "Training"],
     content: (
       <>
+        <div className="mb-8 rounded-2xl border border-red-500/20 bg-red-950/10 p-5 md:p-6">
+          <p className="text-sm leading-7 text-slate-300">
+            <strong className="text-white">Quick diagnostic:</strong> decide whether the problem is raw speed, movement control or an inconsistent test setup before changing technique, hardware and difficulty at the same time.
+          </p>
+        </div>
+        <BlogVisual
+          src="/blog-visuals/spam-troubleshooting-map.svg"
+          alt="Troubleshooting map separating speed problems, control problems and comparison problems in Geometry Dash spam practice"
+          caption="Start with the symptom. Change one variable at a time so the next attempt produces useful information."
+        />
         <ol className="space-y-6 text-slate-300">
           {[
             ["Chasing only peak CPS", "Track repeatable speed and timing consistency, not just the single highest burst."],
@@ -639,7 +690,7 @@ export const BLOG_POSTS: BlogPost[] = [
     excerpt:
       "A checklist for separating useful training advice from unsupported player claims, fake interviews and made-up performance numbers.",
     date: "January 10, 2026",
-    updated: "October 5, 2026",
+    updated: "October 7, 2026",
     readTime: "5 min read",
     coverImage: "/blog-covers/evaluate-geometry-dash-spam-advice.svg",
     tags: ["Community", "Evidence"],
@@ -648,6 +699,11 @@ export const BLOG_POSTS: BlogPost[] = [
         <p className="text-slate-300 mb-6">
           Advice is more useful when you can understand the setup, reproduce the test and verify any factual claims. A famous player name or a confident number is not evidence by itself.
         </p>
+        <BlogVisual
+          src="/blog-visuals/evidence-checklist.svg"
+          alt="Four-step evidence checklist for checking Geometry Dash quotes, test conditions, simulator claims and reproducibility"
+          caption="Use the checklist before repeating a ranking, performance number, quote or simulator claim."
+        />
 
         <h2 className="text-2xl font-bold text-white mt-8 mb-4">1. Check whether the quote is real</h2>
         <p className="text-slate-300 mb-4">
@@ -667,6 +723,11 @@ export const BLOG_POSTS: BlogPost[] = [
         <h2 className="text-2xl font-bold text-white mt-8 mb-4">4. Prefer reproducible advice</h2>
         <p className="text-slate-300 mb-4">
           “Use the same 10-second test three times and compare interval consistency” is reproducible. “All top players need a specific CPS” is not useful without evidence and context.
+        </p>
+
+        <h2 className="text-2xl font-bold text-white mt-8 mb-4">5. Prefer the source that owns the changing fact</h2>
+        <p className="text-slate-300 mb-4">
+          For example, use the <ToolLink href="/spam-challenge-list">Spam Challenge List guide</ToolLink> when the question is about SCL rules or placements, and the <ToolLink href="/demon-list">Demon List snapshot</ToolLink> when the claim is about Pointercrate positions. Our <ToolLink href="/about">About and source policy</ToolLink> explains how checked dates and corrections are handled.
         </p>
 
         <p className="text-slate-300">
