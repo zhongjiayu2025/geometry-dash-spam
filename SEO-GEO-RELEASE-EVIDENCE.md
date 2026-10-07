@@ -114,3 +114,14 @@ A future release is a regression if it unintentionally changes protected canonic
 - High-value articles now use visuals to explain the exact concept discussed in nearby text rather than decorative stock imagery.
 - The overlapping training articles now use explicit scope handoffs: definition → measurement, measurement → training routine, troubleshooting → 30-day plan.
 - Export verification requires every inline first-party visual to exist and remain referenced.
+
+
+## 13. Blog content-value audit
+
+The remaining support articles were reviewed for whether more content would add user value rather than merely add word count.
+
+- `best-mouse-for-spam-geometry-dash`: expanded because the hardware intent benefits from a concrete comparison framework; no unsourced product ranking was added.
+- `mobile-vs-pc-spam`: intentionally kept concise; only added a controlled comparison path into existing diagnostics.
+- `common-spam-mistakes`: converted into a faster troubleshooting entry point and linked explicitly to the 30-day progression plan.
+- `evaluate-geometry-dash-spam-advice`: kept compact but strengthened with a first-party evidence checklist and direct source-policy/list routing.
+- The verifier now protects the intended handoffs between these support articles and their relevant tools/hubs.
