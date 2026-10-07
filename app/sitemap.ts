@@ -57,7 +57,6 @@ const CORE_ROUTES = [
   "/keyboard-ghosting",
   "/key-rollover",
   "/right-click",
-  "/double-click",
   "/blog",
   "/about",
   "/contact",
