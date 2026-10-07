@@ -370,7 +370,7 @@ export const SitemapPage = () => (
           Input & Hardware Tools
         </h2>
         <p className="mb-5 text-sm leading-6 text-slate-500">
-          Supporting click, reaction, keyboard and hardware diagnostics that directly relate to Geometry Dash input practice. Only utilities with a clear training or input-diagnostic role are included in the search sitemap.
+          Supporting click, reaction, keyboard and hardware diagnostics that directly relate to Geometry Dash input practice. This section lists utilities intentionally included in the search sitemap; narrower diagnostics remain available from related-tool links without being promoted as separate search landing pages.
         </p>
         <div className="grid gap-2 sm:grid-cols-2">
           {[
@@ -378,7 +378,6 @@ export const SitemapPage = () => (
             ["/butterfly-click", "Butterfly Click"],
             ["/drag-click", "Drag Click"],
             ["/right-click", "Right Click CPS"],
-            ["/double-click", "Double Click Test"],
             ["/spacebar-counter", "Spacebar Counter"],
             ["/reaction-test", "Reaction Time Test"],
             ["/aim-trainer", "Aim Trainer"],
