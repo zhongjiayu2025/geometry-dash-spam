@@ -106,3 +106,11 @@ A future release is a regression if it unintentionally changes protected canonic
 - Article Open Graph/Twitter/Article structured-data image references use the site-owned PNG Open Graph endpoint for broad social/search crawler compatibility.
 - The Next image config no longer needs an Unsplash remote-host allowlist.
 - Export verification rejects a regression back to remote/Unsplash blog covers and checks every expected local cover exists.
+
+
+## 12. Inline first-party explanatory visuals
+
+- Added six same-origin explanatory diagrams for CPS consistency, fixed-duration method comparison, ranking-system separation, Wave/UFO/Ship input differences, a repeatable practice loop, and Mobile/PC input-path comparison.
+- High-value articles now use visuals to explain the exact concept discussed in nearby text rather than decorative stock imagery.
+- The overlapping training articles now use explicit scope handoffs: definition → measurement, measurement → training routine, troubleshooting → 30-day plan.
+- Export verification requires every inline first-party visual to exist and remain referenced.
