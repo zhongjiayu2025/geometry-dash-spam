@@ -95,6 +95,17 @@ export default function RootLayout({
         },
       },
       {
+        "@type": "Organization",
+        "@id": "https://geometrydashspam.cc/#editorial",
+        name: "Geometry Dash Spam Editorial",
+        url: "https://geometrydashspam.cc/about",
+        parentOrganization: {
+          "@id": "https://geometrydashspam.cc/#organization",
+        },
+        description:
+          "Editorial identity responsible for GeometryDashSpam.cc guides, source checks, corrections and measurement explanations.",
+      },
+      {
         "@type": "WebSite",
         "@id": "https://geometrydashspam.cc/#website",
         name: "Geometry Dash Spam",

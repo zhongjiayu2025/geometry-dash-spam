@@ -2,6 +2,12 @@ import { existsSync, readFileSync, readdirSync } from "node:fs";
 import { join } from "node:path";
 
 const outDir = join(process.cwd(), "out");
+const requiredSeoGovernanceFiles = [
+  "SEO-GEO.md",
+  "SEO-GEO-BASELINE.md",
+  "SEO-GEO-PROJECT-BRIEF.md",
+  "SEO-GEO-RELEASE-EVIDENCE.md",
+];
 const buildWorkflowSource = readFileSync(join(process.cwd(), ".github", "workflows", "build.yml"), "utf8");
 const demonSource = readFileSync(join(process.cwd(), "data", "demons.ts"), "utf8");
 const vaultSource = readFileSync(join(process.cwd(), "data", "vaultCodes.ts"), "utf8");
@@ -352,6 +358,12 @@ if (existsSync(redirectsPath)) {
 }
 
 const infrastructureErrors = [];
+
+for (const file of requiredSeoGovernanceFiles) {
+  if (!existsSync(join(process.cwd(), file))) {
+    infrastructureErrors.push(`Missing required SEO/GEO governance file: ${file}`);
+  }
+}
 const publisherId = "pub-1528586776567779";
 
 const adsPath = join(outDir, "ads.txt");
@@ -480,6 +492,9 @@ if (existsSync(llmsPath)) {
 }
 
 const layoutSource = readFileSync(join(process.cwd(), "app", "layout.tsx"), "utf8");
+if (!layoutSource.includes('"@id": "https://geometrydashspam.cc/#editorial"')) {
+  infrastructureErrors.push("global schema missing stable editorial entity #editorial");
+}
 const loadingSource = readFileSync(join(process.cwd(), "app", "loading.tsx"), "utf8");
 const globalsSource = readFileSync(join(process.cwd(), "app", "globals.css"), "utf8");
 const headerSource = readFileSync(join(process.cwd(), "components", "Header.tsx"), "utf8");
@@ -558,6 +573,11 @@ const clickerEconomySource = readFileSync(join(process.cwd(), "lib", "clickerEco
 const homeSource = readFileSync(join(process.cwd(), "app", "page.tsx"), "utf8");
 const footerSource = readFileSync(join(process.cwd(), "components", "Footer.tsx"), "utf8");
 const infoPagesSource = readFileSync(join(process.cwd(), "components", "InfoPages.tsx"), "utf8");
+for (const expectedSourceToken of ["DEMON_SOURCE_URL", "VAULT_SOURCES", "spamChallengeList.sources[0]"]) {
+  if (!infoPagesSource.includes(expectedSourceToken)) {
+    contentErrors.push(`About page missing primary source links: ${expectedSourceToken}`);
+  }
+}
 const personalStatsSource = readFileSync(join(process.cwd(), "components", "PersonalStats.tsx"), "utf8");
 const personalStatsContentSource = readFileSync(join(process.cwd(), "components", "PersonalStatsContent.tsx"), "utf8");
 const dashboardWaveHistorySource = readFileSync(join(process.cwd(), "components", "DashboardWaveHistory.tsx"), "utf8");

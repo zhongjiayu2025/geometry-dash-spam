@@ -62,7 +62,7 @@ The CI export verifier protects these boundaries in addition to metadata, sitema
 
 ## SEO / GEO standard
 
-This project follows the owner baseline in [chenmu2024/Website-Starter-Standard](https://github.com/chenmu2024/Website-Starter-Standard), with the project-specific rules in `SEO-GEO.md` and the public drift baseline in `SEO-GEO-BASELINE.md`.
+This project follows the owner baseline in [chenmu2024/Website-Starter-Standard](https://github.com/chenmu2024/Website-Starter-Standard), with the project-specific rules in `SEO-GEO.md`, the completed architecture in `SEO-GEO-PROJECT-BRIEF.md`, release proof in `SEO-GEO-RELEASE-EVIDENCE.md`, and the public drift baseline in `SEO-GEO-BASELINE.md`.
 
 The public repository intentionally does not store private Search Console or analytics performance data.
 

@@ -1,5 +1,9 @@
 import React from "react";
 import Link from "next/link";
+import { DEMON_SOURCE_URL } from "./demons";
+import relatedSearchData from "./relatedSearch.json";
+
+const SCL_SOURCE_URL = relatedSearchData.spamChallengeList.sources[0];
 
 export interface BlogPost {
   id: string;
@@ -270,6 +274,14 @@ export const BLOG_POSTS: BlogPost[] = [
         <p className="mb-4 text-slate-300">
           Rankings and community lists can change. Before treating a placement as current, open the source-checked list page, note its verification date and follow the linked live source when exact order matters.
         </p>
+        <div className="mb-4 flex flex-wrap gap-3 text-sm">
+          <a href={SCL_SOURCE_URL} target="_blank" rel="noopener noreferrer" className="font-semibold text-fuchsia-300 hover:underline">
+            Open the maintained SCL source ↗
+          </a>
+          <a href={DEMON_SOURCE_URL} target="_blank" rel="noopener noreferrer" className="font-semibold text-purple-300 hover:underline">
+            Open Pointercrate Demon List ↗
+          </a>
+        </div>
         <p className="text-slate-300">
           For a non-ranking overview of well-known wave and rapid-input examples, see <ToolLink href="/blog/notable-wave-spam-levels">Notable Wave and Spam Levels in Geometry Dash</ToolLink>.
         </p>

@@ -15,6 +15,9 @@ import {
   Server,
 } from "lucide-react";
 import { BLOG_POSTS } from "../data/blogContent";
+import { DEMON_SOURCE_URL } from "../data/demons";
+import { VAULT_SOURCES } from "../data/vaultCodes";
+import relatedSearchData from "../data/relatedSearch.json";
 import Link from "next/link";
 
 interface InfoPageProps {
@@ -119,12 +122,54 @@ export const AboutPage = () => (
         </p>
       </SectionCard>
 
+      <SectionCard title="Editorial responsibility" icon={<FileText className="w-5 h-5"/>}>
+        <p>
+          <strong className="text-white">Geometry Dash Spam Editorial</strong> is the site editorial identity used for published guides. It is responsible for maintaining explanations, checking changing claims against their cited sources and handling corrections through the Contact page.
+        </p>
+        <p>
+          The editorial identity belongs to GeometryDashSpam.cc; it is not presented as an official Geometry Dash or RobTop Games publisher.
+        </p>
+      </SectionCard>
+
       <SectionCard title="Editorial and source policy" icon={<FileText className="w-5 h-5"/>}>
         <p>
           For changing factual claims, we prefer the source that owns the information: maintainer documentation, repositories and releases for community projects; Pointercrate for its Demon List positions; and the maintained Spam Challenge List for its own rankings and rules.
         </p>
         <p>
           A verification date means the site checked the linked source on that date; it is not a promise that a live community ranking can never change. Browser-generated practice metrics are original measurements from events that reach the page and are kept separate from official-game or laboratory claims.
+        </p>
+      </SectionCard>
+
+      <SectionCard title="Primary sources and freshness" icon={<ExternalLink className="w-5 h-5"/>}>
+        <p>
+          Changing facts are tied to the source that owns or maintains them. Important examples include:
+        </p>
+        <ul className="list-disc space-y-2 pl-6">
+          <li>
+            <a href={DEMON_SOURCE_URL} target="_blank" rel="noopener noreferrer" className="text-blue-400 hover:underline">
+              Pointercrate Demon List
+            </a>{" "}
+            for Pointercrate ranking positions.
+          </li>
+          <li>
+            <a href={relatedSearchData.spamChallengeList.sources[0]} target="_blank" rel="noopener noreferrer" className="text-blue-400 hover:underline">
+              Maintained Spam Challenge List
+            </a>{" "}
+            for its own challenge rankings and rules.
+          </li>
+          <li>
+            <a href={VAULT_SOURCES.secrets} target="_blank" rel="noopener noreferrer" className="text-blue-400 hover:underline">
+              Geometry Dash Wiki — Vault of Secrets
+            </a>{" "}
+            and{" "}
+            <a href={VAULT_SOURCES.wraith} target="_blank" rel="noopener noreferrer" className="text-blue-400 hover:underline">
+              Secret Room
+            </a>{" "}
+            for code and progression references used by the code pages.
+          </li>
+        </ul>
+        <p>
+          A checked date records when the linked source was reviewed. For live rankings or changing releases, follow the source link when the exact current state matters.
         </p>
       </SectionCard>
 

@@ -44,6 +44,16 @@ This repository follows the owner baseline in `chenmu2024/Website-Starter-Standa
 - Redirected legacy routes must stay out of the sitemap.
 - Important indexable pages must have at least one crawlable inbound link from another indexable page outside the HTML sitemap.
 
+## AI-search / GEO execution
+
+- Treat GEO as an extension of normal SEO, not a separate technical stack.
+- The same canonical pages serve users, classic Search and AI-assisted Search; do not create duplicate AI-answer pages.
+- Prioritize original value already present on this site: interactive trainers, browser-observed metrics, source-checked snapshots and comparison guidance.
+- Keep important entity names consistent across visible content, metadata and JSON-LD: Geometry Dash Spam, Geometry Dash Spam Editorial and the cited third-party sources.
+- Do not add special AI-only schema or claim that `llms.txt` affects Google rankings.
+- The current robots policy allows ordinary search crawlers and does not explicitly block Google-Extended; any future training-crawler restriction must be treated separately from Search indexing.
+- Use first-party Search Console reporting when evaluating search/AI-search performance. Do not create synthetic AI-visibility scores.
+
 ## GEO / answer-engine policy
 
 Important pages should make the answer extractable without sacrificing usefulness:
@@ -70,3 +80,9 @@ Important pages should make the answer extractable without sacrificing usefulnes
 - L3: periodic — use real GSC/field data to evaluate queries, landing pages, CTR, cannibalization and drift.
 
 Private analytics and Search Console metrics should stay out of this public repository unless the owner explicitly chooses to publish them.
+
+
+## Project evidence artifacts
+
+- `SEO-GEO-PROJECT-BRIEF.md` records this site's approved intent ownership, indexation policy, source registry, entity map, schema plan and crawler policy.
+- `SEO-GEO-RELEASE-EVIDENCE.md` records deterministic release checks and production verification without publishing private Search Console numbers.
