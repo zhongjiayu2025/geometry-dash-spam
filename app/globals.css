@@ -2,6 +2,10 @@
 @tailwind components;
 @tailwind utilities;
 
+[data-demon-row][hidden] {
+  display: none;
+}
+
 html {
   scroll-behavior: smooth;
 }

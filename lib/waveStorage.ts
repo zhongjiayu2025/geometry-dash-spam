@@ -57,12 +57,13 @@ export function normalizeWaveRuns(value: unknown, fallbackMode = "Unknown"): Wav
   return runs;
 }
 
+// Preserve legacy timed records without comparing them to the corrected 15s course.
 function bestKey(scope: WaveStorageScope) {
-  return `gd_spam_best_${scope.difficultyId}_${scope.isEndless ? "endless" : "timed"}_${scope.isMini ? "mini" : "normal"}`;
+  return `gd_spam_best_${scope.difficultyId}_${scope.isEndless ? "endless" : "timed-v2"}_${scope.isMini ? "mini" : "normal"}`;
 }
 
 function runsKey(scope: WaveStorageScope) {
-  return `gd_spam_runs_${scope.difficultyId}_${scope.isEndless ? "endless" : "timed"}_${scope.isMini ? "mini" : "normal"}`;
+  return `gd_spam_runs_${scope.difficultyId}_${scope.isEndless ? "endless" : "timed-v2"}_${scope.isMini ? "mini" : "normal"}`;
 }
 
 export function waveStorageKeys(scope: WaveStorageScope) {

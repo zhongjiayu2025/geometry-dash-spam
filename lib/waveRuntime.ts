@@ -1,4 +1,4 @@
-import { WAVE_SPEED_Y } from "../constants";
+import { WAVE_SPEED_Y, WIN_TIME_MS } from "../constants";
 
 export type PatternType = "random" | "corridor" | "stairs_up" | "stairs_down" | "zigzag" | "sawtooth";
 
@@ -74,7 +74,8 @@ export function prepareWaveSeedAndStars(
   state.rng = deterministic ? mulberry32(stringToSeed(seedKey)) : Math.random;
   state.stars = [];
 
-  const random = state.rng;
+  // Decorative star counts must not consume the obstacle sequence.
+  const random = deterministic ? mulberry32(stringToSeed(`${seedKey}-stars`)) : Math.random;
   const starCount = lowVisuals ? 20 : 40;
   for (let index = 0; index < starCount; index += 1) {
     state.stars.push({
@@ -178,7 +179,11 @@ export function advanceWaveFrame(state: WaveRuntimeState, options: AdvanceWaveOp
   }
 
   const rawDeltaMs = now - state.lastFrameTime;
-  const frameDeltaMs = Math.min(1000 / 30, Math.max(0, rawDeltaMs));
+  const frameDeltaMs = Math.min(
+    1000 / 30,
+    Math.max(0, rawDeltaMs),
+    isEndless ? Infinity : Math.max(0, WIN_TIME_MS - state.runTime)
+  );
   const frameFactor = frameDeltaMs / (1000 / 60);
   state.lastFrameTime = now;
   state.runTime += frameDeltaMs;
@@ -228,7 +233,7 @@ export function advanceWaveFrame(state: WaveRuntimeState, options: AdvanceWaveOp
 
   const won =
     !isEndless &&
-    state.finishLineX - state.distanceTraveled <= state.playerX;
+    state.runTime >= WIN_TIME_MS;
 
   state.trailAccumulator += frameFactor;
   const trailStep = lowVisuals ? 3 : 2;
