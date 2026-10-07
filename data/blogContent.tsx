@@ -26,6 +26,15 @@ const ToolLink = ({ href, children }: { href: string; children: React.ReactNode 
   </Link>
 );
 
+const BlogVisual = ({ src, alt, caption }: { src: string; alt: string; caption: string }) => (
+  <figure className="my-8 overflow-hidden rounded-2xl border border-white/10 bg-slate-950/60">
+    <img src={src} alt={alt} width={1200} height={675} loading="lazy" decoding="async" className="h-auto w-full" />
+    <figcaption className="border-t border-white/10 px-4 py-3 text-xs leading-5 text-slate-500">
+      {caption}
+    </figcaption>
+  </figure>
+);
+
 export const BLOG_POSTS: BlogPost[] = [
   {
     id: "1",
@@ -34,7 +43,7 @@ export const BLOG_POSTS: BlogPost[] = [
     excerpt:
       "A practical explanation of Geometry Dash spam, why wave spam is difficult, and how CPS and timing consistency fit together.",
     date: "January 10, 2026",
-    updated: "October 5, 2026",
+    updated: "October 7, 2026",
     readTime: "7 min read",
     coverImage: "/blog-covers/what-is-spam-geometry-dash-guide.svg",
     tags: ["Guide", "Spam", "Wave"],
@@ -47,6 +56,12 @@ export const BLOG_POSTS: BlogPost[] = [
     ],
     content: (
       <>
+        <BlogVisual
+          src="/blog-visuals/ranking-systems-map.svg"
+          alt="Diagram separating the Spam Challenge List, Pointercrate Demon List and Geometry Dash wave or spam practice guides"
+          caption="Different sources answer different questions. A Pointercrate rank is not a spam-intensity rank."
+        />
+
         <h2 id="definition" className="text-3xl font-display font-bold text-white mt-12 mb-6 scroll-mt-24">
           What Geometry Dash spam means
         </h2>
@@ -73,6 +88,11 @@ export const BLOG_POSTS: BlogPost[] = [
         <p className="mb-4 text-slate-300">
           CPS tells you how many inputs you produce per second. Consistency describes how evenly those inputs arrive. Two players can record the same average CPS while producing very different timing patterns.
         </p>
+        <BlogVisual
+          src="/blog-visuals/cps-vs-consistency.svg"
+          alt="Illustration comparing evenly spaced clicks with uneven click intervals at a similar average CPS"
+          caption="Illustrative timing pattern. Average CPS alone does not show whether the intervals are stable."
+        />
         <ul className="list-disc pl-6 mb-6 space-y-2 text-slate-300">
           <li><strong>Average CPS:</strong> total clicks divided by elapsed time.</li>
           <li><strong>Peak CPS:</strong> a short burst estimate based on the fastest interval.</li>
@@ -93,8 +113,11 @@ export const BLOG_POSTS: BlogPost[] = [
         <h2 id="mistakes" className="text-3xl font-display font-bold text-white mt-12 mb-6 scroll-mt-24">
           Common mistakes
         </h2>
-        <p className="text-slate-300">
+        <p className="mb-4 text-slate-300">
           The most common problems are tensing the whole arm, using a clicking technique that you cannot sustain, changing settings every attempt, and treating a peak CPS number as the only measure of progress. Use one setup long enough to compare like-for-like runs.
+        </p>
+        <p className="text-sm text-slate-400">
+          This guide defines the overall spam concept. For a measurement-focused explanation of intervals and variance, read <ToolLink href="/blog/science-of-clicking">Why Click Timing Consistency Matters</ToolLink>.
         </p>
       </>
     ),
@@ -133,6 +156,11 @@ export const BLOG_POSTS: BlogPost[] = [
         <p className="mb-4 text-slate-300">
           Open the <ToolLink href="/cps-test">Geometry Dash CPS Test</ToolLink> and run three attempts with the same duration before changing technique.
         </p>
+        <BlogVisual
+          src="/blog-visuals/fixed-duration-comparison.svg"
+          alt="Illustrative bar comparison of normal clicking, jitter clicking, butterfly clicking and spacebar CPS using the same test duration"
+          caption="Example values only. The useful comparison is your own repeated runs with the same duration and device."
+        />
 
         <h2 id="methods" className="text-3xl font-display font-bold text-white mt-12 mb-6 scroll-mt-24">
           Compare clicking methods
@@ -350,6 +378,11 @@ export const BLOG_POSTS: BlogPost[] = [
     ],
     content: (
       <>
+        <BlogVisual
+          src="/blog-visuals/wave-ufo-ship-input.svg"
+          alt="Diagram comparing wave direction changes, UFO tap impulses and ship hold-release control"
+          caption="Rapid input can appear in all three modes, but the movement response and control problem are different."
+        />
         <h2 className="text-2xl font-bold text-white mt-8 mb-4">Wave: interval control</h2>
         <p className="text-slate-300 mb-4">
           Wave input directly changes diagonal direction, so the spacing between press and release events strongly affects the path. The <ToolLink href="/geometry-dash-wave">Wave Trainer</ToolLink> is designed around this type of repeated correction.
@@ -434,7 +467,7 @@ export const BLOG_POSTS: BlogPost[] = [
     excerpt:
       "A conservative month-long practice structure for improving consistency, wave control and test repeatability without promising a fixed CPS gain.",
     date: "January 10, 2026",
-    updated: "October 5, 2026",
+    updated: "October 7, 2026",
     readTime: "6 min read",
     coverImage: "/blog-covers/30-day-spam-challenge.svg",
     tags: ["Training", "Practice Plan"],
@@ -443,6 +476,11 @@ export const BLOG_POSTS: BlogPost[] = [
         <p className="text-slate-300 mb-6">
           This plan does not promise that you will reach a particular CPS number. The goal is to create a repeatable practice routine and compare your own results over time.
         </p>
+        <BlogVisual
+          src="/blog-visuals/practice-loop.svg"
+          alt="Four-step Geometry Dash spam practice loop: baseline, control practice, compare results and adjust one variable"
+          caption="A repeatable loop is more useful than changing technique, difficulty and hardware at the same time."
+        />
 
         <h2 className="text-2xl font-bold text-white mt-8 mb-4">Days 1–7: baseline and control</h2>
         <p className="text-slate-300 mb-4">
@@ -464,8 +502,11 @@ export const BLOG_POSTS: BlogPost[] = [
           Repeat the original baseline setup. Compare several attempts, not only the best result. If control improved without a large CPS increase, that is still useful progress for spam gameplay.
         </p>
 
-        <p className="text-sm text-slate-400">
+        <p className="mb-3 text-sm text-slate-400">
           Rest between repeated high-effort attempts and stop if a session causes pain or numbness.
+        </p>
+        <p className="text-sm text-slate-400">
+          This page is the month-long schedule. For troubleshooting individual errors, use <ToolLink href="/blog/common-spam-mistakes">10 Common Geometry Dash Spam Mistakes</ToolLink>.
         </p>
       </>
     ),
@@ -477,7 +518,7 @@ export const BLOG_POSTS: BlogPost[] = [
     excerpt:
       "A measurement-focused explanation of click intervals, variance and why stable timing can matter more than a one-run CPS peak.",
     date: "January 10, 2026",
-    updated: "October 5, 2026",
+    updated: "October 7, 2026",
     readTime: "5 min read",
     coverImage: "/blog-covers/science-of-clicking.svg",
     tags: ["Measurement", "CPS"],
@@ -487,6 +528,11 @@ export const BLOG_POSTS: BlogPost[] = [
         <p className="text-slate-300 mb-4">
           A 10 CPS result means ten registered inputs per second on average. It does not tell you whether those clicks arrived evenly. A run with alternating very short and very long intervals can produce the same CPS as a run with stable spacing.
         </p>
+        <BlogVisual
+          src="/blog-visuals/cps-vs-consistency.svg"
+          alt="Illustration of two click sequences with a similar average CPS but different interval regularity"
+          caption="The diagram is illustrative, not a benchmark. It shows why average CPS and interval stability are separate measurements."
+        />
 
         <h2 className="text-2xl font-bold text-white mt-8 mb-4">Look at intervals</h2>
         <p className="text-slate-300 mb-4">
@@ -498,8 +544,11 @@ export const BLOG_POSTS: BlogPost[] = [
           Repeated wave corrections depend on when inputs arrive. If your interval pattern changes dramatically from click to click, the same average CPS can still produce a less predictable trajectory.
         </p>
 
-        <p className="text-slate-300">
+        <p className="mb-4 text-slate-300">
           Use the <ToolLink href="/">Spam Test</ToolLink> after a CPS run to see whether the timing pattern transfers into a controllable path.
+        </p>
+        <p className="text-sm text-slate-400">
+          This article explains the measurement. For a practical training routine, use <ToolLink href="/blog/how-to-improve-cps-geometry-dash">How to Improve CPS in Geometry Dash</ToolLink>.
         </p>
       </>
     ),
@@ -511,12 +560,17 @@ export const BLOG_POSTS: BlogPost[] = [
     excerpt:
       "A practical comparison of touch, mouse and keyboard input without assuming one platform is always faster.",
     date: "January 10, 2026",
-    updated: "October 5, 2026",
+    updated: "October 7, 2026",
     readTime: "5 min read",
     coverImage: "/blog-covers/mobile-vs-pc-spam.svg",
     tags: ["Mobile", "Input"],
     content: (
       <>
+        <BlogVisual
+          src="/blog-visuals/mobile-vs-pc-comparison.svg"
+          alt="Diagram comparing the full input paths involved in mobile touch and PC mouse or keyboard setups"
+          caption="Platform labels are too broad for a universal latency claim. Compare complete setups under controlled conditions."
+        />
         <h2 className="text-2xl font-bold text-white mt-8 mb-4">The input path is different</h2>
         <p className="text-slate-300 mb-4">
           Touchscreens, mice and keyboards use different hardware and software paths. Total latency depends on the complete device, operating system, browser or game client, display and input hardware; it cannot be reduced to one universal “mobile” or “PC” number.
@@ -541,7 +595,7 @@ export const BLOG_POSTS: BlogPost[] = [
     excerpt:
       "Ten practical reasons spam practice becomes inconsistent, from chasing peak CPS to changing settings too often.",
     date: "January 10, 2026",
-    updated: "October 5, 2026",
+    updated: "October 7, 2026",
     readTime: "6 min read",
     coverImage: "/blog-covers/common-spam-mistakes.svg",
     tags: ["Tips", "Training"],
@@ -568,8 +622,11 @@ export const BLOG_POSTS: BlogPost[] = [
         </ol>
 
         <div className="mt-8 rounded-xl border border-blue-500/20 bg-blue-950/20 p-5">
-          <p className="text-slate-300">
+          <p className="mb-3 text-slate-300">
             A simple workflow is <ToolLink href="/cps-test">CPS Test</ToolLink> → <ToolLink href="/">Spam Test</ToolLink> → <ToolLink href="/geometry-dash-wave">Wave Trainer</ToolLink>.
+          </p>
+          <p className="text-sm text-slate-400">
+            This page is for troubleshooting. If you want a structured progression schedule, use the <ToolLink href="/blog/30-day-spam-challenge">30-Day Geometry Dash Spam Practice Plan</ToolLink>.
           </p>
         </div>
       </>
