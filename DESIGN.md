@@ -150,6 +150,12 @@ Blog cover direction:
 - social sharing uses the site-owned 1200×630 PNG Open Graph image for broad crawler compatibility
 - keep subject matter understandable without overlaid keyword stuffing
 
+### Inline editorial visuals
+- Use same-origin diagrams when a concept is easier to understand visually than through another paragraph.
+- Every diagram needs meaningful alt text and a short caption that states whether values are illustrative or measured.
+- Do not invent benchmark numbers; illustrative values must be labeled as examples.
+- Reuse a diagram only when it explains the same underlying concept.
+
 ## 9. Motion
 
 - default transitions: 150–250ms
