@@ -36,8 +36,7 @@ export const BLOG_POSTS: BlogPost[] = [
     date: "January 10, 2026",
     updated: "October 5, 2026",
     readTime: "7 min read",
-    coverImage:
-      "https://images.unsplash.com/photo-1550745165-9bc0b252726f?auto=format&fit=crop&w=1200&h=630&q=72",
+    coverImage: "/blog-covers/what-is-spam-geometry-dash-guide.svg",
     tags: ["Guide", "Spam", "Wave"],
     toc: [
       { id: "definition", title: "What Geometry Dash spam means" },
@@ -109,8 +108,7 @@ export const BLOG_POSTS: BlogPost[] = [
     date: "January 10, 2026",
     updated: "October 7, 2026",
     readTime: "7 min read",
-    coverImage:
-      "https://images.unsplash.com/photo-1614726365345-0377fa1f513a?auto=format&fit=crop&w=1200&h=630&q=72",
+    coverImage: "/blog-covers/how-to-improve-cps-geometry-dash.svg",
     tags: ["Training", "CPS", "Technique"],
     toc: [
       { id: "baseline", title: "Measure a baseline" },
@@ -188,8 +186,7 @@ export const BLOG_POSTS: BlogPost[] = [
     date: "January 10, 2026",
     updated: "October 7, 2026",
     readTime: "7 min read",
-    coverImage:
-      "https://images.unsplash.com/photo-1542751371-adc38448a05e?auto=format&fit=crop&w=1200&h=630&q=72",
+    coverImage: "/blog-covers/top-spam-levels-2026.svg",
     tags: ["Levels", "Spam", "Demon List"],
     toc: [
       { id: "definition", title: "What counts as a spam level?" },
@@ -298,8 +295,7 @@ export const BLOG_POSTS: BlogPost[] = [
     date: "January 10, 2026",
     updated: "October 5, 2026",
     readTime: "6 min read",
-    coverImage:
-      "https://images.unsplash.com/photo-1527814050087-3793815479db?auto=format&fit=crop&w=1200&h=630&q=72",
+    coverImage: "/blog-covers/best-mouse-for-spam-geometry-dash.svg",
     tags: ["Hardware", "Guide"],
     content: (
       <>
@@ -336,8 +332,7 @@ export const BLOG_POSTS: BlogPost[] = [
     date: "January 10, 2026",
     updated: "October 7, 2026",
     readTime: "5 min read",
-    coverImage:
-      "https://images.unsplash.com/photo-1518770660439-4636190af475?auto=format&fit=crop&w=1200&h=630&q=72",
+    coverImage: "/blog-covers/wave-vs-ufo-spam.svg",
     tags: ["Mechanics", "Wave"],
     faqs: [
       {
@@ -388,8 +383,7 @@ export const BLOG_POSTS: BlogPost[] = [
     date: "January 10, 2026",
     updated: "October 7, 2026",
     readTime: "6 min read",
-    coverImage:
-      "https://images.unsplash.com/photo-1535905557558-afc4877a26fc?auto=format&fit=crop&w=1200&h=630&q=72",
+    coverImage: "/blog-covers/notable-wave-spam-levels.svg",
     tags: ["Levels", "Wave"],
     faqs: [
       {
@@ -442,8 +436,7 @@ export const BLOG_POSTS: BlogPost[] = [
     date: "January 10, 2026",
     updated: "October 5, 2026",
     readTime: "6 min read",
-    coverImage:
-      "https://images.unsplash.com/photo-1517836357463-d25dfeac3438?auto=format&fit=crop&w=1200&h=630&q=72",
+    coverImage: "/blog-covers/30-day-spam-challenge.svg",
     tags: ["Training", "Practice Plan"],
     content: (
       <>
@@ -486,8 +479,7 @@ export const BLOG_POSTS: BlogPost[] = [
     date: "January 10, 2026",
     updated: "October 5, 2026",
     readTime: "5 min read",
-    coverImage:
-      "https://images.unsplash.com/photo-1532094349884-543bc11b234d?auto=format&fit=crop&w=1200&h=630&q=72",
+    coverImage: "/blog-covers/science-of-clicking.svg",
     tags: ["Measurement", "CPS"],
     content: (
       <>
@@ -521,8 +513,7 @@ export const BLOG_POSTS: BlogPost[] = [
     date: "January 10, 2026",
     updated: "October 5, 2026",
     readTime: "5 min read",
-    coverImage:
-      "https://images.unsplash.com/photo-1512941937669-90a1b58e7e9c?auto=format&fit=crop&w=1200&h=630&q=72",
+    coverImage: "/blog-covers/mobile-vs-pc-spam.svg",
     tags: ["Mobile", "Input"],
     content: (
       <>
@@ -552,8 +543,7 @@ export const BLOG_POSTS: BlogPost[] = [
     date: "January 10, 2026",
     updated: "October 5, 2026",
     readTime: "6 min read",
-    coverImage:
-      "https://images.unsplash.com/photo-1455849318743-b2233052fcff?auto=format&fit=crop&w=1200&h=630&q=72",
+    coverImage: "/blog-covers/common-spam-mistakes.svg",
     tags: ["Tips", "Training"],
     content: (
       <>
@@ -594,8 +584,7 @@ export const BLOG_POSTS: BlogPost[] = [
     date: "January 10, 2026",
     updated: "October 5, 2026",
     readTime: "5 min read",
-    coverImage:
-      "https://images.unsplash.com/photo-1542751371-adc38448a05e?auto=format&fit=crop&w=1200&h=630&q=72",
+    coverImage: "/blog-covers/evaluate-geometry-dash-spam-advice.svg",
     tags: ["Community", "Evidence"],
     content: (
       <>
