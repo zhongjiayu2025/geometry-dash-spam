@@ -308,7 +308,7 @@ const GameCanvas: React.FC<GameCanvasProps> = memo(({ difficulty, status, onStat
       clickCount: 0,
       runTime: 0,
       lastClickTime: 0,
-      finishLineX: totalDistance + 600,
+      finishLineX: totalDistance + gameState.current.playerX,
       baseColor: difficulty.color,
       rng: Math.random
     };
@@ -380,7 +380,7 @@ const GameCanvas: React.FC<GameCanvasProps> = memo(({ difficulty, status, onStat
             if (progressRef.current && !isEndless) {
                 const progress = Math.min(
                   100,
-                  (gameState.current.distanceTraveled / gameState.current.finishLineX) * 100
+                  (gameState.current.runTime / WIN_TIME_MS) * 100
                 );
                 progressRef.current.style.width = `${progress}%`;
             }
@@ -709,7 +709,7 @@ const GameCanvas: React.FC<GameCanvasProps> = memo(({ difficulty, status, onStat
         progressPercent={
           isEndless
             ? 100
-            : Math.min(100, (gameState.current.distanceTraveled / gameState.current.finishLineX) * 100)
+            : Math.min(100, (gameState.current.runTime / WIN_TIME_MS) * 100)
         }
         timeDisplayRef={timeDisplayRef}
         progressRef={progressRef}
@@ -785,7 +785,7 @@ const GameCanvas: React.FC<GameCanvasProps> = memo(({ difficulty, status, onStat
           progressPercent={
             isEndless
               ? 100
-              : Math.min(100, (gameState.current.distanceTraveled / gameState.current.finishLineX) * 100)
+              : Math.min(100, (gameState.current.runTime / WIN_TIME_MS) * 100)
           }
           onRetry={() => {
             resetGame();
