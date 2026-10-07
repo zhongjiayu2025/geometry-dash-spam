@@ -10,6 +10,7 @@ export const metadata: Metadata = {
   description:
     "Check for unusually rapid repeated mouse clicks and inspect time intervals between registered clicks in your browser.",
   alternates: { canonical: "/double-click" },
+  robots: { index: false, follow: true },
   openGraph: {
     title: "Double Click Test | Browser Mouse Bounce Check",
     description: "Check for unusually rapid repeated mouse clicks and inspect time intervals between registered clicks in your browser.",
