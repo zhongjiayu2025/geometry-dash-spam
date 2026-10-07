@@ -430,6 +430,22 @@ const headersPath = join(outDir, "_headers");
 if (existsSync(headersPath)) {
   const headersTxt = readFileSync(headersPath, "utf8");
 
+  if (
+    !headersTxt.includes("/sitemap.xml") ||
+    !headersTxt.includes("Content-Type: application/xml; charset=utf-8")
+  ) {
+    infrastructureErrors.push("_headers must explicitly serve sitemap.xml as XML");
+  }
+
+  if (
+    !headersTxt.includes("/robots.txt") ||
+    !headersTxt.includes("Content-Type: text/plain; charset=utf-8")
+  ) {
+    infrastructureErrors.push("_headers must explicitly serve robots.txt as text/plain");
+  }
+
+
+
   if (!headersTxt.includes("Content-Security-Policy: frame-ancestors 'self'")) {
     infrastructureErrors.push("_headers missing frame-ancestors protection");
   }
@@ -2916,6 +2932,14 @@ const sitemapTitleOwners = new Map();
 const sitemapDescriptionOwners = new Map();
 if (existsSync(sitemapPath)) {
   const sitemapXml = readFileSync(sitemapPath, "utf8");
+
+  if (
+    !sitemapXml.trimStart().startsWith("<?xml") ||
+    !sitemapXml.includes('<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">') ||
+    !sitemapXml.includes("</urlset>")
+  ) {
+    sitemapPolicyErrors.push("sitemap.xml must be a valid standard urlset document with an XML declaration");
+  }
   const sitemapRecords = [
     ...sitemapXml.matchAll(/<url>([\s\S]*?)<\/url>/g),
   ].map((match) => {
