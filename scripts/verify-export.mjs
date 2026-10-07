@@ -375,6 +375,24 @@ const blogCoverRoutes = [
   "/blog-covers/common-spam-mistakes.svg",
   "/blog-covers/evaluate-geometry-dash-spam-advice.svg"
 ];
+const requiredBlogVisuals = [
+  "/blog-visuals/cps-vs-consistency.svg",
+  "/blog-visuals/fixed-duration-comparison.svg",
+  "/blog-visuals/ranking-systems-map.svg",
+  "/blog-visuals/wave-ufo-ship-input.svg",
+  "/blog-visuals/practice-loop.svg",
+  "/blog-visuals/mobile-vs-pc-comparison.svg",
+];
+for (const visual of requiredBlogVisuals) {
+  const visualPath = join(outDir, visual.replace(/^\//, ""));
+  if (!existsSync(visualPath)) {
+    infrastructureErrors.push(`missing first-party inline blog visual in export: ${visual}`);
+  }
+  if (!blogContentSource.includes(visual)) {
+    infrastructureErrors.push(`first-party inline blog visual is not referenced by blog content: ${visual}`);
+  }
+}
+
 if (blogContentSource.includes("images.unsplash.com") || /coverImage:\s*["']https?:\/\//.test(blogContentSource)) {
   infrastructureErrors.push("blog covers must stay first-party/same-origin; remote stock cover URLs are not allowed");
 }
