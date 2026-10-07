@@ -97,3 +97,12 @@ A future release is a regression if it unintentionally changes protected canonic
 - Referrer policy: `strict-origin-when-cross-origin`, compatible with Google's documented consent-message requirement.
 - `ADS-CONSENT.md`: records the required account-side CMP setup.
 - Source code cannot prove that an AdSense Privacy & messaging European regulations message has been published. This must be verified in the AdSense account.
+
+
+## 11. First-party blog media
+
+- All 11 blog hero covers were migrated from third-party stock-photo URLs to same-origin first-party SVG visuals under `/blog-covers/`.
+- Article UI no longer depends on Unsplash for above-the-fold hero media.
+- Article Open Graph/Twitter/Article structured-data image references use the site-owned PNG Open Graph endpoint for broad social/search crawler compatibility.
+- The Next image config no longer needs an Unsplash remote-host allowlist.
+- Export verification rejects a regression back to remote/Unsplash blog covers and checks every expected local cover exists.
