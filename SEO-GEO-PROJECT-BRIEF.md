@@ -66,6 +66,21 @@ Approved phrases are not silently replaced because another variant appears easie
 - Core authority pages must not prominently leak authority into noindex utilities.
 - New indexable utilities require an explicit intent decision before sitemap inclusion.
 
+### Conservative indexation audit — 2026-10-07
+
+The site keeps three practical route tiers:
+
+1. **Core / proven search pages** — homepage, Wave, CPS, Demon/SCL, proven support tools and source-checked Geometry Dash guides remain indexable.
+2. **Supporting input diagnostics with clear Geometry Dash relevance** — Polling Rate, Keyboard Timing, Ghosting/Rollover, Drag Click and similar pages remain indexable while they have distinct intent and useful explanatory content.
+3. **Narrow or generic diagnostics** — remain usable but use `noindex,follow` when a separate search landing page would add little topical value.
+
+Current reduction decision:
+- `/double-click` → **noindex,follow** and removed from XML/HTML search-sitemap promotion. It remains accessible as a browser diagnostic through narrower related-tool flows.
+- Existing noindex utility pages remain noindex.
+- No GSC-proven winner was deindexed.
+
+This is deliberately conservative: absence from a top-pages report alone is not treated as proof that an indexable route has zero value.
+
 ## 5. Internal-link architecture
 
 Primary hubs:
