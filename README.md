@@ -60,6 +60,19 @@ The verification step checks core static routes, internal links, sitemap targets
 
 The CI export verifier protects these boundaries in addition to metadata, sitemap, redirect, data freshness, internal-link and indexability checks.
 
+## Ad provider policy
+
+Only Google AdSense (`ca-pub-1528586776567779`) is authorized as an advertising network.
+The global HTML head contains the single asynchronous AdSense loader; `public/ads.txt`
+authorizes exactly one Google seller. The `npm run verify:ads` check rejects legacy
+Adsterra/Monetag loaders, unexpected remote scripts in exported HTML and additional
+ad sellers. The production CI verifies important public routes.
+
+If an ad from another network remains visible despite a clean repository and deployment,
+inspect Cloudflare Dashboard injections (Zaraz, Workers, HTML transforms), any external
+tag manager, and the browser's cached files. Repository tests cannot inspect third-party
+dashboard settings or every browser-executed script.
+
 ## SEO / GEO standard
 
 This project follows the owner baseline in [chenmu2024/Website-Starter-Standard](https://github.com/chenmu2024/Website-Starter-Standard), with the project-specific rules in `SEO-GEO.md`, the completed architecture in `SEO-GEO-PROJECT-BRIEF.md`, release proof in `SEO-GEO-RELEASE-EVIDENCE.md`, and the public drift baseline in `SEO-GEO-BASELINE.md`.

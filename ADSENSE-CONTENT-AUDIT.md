@@ -54,3 +54,11 @@ Authoritative references:
 - Whether Google will approve on the next attempt.
 
 Do **not** interpret this document or a passing CI build as an AdSense approval guarantee.
+
+## Advertising network exclusivity
+
+- The application source and main layout were audited for legacy third-party advertising integrations.
+- Only the authorized AdSense publisher is configured in the website code and public ads.txt.
+- Added `npm run verify:ads` to fail if legacy ad-network signatures or other external scripts enter exported HTML/JS, or if ads.txt authorizes any second seller.
+- Added a production check against major live routes. Cloudflare dashboard / browser injections still require manual inspection if a visitor observes non-AdSense ads.
+- The previous AdSense low-value-content finding is a separate review issue; removal of a second network alone does not guarantee approval.

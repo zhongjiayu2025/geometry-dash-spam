@@ -201,3 +201,54 @@ jobs:
               raise SystemExit("Production AdSense script must be async, unique and inside HTML head")
           print("Production AdSense ownership verification passed: ads.txt + head script")
           PY
+
+      - name: Verify only Google AdSense is authorized
+        shell: bash
+        run: |
+          set -euo pipefail
+
+          python3 - <<'PY'
+          import subprocess
+          import re
+
+          allowed_seller = "google.com, pub-1528586776567779, DIRECT, f08c47fec0942fa0"
+          seller_data = subprocess.check_output(
+              ["curl", "-fsSL", "--connect-timeout", "10", "--max-time", "30",
+               "https://geometrydashspam.cc/ads.txt"], text=True
+          )
+          seller_lines = [
+              item.strip() for item in seller_data.splitlines()
+              if item.strip() and not item.strip().startswith("#")
+          ]
+          if seller_lines != [allowed_seller]:
+              raise SystemExit("Production ads.txt authorizes an unexpected advertising seller")
+
+          blocked = re.compile(
+              r"adsterra|highperformanceformat[.]com|profitableratecpm[.]com|"
+              r"onclicka[.]com|\batOptions\s*=|monetag|propellerads[.]com|"
+              r"onclickperformance[.]com",
+              re.I
+          )
+          allowed_script = (
+              "https://pagead2.googlesyndication.com/pagead/js/"
+              "adsbygoogle.js?client=ca-pub-1528586776567779"
+          )
+
+          for route in ["/", "/cps-test", "/geometry-dash-wave", "/blog"]:
+              html = subprocess.check_output(
+                  ["curl", "-fsSL", "--connect-timeout", "10", "--max-time", "30",
+                   "https://geometrydashspam.cc" + route], text=True
+              )
+              if blocked.search(html):
+                  raise SystemExit("Production " + route + " contains a legacy ad-network signature")
+              tags = re.findall(r"<script\b[^>]*>", html, re.I)
+              for tag in tags:
+                  match = re.search(r'\bsrc\s*=\s*["\x27]([^"\x27]+)["\x27]', tag, re.I)
+                  if match and match.group(1).startswith(("http://", "https://")):
+                      if match.group(1) != allowed_script:
+                          raise SystemExit("Unexpected external production script on " + route + ": " + match.group(1))
+              if sum(allowed_script in tag for tag in tags) != 1:
+                  raise SystemExit("Expected one AdSense loader on production route " + route)
+              print("AdSense-only production page verified: " + route)
+          print("Only the authorized Google AdSense seller and loader are present")
+          PY

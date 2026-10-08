@@ -76,6 +76,8 @@ Use this checklist before calling a major website release complete.
 
 - [ ] `ads.txt` contains the current publisher ID.
 - [ ] AdSense tag is present once in the root layout.
+- [ ] `npm run verify:ads` confirms AdSense-only ownership, no Adsterra/Monetag loaders, and one Google ads.txt seller.
+- [ ] If an old ad is visible despite a clean build, inspect Cloudflare Zaraz/Workers/Rules and the browser network log; these can inject scripts outside the repository.
 - [ ] Referrer policy remains compatible with Google Privacy & messaging.
 - [ ] Google-certified CMP / European regulations message is published in AdSense for the production site if personalized ads are served to EEA/UK/Swiss users.
 - [ ] Privacy policy URL in AdSense matches `https://geometrydashspam.cc/privacy`.
