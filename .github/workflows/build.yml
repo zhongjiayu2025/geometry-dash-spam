@@ -188,16 +188,16 @@ jobs:
           import sys
 
           html = open(sys.argv[1], encoding="utf-8").read()
-          head = re.search(r"<head\\b[^>]*>(.*?)</head>", html, re.I | re.S)
+          head = re.search(r"<head\b[^>]*>(.*?)</head>", html, re.I | re.S)
           if not head:
               raise SystemExit("Production homepage has no HTML head")
 
           expected = "adsbygoogle.js?client=ca-pub-1528586776567779"
-          all_scripts = [m.group(0) for m in re.finditer(r"<script\\b[^>]*>", html, re.I)]
-          head_scripts = [m.group(0) for m in re.finditer(r"<script\\b[^>]*>", head.group(1), re.I)]
+          all_scripts = [m.group(0) for m in re.finditer(r"<script\b[^>]*>", html, re.I)]
+          head_scripts = [m.group(0) for m in re.finditer(r"<script\b[^>]*>", head.group(1), re.I)]
           matches = [tag for tag in all_scripts if expected in tag]
           head_matches = [tag for tag in head_scripts if expected in tag]
-          if len(matches) != 1 or len(head_matches) != 1 or not re.search(r"\\basync(?:\\s|=|>)", head_matches[0], re.I):
+          if len(matches) != 1 or len(head_matches) != 1 or not re.search(r"\basync(?:\s|=|>)", head_matches[0], re.I):
               raise SystemExit("Production AdSense script must be async, unique and inside HTML head")
           print("Production AdSense ownership verification passed: ads.txt + head script")
           PY
