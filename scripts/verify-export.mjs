@@ -706,15 +706,15 @@ for (const route of ["/", "/cps-test", "/geometry-dash-wave"]) {
   const filePath = exportedPath(route);
   if (!filePath) continue;
   const html = readFileSync(filePath, "utf8");
-  const tags = [...html.matchAll(/<script\\b[^>]*>/gi)].map((match) => match[0]);
+  const tags = [...html.matchAll(/<script\b[^>]*>/gi)].map((match) => match[0]);
   const adsenseTags = tags.filter((tag) => tag.includes(adsenseScriptUrl));
-  const headAdsenseTags = [...documentHead(html).matchAll(/<script\\b[^>]*>/gi)]
+  const headAdsenseTags = [...documentHead(html).matchAll(/<script\b[^>]*>/gi)]
     .map((match) => match[0])
     .filter((tag) => tag.includes(adsenseScriptUrl));
   if (
     adsenseTags.length !== 1 ||
     headAdsenseTags.length !== 1 ||
-    !/\\basync(?:\\s|=|>)/i.test(headAdsenseTags[0])
+    !/\basync(?:\s|=|>)/i.test(headAdsenseTags[0])
   ) {
     infrastructureErrors.push(`${route}: exactly one async AdSense verification script must appear in exported HTML <head>`);
   }
