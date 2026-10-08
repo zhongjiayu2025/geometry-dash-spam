@@ -95,7 +95,7 @@ export const BLOG_POSTS: BlogPost[] = [
         />
         <ul className="list-disc pl-6 mb-6 space-y-2 text-slate-300">
           <li><strong>Average CPS:</strong> total clicks divided by elapsed time.</li>
-          <li><strong>Peak CPS:</strong> a short burst estimate based on the fastest interval.</li>
+          <li><strong>Peak 1s CPS:</strong> the largest number of browser-registered clicks inside a rolling one-second window.</li>
           <li><strong>Average interval:</strong> average milliseconds between inputs.</li>
           <li><strong>Consistency:</strong> a site-specific score based on variation between input intervals.</li>
         </ul>
@@ -110,6 +110,15 @@ export const BLOG_POSTS: BlogPost[] = [
           <li>Stop the session if your hand, wrist or forearm becomes painful or numb.</li>
         </ol>
 
+        <div className="mb-6 rounded-2xl border border-blue-500/20 bg-blue-950/10 p-5">
+          <h3 className="mb-3 text-xl font-bold text-white">Try a two-part test yourself</h3>
+          <p className="mb-3 text-sm leading-7 text-slate-300">
+            First, run the 10-second CPS Test three times with the same input method. Note your typical CPS instead of using only the highest score. Then select Normal Wave with the same difficulty for three runs. Write down the error you notice most: a late release, too many reversals, or an attempt that collapses when you increase speed.
+          </p>
+          <p className="text-sm leading-7 text-slate-300">
+            If CPS is stable but wave control varies, raw speed is not your only limitation. Work on reversal timing before increasing the corridor difficulty. This experiment is useful because the two tools ask different questions; it is not a claim that the browser model predicts your result in the official game.
+          </p>
+        </div>
         <h2 id="mistakes" className="text-3xl font-display font-bold text-white mt-12 mb-6 scroll-mt-24">
           Common mistakes
         </h2>
@@ -192,6 +201,22 @@ export const BLOG_POSTS: BlogPost[] = [
           <li><strong>30–60 seconds:</strong> useful for seeing whether your pace remains stable over time.</li>
         </ul>
 
+        <h2 className="mt-10 mb-4 text-2xl font-bold text-white">How to decide whether a technique is an improvement</h2>
+        <p className="mb-4 text-slate-300">
+          Repeat a fixed-length test three times using your usual technique, then repeat it using the method you want to try. Note the median or typical speed, the timing consistency shown after each run, and whether the method feels sustainable. Change only the technique; otherwise it becomes difficult to explain why the results differ.
+        </p>
+        <div className="mb-6 overflow-x-auto rounded-xl border border-white/10">
+          <table className="w-full min-w-[510px] text-left text-sm">
+            <thead className="bg-slate-800/70 text-white"><tr><th className="p-3">Outcome</th><th className="p-3">What it suggests</th><th className="p-3">Next action</th></tr></thead>
+            <tbody className="divide-y divide-white/10 text-slate-300">
+              <tr><td className="p-3">Higher CPS and stable intervals</td><td className="p-3">Possible repeatable speed gain</td><td className="p-3">Test whether wave control is also stable</td></tr>
+              <tr><td className="p-3">Higher peak, inconsistent runs</td><td className="p-3">A burst may not transfer to a real section</td><td className="p-3">Reduce the pace and repeat</td></tr>
+              <tr><td className="p-3">Similar CPS, better control</td><td className="p-3">Movement rhythm may have improved</td><td className="p-3">Use the same wave preset to verify</td></tr>
+              <tr><td className="p-3">Pain or numbness</td><td className="p-3">The session should stop</td><td className="p-3">Rest rather than forcing another attempt</td></tr>
+            </tbody>
+          </table>
+        </div>
+        <p className="mb-5 text-xs text-slate-500">Illustrative decision rules, not measured player outcomes or universal performance thresholds.</p>
         <h2 id="transfer" className="text-3xl font-display font-bold text-white mt-12 mb-6 scroll-mt-24">
           Transfer speed into wave control
         </h2>
@@ -283,6 +308,25 @@ export const BLOG_POSTS: BlogPost[] = [
           Wave-heavy examples belong in a slightly different bucket because fast clicks are only useful if the press-and-release spacing remains controllable. The <ToolLink href="/demon-list/wave-demons">Wave Demon guide</ToolLink> focuses on that mechanic.
         </p>
 
+        <h2 className="mb-4 mt-10 text-2xl font-bold text-white">Examples of spam and wave-heavy levels, without a made-up ranking</h2>
+        <p className="mb-4 text-slate-300">
+          If you want names to explore rather than a leaderboard position, here are three different kinds of reference. These examples are not the current top three on the Spam Challenge List; they illustrate mechanics discussed by players. For precise gameplay, watch a completion or open the level and identify the relevant section.
+        </p>
+        <div className="mb-6 grid gap-4 md:grid-cols-3">
+          {[
+            ["Sakupen Circles", "A circles-style reference where tight wave control makes input spacing especially visible. Practice precise reversals rather than chasing one CPS target."],
+            ["Slaughterhouse", "An extreme-execution reference: rapid inputs appear alongside difficult transitions. Practice the specific transition in the real game rather than assuming a browser wave preset is identical."],
+            ["Ashley Wave Trials", "A wave-centered reference. Separate sustained rhythm from narrow, exact corrections when deciding which skill to drill."],
+          ].map(([level, note]) => (
+            <div key={level} className="rounded-xl border border-white/10 bg-slate-900/30 p-5">
+              <h3 className="mb-2 font-bold text-white">{level}</h3>
+              <p className="text-sm leading-6 text-slate-400">{note}</p>
+            </div>
+          ))}
+        </div>
+        <p className="mb-5 text-sm text-slate-400">
+          These descriptions are skill-focused references, not official rankings, recommended clear orders or verified CPS requirements. See the <ToolLink href="/blog/notable-wave-spam-levels">level overview</ToolLink> for more examples and the live ranking sources below for up-to-date placements.
+        </p>
         <h2 id="practice" className="text-3xl font-display font-bold text-white mt-12 mb-6 scroll-mt-24">
           How to practice Geometry Dash spam levels
         </h2>
@@ -375,6 +419,16 @@ export const BLOG_POSTS: BlogPost[] = [
             </div>
           ))}
         </div>
+        <h2 className="mt-10 mb-4 text-2xl font-bold text-white">A comparison sheet before buying</h2>
+        <p className="mb-3 text-slate-300">
+          Write down the exact model and firmware version for each mouse you are considering. Use the same computer, browser, 10-second CPS duration and clicking technique, then record several results. If possible, test each device in the same wave preset and note any discomfort or loss of control. A mouse that produces a single high CPS score but makes your grip less stable may be a poor choice for your actual practice.
+        </p>
+        <p className="mb-3 text-slate-300">
+          Keep product specifications separate from observed results: an advertised polling rate is not an independent measurement of click-to-display latency. If you cannot test both mice, label that comparison as unknown rather than declaring a winner from marketing figures.
+        </p>
+        <p className="mb-5 text-sm text-slate-400">
+          This is a reproducible selection method, not a tested product roundup. The site has not conducted controlled laboratory testing of the brands or models you may see advertised elsewhere.
+        </p>
       </>
     ),
   },
@@ -762,6 +816,13 @@ export const BLOG_POSTS: BlogPost[] = [
           ))}
         </ol>
 
+        <h2 className="mt-10 mb-4 text-2xl font-bold text-white">Choose one fix based on the result you saw</h2>
+        <p className="mb-4 text-slate-300">
+          If your CPS collapses in longer runs, compare a comfortable 10-second test with a 30-second test using the same device. If the score is similar but your wave fails earlier, lower the wave difficulty and focus on the exact reversal that causes the problem. If the numbers jump randomly between runs, stop changing settings: use the same browser, test length and input method until you have a comparable baseline.
+        </p>
+        <p className="mb-4 text-slate-300">
+          Do not interpret the browser consistency percentage as a medical or neurological measurement. The score only describes variation in timestamps received by this page. Repeated discomfort is a reason to stop, not a training metric to push through.
+        </p>
         <div className="mt-8 rounded-xl border border-blue-500/20 bg-blue-950/20 p-5">
           <p className="mb-3 text-slate-300">
             A simple workflow is <ToolLink href="/cps-test">CPS Test</ToolLink> → <ToolLink href="/">Spam Test</ToolLink> → <ToolLink href="/geometry-dash-wave">Wave Trainer</ToolLink>.
@@ -820,6 +881,22 @@ export const BLOG_POSTS: BlogPost[] = [
           For example, use the <ToolLink href="/spam-challenge-list">Spam Challenge List guide</ToolLink> when the question is about SCL rules or placements, and the <ToolLink href="/demon-list">Demon List snapshot</ToolLink> when the claim is about Pointercrate positions. Our <ToolLink href="/about">About and source policy</ToolLink> explains how checked dates and corrections are handled.
         </p>
 
+        <h2 className="mt-9 mb-4 text-2xl font-bold text-white">Three claims put through the checklist</h2>
+        <div className="mb-6 space-y-3">
+          {[
+            ["Everyone needs 15 CPS for wave", "Not supported without a specific section, input method and test. Ask which level, which player evidence and whether timing control was measured."],
+            ["This level is #1 for spam", "First ask which maintained list and which rules. Pointercrate&apos;s overall Demon position is not a spam-challenge ranking."],
+            ["My browser result proves zero input lag", "A browser observes events after hardware and operating-system processing. A favorable number cannot certify end-to-end hardware or game-client latency."],
+          ].map(([claim, response]) => (
+            <div key={claim} className="rounded-xl border border-white/10 bg-slate-900/30 p-4">
+              <h3 className="mb-2 font-semibold text-white">Claim: “{claim}”</h3>
+              <p className="text-sm leading-6 text-slate-400">{response}</p>
+            </div>
+          ))}
+        </div>
+        <p className="mb-5 text-slate-300">
+          When reviewing a guide, look for a clear explanation of what can be repeated locally and what must be confirmed at a third-party source. If the source or method is absent, treat the claim as unverified rather than translating confidence into evidence.
+        </p>
         <p className="text-slate-300">
           You can reproduce basic speed and timing experiments with the <ToolLink href="/cps-test">CPS Test</ToolLink> and then test movement control in the <ToolLink href="/">Spam Simulator</ToolLink>.
         </p>
