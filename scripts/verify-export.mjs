@@ -559,6 +559,12 @@ if (existsSync(llmsPath)) {
 const layoutSource = readFileSync(join(process.cwd(), "app", "layout.tsx"), "utf8");
 const headersSource = readFileSync(join(process.cwd(), "public", "_headers"), "utf8");
 if (
+  !headersSource.includes("/ads.txt") ||
+  !headersSource.includes("Content-Type: text/plain; charset=utf-8")
+) {
+  infrastructureErrors.push("ads.txt must be publicly served as text/plain");
+}
+if (
   !headersSource.includes("Referrer-Policy: strict-origin-when-cross-origin") ||
   !layoutSource.includes("pagead2.googlesyndication.com/pagead/js/adsbygoogle.js")
 ) {
@@ -687,10 +693,31 @@ const supportClientSources = supportClientPaths.map((file) => [
 ]);
 const blogReaderSource = readFileSync(join(process.cwd(), "components", "BlogPostReader.tsx"), "utf8");
 const copyLinkSource = readFileSync(join(process.cwd(), "components", "CopyLinkButton.tsx"), "utf8");
-if (!layoutSource.includes(`client=ca-${publisherId}`)) {
-  infrastructureErrors.push(
-    `AdSense script client does not match ads.txt publisher ID ${publisherId}`
-  );
+const adsenseScriptUrl = `https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-${publisherId}`;
+const layoutHeadSource = layoutSource.split("<head>")[1]?.split("</head>")[0] ?? "";
+if (
+  !layoutHeadSource.includes(`src="${adsenseScriptUrl}"`) ||
+  !layoutHeadSource.includes('crossOrigin="anonymous"') ||
+  !layoutHeadSource.includes("<script")
+) {
+  infrastructureErrors.push("AdSense ownership script must be an async script in the global HTML head with the matching publisher ID");
+}
+for (const route of ["/", "/cps-test", "/geometry-dash-wave"]) {
+  const filePath = exportedPath(route);
+  if (!filePath) continue;
+  const html = readFileSync(filePath, "utf8");
+  const tags = [...html.matchAll(/<script\\b[^>]*>/gi)].map((match) => match[0]);
+  const adsenseTags = tags.filter((tag) => tag.includes(adsenseScriptUrl));
+  const headAdsenseTags = [...documentHead(html).matchAll(/<script\\b[^>]*>/gi)]
+    .map((match) => match[0])
+    .filter((tag) => tag.includes(adsenseScriptUrl));
+  if (
+    adsenseTags.length !== 1 ||
+    headAdsenseTags.length !== 1 ||
+    !/\\basync(?:\\s|=|>)/i.test(headAdsenseTags[0])
+  ) {
+    infrastructureErrors.push(`${route}: exactly one async AdSense verification script must appear in exported HTML <head>`);
+  }
 }
 
 if (

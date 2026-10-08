@@ -167,3 +167,37 @@ jobs:
           }
 
           echo "robots.txt and sitemap.xml are crawler-readable in production"
+
+      - name: Verify production AdSense ownership files
+        shell: bash
+        run: |
+          set -euo pipefail
+          ads_url="https://geometrydashspam.cc/ads.txt"
+          home_url="https://geometrydashspam.cc/"
+          expected="google.com, pub-1528586776567779, DIRECT, f08c47fec0942fa0"
+
+          curl -fsSL --connect-timeout 10 --max-time 30 "$ads_url" -o /tmp/geometrydashspam-ads.txt
+          grep -Fx "$expected" /tmp/geometrydashspam-ads.txt >/dev/null || {
+            echo "::error::Production ads.txt does not contain the authorized publisher line"
+            exit 1
+          }
+
+          curl -fsSL --connect-timeout 10 --max-time 30 "$home_url" -o /tmp/geometrydashspam-home.html
+          python3 - /tmp/geometrydashspam-home.html <<'PY'
+          import re
+          import sys
+
+          html = open(sys.argv[1], encoding="utf-8").read()
+          head = re.search(r"<head\\b[^>]*>(.*?)</head>", html, re.I | re.S)
+          if not head:
+              raise SystemExit("Production homepage has no HTML head")
+
+          expected = "adsbygoogle.js?client=ca-pub-1528586776567779"
+          all_scripts = [m.group(0) for m in re.finditer(r"<script\\b[^>]*>", html, re.I)]
+          head_scripts = [m.group(0) for m in re.finditer(r"<script\\b[^>]*>", head.group(1), re.I)]
+          matches = [tag for tag in all_scripts if expected in tag]
+          head_matches = [tag for tag in head_scripts if expected in tag]
+          if len(matches) != 1 or len(head_matches) != 1 or not re.search(r"\\basync(?:\\s|=|>)", head_matches[0], re.I):
+              raise SystemExit("Production AdSense script must be async, unique and inside HTML head")
+          print("Production AdSense ownership verification passed: ads.txt + head script")
+          PY
