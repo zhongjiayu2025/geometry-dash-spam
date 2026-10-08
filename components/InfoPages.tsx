@@ -113,6 +113,23 @@ export const AboutPage = () => (
         </p>
       </SectionCard>
 
+      <SectionCard title="An independently repeatable CPS example" icon={<FileText className="w-5 h-5"/>}>
+        <p>
+          If a visitor registers 72 clicks in a ten-second test, the displayed average CPS is 72 ÷ 10 = 7.20.
+          The first click starts the timer and is counted. The site&apos;s peak counter uses the largest number of
+          input timestamps inside a rolling one-second window; it does not claim to measure a mouse switch&apos;s latency.
+        </p>
+        <p>
+          Consistency is calculated from the variation between consecutive click intervals, expressed as a bounded
+          0–100 site score. Runs with too little interval data report an unavailable consistency value instead of a fabricated score.
+          A more detailed breakdown appears below the <Link href="/cps-test" className="text-blue-400 hover:underline">CPS Test</Link>.
+        </p>
+        <p>
+          These are reproducible explanations of our browser code, not testimonials, laboratory research or
+          guaranteed Geometry Dash performance gains.
+        </p>
+      </SectionCard>
+
       <SectionCard title="How we handle claims" icon={<Shield className="w-5 h-5"/>}>
         <p>
           Site-specific metrics are described as training diagnostics, not laboratory measurements. Time-sensitive Demon List and code claims show a checked date and link to the source used for verification.

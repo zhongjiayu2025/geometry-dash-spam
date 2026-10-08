@@ -32,6 +32,39 @@ export default function CpsGuide() {
         </div>
       </section>
 
+      <section className="mb-12 rounded-2xl border border-white/10 bg-slate-900/30 p-6 md:p-8">
+        <h2 className="mb-3 text-2xl font-display font-bold text-white">What your CPS result actually tells you</h2>
+        <p className="mb-5 leading-7 text-slate-300">
+          This test counts input events received by your browser. The first click both starts the timer and counts as input one.
+          At the end of a run, average CPS is the final click count divided by the selected duration. For example,
+          72 registered clicks in 10 seconds produces 7.20 CPS. It does not prove the game received 72 identical events.
+        </p>
+        <div className="overflow-x-auto rounded-xl border border-white/10">
+          <table className="w-full min-w-[510px] text-left text-sm">
+            <thead className="bg-slate-800/60 text-white">
+              <tr><th className="p-3">Displayed metric</th><th className="p-3">How the tool derives it</th><th className="p-3">Important limitation</th></tr>
+            </thead>
+            <tbody className="divide-y divide-white/10 text-slate-300">
+              <tr><td className="p-3 font-semibold">Average CPS</td><td className="p-3">Click count ÷ chosen seconds</td><td className="p-3">Different durations are not interchangeable</td></tr>
+              <tr><td className="p-3 font-semibold">Peak 1s CPS</td><td className="p-3">Most click timestamps in a rolling one-second window</td><td className="p-3">A burst count, not a hardware polling-rate test</td></tr>
+              <tr><td className="p-3 font-semibold">Average interval</td><td className="p-3">Mean of the milliseconds between successive click timestamps</td><td className="p-3">Browser event scheduling can affect the value</td></tr>
+              <tr><td className="p-3 font-semibold">Consistency</td><td className="p-3">100 × (1 − interval standard deviation ÷ average interval), bounded to 0–100</td><td className="p-3">Site-defined diagnostic, not an official game score</td></tr>
+            </tbody>
+          </table>
+        </div>
+        <h3 className="mb-2 mt-6 text-lg font-bold text-white">Try the same test three times</h3>
+        <p className="text-sm leading-7 text-slate-300">
+          Pick 10 seconds, use the same mouse or key, and complete three trials. Compare typical speed, timing regularity
+          and comfort before changing to jitter or butterfly clicking. When finished, use the Wave Trainer to see whether
+          that input rhythm stays controllable in movement. Your recent CPS history is stored locally in the browser,
+          not uploaded to a shared leaderboard.
+        </p>
+        <p className="mt-4 text-xs leading-5 text-slate-500">
+          This explanation follows the site&apos;s CPS counting and result logic. Browser results are practice diagnostics,
+          not independent measurements of your hardware or Geometry Dash client.
+        </p>
+      </section>
+
       <Link
         href="/blog/how-to-improve-cps-geometry-dash"
         className="group relative mb-12 block overflow-hidden rounded-2xl border border-blue-500/30 bg-gradient-to-r from-blue-900/40 to-slate-900/40 p-6 transition-colors hover:border-blue-400/50 md:p-8"

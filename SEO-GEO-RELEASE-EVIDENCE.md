@@ -157,3 +157,23 @@ After deployment, Search Console should be asked to re-read/resubmit `sitemap.xm
 
 
 Validation rerun marker: sitemap hardening was re-queued after the earlier concurrency-cancelled workflow so the final branch state is tested as one release.
+
+
+## AdSense low-value content remediation (2026-10-09)
+
+Previous AdSense feedback: **low-value content** as reported by the site owner. This release addresses observable content problems but does **not** certify AdSense approval.
+
+Findings:
+- Eleven blog guides had exaggerated 5–7 minute reading-time labels for substantially shorter copy. They have been changed to plausible 2–3 minute labels.
+- The five shortest guides lacked enough practical substance to fulfill their topics. They now include distinct reproducible experiments, comparisons, source-bound limits, concrete test protocols and/or useful tables.
+- Six remaining guides now include original decision frameworks, concrete examples and clarified claims. The high-impression top-spam guide includes actual level examples while explicitly distinguishing those from official ranked placements.
+- The broad "what is spam" guide previously described peak CPS as based on the fastest interval, but code actually measures click events inside a rolling one-second window. This was corrected.
+- The core CPS landing page now describes the precise counting formula, rolling window, coefficient-of-variation consistency diagnostic, sample run and limitations. About includes a reproducible worked example.
+
+Important follow-up:
+- Google AdSense re-review remains solely Google's decision.
+- Maintain the existing ownership code and ads.txt; do not add placeholder ad slots or extra ads on thin/noindex utility pages during review.
+- Verify the production site on mobile/desktop, functional interaction and policy links.
+- Review AdSense's exact rejection message; additional policy reasons must be handled separately.
+- Do not claim a minimum number of words or articles as an AdSense rule.
+- Do not treat this content audit as evidence of user studies or first-hand testing beyond the actual in-browser tools.

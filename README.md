@@ -71,6 +71,7 @@ Project governance files:
 - `DESIGN.md` — Geometry Dash Spam visual system and UI guardrails.
 - `QA-CHECKLIST.md` — project-specific release/visual/accessibility QA.
 - `ADS-CONSENT.md` — AdSense consent/CMP setup notes and the account-side action that cannot be verified from source code alone.
+- `ADSENSE-CONTENT-AUDIT.md` — findings, original-content improvements and pre-review checklist; not an approval guarantee.
 - `SEO-GEO-PROJECT-BRIEF.md` — search intent, indexation, source, entity and crawler architecture.
 - `SEO-GEO-RELEASE-EVIDENCE.md` — release proof and production verification.
 
