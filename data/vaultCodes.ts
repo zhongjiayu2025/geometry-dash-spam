@@ -4,7 +4,7 @@ export type VaultCode = {
   note?: string;
 };
 
-export const VAULT_CODES_CHECKED_AT = "2026-10-05";
+export const VAULT_CODES_CHECKED_AT = "2026-10-12";
 export const WRAITH_KNOWN_REWARDS_FINGERPRINT = "20aac626";
 
 export const VAULT_SOURCES = {
