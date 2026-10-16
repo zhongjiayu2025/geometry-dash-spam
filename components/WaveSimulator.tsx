@@ -52,6 +52,16 @@ const WaveSimulator: React.FC<WaveSimulatorProps> = ({ variant = 'spam' }) => {
 
     setIsEndless(readStorage('gd_spam_endless_mode') === 'true');
     setIsMini(readStorage('gd_spam_mini_mode') === 'true');
+
+    // An explicit drill link takes precedence over previously saved settings.
+    const linkedPreset = WAVE_PRESETS.find(({ id }) => window.location.hash === `#drill-${id}`);
+    if (linkedPreset) {
+      setWavePreset(linkedPreset.id);
+      setDifficulty(linkedPreset.difficulty);
+      setIsMini(linkedPreset.mini);
+      setIsEndless(linkedPreset.endless);
+      persistWaveSettings(linkedPreset.difficulty, linkedPreset.mini, linkedPreset.endless);
+    }
   }, []);
 
   const handleDifficultySelect = useCallback((newDiff: Difficulty) => {
@@ -91,6 +101,26 @@ const WaveSimulator: React.FC<WaveSimulatorProps> = ({ variant = 'spam' }) => {
     setGameStatus(GameStatus.Idle);
   }, [gameStatus]);
 
+  useEffect(() => {
+    const selectLinkedDrill = () => {
+      const preset = WAVE_PRESETS.find(({ id }) => window.location.hash === `#drill-${id}`);
+      if (preset) applyWavePreset(preset.id);
+    };
+    const selectClickedDrill = (event: MouseEvent) => {
+      if (event.defaultPrevented || event.button !== 0 || event.ctrlKey || event.metaKey || event.shiftKey || event.altKey) return;
+      const anchor = event.target instanceof Element ? event.target.closest('a[href^="#drill-"]') : null;
+      const preset = WAVE_PRESETS.find(({ id }) => anchor?.getAttribute('href') === `#drill-${id}`);
+      // Also handle clicking the current hash after manually changing settings.
+      if (preset) applyWavePreset(preset.id);
+    };
+    window.addEventListener('hashchange', selectLinkedDrill);
+    document.addEventListener('click', selectClickedDrill);
+    return () => {
+      window.removeEventListener('hashchange', selectLinkedDrill);
+      document.removeEventListener('click', selectClickedDrill);
+    };
+  }, [applyWavePreset]);
+
   const currentConfig = DIFFICULTY_CONFIGS[difficulty];
 
   const acceptPracticeDrill = () => {
@@ -121,6 +151,7 @@ const WaveSimulator: React.FC<WaveSimulatorProps> = ({ variant = 'spam' }) => {
             {WAVE_PRESETS.map((preset) => (
               <button
                 key={preset.id}
+                id={`drill-${preset.id}`}
                 type="button"
                 onClick={() => applyWavePreset(preset.id)}
                 aria-pressed={wavePreset === preset.id}

@@ -62,3 +62,24 @@ Do **not** interpret this document or a passing CI build as an AdSense approval 
 - Added `npm run verify:ads` to fail if legacy ad-network signatures or other external scripts enter exported HTML/JS, or if ads.txt authorizes any second seller.
 - Added a production check against major live routes. Cloudflare dashboard / browser injections still require manual inspection if a visitor observes non-AdSense ads.
 - The previous AdSense low-value-content finding is a separate review issue; removal of a second network alone does not guarantee approval.
+
+
+## Repeat rejection review — 2026-10-17 (Asia/Shanghai)
+
+The publisher supplied a screenshot showing **Low value content** and ads.txt **Authorized**. The screenshot does not identify individual failing pages or disclose Google's internal evaluation.
+
+Verified before changes:
+- Production `/deploy-status.json` served commit `64e1ef007faee556b345e08293051e1b753c1ddd`; the previous content and AdSense-only commits are included in its history.
+- Current production About/Contact and homepage contain the previous revised content. A stale search-service Contact extract was checked against a fresh production response and was not treated as the current page.
+- The homepage drill cards all used `#spam-test-tool`; selecting a named drill did not apply that preset.
+- The Wave page reused the homepage simulator and much of its general CPS/control advice. It lacked a visual explanation of hold duration, despite hold/release balance being part of this runtime's movement model.
+- CPS history showed individual runs and their mean but did not expose the typical pace/range recommended by the guides.
+
+Changes in this review:
+- Drill links select the named preset, including initial direct links, same-page hash changes, and repeated selection after manual settings changes. In-progress runs retain their existing settings.
+- The existing Wave page now has an original, server-rendered hold/release diagram, a numerical example derived from `WAVE_SPEED_Y`, a control exercise, and a preset table derived from the real configuration.
+- The diagram explicitly distinguishes input cadence from hold/release balance. Examples are labeled schematic rather than fabricated player measurements.
+- CPS history exposes the median and range after at least three same-duration trials. It does not claim a measured improvement or assume unchanged hardware/technique.
+- Homepage copy now describes the drill action rather than discussing SEO page-creation strategy. Core keywords and URLs are preserved; no new search landing pages are added.
+
+These are concrete usability and explanatory-content improvements, **not proof that any one issue caused rejection**. No traffic minimum, word-count target, fixed waiting period, or approval guarantee is inferred from them. Re-review should follow verified production changes; do not remove/re-add the site as a workaround.

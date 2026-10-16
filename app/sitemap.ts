@@ -7,6 +7,7 @@ import relatedSearchData from "../data/relatedSearch.json";
 export const dynamic = "force-static";
 
 const UPDATED = "2026-10-07";
+const TRAINING_UPDATED = "2026-10-17";
 
 const DEMON_ROUTES = new Set([
   "/demon-list",
@@ -74,7 +75,9 @@ export default function sitemap(): MetadataRoute.Sitemap {
       ? DEMON_VERIFIED_AT
       : CODE_ROUTES.has(route)
         ? VAULT_CODES_CHECKED_AT
-        : RELATED_ROUTE_DATES.get(route) ?? UPDATED,
+        : ["", "/geometry-dash-wave", "/cps-test"].includes(route)
+          ? TRAINING_UPDATED
+          : RELATED_ROUTE_DATES.get(route) ?? UPDATED,
   }));
 
   const blogEntries: MetadataRoute.Sitemap = BLOG_POSTS.map((post) => ({

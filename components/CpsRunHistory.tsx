@@ -22,6 +22,12 @@ export default function CpsRunHistory({
     ? recentRuns.reduce((sum, run) => sum + run.cps, 0) / recentRuns.length
     : 0;
 
+  const orderedScores = recentRuns.map((run) => run.cps).sort((a, b) => a - b);
+  const middle = Math.floor(orderedScores.length / 2);
+  const median = !orderedScores.length ? 0 : orderedScores.length % 2
+    ? orderedScores[middle]
+    : (orderedScores[middle - 1] + orderedScores[middle]) / 2;
+
   return (
     <section className="mb-12 rounded-2xl border border-white/10 bg-slate-900/30 p-6 md:p-8">
       <div className="mb-5 flex flex-col gap-2 sm:flex-row sm:items-end sm:justify-between">
@@ -36,6 +42,20 @@ export default function CpsRunHistory({
         )}
       </div>
 
+      {recentRuns.length >= 3 && (
+        <div className="mb-5 rounded-xl border border-blue-500/20 bg-blue-950/15 p-4 text-sm leading-6 text-slate-300">
+          <p>
+            Typical pace (median): <strong className="text-white">{median.toFixed(2)} CPS</strong>.
+            Range: <strong className="text-white">{orderedScores[0].toFixed(2)}–{orderedScores.at(-1)!.toFixed(2)} CPS</strong>.
+          </p>
+          <p className="mt-2 text-xs text-slate-400">
+            Based on your latest {recentRuns.length} completed {selectedDuration}s runs, newest first below.
+            Only compare these numbers if you kept the same device and clicking method; history does not record those conditions.
+            The median is the middle score after sorting (or the mean of the two middle scores).
+          </p>
+        </div>
+      )}
+
       {recentRuns.length ? (
         <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-5">
           {recentRuns.map((run, index) => (
@@ -49,7 +69,7 @@ export default function CpsRunHistory({
         </div>
       ) : (
         <p className="text-sm leading-6 text-slate-400">
-          No saved {selectedDuration}-second runs yet. Complete this duration to add one to your private browser history.
+          No saved {selectedDuration}-second runs yet. Complete three runs at this duration to see your median pace and range, alongside your private browser history.
         </p>
       )}
     </section>

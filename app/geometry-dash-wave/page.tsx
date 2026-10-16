@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import WaveSimulator from "../../components/WaveSimulator";
+import WaveControlGuide from "../../components/WaveControlGuide";
 import Breadcrumbs from "../../components/Breadcrumbs";
 import CoreTrainingLinks from "../../components/CoreTrainingLinks";
 
@@ -136,6 +137,8 @@ export default function GeometryDashWavePage() {
             <p className="text-sm leading-6 text-slate-400">Remove the fixed finish goal and focus on a repeatable personal-best run.</p>
           </div>
         </div>
+
+        <WaveControlGuide />
 
         <section className="grid gap-5 md:grid-cols-2">
           <div className="rounded-2xl border border-white/10 bg-slate-900/30 p-6">

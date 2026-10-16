@@ -94,14 +94,14 @@ export default function HomeGuide() {
           Geometry Dash Spam Test Series: 5 drills in one trainer
         </h2>
         <p className="mb-6 max-w-3xl text-sm leading-6 text-slate-500">
-          Instead of cloning dozens of numbered spam-test pages, the main trainer keeps five distinct practice presets in one place.
-          Start with control, add faster corrections, move into wave spam, tighten precision, then use Endless for repeatable endurance.
+          Choose a drill below to load its difficulty and modes in the trainer above. Start with Normal Wave for direction changes,
+          try Mini Wave for shorter holds, and use Precision when you can keep a steady path in a wider corridor.
         </p>
         <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-5">
           {WAVE_PRESETS.map((preset, index) => (
             <a
               key={preset.id}
-              href="#spam-test-tool"
+              href={`#drill-${preset.id}`}
               className="rounded-xl border border-white/10 bg-slate-900/30 p-4 hover:border-blue-500/40"
             >
               <span className="text-[10px] font-bold uppercase tracking-[0.16em] text-blue-400">
