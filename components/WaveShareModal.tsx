@@ -13,6 +13,7 @@ export default function WaveShareModal({
 }) {
   const [copied, setCopied] = useState(false);
   const closeRef = useRef<HTMLButtonElement>(null);
+  const dialogRef = useRef<HTMLDivElement>(null);
   const { schedule: scheduleCopiedReset } = useManagedTimeout();
 
   const copyShare = async () => {
@@ -24,16 +25,31 @@ export default function WaveShareModal({
   };
 
   useEffect(() => {
+    const previousFocus = document.activeElement instanceof HTMLElement ? document.activeElement : null;
     closeRef.current?.focus({ preventScroll: true });
 
     const handleKeyDown = (event: KeyboardEvent) => {
-      if (event.key !== "Escape") return;
-      event.preventDefault();
-      onClose();
+      if (event.key === "Escape") {
+        event.preventDefault();
+        onClose();
+      } else if (event.key === "Tab") {
+        const controls = dialogRef.current?.querySelectorAll<HTMLElement>('button:not([disabled]), a[href]');
+        if (!controls?.length) return;
+        const first = controls[0];
+        const last = controls[controls.length - 1];
+        if (event.shiftKey && (document.activeElement === first || !dialogRef.current?.contains(document.activeElement))) {
+          event.preventDefault(); last.focus();
+        } else if (!event.shiftKey && (document.activeElement === last || !dialogRef.current?.contains(document.activeElement))) {
+          event.preventDefault(); first.focus();
+        }
+      }
     };
 
     window.addEventListener("keydown", handleKeyDown);
-    return () => window.removeEventListener("keydown", handleKeyDown);
+    return () => {
+      window.removeEventListener("keydown", handleKeyDown);
+      if (previousFocus?.isConnected) previousFocus.focus({ preventScroll: true });
+    };
   }, [onClose]);
 
   return (
@@ -43,9 +59,10 @@ export default function WaveShareModal({
     >
       <div
         role="dialog"
+        ref={dialogRef}
         aria-modal="true"
         aria-labelledby="wave-share-title"
-        className="share-modal-content relative w-[90%] max-w-sm rounded-2xl border border-white/10 bg-[#0f172a] p-6 shadow-2xl"
+        className="share-modal-content relative max-h-[calc(100%_-_1rem)] w-[90%] max-w-sm overflow-y-auto rounded-2xl border border-white/10 bg-[#0f172a] p-6 shadow-2xl"
         onClick={(event) => event.stopPropagation()}
       >
         <button
@@ -53,12 +70,12 @@ export default function WaveShareModal({
           type="button"
           aria-label="Close share dialog"
           onClick={onClose}
-          className="absolute right-4 top-4 text-slate-400 hover:text-white"
+          className="absolute right-2 top-2 grid h-11 w-11 place-items-center text-slate-400 hover:text-white"
         >
           <X className="h-5 w-5" />
         </button>
 
-        <h3 id="wave-share-title" className="mb-4 flex items-center gap-2 text-xl font-display font-bold text-white">
+        <h3 id="wave-share-title" className="mb-4 flex items-center gap-2 pr-10 text-xl font-display font-bold text-white">
           <Share2 className="h-5 w-5 text-blue-400" /> Share Result
         </h3>
 

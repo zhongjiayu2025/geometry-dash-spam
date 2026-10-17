@@ -10,6 +10,7 @@ import type { WaveRuntimeState } from '../lib/waveRuntime';
 import type { WaveRun } from '../lib/waveStorage';
 import { readStorage, writeStorage } from '../lib/browserStorage';
 import { useWaveRecords } from '../lib/useWaveRecords';
+import { HeldWaveInputs } from '../lib/heldWaveInputs';
 
 type WaveRenderer = typeof import('../lib/waveRenderer').renderWaveFrame;
 type WaveRuntime = typeof import('../lib/waveRuntime');
@@ -44,6 +45,7 @@ const GameCanvas: React.FC<GameCanvasProps> = memo(({ difficulty, status, onStat
   const progressRef = useRef<HTMLDivElement>(null);
   const runRecordedRef = useRef(false);
   const shareOpenRef = useRef(false);
+  const heldInputsRef = useRef(new HeldWaveInputs());
   
   useEffect(() => {
     lowVisualsRef.current =
@@ -280,6 +282,7 @@ const GameCanvas: React.FC<GameCanvasProps> = memo(({ difficulty, status, onStat
 
   const resetGame = useCallback(() => {
     if (!canvasRef.current) return;
+    heldInputsRef.current.clear();
     const width = canvasRef.current.width;
     const height = canvasRef.current.height;
     const totalDistance = difficulty.speed * 60 * (WIN_TIME_MS / 1000);
@@ -453,7 +456,7 @@ const GameCanvas: React.FC<GameCanvasProps> = memo(({ difficulty, status, onStat
   };
   
 
-  const handleStart = useCallback((e?: any) => {
+  const handleStart = useCallback((source: string, e?: PointerEvent) => {
      // Check if the target is a button, interactive element, or inside the modal
      if (e && e.target instanceof Element) {
         if (e.target.closest('button') || e.target.closest('a') || e.target.closest('.share-modal-content')) {
@@ -472,6 +475,7 @@ const GameCanvas: React.FC<GameCanvasProps> = memo(({ difficulty, status, onStat
          onStatusChange(GameStatus.Playing);
      }
      
+     if (!heldInputsRef.current.press(source)) return;
      gameState.current.isHolding = true;
      
      const now = performance.now();
@@ -487,12 +491,16 @@ const GameCanvas: React.FC<GameCanvasProps> = memo(({ difficulty, status, onStat
      playSound('click');
   }, [status, resetGame, onStatusChange, playSound]);
 
-  const handleEnd = useCallback(() => {
-     gameState.current.isHolding = false;
+  const handleEnd = useCallback((source: string) => {
+     gameState.current.isHolding = heldInputsRef.current.release(source);
   }, []);
 
   const handleShareOpenChange = useCallback((open: boolean) => {
       shareOpenRef.current = open;
+      if (open) {
+          heldInputsRef.current.clear();
+          gameState.current.isHolding = false;
+      }
   }, []);
 
   const focusGame = useCallback(() => {
@@ -540,6 +548,7 @@ const GameCanvas: React.FC<GameCanvasProps> = memo(({ difficulty, status, onStat
 
   useEffect(() => {
       const releaseInput = () => {
+          heldInputsRef.current.clear();
           gameState.current.isHolding = false;
       };
 
@@ -577,12 +586,12 @@ const GameCanvas: React.FC<GameCanvasProps> = memo(({ difficulty, status, onStat
 
           if (e.code === 'Space' || e.code === 'ArrowUp') {
               e.preventDefault();
-              if (!e.repeat) handleStart();
+              if (!e.repeat) handleStart(`key:${e.code}`);
           }
       };
       const handleKeyUp = (e: KeyboardEvent) => {
           if (e.code === 'Space' || e.code === 'ArrowUp') {
-              handleEnd();
+              handleEnd(`key:${e.code}`);
           }
       };
 
@@ -592,6 +601,7 @@ const GameCanvas: React.FC<GameCanvasProps> = memo(({ difficulty, status, onStat
       const container = containerRef.current;
       const handlePointerDown = (e: PointerEvent) => {
           if (status !== GameStatus.Playing) return;
+          if (e.pointerType === 'mouse' && e.button !== 0) return;
 
           const target = e.target as HTMLElement;
           if (target.closest('button') || target.closest('a') || target.closest('.share-modal-content')) {
@@ -604,13 +614,14 @@ const GameCanvas: React.FC<GameCanvasProps> = memo(({ difficulty, status, onStat
                   container.setPointerCapture(e.pointerId);
               } catch {}
           }
-          handleStart(e);
+          handleStart(`pointer:${e.pointerId}`, e);
       };
       const handlePointerUp = (e: PointerEvent) => {
-          if (status !== GameStatus.Playing) return;
+          const source = `pointer:${e.pointerId}`;
+          if (!heldInputsRef.current.has(source)) return;
 
           e.preventDefault();
-          handleEnd();
+          handleEnd(source);
           if (container?.hasPointerCapture?.(e.pointerId)) {
               try {
                   container.releasePointerCapture(e.pointerId);
@@ -622,6 +633,7 @@ const GameCanvas: React.FC<GameCanvasProps> = memo(({ difficulty, status, onStat
           container.addEventListener('pointerdown', handlePointerDown, { passive: false });
           container.addEventListener('pointerup', handlePointerUp, { passive: false });
           container.addEventListener('pointercancel', handlePointerUp, { passive: false });
+          container.addEventListener('lostpointercapture', handlePointerUp);
       }
 
       return () => {
@@ -631,6 +643,7 @@ const GameCanvas: React.FC<GameCanvasProps> = memo(({ difficulty, status, onStat
               container.removeEventListener('pointerdown', handlePointerDown);
               container.removeEventListener('pointerup', handlePointerUp);
               container.removeEventListener('pointercancel', handlePointerUp);
+              container.removeEventListener('lostpointercapture', handlePointerUp);
           }
       };
   }, [handleStart, handleEnd, status]);
