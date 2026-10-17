@@ -53,7 +53,8 @@ export default function PracticePlanLog() {
       <p className="mb-2 text-sm leading-6 text-slate-300">{task}</p>
       <p className="mb-3 text-sm leading-6 text-blue-200">Next step: {decision}</p>
       <label className="mb-3 flex items-center gap-2 text-sm text-slate-300"><input type="checkbox" disabled={!ready} checked={entries[index + 1]?.done ?? false} onChange={(event) => update(index + 1, { done: event.target.checked })} /> Day {index + 1} done</label>
-      <label className="block text-xs text-slate-400">Day {index + 1} results and setup<textarea rows={2} maxLength={1000} disabled={!ready} value={entries[index + 1]?.note ?? ""} onChange={(event) => update(index + 1, { note: event.target.value })} placeholder="Date · device · duration/preset · run series · first error · next change" className="mt-2 w-full rounded-lg border border-white/10 bg-slate-950 p-3 text-sm text-white" /></label>
+      <label htmlFor={`practice-day-${index + 1}-notes`} className="block text-xs text-slate-400">Day {index + 1} results and setup</label>
+      <textarea id={`practice-day-${index + 1}-notes`} rows={2} maxLength={1000} disabled={!ready} value={entries[index + 1]?.note ?? ""} onChange={(event) => update(index + 1, { note: event.target.value })} placeholder="Date · device · duration/preset · run series · first error · next change" className="mt-2 w-full rounded-lg border border-white/10 bg-slate-950 p-3 text-sm text-white" />
     </article>)}</div>
   </section>;
 }

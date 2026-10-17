@@ -141,3 +141,21 @@ Remaining limits: no private AdSense rejection details or account settings were
 available; CMP publication and regional behavior are not certified by a source
 build. No artificial word-count, traffic threshold, guaranteed approval or
 fixed reapplication waiting period is claimed.
+
+Production acceptance for commit `2a4e4b0`:
+- GitHub Build / verify-production and Cloudflare Pages deployment succeeded.
+- All twelve difficulty images loaded in the production browser.
+- A content-page → Guides navigation removed the AdSense loader (0 on Guides,
+  1 on an eligible content page), including after an SDK-bearing page.
+- The 30-day form has 30 checkboxes and 30 note fields. A saved first-day note
+  and checkbox survived reload. Downloaded CSV parsed as one header + 30 rows
+  and contained the entered note/completion state. QA entries were cleared.
+- Rollover simultaneous Space+Up recorded both expected keys; a Space-only
+  attempt reported the missing Up key instead of a successful chord.
+- The fixed-key drill completed at 20 holds / 19 release gaps, with mean and SD.
+- A single-click Wave run ending at 0.99s displayed 1.01 average CPS, 1.00
+  rolling-second peak, and Timing SD N/A. This directly verifies the prior
+  low-sample bug's visible result; values are QA observations, not benchmarks.
+- Browser verification identified a label-selector ambiguity after editing a
+  note. Notes now use stable explicit label/textarea associations so their
+  names remain independent of the entered value.
