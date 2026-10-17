@@ -7,7 +7,7 @@ export type DemonEntry = {
 
 export const DEMON_SOURCE_URL = "https://pointercrate.com/demonlist/";
 export const DEMON_API_URL = "https://pointercrate.com/api/v2/demons/listed/?limit=50";
-export const DEMON_VERIFIED_AT = "2026-10-13";
+export const DEMON_VERIFIED_AT = "2026-10-17";
 
 export const DEMONS: DemonEntry[] = [
   { rank: 1, level: "GRIEF", publisher: "icedcave", difficulty: "Extreme Demon" },
@@ -32,12 +32,12 @@ export const DEMONS: DemonEntry[] = [
   { rank: 20, level: "KILLSTEALER", publisher: "rynoxious", difficulty: "Extreme Demon" },
   { rank: 21, level: "Subsuming Vortex", publisher: "[TCD] Cursed", difficulty: "Extreme Demon" },
   { rank: 22, level: "Anathema", publisher: "nikroplays", difficulty: "Extreme Demon" },
-  { rank: 23, level: "Avernus", publisher: "PockeWindfish", difficulty: "Extreme Demon" },
-  { rank: 24, level: "Acheron", publisher: "ryamu", difficulty: "Extreme Demon" },
-  { rank: 25, level: "Spectre", publisher: "xander", difficulty: "Extreme Demon" },
-  { rank: 26, level: "Menace", publisher: "Arraegen", difficulty: "Extreme Demon" },
-  { rank: 27, level: "Abyss of Darkness", publisher: "Exen", difficulty: "Extreme Demon" },
-  { rank: 28, level: "Defeated Circles", publisher: "GXQ", difficulty: "Extreme Demon" },
+  { rank: 23, level: "Defeated Circles", publisher: "GXQ", difficulty: "Extreme Demon" },
+  { rank: 24, level: "Avernus", publisher: "PockeWindfish", difficulty: "Extreme Demon" },
+  { rank: 25, level: "Acheron", publisher: "ryamu", difficulty: "Extreme Demon" },
+  { rank: 26, level: "Spectre", publisher: "xander", difficulty: "Extreme Demon" },
+  { rank: 27, level: "Menace", publisher: "Arraegen", difficulty: "Extreme Demon" },
+  { rank: 28, level: "Abyss of Darkness", publisher: "Exen", difficulty: "Extreme Demon" },
   { rank: 29, level: "FOREST OF SPIKES", publisher: "bims", difficulty: "Extreme Demon" },
   { rank: 30, level: "Tunnel of Despair", publisher: "Exen", difficulty: "Extreme Demon" },
   { rank: 31, level: "Kyouki", publisher: "｛出見塩｝", difficulty: "Extreme Demon" },
