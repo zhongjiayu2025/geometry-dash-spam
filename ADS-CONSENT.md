@@ -1,6 +1,9 @@
 # AdSense Consent / CMP Setup
 
-Status: source-code prerequisites complete; AdSense account-side publication must be verified manually.
+Status: source prerequisites complete; a published Google European-regulations
+message was observed in production using Google's official preview on
+2026-10-18 (Asia/Shanghai). Account-editor settings and real regional behavior
+have not been inspected.
 
 ## Why this exists
 
@@ -10,13 +13,14 @@ The repository can verify the code-side prerequisites, but it cannot prove wheth
 
 ## Code-side state
 
-- AdSense publisher tag is loaded from the root layout.
+- The root layout uses `AdSenseHead` to load the publisher tag on the explicit
+  40-page allowlist; navigation, information, utility and error pages are excluded.
 - `ads.txt` contains the site publisher relationship.
 - Referrer policy is `strict-origin-when-cross-origin`, which is compatible with Google's documented requirement for Privacy & messaging messages.
 - Privacy policy URL: https://geometrydashspam.cc/privacy
 - The privacy page distinguishes local practice-tool storage from advertising/consent processing.
 
-## Required AdSense account action
+## AdSense account setup reference
 
 In AdSense:
 
@@ -58,3 +62,21 @@ A release may mark CMP status as **verified** only after someone has confirmed t
   which Auto ads placements Google will choose. Account-side CMP publication,
   consent-message behavior and Auto ads previews remain separately verifiable
   only with access to that configuration or observable regional behavior.
+
+## Production preview verification — 2026-10-18 (Asia/Shanghai)
+
+- Official testing reference:
+  https://developers.google.com/funding-choices/fc-api-docs#testing_and_debugging_on_your_site
+- Tested URL: https://geometrydashspam.cc/?fc=alwaysshow&fctype=gdpr
+- The published Google message appeared after its asynchronous scripts loaded,
+  naming geometrydashspam.cc and displaying consent and management controls.
+  Funding Choices was loaded for publisher `ca-pub-1528586776567779`.
+- Opening Manage options showed purpose/vendor controls and the confirmation
+  control. This establishes an observable published message and working entry
+  to preferences; it does not certify every region, consent signal or account
+  setting.
+- Saving the test visitor choices was not executed: automatic approval review
+  rejected that action because explicit authorization to save privacy choices
+  was absent. Save/withdrawal behavior is therefore still unverified.
+- The AdSense account editor redirected to Google sign-in; no account settings
+  were changed. A second homemade consent banner was not introduced.

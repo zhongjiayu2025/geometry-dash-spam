@@ -47,7 +47,7 @@ export default function WaveCanvasHud({
           </div>
 
           {!isEndless ? (
-            <div className="w-32 sm:w-48 h-2 bg-slate-800 rounded-full overflow-hidden border border-white/10">
+            <div className="w-20 sm:w-48 h-2 bg-slate-800 rounded-full overflow-hidden border border-white/10">
               <div
                 ref={progressRef}
                 className="h-full bg-white shadow-[0_0_10px_white] transition-all duration-75"
@@ -64,14 +64,14 @@ export default function WaveCanvasHud({
           )}
         </div>
 
-        <div className="flex gap-2 pointer-events-auto">
+        <div className="flex gap-1 sm:gap-2 pointer-events-auto">
           <button
             type="button"
             aria-label={reduceMotion ? "Enable motion effects" : "Reduce motion effects"}
             aria-pressed={reduceMotion}
             title={reduceMotion ? "Enable Motion/Pulse" : "Reduce Motion/Shake"}
             onClick={onToggleMotion}
-            className={`p-2 rounded-full backdrop-blur-md transition-colors border border-transparent ${reduceMotion ? "bg-blue-600 text-white border-blue-400" : "bg-black/40 text-white/70 hover:bg-black/60 hover:text-white"}`}
+            className={`grid h-11 w-11 place-items-center rounded-full backdrop-blur-md transition-colors border border-transparent ${reduceMotion ? "bg-blue-600 text-white border-blue-400" : "bg-black/40 text-white/70 hover:bg-black/60 hover:text-white"}`}
           >
             {reduceMotion ? <ZapOff className="w-5 h-5" /> : <Activity className="w-5 h-5" />}
           </button>
@@ -86,7 +86,7 @@ export default function WaveCanvasHud({
                 event.stopPropagation();
                 onToggleFullscreen();
               }}
-              className="p-2 bg-black/40 hover:bg-black/60 rounded-full text-white/70 hover:text-white backdrop-blur-md transition-colors"
+              className="grid h-11 w-11 place-items-center bg-black/40 hover:bg-black/60 rounded-full text-white/70 hover:text-white backdrop-blur-md transition-colors"
             >
               {isFullscreen ? <Minimize className="w-5 h-5" /> : <Maximize className="w-5 h-5" />}
             </button>
@@ -97,7 +97,7 @@ export default function WaveCanvasHud({
             aria-label={isMuted ? "Unmute" : "Mute"}
             aria-pressed={isMuted}
             onClick={onToggleMute}
-            className="p-2 bg-black/40 hover:bg-black/60 rounded-full text-white/70 hover:text-white backdrop-blur-md transition-colors"
+            className="grid h-11 w-11 place-items-center bg-black/40 hover:bg-black/60 rounded-full text-white/70 hover:text-white backdrop-blur-md transition-colors"
           >
             {isMuted ? <VolumeX className="w-5 h-5" /> : <Volume2 className="w-5 h-5" />}
           </button>

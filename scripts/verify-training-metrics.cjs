@@ -12,6 +12,23 @@ require.extensions[".ts"] = (module, filename) => {
 try {
   const { getWaveRunStats, calculateWaveConsistency } = require("../lib/waveRuntime.ts");
   const { normalizeWaveRuns } = require("../lib/waveStorage.ts");
+  const { HeldWaveInputs } = require("../lib/heldWaveInputs.ts");
+  const held = new HeldWaveInputs();
+  assert.equal(held.press("key:Space"), true);
+  assert.equal(held.press("key:Space"), false, "repeated down must not register another input");
+  held.press("key:ArrowUp");
+  assert.equal(held.release("key:Space"), true, "Up remains held after Space is released");
+  assert.equal(held.release("pointer:unrelated"), true, "a toolbar tap must not release gameplay input");
+  assert.equal(held.release("key:ArrowUp"), false);
+  held.press("pointer:1");
+  held.press("pointer:2");
+  assert.equal(held.release("pointer:1"), true, "second touch remains held");
+  assert.equal(held.release("pointer:2"), false, "last touch release ends the hold");
+  held.press("key:Space");
+  held.press("pointer:3");
+  held.clear();
+  assert.equal(held.isHolding, false, "blur/reset must clear all input sources");
+  assert.equal(held.has("pointer:3"), false);
   const stats = (times, runTime) => {
     const state = { clickTimes: times, clickIntervals: times.slice(1).map((time, index) => time - times[index]), clickCount: times.length, runTime };
     return { ...getWaveRunStats(state), consistency: calculateWaveConsistency(state) };
@@ -40,7 +57,7 @@ try {
   assert.deepEqual(runs.map((run) => run.timingSd), [null, null, 0, null]);
   assert.equal(runs[0].peakCps, 1, "legacy single-click peaks must be corrected");
   assert.deepEqual(normalizeWaveRuns(runs), runs, "normalization must preserve the unavailable state on subsequent loads");
-  console.log("Training metrics verified: short/empty runs, interval sample thresholds, rolling peaks, legacy history and null persistence.");
+  console.log("Training verified: overlapping inputs, focus/reset cleanup, short/empty runs, sample thresholds, rolling peaks and legacy history.");
 } finally {
   if (oldLoader) require.extensions[".ts"] = oldLoader;
   else delete require.extensions[".ts"];
