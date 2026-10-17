@@ -80,8 +80,8 @@ const BlogPostReader: React.FC<BlogPostProps> = ({ post }) => {
           {post.title}
         </h1>
 
-        <div className="flex items-center justify-between border-b border-white/10 pb-8">
-            <div className="flex items-center gap-6 text-sm text-slate-400 font-mono">
+        <div className="flex flex-wrap items-center justify-between gap-4 border-b border-white/10 pb-8">
+            <div className="flex min-w-0 flex-wrap items-center gap-3 sm:gap-6 text-sm text-slate-400 font-mono">
                 {/* Semantic Time Element */}
                 <span className="flex items-center gap-2">
                     <Calendar className="w-4 h-4" />
@@ -90,7 +90,7 @@ const BlogPostReader: React.FC<BlogPostProps> = ({ post }) => {
                       {post.updated && <> · Updated <time dateTime={new Date(post.updated).toISOString()}>{post.updated}</time></>}
                     </span>
                 </span>
-                <span className="flex items-center gap-2"><Clock className="w-4 h-4" /> {post.readTime}</span>
+                <span className="flex shrink-0 items-center gap-2"><Clock className="w-4 h-4" /> {post.readTime}</span>
             </div>
             
             <div className="flex gap-4">

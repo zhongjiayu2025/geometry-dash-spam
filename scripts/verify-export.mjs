@@ -3013,7 +3013,10 @@ if (existsSync(sitemapPath)) {
   ]);
 
   const contentDates = JSON.parse(readFileSync(join(process.cwd(), "data", "pageUpdates.json"), "utf8"));
-  for (const [route, date] of Object.entries(contentDates)) expectedFreshness.set(route, date);
+  for (const [route, date] of Object.entries(contentDates)) {
+    const sourceDate = expectedFreshness.get(route) ?? "";
+    expectedFreshness.set(route, sourceDate > date ? sourceDate : date);
+  }
 
   for (const [route, expectedDate] of expectedFreshness) {
     const record = sitemapRecords.find((item) => item.route === route);

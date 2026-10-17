@@ -23,6 +23,12 @@ export default function ClickTechniqueGuide({ variant }: { variant: "jitter" | "
               <strong className="text-white">Quick answer:</strong> the jitter click test runs for 10 seconds and reports browser-registered CPS. Compare several runs on the same setup; the useful result is a repeatable range, not a universal target number.
             </p>
           </div>
+          <section className="rounded-2xl border border-white/10 p-5 md:p-8">
+            <h2 className="mb-4 text-2xl font-bold text-white">Separate a jitter burst from a repeatable gain</h2>
+            <p className="mb-4 text-sm leading-7 text-slate-300">Use three 10-second normal-click runs as a baseline, then three jitter runs with the same mouse and settings. Rest between attempts and reverse the order in another session. Record each average CPS; this page cannot recognise your physical clicking technique, so label the method yourself.</p>
+            <div className="overflow-x-auto"><table className="w-full text-left text-sm"><caption className="mb-2 text-left text-slate-400">Arithmetic example, not measured player results</caption><thead><tr><th className="p-3">Method</th><th className="p-3">Three average CPS values</th><th className="p-3">Median / range</th></tr></thead><tbody className="text-slate-300"><tr className="border-t border-white/10"><td className="p-3">Normal</td><td className="p-3">6.4 / 6.6 / 6.5</td><td className="p-3">6.5 / 6.4–6.6</td></tr><tr className="border-t border-white/10"><td className="p-3">Jitter</td><td className="p-3">9.6 / 7.1 / 6.8</td><td className="p-3">7.1 / 6.8–9.6</td></tr></tbody></table></div>
+            <p className="mt-4 text-sm leading-7 text-slate-300">The example supports a 0.6 CPS difference between medians, not a repeatable 3.1 CPS gain based on the best jitter run. The declining series is a reason to retest; it cannot identify fatigue, registration or technique as the cause. Next compare the methods at one fixed Wave preset. Keep the faster method only if you can also reproduce the intended rises and releases.</p>
+          </section>
           <div className="bg-slate-900/40 border border-white/5 rounded-2xl p-8 md:p-12">
             <h2 className="text-3xl font-display font-bold text-white mb-6 flex items-center gap-3">
               <CheckCircle className="text-orange-500 w-8 h-8" />
@@ -153,6 +159,13 @@ export default function ClickTechniqueGuide({ variant }: { variant: "jitter" | "
           Butterfly clicking splits repeated inputs between two fingers, which may feel more sustainable or controllable for some players during longer rapid-input sections. That does not make it universally better for Geometry Dash: compare it with your normal method using the same device, test length and wave difficulty, then keep the technique that produces the most repeatable control.
         </p>
       </div>
+
+      <section className="rounded-2xl border border-white/10 p-5 md:p-8">
+        <h2 className="mb-4 text-2xl font-bold text-white">Check the handoff between two fingers</h2>
+        <p className="mb-4 text-sm leading-7 text-slate-300">Begin slowly: press with the index finger, release fully, then press with the middle finger. First make the two gaps feel similar, then increase pace. If one finger keeps the switch held while the other lands, two physical movements may produce only one registered press. The browser does not identify which finger caused an event.</p>
+        <p className="mb-4 text-sm leading-7 text-slate-300">A rhythm example explains why CPS alone is insufficient: alternating 20ms and 80ms gaps has the same 50ms mean as evenly spaced 50ms gaps. The alternating pattern still contains close pairs and longer pauses. These are illustrative timings, not a capture from this test; use the main <Link href="/cps-test" className="text-blue-300 underline">CPS Test</Link> for its interval-consistency metric.</p>
+        <ol className="list-decimal space-y-3 pl-5 text-sm leading-7 text-slate-300"><li>Record three 10-second runs with one finger, then three with alternating fingers. Keep the mouse firmware, debounce setting and contact area fixed.</li><li>If the alternating count is unexpectedly high, repeat slow, deliberate single presses. Extra registered events are a registration question; a high CPS result alone does not prove either skill or switch bounce.</li><li>If CPS rises but wave direction changes arrive in pairs, slow the finger handoff and work on full releases. Compare the same Wave preset rather than increasing difficulty at the same time.</li><li>Before using the method for a ranked challenge, check that list’s current input rules. Two fingers on one button and two separately bound inputs are different arrangements.</li></ol>
+      </section>
 
       <div className="flex flex-col md:flex-row gap-4">
         <div className="flex-1 bg-slate-950/50 p-6 rounded-xl border border-white/5">

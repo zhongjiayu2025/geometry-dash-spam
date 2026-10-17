@@ -25,8 +25,8 @@ export const metadata: Metadata = {
 
 const baseDifficulties = [
   { name: "Auto", stars: "1★", face: 0, tone: "text-cyan-300 border-cyan-500/30 bg-cyan-500/10", note: "Rated automated level." },
-  { name: "Easy", stars: "2★", face: 1, tone: "text-green-300 border-green-500/30 bg-green-500/10", note: "Lowest standard user-level difficulty." },
-  { name: "Normal", stars: "3★", face: 2, tone: "text-blue-300 border-blue-500/30 bg-blue-500/10", note: "Standard early progression difficulty." },
+  { name: "Easy", stars: "2★", face: 1, tone: "text-blue-300 border-blue-500/30 bg-blue-500/10", note: "Lowest standard user-level difficulty." },
+  { name: "Normal", stars: "3★", face: 2, tone: "text-green-300 border-green-500/30 bg-green-500/10", note: "Standard early progression difficulty." },
   { name: "Hard", stars: "4–5★", face: 3, tone: "text-yellow-300 border-yellow-500/30 bg-yellow-500/10", note: "A step above Normal." },
   { name: "Harder", stars: "6–7★", face: 4, tone: "text-orange-300 border-orange-500/30 bg-orange-500/10", note: "Higher-rated non-Demon difficulty." },
   { name: "Insane", stars: "8–9★", face: 5, tone: "text-pink-300 border-pink-500/30 bg-pink-500/10", note: "Highest standard non-Demon rating." },

@@ -93,11 +93,31 @@ export default function HardestLevelPage() {
           <div className="mb-2 text-xs font-bold uppercase tracking-[0.18em] text-amber-300">Latest ranking change</div>
           <h2 className="mb-2 text-xl font-bold text-white">GRIEF moved to #1 on October 5, 2026</h2>
           <p className="text-sm leading-6 text-slate-400">
-            GRIEF was verified and placed at the top of the Demon List on October 5, 2026, replacing Society.
+            Pointercrate placed GRIEF at the top of the Demon List on October 5, 2026, replacing Society.
             The table below is sourced from the post-placement snapshot rather than the older cached order.
           </p>
         </section>
       )}
+
+      {showGriefPlacementNote && (
+        <section className="mb-10 rounded-2xl border border-white/10 p-5 md:p-6">
+          <h2 className="mb-4 text-2xl font-bold text-white">Identify the listed GRIEF</h2>
+          <p className="mb-4 leading-7 text-slate-300">Search the official game for level ID <strong className="font-mono text-white">149992717</strong>, published by icedcave. Pointercrate credits GrenadeofTacos and collaborators as creators and [TCD] Doggie as verifier. Its listed length is 2m45s and its in-game rating is Extreme Demon. These identity details were checked on October 17, 2026; copies and similarly named levels are separate entries.</p>
+          <a href="https://pointercrate.com/demonlist/1/" target="_blank" rel="noopener noreferrer" className="text-blue-400 underline">GRIEF source details and verification video →</a>
+          <p className="mt-3 text-xs leading-5 text-slate-400">This is a position-based source URL: confirm the level name when opening it after a ranking change. The placement date above does not establish the date of the verifier’s completion.</p>
+        </section>
+      )}
+
+      <section className="mb-10 space-y-4 text-slate-300">
+        <h2 className="text-2xl font-bold text-white">What “hardest” tells you when choosing a level</h2>
+        <p className="leading-7">The #1 position compares complete rated levels within Pointercrate’s list. It does not mean that every individual section requires the fastest clicking, that every player finds the same section hardest, or that the level is the best next practice step. Extreme Demon is an in-game category shared by many levels; #1 is a community list position within that category.</p>
+        <ol className="list-decimal space-y-3 pl-6 leading-7">
+          <li><strong className="text-white">For a factual lookup:</strong> match the name, publisher and level ID, then check the live position. Do not infer a new placement from an old video title.</li>
+          <li><strong className="text-white">For section practice:</strong> watch the linked verification and identify the mode, entry and exit of the part you want to study. A full-level rank does not specify its hold/release rhythm.</li>
+          <li><strong className="text-white">For progression:</strong> choose a section you can repeat under comparable settings and record where attempts first fail. If you cannot reach the relevant skill repeatedly, use a simpler exercise before judging progress by the hardest-level list.</li>
+        </ol>
+        <p className="leading-7">For example, a run with a higher CPS but earlier wave exits suggests that speed alone has not solved the control task. Compare the same preset and input setup in the <Link href="/geometry-dash-wave" className="text-blue-400 underline">Wave Trainer</Link>, or use the <Link href="/demon-list/wave-demons" className="text-blue-400 underline">section-specific Wave Demon guide</Link>. This is a practice interpretation, not a claim that our browser trainer reproduces GRIEF.</p>
+      </section>
 
       <section className="mb-10">
         <h2 className="mb-4 text-2xl font-bold text-white">Current top five</h2>

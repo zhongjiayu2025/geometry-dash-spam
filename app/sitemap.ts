@@ -71,16 +71,22 @@ const CORE_ROUTES = [
 export default function sitemap(): MetadataRoute.Sitemap {
   const baseUrl = "https://geometrydashspam.cc";
 
-  const routeEntries: MetadataRoute.Sitemap = CORE_ROUTES.map((route) => ({
-    url: `${baseUrl}${route}`,
-    lastModified: CONTENT_DATES[route || "/"] ?? ( DEMON_ROUTES.has(route)
+  const routeEntries: MetadataRoute.Sitemap = CORE_ROUTES.map((route) => {
+    const sourceDate = DEMON_ROUTES.has(route)
       ? DEMON_VERIFIED_AT
       : CODE_ROUTES.has(route)
         ? VAULT_CODES_CHECKED_AT
         : ["", "/geometry-dash-wave", "/cps-test"].includes(route)
           ? TRAINING_UPDATED
-          : RELATED_ROUTE_DATES.get(route) ?? UPDATED),
-  }));
+          : RELATED_ROUTE_DATES.get(route) ?? UPDATED;
+    const contentDate = CONTENT_DATES[route || "/"] ?? "";
+    // ISO dates sort chronologically. A content edit must not pin a later
+    // automated source refresh to the earlier editorial date.
+    return {
+      url: `${baseUrl}${route}`,
+      lastModified: contentDate > sourceDate ? contentDate : sourceDate,
+    };
+  });
 
   const blogEntries: MetadataRoute.Sitemap = BLOG_POSTS.map((post) => ({
     url: `${baseUrl}/blog/${post.slug}`,

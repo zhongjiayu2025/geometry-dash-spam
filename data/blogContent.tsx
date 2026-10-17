@@ -240,7 +240,7 @@ export const BLOG_POSTS: BlogPost[] = [
       "Looking for the hardest Geometry Dash spam levels? Use this source-led 2026 guide to separate Spam Challenge List rankings, spam-heavy Demons and wave practice references.",
     date: "January 10, 2026",
     updated: "October 17, 2026",
-    readTime: "3 min read",
+    readTime: "4 min read",
     coverImage: "/blog-covers/top-spam-levels-2026.svg",
     tags: ["Levels", "Spam", "Demon List"],
     toc: [
@@ -350,7 +350,7 @@ export const BLOG_POSTS: BlogPost[] = [
       "What actually matters when comparing mice for Geometry Dash: click feel, debounce behavior, polling, shape and repeatable comfort.",
     date: "January 10, 2026",
     updated: "October 17, 2026",
-    readTime: "3 min read",
+    readTime: "4 min read",
     coverImage: "/blog-covers/best-mouse-for-spam-geometry-dash.svg",
     tags: ["Hardware", "Guide"],
     content: (
@@ -499,7 +499,7 @@ export const BLOG_POSTS: BlogPost[] = [
       "A non-ranking list of well-known levels associated with difficult wave control and rapid-input sections, with links back to the current Demon List.",
     date: "January 10, 2026",
     updated: "October 17, 2026",
-    readTime: "3 min read",
+    readTime: "4 min read",
     coverImage: "/blog-covers/notable-wave-spam-levels.svg",
     tags: ["Levels", "Wave"],
     faqs: [
@@ -528,7 +528,7 @@ export const BLOG_POSTS: BlogPost[] = [
       "A conservative month-long practice structure for improving consistency, wave control and test repeatability without promising a fixed CPS gain.",
     date: "January 10, 2026",
     updated: "October 17, 2026",
-    readTime: "3 min read",
+    readTime: "8 min read",
     coverImage: "/blog-covers/30-day-spam-challenge.svg",
     tags: ["Training", "Practice Plan"],
     content: (
@@ -640,7 +640,7 @@ export const BLOG_POSTS: BlogPost[] = [
       "A practical comparison of touch, mouse and keyboard input without assuming one platform is always faster.",
     date: "January 10, 2026",
     updated: "October 17, 2026",
-    readTime: "3 min read",
+    readTime: "4 min read",
     coverImage: "/blog-covers/mobile-vs-pc-spam.svg",
     tags: ["Mobile", "Input"],
     content: (
@@ -710,7 +710,7 @@ export const BLOG_POSTS: BlogPost[] = [
       "Ten practical reasons spam practice becomes inconsistent, from chasing peak CPS to changing settings too often.",
     date: "January 10, 2026",
     updated: "October 17, 2026",
-    readTime: "2 min read",
+    readTime: "4 min read",
     coverImage: "/blog-covers/common-spam-mistakes.svg",
     tags: ["Tips", "Training"],
     content: (
@@ -773,7 +773,7 @@ export const BLOG_POSTS: BlogPost[] = [
       "A checklist for separating useful training advice from unsupported player claims, fake interviews and made-up performance numbers.",
     date: "January 10, 2026",
     updated: "October 17, 2026",
-    readTime: "2 min read",
+    readTime: "4 min read",
     coverImage: "/blog-covers/evaluate-geometry-dash-spam-advice.svg",
     tags: ["Community", "Evidence"],
     content: (

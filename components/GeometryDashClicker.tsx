@@ -149,6 +149,7 @@ export default function GeometryDashClicker() {
         <button
           type="button"
           {...cubePointerAction}
+          onClick={(event) => { if (event.detail === 0) clickCube(); }}
           className="touch-pan-y mx-auto flex aspect-square w-full max-w-sm select-none items-center justify-center rounded-3xl border-2 border-blue-400/50 bg-gradient-to-br from-blue-600 to-indigo-900 shadow-[0_0_45px_rgba(37,99,235,0.25)] transition-transform active:scale-[0.97]"
           aria-label="Click the Geometry Dash cube"
         >
