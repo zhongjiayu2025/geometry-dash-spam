@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import Breadcrumbs from "../../components/Breadcrumbs";
+import SpamChallengeSnapshot from "../../components/SpamChallengeSnapshot";
 import relatedSearchData from "../../data/relatedSearch.json";
 
 const relatedPageData = relatedSearchData.spamChallengeList;
@@ -86,7 +87,7 @@ export default function SpamChallengeListPage() {
           <p className="leading-7 text-slate-400">
             The <strong className="text-white">Spam Challenge List (SCL)</strong> is a community list for
             Geometry Dash challenges centered on rapid repeated input. It is a different ranking system from
-            Pointercrate&apos;s Demon List, so this page keeps the two search intents separate.
+            Pointercrate&apos;s Demon List, so its ranks must be read under the SCL’s own rules.
           </p>
         </header>
 
@@ -96,7 +97,7 @@ export default function SpamChallengeListPage() {
             If you want the <strong className="text-white">current Spam Challenge List rankings, rules or submission information</strong>,
             open the live SCL app below (currently <strong className="text-white">{CURRENT_VERSION}</strong>). The older Google Sites page now identifies itself as the old list and points players
             toward the newer list, while the GeometryDashLists hub also lists the Spam Challenge List separately.
-            We intentionally do not copy the live ranking here because placements and rules can change.
+            The dated selection below includes exact IDs and eligibility fields; follow the source for the complete live order.
           </p>
           <a
             href={CURRENT_LIST_SOURCE}
@@ -107,6 +108,8 @@ export default function SpamChallengeListPage() {
             Open live SCL rankings & rules →
           </a>
         </section>
+
+        <SpamChallengeSnapshot />
 
         <section className="mb-10 grid gap-4 md:grid-cols-3">
           <div className="rounded-xl border border-white/10 bg-slate-900/30 p-5">

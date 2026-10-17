@@ -4,6 +4,7 @@ import { Inter, Orbitron } from "next/font/google";
 import "./globals.css";
 import Header from "../components/Header";
 import Footer from "../components/Footer";
+import AdSenseHead from "../components/AdSenseHead";
 
 const inter = Inter({ subsets: ["latin"], variable: "--font-inter", display: "swap" });
 const orbitron = Orbitron({ subsets: ["latin"], variable: "--font-orbitron", display: "swap" });
@@ -127,13 +128,7 @@ export default function RootLayout({
   return (
     <html lang="en">
       <head>
-        <script
-          async
-          src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-1528586776567779"
-          crossOrigin="anonymous"
-        />
-        <link rel="dns-prefetch" href="https://pagead2.googlesyndication.com" />
-        <link rel="dns-prefetch" href="https://googleads.g.doubleclick.net" />
+        <AdSenseHead />
         <link rel="describedby" href="/llms.txt" type="text/markdown" />
         <meta property="og:site_name" content="Geometry Dash Spam" />
         <meta property="og:locale" content="en_US" />

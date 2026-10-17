@@ -234,7 +234,7 @@ jobs:
               "adsbygoogle.js?client=ca-pub-1528586776567779"
           )
 
-          for route in ["/", "/cps-test", "/geometry-dash-wave", "/blog"]:
+          for route in ["/", "/cps-test", "/geometry-dash-wave", "/blog", "/dashboard", "/privacy"]:
               html = subprocess.check_output(
                   ["curl", "-fsSL", "--connect-timeout", "10", "--max-time", "30",
                    "https://geometrydashspam.cc" + route], text=True
@@ -247,8 +247,9 @@ jobs:
                   if match and match.group(1).startswith(("http://", "https://")):
                       if match.group(1) != allowed_script:
                           raise SystemExit("Unexpected external production script on " + route + ": " + match.group(1))
-              if sum(allowed_script in tag for tag in tags) != 1:
-                  raise SystemExit("Expected one AdSense loader on production route " + route)
+              expected_loaders = 1 if route in ["/", "/cps-test", "/geometry-dash-wave"] else 0
+              if sum(allowed_script in tag for tag in tags) != expected_loaders:
+                  raise SystemExit("Unexpected AdSense loader count on production route " + route)
               print("AdSense-only production page verified: " + route)
           print("Only the authorized Google AdSense seller and loader are present")
           PY

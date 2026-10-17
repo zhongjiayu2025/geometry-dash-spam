@@ -259,15 +259,15 @@ const GameCanvas: React.FC<GameCanvasProps> = memo(({ difficulty, status, onStat
       clickCount: gameState.current.clickCount,
       averageCps: 0,
       peakCps: 0,
-      averageInterval: 0,
-      intervalStdDev: 0,
+      averageInterval: null,
+      intervalStdDev: null,
     };
 
     const run: WaveRun = {
       time: Number((gameState.current.runTime / 1000).toFixed(2)),
       averageCps: Number(stats.averageCps.toFixed(2)),
       peakCps: Number(stats.peakCps.toFixed(2)),
-      timingSd: Number(stats.intervalStdDev.toFixed(0)),
+      timingSd: stats.intervalStdDev === null ? null : Number(stats.intervalStdDev.toFixed(0)),
       clicks: stats.clickCount,
       result,
       timestamp: Date.now(),
@@ -663,15 +663,15 @@ const GameCanvas: React.FC<GameCanvasProps> = memo(({ difficulty, status, onStat
           clickCount: gameState.current.clickCount,
           averageCps: 0,
           peakCps: 0,
-          averageInterval: 0,
-          intervalStdDev: 0,
+          averageInterval: null,
+          intervalStdDev: null,
         }
       : {
           clickCount: 0,
           averageCps: 0,
           peakCps: 0,
-          averageInterval: 0,
-          intervalStdDev: 0,
+          averageInterval: null,
+          intervalStdDev: null,
         };
 
   return (

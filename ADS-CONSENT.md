@@ -40,3 +40,21 @@ In AdSense:
 ## Release check
 
 A release may mark CMP status as **verified** only after someone has confirmed the published message in the AdSense account or production behavior. Source code alone is not sufficient evidence.
+
+## Page eligibility revision — 2026-10-17
+
+- `data/adPages.json` is the explicit page allowlist (40 content/tool routes).
+- `components/AdSenseHead.tsx` retains the authorized asynchronous publisher tag
+  in eligible exported document heads. It excludes the 12 existing noindex
+  utilities, the two exported error templates, and six navigation/information
+  pages (`/blog`, `/sitemap`, `/about`, `/contact`, `/privacy`, `/terms`).
+- The component performs a full document navigation when an ordinary internal
+  link crosses the allowlist boundary. This prevents an already loaded,
+  document-wide AdSense SDK from carrying into an excluded page through Next.js
+  client navigation. It does not change indexed URLs or robots policy.
+- `verify:ads` checks all exported HTML against this allowlist. Production CI
+  checks both included and excluded sample routes.
+- This code change does not prove the account has a published CMP or establish
+  which Auto ads placements Google will choose. Account-side CMP publication,
+  consent-message behavior and Auto ads previews remain separately verifiable
+  only with access to that configuration or observable regional behavior.

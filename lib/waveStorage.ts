@@ -4,7 +4,7 @@ export interface WaveRun {
   time: number;
   averageCps: number;
   peakCps: number;
-  timingSd: number;
+  timingSd: number | null;
   clicks: number;
   result: "won" | "lost";
   timestamp: number;
@@ -43,8 +43,10 @@ export function normalizeWaveRuns(value: unknown, fallbackMode = "Unknown"): Wav
     runs.push({
       time,
       averageCps: nonNegative(record.averageCps) ?? 0,
-      peakCps: nonNegative(record.peakCps) ?? 0,
-      timingSd: nonNegative(record.timingSd) ?? 0,
+      peakCps: (nonNegative(record.clicks) ?? 0) < 2
+        ? Math.floor(nonNegative(record.clicks) ?? 0)
+        : nonNegative(record.peakCps) ?? 0,
+      timingSd: (nonNegative(record.clicks) ?? 0) >= 3 ? nonNegative(record.timingSd) : null,
       clicks: Math.floor(nonNegative(record.clicks) ?? 0),
       result: record.result === "won" ? "won" : "lost",
       timestamp: nonNegative(record.timestamp) ?? 0,

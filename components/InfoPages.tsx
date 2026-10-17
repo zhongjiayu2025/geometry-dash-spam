@@ -235,7 +235,7 @@ export const ContactPage = () => (
 );
 
 export const PrivacyPage = () => (
-  <InfoPageLayout title="Privacy Policy" icon={<Shield className="w-10 h-10"/>} lastUpdated="October 5, 2026">
+  <InfoPageLayout title="Privacy Policy" icon={<Shield className="w-10 h-10"/>} lastUpdated="October 16, 2026">
     <div className="space-y-4">
       <p className="mb-8 text-slate-300">
         This page explains the data used by <strong>GeometryDashSpam.cc</strong>. The interactive tools do not require an account.
@@ -246,7 +246,7 @@ export const PrivacyPage = () => (
           Supported tools store settings and personal-best values in your browser&apos;s local storage. That local data is used to restore your preferences and records on the same browser.
         </p>
         <p>
-          Examples include selected difficulty, sound settings, CPS best scores, recent CPS and wave-run history, wave personal bests and clicker progress.
+          Examples include selected difficulty, sound settings, CPS best scores, recent CPS and wave-run history, wave personal bests, the 30-day practice log and clicker progress.
         </p>
       </SectionCard>
 
@@ -255,13 +255,13 @@ export const PrivacyPage = () => (
           The site loads Google AdSense. Google and its advertising partners may use cookies or similar technologies for ad delivery, measurement, fraud prevention and related purposes according to their own policies and the consent requirements that apply to the visitor.
         </p>
         <p>
-          The site should not be understood as claiming that all data remains only on-device: advertising requests can involve third-party network services.
+          When an advertising request is made, Google receives network information such as your IP address and may process cookie identifiers, device or browser details and page/ad interaction information. These are separate from the practice history saved by our tools. The tools do not intentionally send your local CPS or Wave history to Google. See Google’s explanation of <a href="https://policies.google.com/technologies/partner-sites" className="text-blue-300 underline" target="_blank" rel="noopener noreferrer">how Google uses information from sites that use its services</a>.
         </p>
       </SectionCard>
 
       <SectionCard title="3. Consent and regional ad choices" icon={<Shield className="w-5 h-5"/>}>
         <p>
-          In regions where advertising consent is required, a Google-certified consent management platform may present choices about personalized advertising, non-personalized advertising, limited ads and related data use. Those choices are handled by the consent platform and advertising provider rather than by the local practice tools.
+          Where a consent message is presented, use it to accept, reject or manage the advertising purposes offered. The message and available options depend on your region and the advertising provider. This policy does not itself grant consent. You can also review <a href="https://myadcenter.google.com/" className="text-blue-300 underline" target="_blank" rel="noopener noreferrer">Google My Ad Center</a> and your browser’s cookie controls; those controls have different scopes.
         </p>
         <p>
           Advertising consent is separate from the browser-local settings and personal-best data used by the training tools. Declining advertising consent should not be treated as consent to upload local practice history.
@@ -282,7 +282,7 @@ export const PrivacyPage = () => (
 
       <SectionCard title="6. Your browser controls">
         <p>
-          You can clear locally stored tool data through your browser settings. Advertising and cookie controls may also be available through your browser and any consent interface shown on the site.
+          You can clear locally stored tool data through your browser settings. Clearing local storage removes saved tool records on that browser. Clearing cookies or changing an advertising choice does not automatically clear those local practice records. Privacy questions and requests can be sent to the contact address below.
         </p>
       </SectionCard>
 

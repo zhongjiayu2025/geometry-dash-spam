@@ -33,25 +33,8 @@ const baseDifficulties = [
   { name: "Demon", stars: "10★", face: 6, tone: "text-red-300 border-red-500/30 bg-red-500/10", note: "Demon levels use five community-voted sub-difficulties." },
 ];
 
-const faceMouths = [
-  "M18 38 Q32 51 46 38",
-  "M18 39 Q32 49 46 39",
-  "M20 41 H44",
-  "M18 43 Q32 39 46 43",
-  "M18 44 Q32 36 46 44",
-  "M17 46 Q32 32 47 46",
-  "M15 48 Q32 28 49 48",
-];
-
-function DifficultyReferenceFace({ name, level }: { name: string; level: number }) {
-  return (
-    <svg viewBox="0 0 64 64" role="img" aria-label={`${name} original reference face`} className="h-12 w-12">
-      <circle cx="32" cy="32" r="27" fill="none" stroke="currentColor" strokeWidth="3" />
-      <circle cx="23" cy="27" r="3" fill="currentColor" />
-      <circle cx="41" cy="27" r="3" fill="currentColor" />
-      <path d={faceMouths[level]} fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round" />
-    </svg>
-  );
+function DifficultyReferenceFace({ name }: { name: string }) {
+  return <img src={`/difficulty-faces/${name.toLowerCase()}.png`} width={64} height={64} alt={`${name} difficulty icon from Geometry Dash`} className="h-16 w-16 object-contain" />;
 }
 
 const difficultyFaqs = [
@@ -125,7 +108,7 @@ export default function DifficultyFacesPage() {
           <div className="mb-2 text-xs font-bold uppercase tracking-[0.18em] text-blue-300">Quick answer</div>
           <p className="leading-7 text-slate-300">
             The rated user-level scale is <strong className="text-white">Auto → Easy → Normal → Hard → Harder → Insane → Demon</strong>.
-            Demon then splits into Easy, Medium, Hard, Insane and Extreme Demon. The cards below use original reference faces rather than copied game artwork.
+            Demon then splits into Easy, Medium, Hard, Insane and Extreme Demon. Compare the actual difficulty icons below; the star reward stays at 10 for every Demon sub-rating.
           </p>
         </section>
 
@@ -135,7 +118,7 @@ export default function DifficultyFacesPage() {
             {baseDifficulties.map((item) => (
               <div key={item.name} className="rounded-2xl border border-white/10 bg-slate-900/30 p-5">
                 <div className={"mb-4 grid h-16 w-16 place-items-center rounded-full border-2 " + item.tone}>
-                  <DifficultyReferenceFace name={item.name} level={item.face} />
+                  <DifficultyReferenceFace name={item.name} />
                 </div>
                 <div className="mb-2 flex items-center justify-between gap-3">
                   <h3 className="text-xl font-bold text-white">{item.name}</h3>
@@ -146,16 +129,16 @@ export default function DifficultyFacesPage() {
             ))}
           </div>
           <p className="mt-4 text-xs leading-5 text-slate-600">
-            The face illustrations above are original visual references for this guide, not copies of the official Geometry Dash sprites.
+            Difficulty sprites are Geometry Dash game artwork by RobTop Games, reproduced here for identification. Asset reference: GDBrowser community archive; see the source credit below.
           </p>
         </section>
 
         <section className="mb-12 rounded-2xl border border-purple-500/20 bg-purple-950/10 p-6 md:p-8">
           <h2 className="mb-4 text-2xl font-bold text-white">Geometry Dash Demon difficulty faces</h2>
           <div className="grid gap-3 md:grid-cols-5">
-            {demonDifficulties.map((item, index) => (
+            {demonDifficulties.map((item) => (
               <div key={item.name} className="rounded-xl border border-white/10 bg-black/20 p-4">
-                <div className="mb-3 text-xs font-mono text-purple-300">D{index + 1}</div>
+                <img src={`/difficulty-faces/demon-${item.name.split(" ")[0].toLowerCase()}.png`} width={64} height={64} alt={`${item.name} difficulty icon from Geometry Dash`} className="mb-3 h-16 w-16 object-contain" />
                 <h3 className="mb-2 font-bold text-white">{item.name}</h3>
                 <p className="text-xs leading-5 text-slate-500">{item.description}</p>
               </div>
@@ -166,6 +149,13 @@ export default function DifficultyFacesPage() {
             The Geometry Dash Wiki notes that Demon user levels award 10 stars regardless of sub-difficulty, and
             the sub-rating is determined by community votes.
           </p>
+        </section>
+
+        <section className="mb-10 rounded-xl border border-white/10 p-6">
+          <h2 className="mb-3 text-2xl font-bold text-white">Where to find the face in the game</h2>
+          <p className="mb-3 leading-7 text-slate-300">Open a user level from Search or a saved list. The large face beside the level name identifies its rating; read the stars as a separate reward. Easy is blue, Normal is green, Hard is yellow, Harder is orange and Insane is pink. Demon icons add horns and change their facial shape and colour across sub-ratings.</p>
+          <p className="leading-7 text-slate-400">Do not confuse Easy with Easy Demon: Easy gives 2 stars, while Easy Demon uses a horned Demon icon and gives 10. A glow or featured decoration around a face describes an additional rating distinction; it is not an extra Demon tier. These references omit those frames to make the faces comparable.</p>
+          <p className="mt-3 text-xs leading-5 text-slate-400">Image source: <a href="https://github.com/tzt345/GDBrowser/tree/master/assets/difficulties" className="text-blue-300 underline" target="_blank" rel="noopener noreferrer">GDBrowser difficulty asset archive</a>. Game artwork belongs to RobTop Games; this independent fan guide does not claim ownership or an official affiliation.</p>
         </section>
 
         <section className="mb-10 grid gap-4 md:grid-cols-2">

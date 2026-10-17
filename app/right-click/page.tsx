@@ -1,3 +1,4 @@
+import ToolResultExamples from "../../components/ToolResultExamples";
 import type { Metadata } from "next";
 import RightClickTest from "../../components/RightClickTest";
 import Breadcrumbs from "../../components/Breadcrumbs";
@@ -63,6 +64,7 @@ export default function RightClickPage() {
       <Breadcrumbs items={[{ label: "Right Click", href: "/right-click", active: true }]} />
       <ClickTestHero variant="rightClick" />
       <RightClickTest />
+      <ToolResultExamples tool="right" />
       <InputToolGuide tool="right-click" />
       <section className="mx-auto mt-10 max-w-5xl">
         <h2 className="mb-4 text-2xl font-display font-bold text-white">Right Click CPS Test FAQ</h2>

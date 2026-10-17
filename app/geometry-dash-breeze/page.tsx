@@ -161,6 +161,14 @@ export default function GeometryDashBreezePage() {
           </p>
         </section>
 
+        <section className="mb-10 rounded-2xl border border-sky-500/20 p-5 md:p-6">
+          <h2 className="mb-4 text-2xl font-bold text-white">What changed between v1.3.0 and v1.3.1?</h2>
+          <div className="overflow-x-auto"><table className="w-full text-left text-sm"><thead><tr><th className="p-3">Release</th><th className="p-3">Maintainer’s notes</th><th className="p-3">What to check on your copy</th></tr></thead><tbody className="text-slate-300"><tr className="border-t border-white/10"><td className="p-3">v1.3.0</td><td className="p-3">Updated to GD 2.207, Android 5+ support, revised levels/achievements, unlocked icons/colours and package name com.andrexel.gdbreeze.</td><td className="p-3">Record the version and Android package shown on your device. A similarly named download does not establish which project or version it contains.</td></tr><tr className="border-t border-white/10"><td className="p-3">v1.3.1</td><td className="p-3">Added a new achievement and the main level Ghost Retention, plus fixes and tweaks.</td><td className="p-3">Check the release title before expecting the new main level. The notes do not provide a complete device-by-device compatibility test.</td></tr></tbody></table></div>
+          <h3 className="mb-3 mt-5 text-lg font-bold text-white">A practical first-launch check</h3>
+          <ol className="list-decimal space-y-2 pl-5 text-sm leading-6 text-slate-300"><li>Start from the maintained repository’s download links and match the release/version to the format you intend to use.</li><li>Note your OS, project version and whether levels appear. If the first launch shows Coming Soon, try the maintainer’s documented close-and-reopen step once.</li><li>If it persists, include the exact version, OS and observed screen in an issue to the project. Do not describe every failure as unsupported Android without that information.</li><li>For the GD Lists format, follow the README’s separate instructions; availability as a list is not the same as a separately installed executable.</li></ol>
+          <p className="mt-4 text-xs leading-5 text-slate-400">Based on <a href={RELEASE_SOURCE} className="text-blue-300 underline" target="_blank" rel="noopener noreferrer">the maintainer’s release notes</a>. This is a source-based version and troubleshooting comparison. We have not installed the Windows or Android builds in this review and do not claim independent compatibility or performance results.</p>
+        </section>
+
         <section className="mb-10">
           <h2 className="mb-4 text-2xl font-bold text-white">Geometry Dash Breeze FAQ</h2>
           <div className="grid gap-4 md:grid-cols-3">

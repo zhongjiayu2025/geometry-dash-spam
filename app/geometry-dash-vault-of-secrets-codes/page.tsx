@@ -90,7 +90,7 @@ export default function VaultOfSecretsCodesPage() {
         <div className="rounded-xl border border-white/10 bg-slate-900/30 p-6">
           <h2 className="mb-3 text-xl font-bold text-white">Why glubfub is different</h2>
           <p className="text-sm leading-6 text-slate-400">
-            Glubfub needs the dialogue sequence involving Sparky in the regular Vault before it can be redeemed in the Vault of Secrets.
+            Glubfub needs the dialogue sequence involving Sparky in the regular Vault before it can be redeemed in the Vault of Secrets. Follow the full sequence below.
           </p>
         </div>
         <div className="rounded-xl border border-white/10 bg-slate-900/30 p-6">
@@ -104,6 +104,27 @@ export default function VaultOfSecretsCodesPage() {
           <p className="text-sm leading-6 text-slate-400">
             Entering “the challenge” reveals access to the secret level. The level itself then requires 200 diamonds.
           </p>
+        </div>
+      </section>
+
+      <section className="mt-10 grid gap-5 md:grid-cols-2">
+        <div className="rounded-xl border border-white/10 p-5">
+          <h2 className="mb-3 text-2xl font-bold text-white">Glubfub: the complete room sequence</h2>
+          <ol className="list-decimal space-y-3 pl-5 text-sm leading-6 text-slate-300">
+            <li>Unlock the regular Vault with 10 user coins. Find its padlock in Settings; it is a different room from the 50-diamond Vault of Secrets.</li>
+            <li>Enter <code>sparky</code> in the regular Vault to receive Spooky’s secret coin.</li>
+            <li>Go to the Vault of Secrets. Press the Keymaster’s button until the dialogue mentions Sparky.</li>
+            <li>Return to the regular Vault. Cycle Spooky’s dialogue until it reveals the name Glubfub.</li>
+            <li>Go back to the Vault of Secrets and enter <code>glubfub</code>.</li>
+          </ol>
+          <p className="mt-3 text-sm text-slate-400">If the code is rejected, revisit the missing dialogue step in the correct room. Entering the final word before the conversation is complete does not skip the prerequisite.</p>
+        </div>
+        <div className="rounded-xl border border-white/10 p-5">
+          <h2 className="mb-3 text-2xl font-bold text-white">Cod3breaker: a six-number worked example</h2>
+          <p className="mb-3 text-sm leading-6 text-slate-300">Enter <code>cod3breaker</code> and note all six numbers in order. Example sequence: 10, 17, 29, 34, 48, 69. Use your own sequence in the game.</p>
+          <ol className="list-decimal space-y-2 pl-5 font-mono text-sm text-slate-300"><li>17 − 10 = 7</li><li>29 − 17 = 12</li><li>34 − 29 = 5</li><li>48 − 34 = 14</li><li>69 − 48 = 21</li></ol>
+          <p className="mt-3 text-sm leading-6 text-slate-300">Join the five answers without spaces or addition: <code>71251421</code>. The two-digit differences stay intact. Do not type this example answer unless it matches your six numbers.</p>
+          <p className="mt-3 text-sm text-slate-400">If it fails, check the order, each subtraction and the concatenation. Six numbers create five differences. These instructions are source checked; this site does not redeem codes or access your save.</p>
         </div>
       </section>
 

@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import Link from "next/link";
+import LevelPracticeCards from "../../../components/LevelPracticeCards";
 import Breadcrumbs from "../../../components/Breadcrumbs";
 import { DEMONS, DEMON_SOURCE_URL, DEMON_VERIFIED_AT } from "../../../data/demons";
 
@@ -36,8 +37,6 @@ const SPAM_REFERENCES = [
   { name: "Sakupen Circles", note: "Tight wave sections make input spacing and rapid correction especially visible." },
   { name: "Slaughterhouse", note: "A useful high-end reference for repeated control under difficult transitions." },
   { name: "Ashley Wave Trials", note: "Wave-focused gameplay makes it useful when practicing sustained rapid input." },
-  { name: "Silent clubstep", note: "Historically associated with extreme execution demands that go well beyond a simple CPS target." },
-  { name: "Ultra Paracosm", note: "A circles-style reference for practicing fast but controlled wave inputs." },
 ];
 
 export default function SpamDemonsPage() {
@@ -108,22 +107,9 @@ export default function SpamDemonsPage() {
         </p>
       </section>
 
-      <section className="mb-10 grid gap-4 md:grid-cols-2">
-        {entries.map(({ demon, note }) => demon && (
-          <div key={demon.rank} className="rounded-xl border border-white/10 bg-slate-900/30 p-5">
-            <div className="mb-3 flex items-start justify-between gap-4">
-              <div>
-                <h2 className="text-xl font-bold text-white">{demon.level}</h2>
-                <p className="text-xs text-slate-500">Published by {demon.publisher}</p>
-              </div>
-              <span className="rounded-full border border-purple-500/20 bg-purple-500/10 px-3 py-1 font-mono text-sm font-bold text-purple-300">
-                #{demon.rank}
-              </span>
-            </div>
-            <p className="text-sm leading-6 text-slate-400">{note}</p>
-          </div>
-        ))}
-      </section>
+      <LevelPracticeCards kind="spam" />
+
+      <p className="mb-6 text-sm leading-6 text-slate-400">Silent clubstep is omitted from this focused selection: an overall execution challenge is not enough evidence to label a particular passage as spam. The selected tasks above identify the input problem to examine.</p>
 
       <section className="space-y-4">
         {[

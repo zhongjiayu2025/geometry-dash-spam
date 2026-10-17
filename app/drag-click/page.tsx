@@ -1,3 +1,4 @@
+import ToolResultExamples from "../../components/ToolResultExamples";
 import DragClickTest from "../../components/DragClickTest";
 import Breadcrumbs from "../../components/Breadcrumbs";
 import ToolWebApplicationSchema from "../../components/ToolWebApplicationSchema";
@@ -42,6 +43,7 @@ export default function DragClickPage() {
         </p>
       </div>
       <DragClickTest />
+      <ToolResultExamples tool="drag" />
       <InputToolGuide tool="drag" />
           <RelatedTools currentTool="dragClick" />
 </>

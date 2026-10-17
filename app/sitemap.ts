@@ -3,11 +3,13 @@ import { BLOG_POSTS } from "../data/blogContent";
 import { DEMON_VERIFIED_AT } from "../data/demons";
 import { VAULT_CODES_CHECKED_AT } from "../data/vaultCodes";
 import relatedSearchData from "../data/relatedSearch.json";
+import pageUpdates from "../data/pageUpdates.json";
 
 export const dynamic = "force-static";
 
 const UPDATED = "2026-10-07";
 const TRAINING_UPDATED = "2026-10-17";
+const CONTENT_DATES: Record<string, string> = pageUpdates;
 
 const DEMON_ROUTES = new Set([
   "/demon-list",
@@ -71,13 +73,13 @@ export default function sitemap(): MetadataRoute.Sitemap {
 
   const routeEntries: MetadataRoute.Sitemap = CORE_ROUTES.map((route) => ({
     url: `${baseUrl}${route}`,
-    lastModified: DEMON_ROUTES.has(route)
+    lastModified: CONTENT_DATES[route || "/"] ?? ( DEMON_ROUTES.has(route)
       ? DEMON_VERIFIED_AT
       : CODE_ROUTES.has(route)
         ? VAULT_CODES_CHECKED_AT
         : ["", "/geometry-dash-wave", "/cps-test"].includes(route)
           ? TRAINING_UPDATED
-          : RELATED_ROUTE_DATES.get(route) ?? UPDATED,
+          : RELATED_ROUTE_DATES.get(route) ?? UPDATED),
   }));
 
   const blogEntries: MetadataRoute.Sitemap = BLOG_POSTS.map((post) => ({

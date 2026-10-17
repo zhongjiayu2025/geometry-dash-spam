@@ -1,3 +1,4 @@
+import ToolResultExamples from "../../components/ToolResultExamples";
 import PollingRateTest from "../../components/PollingRateTest";
 import Breadcrumbs from "../../components/Breadcrumbs";
 import ToolWebApplicationSchema from "../../components/ToolWebApplicationSchema";
@@ -42,6 +43,7 @@ export default function PollingRatePage() {
         </p>
       </div>
       <PollingRateTest />
+      <ToolResultExamples tool="polling" />
       <InputToolGuide tool="polling-rate" />
           <RelatedTools currentTool="pollingRate" />
 </>

@@ -24,6 +24,7 @@ export const metadata: Metadata = {
 export default function ChimpTestPage() {
   return (
     <>
+      <header className="mx-auto mb-6 max-w-3xl text-center"><h1 className="mb-3 text-3xl font-bold text-white">Number sequence memory test</h1><p className="text-sm leading-6 text-slate-400">Remember the numbered positions, then select them in ascending order after the numbers disappear. This is an optional memory game; its score is not a Geometry Dash skill rating.</p></header>
       <ChimpTest />
       <RelatedTools currentTool="chimpTest" />
     </>

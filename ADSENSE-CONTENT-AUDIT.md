@@ -83,3 +83,61 @@ Changes in this review:
 - Homepage copy now describes the drill action rather than discussing SEO page-creation strategy. Core keywords and URLs are preserved; no new search landing pages are added.
 
 These are concrete usability and explanatory-content improvements, **not proof that any one issue caused rejection**. No traffic minimum, word-count target, fixed waiting period, or approval guarantee is inferred from them. Re-review should follow verified production changes; do not remove/re-add the site as a workaround.
+
+## Full audit implementation — 2026-10-17
+
+The following changes address the concrete issues in the full page audit. They
+are independent improvements, not a claim that Google identified these pages.
+
+- Home + Wave: rolling-second peak counts no longer fall back to average CPS in
+  short/single-click runs. Unavailable interval means and SD remain null; SD
+  needs two observed intervals. Result and local-history displays show N/A.
+  Existing low-click history is normalized without inventing a zero deviation.
+- Difficulty faces: twelve actual reference sprites, including all five Demon
+  faces, replace placeholder smileys/D1–D5. Credit and identification guidance
+  accompany the images. No ownership or open-source license is asserted for
+  RobTop's game artwork.
+- SCL: three directly checked dated entries with exact IDs, evidence links,
+  method/FPS/device/handcam fields, a current-rule summary and a worked
+  eligibility example. These do not auto-refresh with the separate source-home
+  health-check date; the entry snapshot has its own date.
+- Demon references: exact level identities and permanent Pointercrate links,
+  section-specific failure/practice tasks, and an introductory route. The
+  Rulas Easy Demon and declanlc Extreme Demon named Ultra Paracosm are distinct.
+  JSON-LD selections match the visible cards.
+- Easiest Demons: a single responsive set of five exact-ID practice cards,
+  different selection reasons and concrete checkpoint tasks; no invented clear
+  results or universal easiest-to-hardest order.
+- Key Rollover: expected-versus-observed combination trials with simultaneous
+  snapshots and repeatable session records. Keyboard Timing: a fixed-key,
+  20-tap series with separate hold and release summaries and sample counts.
+- The 30-day article now has 30 distinct daily tasks, adjustment/review/rest
+  decisions, browser-local completion/notes and CSV export.
+- Top spam article compares sourced selections; Notable Levels is a distinct
+  three-section analysis. Other revised guides add mouse worksheets, concrete
+  input/posture comparisons, ten symptom/correction/retest cases and a real
+  source-traceable measurement-claim analysis.
+- Vault instructions include the full Sparky/Glubfub room sequence and an
+  original six-number subtraction/concatenation example.
+- Drag/right-click/polling pages have task-specific worked interpretations.
+  Polling exposes actual event/sample duration counts, without claiming USB
+  certification. Breeze and Dashmetry add source-based version/mode comparisons;
+  Windows/Android installs and gameplay performance have not been independently
+  tested in this review.
+- Privacy names advertising network data types and links Google's data-use
+  explanation. Advertising eligibility is explicitly scoped; see ADS-CONSENT.
+  Memory utilities gain persistent semantic headings and task descriptions.
+- Automated metrics regression checks cover zero/one/two-click runs, enough
+  equal/unequal intervals, rolling-window edges, short-run peaks and legacy
+  nullable history. Existing complete build/export/SEO/provider checks remain.
+
+Core keywords, existing search URLs and robots settings are preserved. No new
+search landing pages are introduced. Source dates and content-modification
+sitemap dates are tracked separately. The existing daily source workflow is
+retained; its newer Pointercrate snapshot is preserved when integrating this
+release.
+
+Remaining limits: no private AdSense rejection details or account settings were
+available; CMP publication and regional behavior are not certified by a source
+build. No artificial word-count, traffic threshold, guaranteed approval or
+fixed reapplication waiting period is claimed.

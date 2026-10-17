@@ -557,6 +557,7 @@ if (existsSync(llmsPath)) {
 }
 
 const layoutSource = readFileSync(join(process.cwd(), "app", "layout.tsx"), "utf8");
+const adSenseSource = readFileSync(join(process.cwd(), "components", "AdSenseHead.tsx"), "utf8");
 const headersSource = readFileSync(join(process.cwd(), "public", "_headers"), "utf8");
 if (
   !headersSource.includes("/ads.txt") ||
@@ -566,7 +567,7 @@ if (
 }
 if (
   !headersSource.includes("Referrer-Policy: strict-origin-when-cross-origin") ||
-  !layoutSource.includes("pagead2.googlesyndication.com/pagead/js/adsbygoogle.js")
+  !adSenseSource.includes("pagead2.googlesyndication.com/pagead/js/adsbygoogle.js")
 ) {
   infrastructureErrors.push(
     "AdSense consent-message prerequisite is missing: keep the AdSense tag and a cross-origin-compatible Referrer-Policy"
@@ -696,9 +697,9 @@ const copyLinkSource = readFileSync(join(process.cwd(), "components", "CopyLinkB
 const adsenseScriptUrl = `https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-${publisherId}`;
 const layoutHeadSource = layoutSource.split("<head>")[1]?.split("</head>")[0] ?? "";
 if (
-  !layoutHeadSource.includes(`src="${adsenseScriptUrl}"`) ||
-  !layoutHeadSource.includes('crossOrigin="anonymous"') ||
-  !layoutHeadSource.includes("<script")
+  !layoutHeadSource.includes("<AdSenseHead />") ||
+  !adSenseSource.includes(`src="${adsenseScriptUrl}"`) ||
+  !adSenseSource.includes('crossOrigin="anonymous"')
 ) {
   infrastructureErrors.push("AdSense ownership script must be an async script in the global HTML head with the matching publisher ID");
 }
@@ -3010,6 +3011,9 @@ if (existsSync(sitemapPath)) {
     ["/dashmetry", relatedSearchData.dashmetry.checkedAt],
     ["/geometry-dash-breeze", relatedSearchData.breeze.checkedAt],
   ]);
+
+  const contentDates = JSON.parse(readFileSync(join(process.cwd(), "data", "pageUpdates.json"), "utf8"));
+  for (const [route, date] of Object.entries(contentDates)) expectedFreshness.set(route, date);
 
   for (const [route, expectedDate] of expectedFreshness) {
     const record = sitemapRecords.find((item) => item.route === route);

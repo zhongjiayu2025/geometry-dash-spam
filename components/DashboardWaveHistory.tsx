@@ -7,7 +7,7 @@ interface WaveRun {
   time: number;
   averageCps: number;
   peakCps: number;
-  timingSd: number;
+  timingSd: number | null;
   clicks: number;
   result: "won" | "lost";
   timestamp: number;
@@ -75,10 +75,11 @@ export default function DashboardWaveHistory({ runs }: { runs: WaveRun[] }) {
                 {run.result === "won" ? "Completed" : "Crashed"} · {run.clicks} inputs
               </div>
             </div>
-            <div className="flex gap-4 text-xs font-mono text-slate-300">
+            <div className="flex flex-wrap gap-4 text-xs font-mono text-slate-300">
               <span>{run.time.toFixed(2)}s</span>
               <span>{run.averageCps.toFixed(2)} CPS</span>
-              <span>{run.peakCps.toFixed(2)} peak</span>
+              <span>{run.peakCps.toFixed(2)} peak 1s</span>
+              <span>SD {run.timingSd === null ? "N/A" : `${run.timingSd.toFixed(0)}ms`}</span>
             </div>
           </div>
         ))}

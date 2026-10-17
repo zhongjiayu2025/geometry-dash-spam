@@ -15,6 +15,7 @@ const blockedProviders = [
   { name: "Monetag", pattern: /monetag|propellerads[.]com|onclickperformance[.]com/i },
 ];
 
+const adPages = JSON.parse(readFileSync(join(root, "data", "adPages.json"), "utf8"));
 const errors = [];
 const sourceExt = new Set([".ts", ".tsx", ".js", ".jsx", ".mjs", ".html", ".json"]);
 const exportExt = new Set([".html", ".js"]);
@@ -58,11 +59,14 @@ visit(exported, exportExt, (htmlOrJs, filename) => {
   const matching = all.filter((tag) => tag.includes(adSenseSrc));
   const matchingHead = headScripts.filter((tag) => tag.includes(adSenseSrc));
 
-  if (
+  const route = filename.replace(/^out/, "").replace(/\/index[.]html$/, "/").replace(/[.]html$/, "").replace(/\/$/, "") || "/";
+  const eligible = adPages.includes(route);
+  if (!eligible && matching.length) errors.push(filename + ": excluded page must not load AdSense");
+  if (eligible && (
     matching.length !== 1 ||
     matchingHead.length !== 1 ||
     !/\basync(?:\s|=|>)/i.test(matchingHead[0])
-  ) {
+  )) {
     errors.push(filename + ": require exactly one async authorized AdSense script in <head>");
   }
 

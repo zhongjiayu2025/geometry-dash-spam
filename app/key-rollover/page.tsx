@@ -1,3 +1,4 @@
+import RolloverMatrix from "../../components/RolloverMatrix";
 import KeyRolloverTest from "../../components/KeyRolloverTest";
 import Breadcrumbs from "../../components/Breadcrumbs";
 import ToolWebApplicationSchema from "../../components/ToolWebApplicationSchema";
@@ -42,6 +43,7 @@ export default function KeyRolloverPage() {
         </p>
       </div>
       <KeyRolloverTest />
+      <RolloverMatrix />
       <InputToolGuide tool="key-rollover" />
           <RelatedTools currentTool="rollover" />
 </>

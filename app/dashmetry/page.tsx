@@ -167,6 +167,14 @@ export default function DashmetryPage() {
           </div>
         </section>
 
+        <section className="mb-10 rounded-2xl border border-cyan-500/20 p-5 md:p-6">
+          <h2 className="mb-4 text-2xl font-bold text-white">Choose a mode for the task you actually want</h2>
+          <div className="overflow-x-auto"><table className="w-full text-left text-sm"><thead><tr><th className="p-3">Task</th><th className="p-3">Documented option</th><th className="p-3">Useful distinction</th></tr></thead><tbody className="text-slate-300"><tr className="border-t border-white/10"><td className="p-3">Learn one difficult section</td><td className="p-3">Practice Mode</td><td className="p-3">The official description includes checkpoints and skip-forward, without leaderboard ranking. Use it to learn before comparing full runs.</td></tr><tr className="border-t border-white/10"><td className="p-3">Repeat a designed level</td><td className="p-3">Normal Mode</td><td className="p-3">The level is the comparison task. A run after practising a checkpoint is different from an isolated practice result.</td></tr><tr className="border-t border-white/10"><td className="p-3">Explore changing obstacles</td><td className="p-3">Endless Mode</td><td className="p-3">The official site describes generated courses. Two runs can have different obstacles, so survival alone does not isolate a skill change.</td></tr><tr className="border-t border-white/10"><td className="p-3">Create a controlled section</td><td className="p-3">Level Editor</td><td className="p-3">Use a fixed shared version when comparing attempts; editing the obstacle placement changes the task.</td></tr></tbody></table></div>
+          <h3 className="mb-3 mt-5 text-lg font-bold text-white">Challenge Rush versus this site’s Wave Trainer</h3>
+          <p className="mb-3 text-sm leading-7 text-slate-300">Challenge Rush documents multiple movement forms, designed/community levels and account-linked progress. Our Wave Trainer isolates its own hold/release movement model, gives local run metrics and does not reproduce Challenge Rush levels or import its scores. Choose the actual game for a particular level; choose the browser drill here to inspect how changing the hold/release balance changes a wave path.</p>
+          <p className="text-xs leading-5 text-slate-400">This table interprets <a href={OFFICIAL_GAME_SOURCE} className="text-blue-300 underline" target="_blank" rel="noopener noreferrer">the developer’s mode descriptions</a>. It is not a hands-on performance benchmark. Race and Daily Challenge are marked Coming Soon on the checked official page; do not choose them on the assumption that an older update note guarantees availability.</p>
+        </section>
+
         <section className="mb-10">
           <h2 className="mb-4 text-2xl font-bold text-white">Dashmetry FAQ</h2>
           <div className="grid gap-4 md:grid-cols-3">

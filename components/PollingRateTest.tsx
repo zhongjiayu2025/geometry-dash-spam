@@ -10,6 +10,7 @@ export default function PollingRateTest() {
   const [hz, setHz] = useState(0);
   const [maxHz, setMaxHz] = useState(0);
   const [avgHz, setAvgHz] = useState(0);
+  const [sample, setSample] = useState({ events: 0, seconds: 0, windows: 0 });
 
   const trackingAreaRef = useRef<HTMLDivElement>(null);
   const trackingRef = useRef(false);
@@ -34,6 +35,7 @@ export default function PollingRateTest() {
     const currentHz = Math.round(eventCountRef.current / sampleElapsedSeconds);
     const averageHz = Math.round(totalEventsRef.current / totalElapsedSeconds);
 
+    setSample((previous) => ({ events: totalEventsRef.current, seconds: totalElapsedSeconds, windows: previous.windows + 1 }));
     setHz(currentHz);
     setMaxHz((previous) => Math.max(previous, currentHz));
     setAvgHz(averageHz);
@@ -51,6 +53,7 @@ export default function PollingRateTest() {
     startedAtRef.current = now;
     sampleStartedAtRef.current = now;
 
+    setSample({ events: 0, seconds: 0, windows: 0 });
     setHz(0);
     setMaxHz(0);
     setAvgHz(0);
@@ -134,11 +137,6 @@ export default function PollingRateTest() {
   return (
     <div className="w-full max-w-4xl mx-auto px-4 md:px-0">
       <div className="relative overflow-hidden rounded-3xl border border-white/10 bg-[#0b1021] p-6 shadow-2xl md:p-12">
-        <div
-          aria-hidden="true"
-          className="absolute right-1/2 top-0 h-64 w-64 translate-x-1/2 -translate-y-1/2 rounded-full bg-emerald-500/10 blur-[80px]"
-        />
-
         <div className="relative z-10 flex flex-col items-center">
           <div className="mb-8 grid w-full grid-cols-3 gap-2 rounded-2xl border border-white/5 bg-slate-900/50 p-4 text-center">
             <div>
@@ -151,7 +149,7 @@ export default function PollingRateTest() {
             </div>
             <div>
               <div className="mb-2 text-xs font-bold uppercase tracking-wider text-slate-400 md:text-sm">Max Hz</div>
-              <div className="text-3xl font-display font-bold text-emerald-400 drop-shadow-[0_0_15px_rgba(52,211,153,0.3)] md:text-5xl">{maxHz}</div>
+              <div className="text-3xl font-display font-bold text-emerald-400 md:text-5xl">{maxHz}</div>
             </div>
           </div>
 
@@ -168,7 +166,7 @@ export default function PollingRateTest() {
                 <Mouse className="mx-auto mb-6 h-20 w-20 text-slate-500/50 transition-colors group-hover:text-emerald-400/50" />
                 <button
                   onClick={startTracking}
-                  className="rounded-xl bg-emerald-600 px-8 py-4 text-lg font-bold text-white shadow-[0_0_20px_rgba(52,211,153,0.3)] transition-colors hover:bg-emerald-500"
+                  className="rounded-xl bg-emerald-600 px-8 py-4 text-lg font-bold text-white transition-colors hover:bg-emerald-500"
                 >
                   Start Tracker
                 </button>
@@ -178,11 +176,13 @@ export default function PollingRateTest() {
               </div>
             ) : (
               <div className="pointer-events-none absolute inset-0 flex flex-col items-center justify-center text-center">
-                <Activity className={`mb-4 h-32 w-32 text-emerald-500/20 transition-transform ${hz > 0 ? "scale-110 animate-pulse" : ""}`} />
+                <Activity className={`mb-4 h-32 w-32 text-emerald-500/20 ${hz > 0 ? "scale-110 animate-pulse" : ""}`} />
                 <h3 className="text-4xl font-display font-bold text-emerald-500/30">KEEP MOVING</h3>
               </div>
             )}
           </div>
+
+          <p aria-live="polite" className="mt-4 text-sm text-slate-300">Sample: {sample.events} dispatched mouse pointer events · {sample.seconds.toFixed(1)}s · {sample.windows} rate windows. {sample.seconds > 0 && sample.seconds < 3 ? "Keep moving for at least 3 seconds before comparing." : ""}</p>
 
           {(maxHz > 0 || isTracking) && (
             <div className="mt-8 flex w-full flex-col items-center rounded-xl border border-emerald-500/20 bg-emerald-900/20 p-6 text-center animate-in zoom-in-95">

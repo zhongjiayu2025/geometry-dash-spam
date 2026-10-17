@@ -20,7 +20,7 @@ export interface WaveRunStats {
   clickCount: number;
   averageCps: number;
   peakCps: number;
-  intervalStdDev: number;
+  intervalStdDev: number | null;
 }
 
 type WaveRunOverlaysProps = {
@@ -97,9 +97,11 @@ export default function WaveRunOverlays({
               <Metric label="Local Best" value={`${highScore.toFixed(2)}s`} valueClass="text-yellow-400" />
               <Metric label="Average CPS" value={runStats.averageCps.toFixed(2)} valueClass="text-blue-300" />
               <Metric label="Clicks" value={String(runStats.clickCount)} />
-              <Metric label="Peak CPS" value={runStats.peakCps.toFixed(2)} valueClass="text-purple-300" />
-              <Metric label="Timing SD" value={`${runStats.intervalStdDev.toFixed(0)}ms`} />
+              <Metric label="Peak 1s CPS" value={runStats.peakCps.toFixed(2)} valueClass="text-purple-300" />
+              <Metric label="Timing SD" value={runStats.intervalStdDev === null ? "N/A" : `${runStats.intervalStdDev.toFixed(0)}ms`} />
             </div>
+
+            <p className="mb-3 text-center text-xs text-slate-300">Timing SD needs at least 3 clicks (2 intervals). Peak counts inputs in a rolling second, even in a shorter run.</p>
 
             <div className="flex flex-wrap justify-center gap-2 sm:gap-3">
               <button
@@ -156,7 +158,7 @@ export default function WaveRunOverlays({
 
             <div className="mb-4 grid w-full grid-cols-3 gap-2 sm:mb-6 sm:gap-3">
               <Metric compact label="Average CPS" value={runStats.averageCps.toFixed(2)} valueClass="text-blue-300" />
-              <Metric compact label="Peak CPS" value={runStats.peakCps.toFixed(2)} valueClass="text-purple-300" />
+              <Metric compact label="Peak 1s CPS" value={runStats.peakCps.toFixed(2)} valueClass="text-purple-300" />
               <Metric compact label="Clicks" value={String(runStats.clickCount)} />
             </div>
 

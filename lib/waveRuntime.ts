@@ -321,21 +321,20 @@ export function getWaveRunStats(state: WaveRuntimeState) {
     while (clickTimes[right] - clickTimes[left] > 1000) left += 1;
     peakCps = Math.max(peakCps, right - left + 1);
   }
-  if (clickTimes.length < 2) peakCps = averageCps;
 
   const averageInterval = intervals.length
     ? intervals.reduce((sum, value) => sum + value, 0) / intervals.length
-    : 0;
-  const variance = intervals.length
+    : null;
+  const variance = intervals.length >= 2 && averageInterval !== null
     ? intervals.reduce((sum, value) => sum + Math.pow(value - averageInterval, 2), 0) /
       intervals.length
-    : 0;
+    : null;
 
   return {
     clickCount,
     averageCps,
     peakCps,
     averageInterval,
-    intervalStdDev: Math.sqrt(variance),
+    intervalStdDev: variance === null ? null : Math.sqrt(variance),
   };
 }

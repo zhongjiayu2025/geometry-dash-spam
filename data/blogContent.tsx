@@ -1,6 +1,8 @@
+import { SpamSelectionComparison, NotableLevelAnalysis, MouseComparisonSheet, MobileInputComparison, AdviceVerificationCase } from "../components/AuditGuideContent";
 import React from "react";
 import Link from "next/link";
 import { DEMON_SOURCE_URL } from "./demons";
+import PracticePlanLog from "../components/PracticePlanLog";
 import relatedSearchData from "./relatedSearch.json";
 
 const SCL_SOURCE_URL = relatedSearchData.spamChallengeList.sources[0];
@@ -237,7 +239,7 @@ export const BLOG_POSTS: BlogPost[] = [
     excerpt:
       "Looking for the hardest Geometry Dash spam levels? Use this source-led 2026 guide to separate Spam Challenge List rankings, spam-heavy Demons and wave practice references.",
     date: "January 10, 2026",
-    updated: "October 7, 2026",
+    updated: "October 17, 2026",
     readTime: "3 min read",
     coverImage: "/blog-covers/top-spam-levels-2026.svg",
     tags: ["Levels", "Spam", "Demon List"],
@@ -308,25 +310,7 @@ export const BLOG_POSTS: BlogPost[] = [
           Wave-heavy examples belong in a slightly different bucket because fast clicks are only useful if the press-and-release spacing remains controllable. The <ToolLink href="/demon-list/wave-demons">Wave Demon guide</ToolLink> focuses on that mechanic.
         </p>
 
-        <h2 className="mb-4 mt-10 text-2xl font-bold text-white">Examples of spam and wave-heavy levels, without a made-up ranking</h2>
-        <p className="mb-4 text-slate-300">
-          If you want names to explore rather than a leaderboard position, here are three different kinds of reference. These examples are not the current top three on the Spam Challenge List; they illustrate mechanics discussed by players. For precise gameplay, watch a completion or open the level and identify the relevant section.
-        </p>
-        <div className="mb-6 grid gap-4 md:grid-cols-3">
-          {[
-            ["Sakupen Circles", "A circles-style reference where tight wave control makes input spacing especially visible. Practice precise reversals rather than chasing one CPS target."],
-            ["Slaughterhouse", "An extreme-execution reference: rapid inputs appear alongside difficult transitions. Practice the specific transition in the real game rather than assuming a browser wave preset is identical."],
-            ["Ashley Wave Trials", "A wave-centered reference. Separate sustained rhythm from narrow, exact corrections when deciding which skill to drill."],
-          ].map(([level, note]) => (
-            <div key={level} className="rounded-xl border border-white/10 bg-slate-900/30 p-5">
-              <h3 className="mb-2 font-bold text-white">{level}</h3>
-              <p className="text-sm leading-6 text-slate-400">{note}</p>
-            </div>
-          ))}
-        </div>
-        <p className="mb-5 text-sm text-slate-400">
-          These descriptions are skill-focused references, not official rankings, recommended clear orders or verified CPS requirements. See the <ToolLink href="/blog/notable-wave-spam-levels">level overview</ToolLink> for more examples and the live ranking sources below for up-to-date placements.
-        </p>
+        <SpamSelectionComparison />
         <h2 id="practice" className="text-3xl font-display font-bold text-white mt-12 mb-6 scroll-mt-24">
           How to practice Geometry Dash spam levels
         </h2>
@@ -365,7 +349,7 @@ export const BLOG_POSTS: BlogPost[] = [
     excerpt:
       "What actually matters when comparing mice for Geometry Dash: click feel, debounce behavior, polling, shape and repeatable comfort.",
     date: "January 10, 2026",
-    updated: "October 7, 2026",
+    updated: "October 17, 2026",
     readTime: "3 min read",
     coverImage: "/blog-covers/best-mouse-for-spam-geometry-dash.svg",
     tags: ["Hardware", "Guide"],
@@ -429,6 +413,7 @@ export const BLOG_POSTS: BlogPost[] = [
         <p className="mb-5 text-sm text-slate-400">
           This is a reproducible selection method, not a tested product roundup. The site has not conducted controlled laboratory testing of the brands or models you may see advertised elsewhere.
         </p>
+        <MouseComparisonSheet />
       </>
     ),
   },
@@ -513,7 +498,7 @@ export const BLOG_POSTS: BlogPost[] = [
     excerpt:
       "A non-ranking list of well-known levels associated with difficult wave control and rapid-input sections, with links back to the current Demon List.",
     date: "January 10, 2026",
-    updated: "October 7, 2026",
+    updated: "October 17, 2026",
     readTime: "3 min read",
     coverImage: "/blog-covers/notable-wave-spam-levels.svg",
     tags: ["Levels", "Wave"],
@@ -532,46 +517,7 @@ export const BLOG_POSTS: BlogPost[] = [
       },
     ],
     content: (
-      <>
-        <p className="text-slate-300 mb-6">
-          This article is <strong>not</strong> an official “spam ranking.” The current Pointercrate order is maintained separately on our <ToolLink href="/demon-list">Geometry Dash Demon List</ToolLink>. The examples below are useful because players commonly associate them with demanding wave or rapid-input gameplay.
-        </p>
-
-        {[
-          ["Tidal Wave", "A high-difficulty level with wave-heavy sections and a long history of discussion around control consistency."],
-          ["Sakupen Circles", "A well-known circles-style Extreme Demon associated with very tight wave gameplay."],
-          ["Slaughterhouse", "Contains demanding transitions and wave sections where precise repeated inputs are important."],
-          ["Silent Clubstep", "A historically significant extreme challenge whose difficulty goes far beyond a simple CPS number."],
-          ["Ashley Wave Trials", "A wave-focused level that makes the mechanic itself central to the challenge."],
-        ].map(([level, description]) => (
-          <section key={level} className="mb-6 rounded-xl border border-white/10 bg-slate-900/25 p-5">
-            <h2 className="text-xl font-bold text-white mb-2">{level}</h2>
-            <p className="text-slate-400">{description}</p>
-          </section>
-        ))}
-
-        <h2 className="mb-4 mt-10 text-2xl font-bold text-white">How to turn a level reference into useful practice</h2>
-        <p className="mb-4 text-slate-300">
-          A famous level name is not a training plan. When you watch a completion or practice a specific section, identify the skill causing the failure: sustained wave spacing, a transition into or out of wave, a narrow correction window, or difficulty keeping the same rhythm under pressure. Note the mode and the exact segment rather than describing every failure as a lack of CPS.
-        </p>
-        <ol className="mb-6 list-decimal space-y-3 pl-6 text-slate-300">
-          <li><strong className="text-white">Find the section:</strong> use a genuine completion video or the level itself to identify the mechanic. Do not infer a current ranking from the level name.</li>
-          <li><strong className="text-white">Name the error:</strong> are you late to reverse, pressing too long, or changing the input rate unintentionally?</li>
-          <li><strong className="text-white">Choose a drill:</strong> use our Normal or Precision Wave preset for timing; use the actual game when the hard part is a specific transition or physics detail.</li>
-          <li><strong className="text-white">Re-test:</strong> return to the same section under comparable conditions and record whether you made fewer of the same mistakes.</li>
-        </ol>
-        <h2 className="mb-3 mt-8 text-2xl font-bold text-white">What this list does not claim</h2>
-        <p className="mb-5 text-slate-300">
-          These five names are examples of levels discussed in difficult-wave conversations, not a ranked top five. The list does not certify that every section is spam-focused, that the entries are currently on Pointercrate&apos;s main list, or that one has the highest verified CPS requirement. To answer a ranking question, consult the live ranking and its rules; to choose a training drill, match the mechanic you actually need to improve.
-        </p>
-        <p className="mb-5 text-xs text-slate-500">Original exercise / comparison: skill-focused use of public level references, with the limits of the list made explicit.</p>
-        <p className="text-slate-300 mb-4">
-          Before using a level&apos;s Demon List position as a fact, check the dated <ToolLink href="/demon-list">Top 50 snapshot</ToolLink> or the live source linked from that page.
-        </p>
-        <p className="text-slate-300">
-          For a focused practice path, use the <ToolLink href="/demon-list/wave-demons">Wave Demon guide</ToolLink> for ranked context and the <ToolLink href="/geometry-dash-wave">Geometry Dash Wave Trainer</ToolLink> for browser practice.
-        </p>
-      </>
+      <NotableLevelAnalysis />
     ),
   },
   {
@@ -581,7 +527,7 @@ export const BLOG_POSTS: BlogPost[] = [
     excerpt:
       "A conservative month-long practice structure for improving consistency, wave control and test repeatability without promising a fixed CPS gain.",
     date: "January 10, 2026",
-    updated: "October 7, 2026",
+    updated: "October 17, 2026",
     readTime: "3 min read",
     coverImage: "/blog-covers/30-day-spam-challenge.svg",
     tags: ["Training", "Practice Plan"],
@@ -596,29 +542,11 @@ export const BLOG_POSTS: BlogPost[] = [
           caption="A repeatable loop is more useful than changing technique, difficulty and hardware at the same time."
         />
 
-        <h2 className="text-2xl font-bold text-white mt-8 mb-4">Days 1–7: baseline and control</h2>
-        <p className="text-slate-300 mb-4">
-          Record three 10-second CPS runs and several Easy/Hard spam runs. Keep the same input device and note which pace feels controllable.
-        </p>
-
-        <h2 className="text-2xl font-bold text-white mt-8 mb-4">Days 8–14: short speed blocks</h2>
-        <p className="text-slate-300 mb-4">
-          Add a small number of 1–5 second CPS attempts, then return to the <ToolLink href="/geometry-dash-wave">Wave Trainer</ToolLink> and see whether the extra speed transfers into smoother movement.
-        </p>
-
-        <h2 className="text-2xl font-bold text-white mt-8 mb-4">Days 15–21: consistency</h2>
-        <p className="text-slate-300 mb-4">
-          Use longer 30-second tests sparingly and compare average interval and consistency. On the wave trainer, choose a difficulty you can survive repeatedly rather than the hardest available mode.
-        </p>
-
-        <h2 className="text-2xl font-bold text-white mt-8 mb-4">Days 22–30: progression check</h2>
-        <p className="text-slate-300 mb-4">
-          Repeat the original baseline setup. Compare several attempts, not only the best result. If control improved without a large CPS increase, that is still useful progress for spam gameplay.
-        </p>
-
+        <p className="mb-4 text-slate-300">Use the five preset names exactly as shown in the trainer: Normal, Mini, Spam, Precision and Endless. Keep the same difficulty when comparing runs. The progression rule below is an editorial exercise: advance one setting only after three completed timed runs; step back when the same entry fails repeatedly. It is not a game ranking or a proven improvement threshold.</p>
+        <PracticePlanLog />
         <h2 className="mt-10 mb-4 text-2xl font-bold text-white">A repeatable session you can use throughout the month</h2>
         <p className="mb-4 text-slate-300">
-          The weekly themes above are intentionally flexible. For a short practice session, warm up at a comfortable pace, run three CPS attempts of the same duration, take a break, then perform two or three runs at one fixed wave setting. Finish by noting what changed. Keep high-effort sessions short and allow recovery; the site does not prescribe a medically validated training dose.
+          The daily tasks above are intentionally adjustable. For a short practice session, warm up at a comfortable pace, run three CPS attempts of the same duration, take a break, then perform two or three runs at one fixed wave setting. Finish by noting what changed. Keep high-effort sessions short and allow recovery; the site does not prescribe a medically validated training dose.
         </p>
         <div className="overflow-x-auto rounded-xl border border-white/10">
           <table className="w-full min-w-[550px] text-sm text-left">
@@ -711,7 +639,7 @@ export const BLOG_POSTS: BlogPost[] = [
     excerpt:
       "A practical comparison of touch, mouse and keyboard input without assuming one platform is always faster.",
     date: "January 10, 2026",
-    updated: "October 7, 2026",
+    updated: "October 17, 2026",
     readTime: "3 min read",
     coverImage: "/blog-covers/mobile-vs-pc-spam.svg",
     tags: ["Mobile", "Input"],
@@ -770,6 +698,7 @@ export const BLOG_POSTS: BlogPost[] = [
             </p>
           </div>
         </div>
+        <MobileInputComparison />
       </>
     ),
   },
@@ -780,7 +709,7 @@ export const BLOG_POSTS: BlogPost[] = [
     excerpt:
       "Ten practical reasons spam practice becomes inconsistent, from chasing peak CPS to changing settings too often.",
     date: "January 10, 2026",
-    updated: "October 7, 2026",
+    updated: "October 17, 2026",
     readTime: "2 min read",
     coverImage: "/blog-covers/common-spam-mistakes.svg",
     tags: ["Tips", "Training"],
@@ -798,20 +727,22 @@ export const BLOG_POSTS: BlogPost[] = [
         />
         <ol className="space-y-6 text-slate-300">
           {[
-            ["Chasing only peak CPS", "Track repeatable speed and timing consistency, not just the single highest burst."],
-            ["Changing settings every attempt", "Keep the same difficulty and input method long enough to compare results."],
-            ["Starting too difficult", "A wider corridor makes timing errors easier to see and correct."],
-            ["Tensing the whole arm", "Use a comfortable posture and avoid forcing a technique that feels painful."],
-            ["Ignoring click intervals", "Two runs with the same CPS can have very different timing stability."],
-            ["Training only 1-second tests", "Short bursts are useful, but longer tests reveal whether a pace is sustainable."],
-            ["Treating browser scores as game-engine measurements", "Browser tools are diagnostics; actual game behavior also depends on the game client and hardware."],
-            ["Skipping movement practice", "Raw CPS should be followed by wave-control practice so speed transfers into a useful skill."],
-            ["Comparing different devices without controlling variables", "Use the same duration, difficulty and technique when testing setups."],
-            ["Continuing through pain", "End the session if repeated clicking causes pain, numbness or persistent discomfort."],
-          ].map(([title, body], index) => (
-            <li key={title}>
+            ["Chasing only peak CPS", "Your best one-second burst rises, but most 10-second runs stay the same.", "Run three fixed 10-second tests at a comfortable pace and compare their median and range.", "A useful change appears in typical runs; a new peak alone does not resolve the symptom."],
+            ["Changing settings every attempt", "Your saved wave times jump, but each run uses a different gap or Mini setting.", "Choose one preset and difficulty for a three-run block. Write down both before starting.", "The next block can be compared to the same task; mark changed settings separately."],
+            ["Starting too difficult", "Every run ends at the first narrow turn, before you can tell what went wrong.", "Step down one difficulty and name the first collision side. Adjust the next hold or release slightly.", "Look for a repeatable path through that turn before adding the tighter gap again."],
+            ["Tensing the whole arm", "Your grip shifts while trying to force a faster pace.", "Stop the attempt, restore a comfortable supported position, and use a lower-effort pace.", "Check whether the same finger position can be repeated; do not pursue a score through discomfort."],
+            ["Ignoring click intervals", "Two runs show similar CPS, but one has long pauses between bursts.", "Compare interval SD on runs with enough clicks. Try even, comfortable taps in the next block.", "Look for less interval variation at similar average CPS; SD needs at least two intervals."],
+            ["Training only 1-second tests", "A fast start turns into a much slower finish in the 10-second test.", "Choose a pace you can maintain through ten seconds. Use short bursts as a separate exercise.", "Compare three whole-run averages; do not mix 1-second and 10-second records."],
+            ["Treating browser scores as game-engine measurements", "A high browser score does not clear a specific game transition.", "Write the actual level ID and transition boundaries. Practice that transition in the game.", "Count completions from the same checkpoint; the browser score is not the pass criterion."],
+            ["Skipping movement practice", "CPS improves while the wave still drifts into the same wall.", "Open Normal Wave and balance hold and release time. Keep CPS comfortable while changing one half of the cycle.", "Observe whether the drift or first collision changes before raising speed."],
+            ["Comparing different devices without controlling variables", "A phone run and a mouse run use different durations and techniques.", "Create one three-run series per setup at the same duration. Record screen, input and finger technique.", "Compare complete setups; do not attribute the whole difference to one hardware specification."],
+            ["Continuing through pain", "Repeated clicking produces pain, numbness or persistent discomfort.", "End the drill. Do not use a higher score as a reason to continue.", "Do not schedule a score-based retest while symptoms persist. Seek appropriate advice if they continue."],
+          ].map(([title, symptom, fix, retest], index) => (
+            <li key={title} className="rounded-xl border border-white/10 p-5">
               <h2 className="text-xl font-bold text-white mb-2">{index + 1}. {title}</h2>
-              <p className="text-slate-400">{body}</p>
+              <p className="mb-2 text-slate-400"><strong className="text-slate-200">Symptom:</strong> {symptom}</p>
+              <p className="mb-2 text-slate-300"><strong className="text-white">Correction:</strong> {fix}</p>
+              <p className="text-slate-400"><strong className="text-slate-200">Retest:</strong> {retest}</p>
             </li>
           ))}
         </ol>
@@ -841,7 +772,7 @@ export const BLOG_POSTS: BlogPost[] = [
     excerpt:
       "A checklist for separating useful training advice from unsupported player claims, fake interviews and made-up performance numbers.",
     date: "January 10, 2026",
-    updated: "October 7, 2026",
+    updated: "October 17, 2026",
     readTime: "2 min read",
     coverImage: "/blog-covers/evaluate-geometry-dash-spam-advice.svg",
     tags: ["Community", "Evidence"],
@@ -900,6 +831,7 @@ export const BLOG_POSTS: BlogPost[] = [
         <p className="text-slate-300">
           You can reproduce basic speed and timing experiments with the <ToolLink href="/cps-test">CPS Test</ToolLink> and then test movement control in the <ToolLink href="/">Spam Simulator</ToolLink>.
         </p>
+        <AdviceVerificationCase />
       </>
     ),
   },

@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import Link from "next/link";
+import LevelPracticeCards from "../../../components/LevelPracticeCards";
 import Breadcrumbs from "../../../components/Breadcrumbs";
 import { DEMONS, DEMON_SOURCE_URL, DEMON_VERIFIED_AT } from "../../../data/demons";
 
@@ -114,34 +115,16 @@ export default function WaveDemonsPage() {
         </p>
       </section>
 
-      <section className="mb-10 grid gap-4 md:grid-cols-2">
-        {entries.map(({ demon, note }) => demon && (
-          <div key={demon.rank} className="rounded-xl border border-white/10 bg-slate-900/30 p-5">
-            <div className="mb-3 flex items-start justify-between gap-4">
-              <div>
-                <h2 className="text-xl font-bold text-white">{demon.level}</h2>
-                <p className="text-xs text-slate-500">Published by {demon.publisher}</p>
-              </div>
-              <span className="rounded-full border border-blue-500/20 bg-blue-500/10 px-3 py-1 font-mono text-sm font-bold text-blue-300">
-                #{demon.rank}
-              </span>
-            </div>
-            <p className="text-sm leading-6 text-slate-400">{note}</p>
-          </div>
-        ))}
-      </section>
+      <LevelPracticeCards kind="wave" />
 
-      <section className="mb-10 grid gap-4 md:grid-cols-3">
-        {[
-          ["Beginner", "Use easier wave sections first and focus on repeatable control rather than maximum speed."],
-          ["Intermediate", "Add tighter corridors, transitions and longer runs once basic timing is stable."],
-          ["Advanced", "Practice short difficult sections separately, then combine precision with endurance."],
-        ].map(([title, body]) => (
-          <div key={title} className="rounded-xl border border-white/10 bg-black/20 p-5">
-            <h2 className="mb-2 font-bold text-white">{title}</h2>
-            <p className="text-sm leading-6 text-slate-400">{body}</p>
-          </div>
-        ))}
+      <section className="mb-10 rounded-2xl border border-blue-500/20 p-6">
+        <h2 className="mb-3 text-2xl font-bold text-white">A wave route before Extreme Demons</h2>
+        <ol className="list-decimal space-y-4 pl-5 text-sm leading-6 text-slate-300">
+          <li><strong>Learn direction changes:</strong> open the Normal Wave preset here. Finish three runs at one difficulty before trying Mini; return to Normal if the same wall collision repeats.</li>
+          <li><strong>Use real game physics:</strong> search Ultra Paracosm by Rulas, <a href="https://gdbrowser.com/11588490" className="text-blue-300 underline" target="_blank" rel="noopener noreferrer">ID 11588490</a>. Practice its wave passage from a checkpoint and include its entry/exit. This Easy Demon is distinct from the declanlc Extreme Demon above.</li>
+          <li><strong>Handle longer circles gameplay:</strong> Nine Circles by Zobros, <a href="https://gdbrowser.com/4284013" className="text-blue-300 underline" target="_blank" rel="noopener noreferrer">ID 4284013</a>, is a Hard Demon reference. Start with a short wave subsection, then join adjacent subsections. Do not jump to it until the previous task is reproducible.</li>
+          <li><strong>Study an advanced target:</strong> inspect one of the exact Extreme Demon IDs above. Pick one marked passage; a full clear is not a prerequisite for learning from its video. Browser-preset completion is not proof of readiness for that level.</li>
+        </ol>
       </section>
 
       <section className="mb-10 rounded-2xl border border-blue-500/20 bg-blue-950/10 p-5 md:p-6">

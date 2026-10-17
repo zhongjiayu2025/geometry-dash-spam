@@ -1,3 +1,4 @@
+import KeyTimingDrill from "../../components/KeyTimingDrill";
 import KeyboardLatencyTest from "../../components/KeyboardLatencyTest";
 import Breadcrumbs from "../../components/Breadcrumbs";
 import ToolWebApplicationSchema from "../../components/ToolWebApplicationSchema";
@@ -42,6 +43,7 @@ export default function KeyboardLatencyPage() {
         </p>
       </div>
       <KeyboardLatencyTest />
+      <KeyTimingDrill />
       <InputToolGuide tool="keyboard-timing" />
           <RelatedTools currentTool="keyboardLatency" />
 </>
