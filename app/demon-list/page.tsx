@@ -94,11 +94,12 @@ export default function DemonListPage() {
       <div className="mx-auto max-w-5xl">
         {showGriefPlacementNote && (
           <section className="mb-5 rounded-2xl border border-amber-500/20 bg-amber-950/10 p-5 md:p-6">
-            <div className="mb-2 text-xs font-bold uppercase tracking-[0.18em] text-amber-300">Latest ranking change</div>
-            <h2 className="mb-2 text-xl font-bold text-white">GRIEF is the new #1 Demon List level</h2>
+            <div className="mb-2 text-xs font-bold uppercase tracking-[0.18em] text-amber-300">Latest checked snapshot</div>
+            <h2 className="mb-2 text-xl font-bold text-white">GRIEF ranks #1 as checked {DEMON_VERIFIED_AT}</h2>
             <p className="text-sm leading-6 text-slate-400">
-              GRIEF was placed at #1 on October 5, 2026, moving Society to #2. This top-50 snapshot reflects the new order;
-              older search caches can still show Society at #1.
+              The same snapshot lists <strong className="text-slate-200">{DEMONS[1].level}</strong> at #2
+              and <strong className="text-slate-200">{DEMONS[2].level}</strong> at #3.
+              Older cached rankings may differ; use the live Pointercrate list for the latest order.
             </p>
           </section>
         )}

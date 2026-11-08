@@ -90,11 +90,12 @@ export default function HardestLevelPage() {
 
       {showGriefPlacementNote && (
         <section className="mb-10 rounded-2xl border border-amber-500/20 bg-amber-950/10 p-5 md:p-6">
-          <div className="mb-2 text-xs font-bold uppercase tracking-[0.18em] text-amber-300">Latest ranking change</div>
-          <h2 className="mb-2 text-xl font-bold text-white">GRIEF moved to #1 on October 5, 2026</h2>
+          <div className="mb-2 text-xs font-bold uppercase tracking-[0.18em] text-amber-300">Latest checked snapshot</div>
+          <h2 className="mb-2 text-xl font-bold text-white">GRIEF ranks #1 as checked {DEMON_VERIFIED_AT}</h2>
           <p className="text-sm leading-6 text-slate-400">
-            Pointercrate placed GRIEF at the top of the Demon List on October 5, 2026, replacing Society.
-            The table below is sourced from the post-placement snapshot rather than the older cached order.
+            <strong className="text-slate-200">{DEMONS[1].level}</strong> by {DEMONS[1].publisher} is listed at #2
+            in the same dated snapshot. Rankings can change between source checks.
+            The live Pointercrate list is the authoritative source for later updates.
           </p>
         </section>
       )}
