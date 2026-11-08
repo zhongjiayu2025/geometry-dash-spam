@@ -14,7 +14,7 @@ The repository can verify the code-side prerequisites, but it cannot prove wheth
 ## Code-side state
 
 - The root layout uses `AdSenseHead` to load the publisher tag on the explicit
-  40-page allowlist; navigation, information, utility and error pages are excluded.
+  allowlist (homepage, CPS Test and Wave Trainer). Other routes are excluded.
 - `ads.txt` contains the site publisher relationship.
 - Referrer policy is `strict-origin-when-cross-origin`, which is compatible with Google's documented requirement for Privacy & messaging messages.
 - Privacy policy URL: https://geometrydashspam.cc/privacy

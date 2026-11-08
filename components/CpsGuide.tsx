@@ -52,6 +52,12 @@ export default function CpsGuide() {
             </tbody>
           </table>
         </div>
+        <h3 className="mb-2 mt-6 text-lg font-bold text-white">When peak and average disagree</h3>
+        <p className="mb-4 text-sm leading-7 text-slate-300">
+          Suppose two 10-second trials both register 72 clicks. Both average 7.20 CPS. If one peaks at 13 clicks in a
+          second and the other at 9, the first had the larger burst. Use consistency to judge how
+          evenly the presses were spaced across the whole trial. These are illustrative counts.
+        </p>
         <h3 className="mb-2 mt-6 text-lg font-bold text-white">Try the same test three times</h3>
         <p className="text-sm leading-7 text-slate-300">
           Pick 10 seconds, use the same mouse or key, and complete three trials. Compare typical speed, timing regularity

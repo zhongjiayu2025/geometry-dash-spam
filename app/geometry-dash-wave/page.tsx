@@ -98,17 +98,18 @@ export default function GeometryDashWavePage() {
         <h1 className="mb-4 text-3xl font-display font-bold text-white md:text-5xl">Geometry Dash Wave</h1>
         <p className="leading-7 text-slate-400">
           Practice <strong className="text-slate-200">Geometry Dash wave</strong> movement and
-          <strong className="text-slate-200"> wave spam</strong> with normal, mini, precision and endless presets.
-          The trainer separates raw click speed from the harder part: keeping repeated inputs controlled.
+          learn where to press and release with normal, mini, precision and endless presets.
+          Start with a wide corridor and use the direction of each miss to adjust your next input.
         </p>
       </header>
 
       <section className="mx-auto mb-5 max-w-5xl rounded-2xl border border-blue-500/20 bg-blue-950/15 p-5 md:p-6">
         <div className="mb-2 text-xs font-bold uppercase tracking-[0.18em] text-blue-300">Quick answer</div>
         <p className="leading-7 text-slate-300">
-          The Geometry Dash wave changes direction when you press and release. Wave spam uses rapid repeated inputs,
-          but faster clicking only helps when the spacing between those inputs stays controlled. Use the trainer below
-          to practice the movement, then compare raw speed separately with the <Link href="/cps-test" className="text-blue-400 hover:underline">GD CPS Test</Link>.
+          Hold to climb and release to descend. Start with <a href="#drill-normal" className="text-blue-400 underline">Normal Wave</a>.
+          If you clip the ceiling, release earlier. If you drop into the floor, hold slightly longer.
+          Switch to <a href="#drill-mini" className="text-blue-400 underline">Mini Wave</a> once those corrections feel repeatable.
+          To isolate the effect of Mini Wave, keep the difficulty fixed and use the Mini Wave toggle instead.
         </p>
       </section>
 

@@ -235,6 +235,7 @@ const WaveSimulator: React.FC<WaveSimulatorProps> = ({ variant = 'spam' }) => {
         difficulty={currentConfig}
         status={gameStatus}
         onStatusChange={setGameStatus}
+        compareSpamRuns={!isWavePage}
         isEndless={isEndless}
         isMini={isMini}
       />
