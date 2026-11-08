@@ -111,7 +111,7 @@ export default function GeometryDashCodesPage() {
               Source: Geometry Dash Wiki
             </a>
           </div>
-          <VaultCodeTable codes={THE_VAULT_CODES} label="The Vault codes" />
+          <VaultCodeTable codes={THE_VAULT_CODES} label="The Vault codes" room="the-vault" />
         </section>
 
         <section className="mb-14">
@@ -124,7 +124,7 @@ export default function GeometryDashCodesPage() {
               Open detailed Vault of Secrets guide →
             </Link>
           </div>
-          <VaultCodeTable codes={VAULT_OF_SECRETS_CODES} label="Vault of Secrets codes" />
+          <VaultCodeTable codes={VAULT_OF_SECRETS_CODES} label="Vault of Secrets codes" room="vault-of-secrets" />
         </section>
 
         <section id="chamber" className="mb-14 scroll-mt-28">
@@ -137,7 +137,7 @@ export default function GeometryDashCodesPage() {
               Source: Geometry Dash Wiki
             </a>
           </div>
-          <VaultCodeTable codes={CHAMBER_CODES} label="Chamber of Time codes" />
+          <VaultCodeTable codes={CHAMBER_CODES} label="Chamber of Time codes" room="chamber-of-time" />
         </section>
 
         <section id="wraith" className="mb-14 scroll-mt-28">
@@ -152,7 +152,7 @@ export default function GeometryDashCodesPage() {
               Source: Geometry Dash Wiki
             </a>
           </div>
-          <VaultCodeTable codes={WRAITH_CODES} label="Wraith codes" />
+          <VaultCodeTable codes={WRAITH_CODES} label="Wraith codes" room="wraith" />
         </section>
 
         <section className="mb-10 grid gap-4 md:grid-cols-2">

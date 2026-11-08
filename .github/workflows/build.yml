@@ -168,6 +168,28 @@ jobs:
 
           echo "robots.txt and sitemap.xml are crawler-readable in production"
 
+      - name: Verify representative content URLs with browser and crawler-like user agents
+        shell: bash
+        run: |
+          set -euo pipefail
+          # User-agent emulation is a smoke test, not authenticated Googlebot access.
+          for agent in "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 Chrome/151.0.0.0 Safari/537.36" "Mozilla/5.0 (compatible; Googlebot/2.1; +http://www.google.com/bot.html)"; do
+            for route in "/" "/geometry-dash-wave" "/cps-test" "/demon-list" "/hardest-level" "/geometry-dash-codes" "/geometry-dash-vault-of-secrets-codes" "/blog"; do
+              output="$(mktemp)"
+              status="$(curl -sSL --connect-timeout 10 --max-time 30 --retry 2 --retry-delay 2 -A "$agent" -o "$output" -w '%{http_code}' "https://geometrydashspam.cc$route")"
+              if [[ "$status" != "200" ]]; then
+                echo "::error::HTTP $status for $route with simulated agent $agent"
+                exit 1
+              fi
+              if ! grep -Fq "GEOMETRY DASH SPAM" "$output"; then
+                echo "::error::Missing actual site HTML on $route with simulated agent $agent"
+                exit 1
+              fi
+              echo "Representative content page reachable: $route ($status)"
+              rm -f "$output"
+            done
+          done
+
       - name: Verify production AdSense ownership files
         shell: bash
         run: |

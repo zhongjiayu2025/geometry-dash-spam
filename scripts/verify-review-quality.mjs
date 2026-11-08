@@ -24,6 +24,33 @@ if (!home.includes("Enable JavaScript to play")) errors.push("Home no-script ins
 if (!wave.includes("Enable JavaScript to change hold")) errors.push("Wave no-script instructions missing");
 if (!readFileSync(join(root,"components","WaveSimulator.tsx"),"utf8").includes("loading: () => <WaveTrainerLoading />")) errors.push("Meaningful game loading instructions missing");
 if (!readFileSync(join(root,"components","GameCanvas.tsx"),"utf8").includes("<WaveSessionReview runs={recentRuns}")) errors.push("Local training review not connected");
+
+const codesHtml = exported("/geometry-dash-codes");
+const secretsHtml = exported("/geometry-dash-vault-of-secrets-codes");
+const demonHtml = exported("/demon-list");
+const hardestHtml = exported("/hardest-level");
+
+for (const [route, html] of [["/geometry-dash-codes", codesHtml], ["/geometry-dash-vault-of-secrets-codes", secretsHtml]]) {
+  if (!html.includes("Your code checklist")) errors.push(route + ": tried-code checklist missing");
+  if (!html.includes("This does not redeem them")) errors.push(route + ": tried-not-redeemed disclaimer missing");
+  if (!html.includes("Not tried")) errors.push(route + ": untried filter missing");
+}
+const roomTable = readFileSync(join(root,"components","VaultCodeTable.tsx"),"utf8");
+if (!roomTable.includes("gd_vault_progress_v1_") || !roomTable.includes('window.addEventListener("storage", onStorage)')) {
+  errors.push("Checklist must persist locally and reload across tabs");
+}
+const codesPage = readFileSync(join(root,"app","geometry-dash-codes","page.tsx"),"utf8");
+const detailPage = readFileSync(join(root,"app","geometry-dash-vault-of-secrets-codes","page.tsx"),"utf8");
+if (!codesPage.includes('room="vault-of-secrets"') || !detailPage.includes('room="vault-of-secrets"')) {
+  errors.push("Overview and Vault of Secrets guide must share one room ID");
+}
+if (demonHtml.includes("moving Society to #2") || hardestHtml.includes("replacing Society")) {
+  errors.push("Demon list commentary still asserts an outdated static rank");
+}
+if (!demonHtml.includes("Latest checked snapshot") || !hardestHtml.includes("Latest checked snapshot")) {
+  errors.push("Ranked pages must explain the dated source snapshot");
+}
+
 if (errors.length) {
   console.error("Original-value verification failed:\n" + errors.map(e=>" - "+e).join("\n"));
   process.exit(1);
