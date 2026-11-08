@@ -1,4 +1,4 @@
-import { readFileSync, existsSync } from "node:fs";
+import { readFileSync, existsSync, statSync } from "node:fs";
 import { join } from "node:path";
 const root = process.cwd();
 const errors = [];
@@ -13,7 +13,7 @@ for (const route of ["/demon-list","/hardest-level","/dashmetry","/geometry-dash
 const exported = route => {
   const name = route === "/" ? "index.html" : route.slice(1);
   const possibilities = [join(root,"out",name), join(root,"out",name+".html"),join(root,"out",name,"index.html")];
-  const file = possibilities.find(existsSync);
+  const file = possibilities.find(p => existsSync(p) && statSync(p).isFile());
   if (!file) { errors.push("No exported page " + route); return ""; }
   return readFileSync(file,"utf8");
 };
