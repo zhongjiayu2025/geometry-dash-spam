@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import WaveSimulator from "../../components/WaveSimulator";
 import WaveControlGuide from "../../components/WaveControlGuide";
+import WaveRhythmLab from "../../components/WaveRhythmLab";
 import Breadcrumbs from "../../components/Breadcrumbs";
 import CoreTrainingLinks from "../../components/CoreTrainingLinks";
 
@@ -112,6 +113,10 @@ export default function GeometryDashWavePage() {
         </p>
       </section>
 
+      <WaveRhythmLab />
+      <noscript><p className="mx-auto mb-4 max-w-5xl rounded-lg border border-amber-500/30 bg-amber-950/20 p-4 text-sm text-amber-100">
+        Enable JavaScript to change hold and release timing or play the trainer. The practice explanation remains readable without it.
+      </p></noscript>
       <WaveSimulator variant="wave" />
       <CoreTrainingLinks variant="wave" />
 
