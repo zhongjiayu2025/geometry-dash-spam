@@ -4,8 +4,8 @@ export type VaultCode = {
   note?: string;
 };
 
-export const VAULT_CODES_CHECKED_AT = "2026-10-12";
-export const WRAITH_KNOWN_REWARDS_FINGERPRINT = "20aac626";
+export const VAULT_CODES_CHECKED_AT = "2026-11-09";
+export const WRAITH_KNOWN_REWARDS_FINGERPRINT = "1ffed540";
 
 export const VAULT_SOURCES = {
   vault: "https://geometrydash.wiki.gg/wiki/Vault",
@@ -91,5 +91,6 @@ export const WRAITH_CODES: VaultCode[] = [
   { code: "geometrydash.com", reward: "500 Mana Orbs + 20 Diamonds + 1 Demon Key" },
   { code: "dualitygauntlet", reward: "Icon reward" },
   { code: "gds2mil", reward: "Icon reward" },
-  { code: "timethief", reward: "Reward listed by the live Secret Room source" },
+  { code: "timethief", reward: "Cube 423" },
+  { code: "shrimple", reward: "Ship 107" },
 ];
