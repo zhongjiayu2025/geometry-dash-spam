@@ -78,7 +78,7 @@ export default function VaultOfSecretsCodesPage() {
         </p>
       </section>
 
-      <VaultCodeTable codes={VAULT_OF_SECRETS_CODES} label="Vault of Secrets codes" />
+      <VaultCodeTable codes={VAULT_OF_SECRETS_CODES} label="Vault of Secrets codes" room="vault-of-secrets" />
 
       <section className="mt-12 grid gap-4 md:grid-cols-2">
         <div className="rounded-xl border border-white/10 bg-slate-900/30 p-6">
