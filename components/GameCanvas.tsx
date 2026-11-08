@@ -22,12 +22,13 @@ interface GameCanvasProps {
   difficulty: DifficultyConfig;
   status: GameStatus;
   onStatusChange: (status: GameStatus) => void;
+  onRunComplete?: (run: WaveRun) => void;
   isEndless?: boolean;
   isMini?: boolean;
 }
 
 
-const GameCanvas: React.FC<GameCanvasProps> = memo(({ difficulty, status, onStatusChange, isEndless = false, isMini = false }) => {
+const GameCanvas: React.FC<GameCanvasProps> = memo(({ difficulty, status, onStatusChange, onRunComplete, isEndless = false, isMini = false }) => {
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const containerRef = useRef<HTMLDivElement>(null);
   
@@ -139,7 +140,7 @@ const GameCanvas: React.FC<GameCanvasProps> = memo(({ difficulty, status, onStat
 
   const preloadGameplay = useCallback(() => {
       void Promise.all([ensureRuntime(), ensureRenderer()]);
-  }, [ensureRenderer, ensureRuntime]);
+  }, [ensureRenderer, ensureRuntime, onRunComplete]);
 
   // Game State Ref
   const gameState = useRef<WaveRuntimeState>({
@@ -278,6 +279,7 @@ const GameCanvas: React.FC<GameCanvasProps> = memo(({ difficulty, status, onStat
 
     persistRun(run);
     runRecordedRef.current = true;
+    onRunComplete?.(run);
   };
 
   const resetGame = useCallback(() => {

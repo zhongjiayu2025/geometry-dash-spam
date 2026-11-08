@@ -63,8 +63,8 @@ The CI export verifier protects these boundaries in addition to metadata, sitema
 ## Ad provider policy
 
 Only Google AdSense (`ca-pub-1528586776567779`) is authorized as an advertising network.
-The global HTML head contains the single asynchronous AdSense loader; `public/ads.txt`
-authorizes exactly one Google seller. The `npm run verify:ads` check rejects legacy
+The homepage, CPS Test and Wave Trainer include the single asynchronous AdSense loader.
+Other routes are excluded by `data/adPages.json`. `public/ads.txt` authorizes exactly one Google seller. The `npm run verify:ads` check rejects legacy
 Adsterra/Monetag loaders, unexpected remote scripts in exported HTML and additional
 ad sellers. The production CI verifies important public routes.
 

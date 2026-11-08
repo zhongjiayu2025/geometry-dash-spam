@@ -121,9 +121,9 @@ export default function HomeGuide() {
         <div>
           <h2 className="text-2xl font-display font-bold text-white mb-4">How to practice wave spam</h2>
           <ol className="space-y-3 text-slate-400">
-            <li><strong className="text-slate-200">Start wide.</strong> Use an easier difficulty until your inputs are repeatable.</li>
-            <li><strong className="text-slate-200">Measure speed separately.</strong> Use the CPS test to find your sustainable rate.</li>
-            <li><strong className="text-slate-200">Tighten the corridor.</strong> Increase difficulty only when control remains stable.</li>
+            <li><strong className="text-slate-200">Set a baseline.</strong> Start with <a href="#drill-normal" className="text-blue-400 underline">Normal Wave</a>, or choose Easy if you are still learning the controls. Leave Endless off.</li>
+            <li><strong className="text-slate-200">Repeat three times.</strong> Keep the same setup and compare time, average CPS and timing spread in the panel below the game.</li>
+            <li><strong className="text-slate-200">Adjust one thing.</strong> If faster presses shorten the run, return to your baseline pace. If you repeatedly hit one wall, use the Wave Trainer to isolate hold and release timing.</li>
             <li><strong className="text-slate-200">Stop if your hand hurts.</strong> Short practice sessions are preferable to grinding through pain.</li>
           </ol>
         </div>
