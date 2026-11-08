@@ -2,6 +2,7 @@ import { Metadata } from "next";
 import WaveSimulator from "../components/WaveSimulator";
 import HomeGuide from "../components/HomeGuide";
 import CoreTrainingLinks from "../components/CoreTrainingLinks";
+import HomeChallengeBrief from "../components/HomeChallengeBrief";
 import { WAVE_PRESETS } from "../data/wavePresets";
 
 export const metadata: Metadata = {
@@ -110,6 +111,10 @@ export default function Home() {
         </a>
       </div>
 
+      <HomeChallengeBrief />
+      <noscript><p className="mx-auto mb-4 max-w-5xl rounded-lg border border-amber-500/30 bg-amber-950/20 p-4 text-sm text-amber-100">
+        Enable JavaScript to play the interactive wave game. The challenge instructions and training guides remain readable without it.
+      </p></noscript>
       <WaveSimulator />
       <CoreTrainingLinks variant="spam" />
       <HomeGuide />

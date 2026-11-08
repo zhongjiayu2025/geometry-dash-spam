@@ -10,6 +10,7 @@ import type { WaveRuntimeState } from '../lib/waveRuntime';
 import type { WaveRun } from '../lib/waveStorage';
 import { readStorage, writeStorage } from '../lib/browserStorage';
 import { useWaveRecords } from '../lib/useWaveRecords';
+import WaveSessionReview from './WaveSessionReview';
 import { HeldWaveInputs } from '../lib/heldWaveInputs';
 
 type WaveRenderer = typeof import('../lib/waveRenderer').renderWaveFrame;
@@ -688,6 +689,7 @@ const GameCanvas: React.FC<GameCanvasProps> = memo(({ difficulty, status, onStat
         };
 
   return (
+    <>
     <div 
       className={`relative w-full transition-all duration-500 mx-auto select-none ${status === GameStatus.Playing ? 'touch-none' : 'touch-pan-y'} group bg-slate-950 rounded-lg overflow-hidden
         ${isFullscreen ? 'fixed inset-0 z-50 h-screen max-w-none rounded-none' : 'max-w-5xl h-[330px] sm:h-auto sm:aspect-video md:h-[500px]'}
@@ -814,6 +816,8 @@ const GameCanvas: React.FC<GameCanvasProps> = memo(({ difficulty, status, onStat
       )}
 
     </div>
+    <WaveSessionReview runs={recentRuns} difficulty={difficulty.label} isMini={isMini} isEndless={isEndless} />
+    </>
   );
 });
 

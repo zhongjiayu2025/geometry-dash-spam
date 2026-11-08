@@ -588,6 +588,7 @@ const cpsRunHistorySource = readFileSync(join(process.cwd(), "components", "CpsR
 const cpsFinishedActionsSource = readFileSync(join(process.cwd(), "components", "CpsFinishedActions.tsx"), "utf8");
 const clickTestPanelsSource = readFileSync(join(process.cwd(), "components", "ClickTestPanels.tsx"), "utf8");
 const waveClientSource = readFileSync(join(process.cwd(), "components", "WaveSimulator.tsx"), "utf8");
+const waveLoadingSource = readFileSync(join(process.cwd(), "components", "WaveTrainerLoading.tsx"), "utf8");
 const wavePresetSource = readFileSync(join(process.cwd(), "data", "wavePresets.ts"), "utf8");
 const homeGuideSource = readFileSync(join(process.cwd(), "components", "HomeGuide.tsx"), "utf8");
 const wavePracticeDrillSource = readFileSync(join(process.cwd(), "components", "WavePracticeDrill.tsx"), "utf8");
@@ -2306,9 +2307,11 @@ if (
 }
 
 if (
-  !waveClientSource.includes("Loading Geometry Dash wave trainer") ||
-  !waveClientSource.includes("h-[330px]") ||
-  !waveClientSource.includes("md:h-[500px]")
+  !waveClientSource.includes("loading: () => <WaveTrainerLoading />") ||
+  !waveLoadingSource.includes("min-h-[330px]") ||
+  !waveLoadingSource.includes("md:min-h-[500px]") ||
+  !waveLoadingSource.includes("While the wave game loads") ||
+  !waveLoadingSource.includes("Hold to rise, release to fall")
 ) {
   infrastructureErrors.push(
     "WaveSimulator dynamic GameCanvas must reserve its responsive height while the chunk loads"
