@@ -11,6 +11,7 @@ import type { WaveRun } from '../lib/waveStorage';
 import { readStorage, writeStorage } from '../lib/browserStorage';
 import { useWaveRecords } from '../lib/useWaveRecords';
 import { HeldWaveInputs } from '../lib/heldWaveInputs';
+import SpamRunComparison from './SpamRunComparison';
 
 type WaveRenderer = typeof import('../lib/waveRenderer').renderWaveFrame;
 type WaveRuntime = typeof import('../lib/waveRuntime');
@@ -22,13 +23,15 @@ interface GameCanvasProps {
   difficulty: DifficultyConfig;
   status: GameStatus;
   onStatusChange: (status: GameStatus) => void;
-  onRunComplete?: (run: WaveRun) => void;
   isEndless?: boolean;
   isMini?: boolean;
+  compareSpamRuns?: boolean;
 }
 
 
-const GameCanvas: React.FC<GameCanvasProps> = memo(({ difficulty, status, onStatusChange, onRunComplete, isEndless = false, isMini = false }) => {
+const GameCanvas: React.FC<GameCanvasProps> = memo(({ difficulty, status, onStatusChange, isEndless = false, isMini = false, compareSpamRuns = false }) => {
+  const [comparisonRuns, setComparisonRuns] = useState<WaveRun[]>([]);
+  const runMode = `${difficulty.label}${isMini ? " · Mini" : " · Normal"}${isEndless ? " · Endless" : " · 15s"}`;
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const containerRef = useRef<HTMLDivElement>(null);
   
@@ -140,7 +143,7 @@ const GameCanvas: React.FC<GameCanvasProps> = memo(({ difficulty, status, onStat
 
   const preloadGameplay = useCallback(() => {
       void Promise.all([ensureRuntime(), ensureRenderer()]);
-  }, [ensureRenderer, ensureRuntime, onRunComplete]);
+  }, [ensureRenderer, ensureRuntime, compareSpamRuns, runMode]);
 
   // Game State Ref
   const gameState = useRef<WaveRuntimeState>({
@@ -274,12 +277,14 @@ const GameCanvas: React.FC<GameCanvasProps> = memo(({ difficulty, status, onStat
       clicks: stats.clickCount,
       result,
       timestamp: Date.now(),
-      mode: `${difficulty.label}${isMini ? " · Mini" : " · Normal"}${isEndless ? " · Endless" : " · 15s"}`,
+      mode: runMode,
     };
 
     persistRun(run);
     runRecordedRef.current = true;
-    onRunComplete?.(run);
+    if (compareSpamRuns && !isEndless) {
+      setComparisonRuns((runs) => runs[0]?.mode === run.mode ? [...runs.slice(-2), run] : [run]);
+    }
   };
 
   const resetGame = useCallback(() => {
@@ -690,6 +695,7 @@ const GameCanvas: React.FC<GameCanvasProps> = memo(({ difficulty, status, onStat
         };
 
   return (
+    <>
     <div 
       className={`relative w-full transition-all duration-500 mx-auto select-none ${status === GameStatus.Playing ? 'touch-none' : 'touch-pan-y'} group bg-slate-950 rounded-lg overflow-hidden
         ${isFullscreen ? 'fixed inset-0 z-50 h-screen max-w-none rounded-none' : 'max-w-5xl h-[330px] sm:h-auto sm:aspect-video md:h-[500px]'}
@@ -816,6 +822,15 @@ const GameCanvas: React.FC<GameCanvasProps> = memo(({ difficulty, status, onStat
       )}
 
     </div>
+    {compareSpamRuns && !isEndless && (
+      <SpamRunComparison
+        mode={runMode}
+        runs={comparisonRuns[0]?.mode === runMode ? comparisonRuns : []}
+        onReset={() => setComparisonRuns([])}
+        isPlaying={status === GameStatus.Playing}
+      />
+    )}
+    </>
   );
 });
 

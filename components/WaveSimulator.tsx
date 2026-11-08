@@ -6,8 +6,6 @@ import dynamic from 'next/dynamic';
 import { Difficulty, GameStatus } from '../types';
 import { DIFFICULTY_CONFIGS } from '../constants';
 import DifficultySelector from './DifficultySelector';
-import SpamRunComparison from './SpamRunComparison';
-import type { WaveRun } from '../lib/waveStorage';
 import { Infinity as InfinityIcon, Minimize2 } from 'lucide-react';
 import { readStorage, writeStorage } from '../lib/browserStorage';
 import { WAVE_PRESETS, type WavePreset, type WavePresetState } from '../data/wavePresets';
@@ -45,13 +43,6 @@ const WaveSimulator: React.FC<WaveSimulatorProps> = ({ variant = 'spam' }) => {
   const [gameStatus, setGameStatus] = useState<GameStatus>(GameStatus.Idle);
   const [wavePreset, setWavePreset] = useState<WavePresetState>('custom');
   const isWavePage = variant === 'wave';
-  const [comparisonRuns, setComparisonRuns] = useState<WaveRun[]>([]);
-  const comparisonMode = `${DIFFICULTY_CONFIGS[difficulty].label}${isMini ? " · Mini" : " · Normal"} · 15s`;
-  const recordComparisonRun = useCallback((run: WaveRun) => {
-    setComparisonRuns((runs) => runs[0]?.mode === run.mode
-      ? [...runs.slice(-2), run]
-      : [run]);
-  }, []);
 
   useEffect(() => {
     const savedDifficulty = readStorage('gd_spam_last_difficulty');
@@ -244,24 +235,12 @@ const WaveSimulator: React.FC<WaveSimulatorProps> = ({ variant = 'spam' }) => {
         difficulty={currentConfig}
         status={gameStatus}
         onStatusChange={setGameStatus}
-        onRunComplete={isWavePage || isEndless ? undefined : recordComparisonRun}
+        compareSpamRuns={!isWavePage}
         isEndless={isEndless}
         isMini={isMini}
       />
       
-      {!isWavePage && (
-        <>
-          {!isEndless && (
-            <SpamRunComparison
-              mode={comparisonMode}
-              runs={comparisonRuns[0]?.mode === comparisonMode ? comparisonRuns : []}
-              onReset={() => setComparisonRuns([])}
-              isPlaying={gameStatus === GameStatus.Playing}
-            />
-          )}
-          <WavePracticeDrill onAccept={acceptPracticeDrill} />
-        </>
-      )}
+      {!isWavePage && <WavePracticeDrill onAccept={acceptPracticeDrill} />}
 
     </div>
   );
