@@ -7,7 +7,7 @@ export type DemonEntry = {
 
 export const DEMON_SOURCE_URL = "https://pointercrate.com/demonlist/";
 export const DEMON_API_URL = "https://pointercrate.com/api/v2/demons/listed/?limit=50";
-export const DEMON_VERIFIED_AT = "2026-11-09";
+export const DEMON_VERIFIED_AT = "2026-11-08";
 
 export const DEMONS: DemonEntry[] = [
   { rank: 1, level: "GRIEF", publisher: "icedcave", difficulty: "Extreme Demon" },
@@ -50,7 +50,7 @@ export const DEMONS: DemonEntry[] = [
   { rank: 38, level: "Slaughterhouse", publisher: "icedcave", difficulty: "Extreme Demon" },
   { rank: 39, level: "Subterminal Point", publisher: "SyQual", difficulty: "Extreme Demon" },
   { rank: 40, level: "KOCMOC", publisher: "cherryteam", difficulty: "Extreme Demon" },
-  { rank: 41, level: "BEING HOME", publisher: "Turtl123", difficulty: "Extreme Demon" },
+  { rank: 41, level: "BEING HOME", publisher: "[FC] Turtl123", difficulty: "Extreme Demon" },
   { rank: 42, level: "Deimos", publisher: "ItsHybrid", difficulty: "Extreme Demon" },
   { rank: 43, level: "CHIL", publisher: "McCoco", difficulty: "Extreme Demon" },
   { rank: 44, level: "zorin", publisher: "태리", difficulty: "Extreme Demon" },
