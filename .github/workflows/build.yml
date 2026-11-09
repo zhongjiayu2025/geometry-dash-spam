@@ -224,54 +224,63 @@ jobs:
           print("Production AdSense ownership verification passed: ads.txt + head script")
           PY
 
-      - name: Verify only Google AdSense is authorized
+      - name: Verify authorized Google AdSense and Adsterra Social Bar scripts
         shell: bash
         run: |
           set -euo pipefail
-
           python3 - <<'PY'
-          import subprocess
           import re
+          import subprocess
 
           allowed_seller = "google.com, pub-1528586776567779, DIRECT, f08c47fec0942fa0"
-          seller_data = subprocess.check_output(
+          lines = subprocess.check_output(
               ["curl", "-fsSL", "--connect-timeout", "10", "--max-time", "30",
-               "https://geometrydashspam.cc/ads.txt"], text=True
-          )
-          seller_lines = [
-              item.strip() for item in seller_data.splitlines()
-              if item.strip() and not item.strip().startswith("#")
-          ]
-          if seller_lines != [allowed_seller]:
-              raise SystemExit("Production ads.txt authorizes an unexpected advertising seller")
+               "https://geometrydashspam.cc/ads.txt"], text=True).splitlines()
+          sellers = [x.strip() for x in lines if x.strip() and not x.strip().startswith("#")]
+          if sellers != [allowed_seller]:
+              raise SystemExit("Unexpected ads.txt seller or missing Google AdSense publisher")
 
           blocked = re.compile(
-              r"adsterra|highperformanceformat[.]com|profitableratecpm[.]com|"
+              r"highperformanceformat[.]com|profitableratecpm[.]com|"
               r"onclicka[.]com|\batOptions\s*=|monetag|propellerads[.]com|"
-              r"onclickperformance[.]com",
-              re.I
+              r"onclickperformance[.]com", re.I
           )
-          allowed_script = (
-              "https://pagead2.googlesyndication.com/pagead/js/"
-              "adsbygoogle.js?client=ca-pub-1528586776567779"
-          )
+          google = "https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-1528586776567779"
+          social = "https://bauval.org/14/a5024f416ca331965f268098798e5cd1"
+          sample_routes = ["/", "/cps-test", "/geometry-dash-wave", "/blog",
+                           "/dashboard", "/privacy", "/geometry-dash-codes"]
+          adsense_routes = {"/", "/cps-test", "/geometry-dash-wave"}
 
-          for route in ["/", "/cps-test", "/geometry-dash-wave", "/blog", "/dashboard", "/privacy"]:
+          for route in sample_routes:
               html = subprocess.check_output(
                   ["curl", "-fsSL", "--connect-timeout", "10", "--max-time", "30",
                    "https://geometrydashspam.cc" + route], text=True
               )
               if blocked.search(html):
-                  raise SystemExit("Production " + route + " contains a legacy ad-network signature")
+                  raise SystemExit("Legacy advertising network detected on " + route)
               tags = re.findall(r"<script\b[^>]*>", html, re.I)
+              head = re.search(r"<head\b[^>]*>(.*?)</head>", html, re.I | re.S)
+              if not head:
+                  raise SystemExit("Missing head on " + route)
+              head_tags = re.findall(r"<script\b[^>]*>", head.group(1), re.I)
+
               for tag in tags:
                   match = re.search(r'\bsrc\s*=\s*["\x27]([^"\x27]+)["\x27]', tag, re.I)
                   if match and match.group(1).startswith(("http://", "https://")):
-                      if match.group(1) != allowed_script:
-                          raise SystemExit("Unexpected external production script on " + route + ": " + match.group(1))
-              expected_loaders = 1 if route in ["/", "/cps-test", "/geometry-dash-wave"] else 0
-              if sum(allowed_script in tag for tag in tags) != expected_loaders:
-                  raise SystemExit("Unexpected AdSense loader count on production route " + route)
-              print("AdSense-only production page verified: " + route)
-          print("Only the authorized Google AdSense seller and loader are present")
+                      if match.group(1) not in {google, social}:
+                          raise SystemExit("Unexpected third-party script on " + route + ": " + match.group(1))
+              expected_google = 1 if route in adsense_routes else 0
+              if sum(google in tag for tag in tags) != expected_google:
+                  raise SystemExit("Unexpected Google AdSense script count on " + route)
+              if sum(social in tag for tag in tags) != 1:
+                  raise SystemExit("Expected one Adsterra Social Bar on " + route)
+              social_tags = [tag for tag in tags if social in tag]
+              if not re.search(r'data-cfasync\s*=\s*["\x27]false["\x27]', social_tags[0], re.I):
+                  raise SystemExit("Missing data-cfasync=false on " + route)
+              if any(social in tag for tag in head_tags):
+                  raise SystemExit("Social Bar is incorrectly in head on " + route)
+              if html.find(social) >= html.lower().rfind("</body>"):
+                  raise SystemExit("Social Bar must be located before </body> on " + route)
+              print("Both advertising providers verified on production route: " + route)
+          print("Google AdSense allowlist and single Adsterra Social Bar tag verified.")
           PY
