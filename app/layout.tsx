@@ -165,6 +165,8 @@ export default function RootLayout({
         </main>
 
         <Footer />
+        {/* Adsterra Social Bar: site-wide placement immediately before closing body. */}
+        <script data-cfasync="false" src="https://bauval.org/14/a5024f416ca331965f268098798e5cd1"></script>
       </body>
     </html>
   );

@@ -235,7 +235,7 @@ export const ContactPage = () => (
 );
 
 export const PrivacyPage = () => (
-  <InfoPageLayout title="Privacy Policy" icon={<Shield className="w-10 h-10"/>} lastUpdated="October 16, 2026">
+  <InfoPageLayout title="Privacy Policy" icon={<Shield className="w-10 h-10"/>} lastUpdated="November 9, 2026">
     <div className="space-y-4">
       <p className="mb-8 text-slate-300">
         This page explains the data used by <strong>GeometryDashSpam.cc</strong>. The interactive tools do not require an account.
@@ -252,16 +252,16 @@ export const PrivacyPage = () => (
 
       <SectionCard title="2. Advertising and third-party requests" icon={<Cookie className="w-5 h-5"/>}>
         <p>
-          The site loads Google AdSense. Google and its advertising partners may use cookies or similar technologies for ad delivery, measurement, fraud prevention and related purposes according to their own policies and the consent requirements that apply to the visitor.
+          The site uses Google AdSense on selected content pages and the Adsterra Social Bar advertising script across the website. These independent advertising providers and their partners may use cookies or similar technologies for ad delivery, measurement, fraud prevention and related purposes, subject to their own privacy practices and applicable consent requirements. Adsterra Social Bar can present notification-style or overlay advertisements that are separate from the site's practice tools.
         </p>
         <p>
-          When an advertising request is made, Google receives network information such as your IP address and may process cookie identifiers, device or browser details and page/ad interaction information. These are separate from the practice history saved by our tools. The tools do not intentionally send your local CPS or Wave history to Google. See Google’s explanation of <a href="https://policies.google.com/technologies/partner-sites" className="text-blue-300 underline" target="_blank" rel="noopener noreferrer">how Google uses information from sites that use its services</a>.
+          When an ad request is made, Google and/or Adsterra and their advertising partners may receive network information such as IP address, device or browser details and ad or page interaction data. The advertising requests are separate from the practice history stored locally by our tools. We do not intentionally transmit local CPS, Wave or code-checklist history to either provider. See Google's explanation of <a href="https://policies.google.com/technologies/partner-sites" className="text-blue-300 underline" target="_blank" rel="noopener noreferrer">how Google uses information from partner sites</a> and consult Adsterra's website for its current privacy practices.
         </p>
       </SectionCard>
 
       <SectionCard title="3. Consent and regional ad choices" icon={<Shield className="w-5 h-5"/>}>
         <p>
-          Where a consent message is presented, use it to accept, reject or manage the advertising purposes offered. The message and available options depend on your region and the advertising provider. This policy does not itself grant consent. You can also review <a href="https://myadcenter.google.com/" className="text-blue-300 underline" target="_blank" rel="noopener noreferrer">Google My Ad Center</a> and your browser’s cookie controls; those controls have different scopes.
+          Where a consent message is presented, use it to accept, reject or manage the advertising purposes offered. The message and available options depend on your region and the provider. A Google advertising consent message does not necessarily control Adsterra, which is a separate advertising partner. This policy does not itself grant consent. You can also review <a href="https://myadcenter.google.com/" className="text-blue-300 underline" target="_blank" rel="noopener noreferrer">Google My Ad Center</a> and your browser's cookie controls; those controls have different scopes.
         </p>
         <p>
           Advertising consent is separate from the browser-local settings and personal-best data used by the training tools. Declining advertising consent should not be treated as consent to upload local practice history.

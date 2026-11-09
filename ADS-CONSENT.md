@@ -13,8 +13,8 @@ The repository can verify the code-side prerequisites, but it cannot prove wheth
 
 ## Code-side state
 
-- The root layout uses `AdSenseHead` to load the publisher tag on the explicit
-  40-page allowlist; navigation, information, utility and error pages are excluded.
+- The root layout uses `AdSenseHead` to load the Google publisher tag on the explicit
+  9-page allowlist; navigation, information, utility and error pages are excluded.
 - `ads.txt` contains the site publisher relationship.
 - Referrer policy is `strict-origin-when-cross-origin`, which is compatible with Google's documented requirement for Privacy & messaging messages.
 - Privacy policy URL: https://geometrydashspam.cc/privacy
@@ -47,7 +47,7 @@ A release may mark CMP status as **verified** only after someone has confirmed t
 
 ## Page eligibility revision — 2026-10-17
 
-- `data/adPages.json` is the explicit page allowlist (40 content/tool routes).
+- `data/adPages.json` is the explicit page allowlist (9 high-substance content/tool routes).
 - `components/AdSenseHead.tsx` retains the authorized asynchronous publisher tag
   in eligible exported document heads. It excludes the 12 existing noindex
   utilities, the two exported error templates, and six navigation/information
@@ -80,3 +80,14 @@ A release may mark CMP status as **verified** only after someone has confirmed t
   was absent. Save/withdrawal behavior is therefore still unverified.
 - The AdSense account editor redirected to Google sign-in; no account settings
   were changed. A second homemade consent banner was not introduced.
+
+## Addition: Adsterra Social Bar — 2026-11-09
+
+- Owner-provided Social Bar tag loaded **once, sitewide, near the end of the `<body>`**:
+  `https://bauval.org/14/a5024f416ca331965f268098798e5cd1` with `data-cfasync="false"`.
+- The Google AdSense tag and its existing 9-page allowlist are unchanged. Adsterra script placement is global, including pages not eligible for AdSense.
+- `verify:ads` checks both exact allowed script sources, counts, placement, and absence of known legacy advertising loaders; GitHub Actions also tests the live website.
+- `ads.txt` retains the existing Google publisher record; no Adsterra publisher/seller line was invented without the account's required seller entry.
+- Privacy policy now discloses the additional advertising provider and explains that Google consent tooling does not automatically cover Adsterra.
+- **AdSense policy risk:** third-party pop-unders, forced redirects or other navigation-interfering creatives can violate Google's policies even when AdSense is not their source. Check Social Bar delivery on desktop/mobile before submitting an AdSense review; disable incompatible formats in the advertising provider's controls or revert this integration if needed.
+- This repository edit does not establish Adsterra dashboard activation, ad impressions, regional privacy compliance, or Google's endorsement.
